@@ -6,7 +6,10 @@ import { v4 as uuidv4 } from 'uuid'
 //Create a token cache to prevent reuse
 const usedTokens = new Set()
 
-export const GET = async (req: Request): Promise<Response> => {
+export const GET = auth(async (req) => {
+  if (!req.auth) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
   // Generate a unique token that hasn't been used before
   let token = uuidv4()
 
@@ -36,4 +39,4 @@ export const GET = async (req: Request): Promise<Response> => {
     signature,
     publicKey: process.env.IMAGEKIT_PUBLIC_KEY!,
   })
-}
+})
