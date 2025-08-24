@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  name      String
+  password  String
+  role      String  @default("USER")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+model inventory {
+  id                String        @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  make              String
+  model             String
+  year              Int
+  vatPrice          Float
+  pricenoVat        Float
+  mileage           Float?
+  fuelType          FuelType?
+  condition         Condition
+  transmission      Transmission?
+  images            Json 
+  description       String
+  bodyType          String?
+  truckSize         String?
+  slug              String        @unique
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  special           specials?
+}
+
+model specials {
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  inventory     inventory  @relation(fields: [inventoryId], references: [id])
+  inventoryId   String     @unique @db.ObjectId
+  amount        Float      // either a percentage or fixed value, based on discountType
+  slug          String     @unique
+  validFrom     DateTime
+  validTo       DateTime
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+enum FuelType {
+  PETROL
+  DIESEL
+}
+
+enum Condition {
+  NEW
+  USED
+}
+
+enum Transmission {
+  AUTOMATIC
+  MANUAL
+}
