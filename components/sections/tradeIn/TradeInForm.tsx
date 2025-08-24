@@ -7,6 +7,7 @@ import { z } from 'zod/v4'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import Image from 'next/image'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -343,7 +344,7 @@ export default function TradeInForm() {
                           className="relative group bg-gray-50 rounded-lg overflow-hidden border"
                         >
                           <div className="aspect-square">
-                            <img
+                            <Image
                               src={imagePreview.url}
                               alt={imagePreview.file.name}
                               className="w-full h-full object-cover"
