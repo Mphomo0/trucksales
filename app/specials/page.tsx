@@ -10,8 +10,8 @@ export default function Specials() {
             Our Specials
           </h2>
           <p className="text-lg text-gray-600">
-            Don't miss out on our latest truck specials — limited-time deals,
-            exclusive discounts, and unbeatable offers available now!
+            Don&lsquo;t miss out on our latest truck specials — limited-time
+            deals, exclusive discounts, and unbeatable offers available now!
           </p>
         </div>
 

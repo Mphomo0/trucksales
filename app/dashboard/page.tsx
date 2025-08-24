@@ -1,5 +1,4 @@
 import { auth } from '@/auth'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { AnalyticsDashboard } from '@/components/global/AnalyticsDashboard'
 
