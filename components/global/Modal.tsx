@@ -26,9 +26,9 @@ export const Modal: FC<ModalProps> = ({
   onSubmit,
   initialData,
 }) => {
-  if (!isOpen) return null
-
   const [submitting, setSubmitting] = useState(false)
+
+  if (!isOpen) return null
 
   // Format dates for input fields (YYYY-MM-DD)
   const formatDateForInput = (dateString: string | undefined) => {
