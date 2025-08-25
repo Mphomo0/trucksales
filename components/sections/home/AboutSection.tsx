@@ -31,7 +31,7 @@ export default function AboutSection() {
           </div>
           <div>
             <Image
-              src="/images/workshop.jpg"
+              src="/images/workshop.webp"
               alt="Dealership Image"
               width={500}
               height={400}

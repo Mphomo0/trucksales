@@ -5,7 +5,7 @@ export default function Hero() {
   return (
     <section
       className="relative text-white bg-cover bg-center bg-no-repeat md:h-[700px]"
-      style={{ backgroundImage: 'url(/images/truckBgg.jpg)' }}
+      style={{ backgroundImage: 'url(/images/truckBgg.webp)' }}
     >
       <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-yellow-600 opacity-60" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 h-full">
