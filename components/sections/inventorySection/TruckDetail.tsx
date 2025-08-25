@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -30,12 +30,13 @@ import EnquiryForm from '@/components/sections/inventorySection/EnquiryForm'
 import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
 
-interface Image {
+interface VehicleImage {
   url: string
+  fileId?: string
 }
 
 interface Vehicle {
-  id: number
+  id: string
   name: string
   make: string
   model: string
@@ -48,7 +49,9 @@ interface Vehicle {
   transmission: string
   description: string
   slug?: string
-  images: Image[]
+  images: VehicleImage[]
+  bodyType?: string
+  truckSize?: string
 }
 
 export default function TruckDetail() {
@@ -56,40 +59,76 @@ export default function TruckDetail() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [loaded, setLoaded] = useState(false)
 
-  const [sliderRef, sliderInstanceRef] = useKeenSlider<HTMLDivElement>({
-    slideChanged(slider) {
-      setCurrentSlide(slider.track.details.rel)
+  const [sliderRef, sliderInstanceRef] = useKeenSlider<HTMLDivElement>(
+    {
+      initial: 0,
+      slideChanged(slider) {
+        setCurrentSlide(slider.track.details.rel)
+      },
+      created() {
+        setLoaded(true)
+      },
+      slides: {
+        perView: 1,
+        spacing: 0,
+      },
+      loop: true,
     },
-    slides: {
-      perView: 1,
-      spacing: 0,
-    },
-    loop: true,
-  })
+    []
+  )
 
-  const [thumbnailRef] = useKeenSlider<HTMLDivElement>({
-    initial: 0,
-    slides: { perView: 5, spacing: 10 },
-    slideChanged: (slider) => {
-      sliderInstanceRef.current?.moveToIdx(slider.track.details.rel)
+  const [thumbnailRef, thumbnailInstanceRef] = useKeenSlider<HTMLDivElement>(
+    {
+      initial: 0,
+      slides: {
+        perView: 4,
+        spacing: 10,
+        origin: 'center',
+      },
+      breakpoints: {
+        '(min-width: 768px)': {
+          slides: { perView: 5, spacing: 10 },
+        },
+      },
     },
-  })
+    []
+  )
 
   const params = useParams()
   const slug = params?.slug as string
 
   useEffect(() => {
     const fetchVehicle = async () => {
-      if (!slug) return
+      if (!slug) {
+        setError('No vehicle slug provided')
+        setLoading(false)
+        return
+      }
 
       try {
+        setLoading(true)
+        setError(null)
+
         const res = await fetch(`/api/vehicles/${slug}`)
 
-        if (!res.ok) throw new Error('Vehicle not found')
+        if (!res.ok) {
+          if (res.status === 404) {
+            throw new Error('Vehicle not found')
+          }
+          const errorData = await res.json().catch(() => ({}))
+          throw new Error(
+            errorData.message || `HTTP ${res.status}: ${res.statusText}`
+          )
+        }
 
-        const json = await res.json()
-        setVehicle(json.vehicle)
+        const data = await res.json()
+        if (!data || !data.vehicle) {
+          throw new Error('Invalid response format')
+        }
+
+        setVehicle(data.vehicle)
       } catch (error) {
         console.error('Error fetching vehicle:', error)
         setError('Failed to load vehicle data')
@@ -100,6 +139,19 @@ export default function TruckDetail() {
 
     fetchVehicle()
   }, [slug])
+
+  const handleThumbnailClick = useCallback((index: number) => {
+    sliderInstanceRef.current?.moveToIdx(index)
+    thumbnailInstanceRef.current?.moveToIdx(index)
+  }, [])
+
+  const handlePrevious = useCallback(() => {
+    sliderInstanceRef.current?.prev()
+  }, [])
+
+  const handleNext = useCallback(() => {
+    sliderInstanceRef.current?.next()
+  }, [])
 
   if (loading)
     return <p className="flex justify-center items-center h-96">Loading...</p>
@@ -289,6 +341,14 @@ export default function TruckDetail() {
                   <h3 className="text-lg font-semibold mb-4">Description</h3>
                   <p className="text-gray-600 leading-relaxed">
                     {vehicle.description}
+                  </p>
+                  <p className="text-gray-600 leading-relaxed">
+                    <span className="font-bold">- Truck Size: </span>
+                    {vehicle.truckSize}
+                  </p>
+                  <p className="text-gray-600 leading-relaxed">
+                    <span className="font-bold">- Body Type: </span>
+                    {vehicle.bodyType}
                   </p>
                 </div>
               </CardContent>

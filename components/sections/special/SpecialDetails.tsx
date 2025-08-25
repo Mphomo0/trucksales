@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -48,6 +48,8 @@ interface Inventory {
   transmission: string
   images: Image[]
   description: string
+  truckSize: string
+  bodyType: string
   slug: string
 }
 
@@ -66,37 +68,75 @@ export default function SpecialDetails() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [loaded, setLoaded] = useState(false)
 
-  const [sliderRef, sliderInstanceRef] = useKeenSlider<HTMLDivElement>({
-    slideChanged(slider) {
-      setCurrentSlide(slider.track.details.rel)
+  const [sliderRef, sliderInstanceRef] = useKeenSlider<HTMLDivElement>(
+    {
+      initial: 0,
+      slideChanged(slider) {
+        setCurrentSlide(slider.track.details.rel)
+      },
+      created() {
+        setLoaded(true)
+      },
+      slides: {
+        perView: 1,
+        spacing: 0,
+      },
+      loop: true,
     },
-    slides: {
-      perView: 1,
-      spacing: 0,
-    },
-    loop: true,
-  })
+    []
+  )
 
-  const [thumbnailRef] = useKeenSlider<HTMLDivElement>({
-    initial: 0,
-    slides: { perView: 5, spacing: 10 },
-    slideChanged: (slider) => {
-      sliderInstanceRef.current?.moveToIdx(slider.track.details.rel)
+  const [thumbnailRef, thumbnailInstanceRef] = useKeenSlider<HTMLDivElement>(
+    {
+      initial: 0,
+      slides: {
+        perView: 4,
+        spacing: 10,
+        origin: 'center',
+      },
+      breakpoints: {
+        '(min-width: 768px)': {
+          slides: { perView: 5, spacing: 10 },
+        },
+      },
     },
-  })
+    []
+  )
 
   const params = useParams()
   const slug = params?.slug as string
 
   useEffect(() => {
     const fetchSpecial = async () => {
-      if (!slug) return
+      if (!slug) {
+        setError('No slug provided for Special')
+        setLoading(false)
+        return
+      }
 
       try {
+        setLoading(true)
+        setError(null)
+
         const res = await fetch(`/api/specials/${slug}`)
+
+        if (!res.ok) {
+          if (res.status === 404) {
+            throw new Error('Special not found')
+          }
+          const errorData = await res.json().catch(() => ({}))
+          throw new Error(
+            errorData.message || `HTTP ${res.status}: ${res.statusText}`
+          )
+        }
+
         const data = await res.json()
-        if (!res.ok) throw new Error('Special not found')
+        console.log(data)
+        if (!data || !data.special) {
+          throw new Error('Invalid response format')
+        }
         setSpecial(data.special)
       } catch (error) {
         console.error('Error fetching Special:', error)
@@ -108,6 +148,19 @@ export default function SpecialDetails() {
 
     fetchSpecial()
   }, [slug])
+
+  const handleThumbnailClick = useCallback((index: number) => {
+    sliderInstanceRef.current?.moveToIdx(index)
+    thumbnailInstanceRef.current?.moveToIdx(index)
+  }, [])
+
+  const handlePrevious = useCallback(() => {
+    sliderInstanceRef.current?.prev()
+  }, [])
+
+  const handleNext = useCallback(() => {
+    sliderInstanceRef.current?.next()
+  }, [])
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -313,6 +366,14 @@ export default function SpecialDetails() {
                   <h3 className="text-lg font-semibold mb-4">Description</h3>
                   <p className="text-gray-600 leading-relaxed">
                     {special.inventory.description}
+                  </p>
+                  <p className="text-gray-600 leading-relaxed">
+                    <span className="font-bold">- Truck Size: </span>
+                    {special.inventory.truckSize}
+                  </p>
+                  <p className="text-gray-600 leading-relaxed">
+                    <span className="font-bold">- Body Type: </span>
+                    {special.inventory.bodyType}
                   </p>
                 </div>
               </CardContent>

@@ -46,7 +46,6 @@ export default function AllVehiclesFilter() {
   const [trucks, setTrucks] = useState<Truck[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
   const [limit, setLimit] = useState(50)
 
   const [paginationMeta, setPaginationMeta] = useState({
@@ -70,7 +69,7 @@ export default function AllVehiclesFilter() {
 
   const buildFilters = useCallback(() => {
     const filters: Record<string, string> = {}
-    if (searchTerm) filters.search = searchTerm
+    if (searchTerm.trim()) filters.search = searchTerm.trim()
     if (makeFilter !== 'all') filters.make = makeFilter
     if (modelFilter !== 'all') filters.model = modelFilter
     if (bodyTypeFilter !== 'all') filters.bodyType = bodyTypeFilter
@@ -82,6 +81,8 @@ export default function AllVehiclesFilter() {
     async (page = 1, limitValue = 50, filters = {}) => {
       try {
         setLoading(true)
+        setError(null) // Clear previous errors
+
         const params = new URLSearchParams({
           page: page.toString(),
           limit: limitValue.toString(),
@@ -89,27 +90,57 @@ export default function AllVehiclesFilter() {
         })
 
         const res = await fetch(`/api/vehicles?${params.toString()}`)
-        if (!res.ok) throw new Error('Failed to fetch trucks')
-        const data = await res.json()
 
-        setTrucks(data.vehicles)
-        setPaginationMeta({
-          ...data.meta,
-          page,
-        })
-
-        if (data.filterOptions) {
-          setFilterOptions(data.filterOptions)
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}))
+          throw new Error(
+            errorData.message || `HTTP ${res.status}: ${res.statusText}`
+          )
         }
 
-        setError(null)
+        const data = await res.json()
+
+        // Validate response structure
+        if (!data || typeof data !== 'object') {
+          throw new Error('Invalid response format from server')
+        }
+
+        setTrucks(Array.isArray(data.vehicles) ? data.vehicles : [])
+
+        if (data.meta) {
+          setPaginationMeta({
+            page: data.meta.page || page,
+            totalPages: data.meta.totalPages || 1,
+            total: data.meta.total || 0,
+          })
+        }
+
+        if (data.filterOptions) {
+          setFilterOptions({
+            makes: Array.isArray(data.filterOptions.makes)
+              ? data.filterOptions.makes
+              : [],
+            models: Array.isArray(data.filterOptions.models)
+              ? data.filterOptions.models
+              : [],
+            bodyTypes: Array.isArray(data.filterOptions.bodyTypes)
+              ? data.filterOptions.bodyTypes
+              : [],
+            truckSizes: Array.isArray(data.filterOptions.truckSizes)
+              ? data.filterOptions.truckSizes
+              : [],
+          })
+        }
       } catch (error: unknown) {
         console.error('Error fetching trucks:', error)
         if (error instanceof Error) {
           setError(error.message)
         } else {
-          setError('An unexpected error occurred')
+          setError('An unexpected error occurred while fetching vehicles')
         }
+        // Set empty state on error
+        setTrucks([])
+        setPaginationMeta({ page: 1, totalPages: 1, total: 0 })
       } finally {
         setLoading(false)
       }
@@ -120,21 +151,44 @@ export default function AllVehiclesFilter() {
   const fetchFilterOptions = useCallback(async () => {
     try {
       const res = await fetch('/api/vehicles/filters')
-      if (!res.ok) throw new Error('Failed to fetch filter options')
+
+      if (!res.ok) {
+        console.warn(
+          `Failed to fetch filter options: ${res.status} ${res.statusText}`
+        )
+        return
+      }
+
       const data = await res.json()
-      setFilterOptions(data)
+
+      if (data && typeof data === 'object') {
+        setFilterOptions({
+          makes: Array.isArray(data.makes) ? data.makes : [],
+          models: Array.isArray(data.models) ? data.models : [],
+          bodyTypes: Array.isArray(data.bodyTypes) ? data.bodyTypes : [],
+          truckSizes: Array.isArray(data.truckSizes) ? data.truckSizes : [],
+        })
+      }
     } catch (error) {
       console.error('Filter options fetch error:', error)
+      // Keep default empty arrays on error
     }
   }, [])
 
+  // Initial load
   useEffect(() => {
-    fetchTrucks()
-    fetchFilterOptions()
-  }, [fetchTrucks, fetchFilterOptions])
+    const loadInitialData = async () => {
+      await Promise.all([fetchTrucks(1, limit, {}), fetchFilterOptions()])
+    }
 
+    loadInitialData()
+  }, []) // Only run once on mount
+
+  // Filter change effect with debouncing
   useEffect(() => {
     const filters = buildFilters()
+
+    // Reset to page 1 when filters change
     setPaginationMeta((prev) => ({ ...prev, page: 1 }))
 
     const timeoutId = setTimeout(() => {
@@ -142,24 +196,48 @@ export default function AllVehiclesFilter() {
     }, 500)
 
     return () => clearTimeout(timeoutId)
-  }, [buildFilters, limit, fetchTrucks]) // Simplified dependencies
+  }, [
+    searchTerm,
+    makeFilter,
+    modelFilter,
+    bodyTypeFilter,
+    truckSizeFilter,
+    limit,
+    buildFilters,
+    fetchTrucks,
+  ])
 
+  // Reset model when make changes
   useEffect(() => {
-    setModelFilter('all')
-  }, [makeFilter])
+    if (makeFilter === 'all') {
+      setModelFilter('all')
+    } else {
+      // Check if current model is valid for the selected make
+      const validModels = getModelsForMake
+      if (modelFilter !== 'all' && !validModels.includes(modelFilter)) {
+        setModelFilter('all')
+      }
+    }
+  }, [makeFilter]) // Note: getModelsForMake is not included to avoid circular dependency
 
   const getModelsForMake = useMemo(() => {
-    if (makeFilter === 'all') return filterOptions.models
-    return filterOptions.models
-      .filter((model) =>
-        trucks.some(
-          (truck) =>
-            truck.make.toLowerCase() === makeFilter.toLowerCase() &&
-            truck.model.toLowerCase() === model.toLowerCase()
-        )
+    if (makeFilter === 'all') return filterOptions.models || []
+
+    // Filter models based on available trucks for the selected make
+    const availableModels = trucks
+      .filter((truck) => truck.make?.toLowerCase() === makeFilter.toLowerCase())
+      .map((truck) => truck.model)
+      .filter(Boolean) // Remove null/undefined
+
+    // Get unique models and sort
+    const uniqueModels = [...new Set(availableModels)].sort()
+
+    // Return intersection with filterOptions.models to ensure consistency
+    return filterOptions.models.filter((model) =>
+      uniqueModels.some(
+        (availableModel) => availableModel.toLowerCase() === model.toLowerCase()
       )
-      .filter((model, index, array) => array.indexOf(model) === index)
-      .sort()
+    )
   }, [makeFilter, filterOptions.models, trucks])
 
   const clearFilters = useCallback(() => {
@@ -190,9 +268,11 @@ export default function AllVehiclesFilter() {
   if (error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center max-w-md">
           <p className="text-red-500 text-lg mb-4">Error: {error}</p>
-          <Button onClick={() => fetchTrucks()}>Try Again</Button>
+          <Button onClick={() => fetchTrucks(1, limit, buildFilters())}>
+            Try Again
+          </Button>
         </div>
       </div>
     )
@@ -235,7 +315,7 @@ export default function AllVehiclesFilter() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Makes</SelectItem>
-                {filterOptions.makes.map((make) => (
+                {(filterOptions.makes || []).map((make) => (
                   <SelectItem key={make} value={make}>
                     {make}
                   </SelectItem>
@@ -269,7 +349,7 @@ export default function AllVehiclesFilter() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Body Types</SelectItem>
-                {filterOptions.bodyTypes.map((type) => (
+                {(filterOptions.bodyTypes || []).map((type) => (
                   <SelectItem key={type} value={type}>
                     {type}
                   </SelectItem>
@@ -284,7 +364,7 @@ export default function AllVehiclesFilter() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Truck Sizes</SelectItem>
-                {filterOptions.truckSizes.map((size) => (
+                {(filterOptions.truckSizes || []).map((size) => (
                   <SelectItem key={size} value={size}>
                     {size}
                   </SelectItem>
@@ -302,12 +382,17 @@ export default function AllVehiclesFilter() {
 
         {/* Results */}
         <div className="mb-6">
-          <p className="text-gray-600">Showing {paginationMeta.total} trucks</p>
+          <p className="text-gray-600">
+            Showing {loading ? '...' : paginationMeta.total.toLocaleString()}{' '}
+            trucks
+          </p>
         </div>
 
         {loading && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">Loading vehicles...</p>
+            <div className="animate-pulse">
+              <p className="text-gray-500 text-lg">Loading vehicles...</p>
+            </div>
           </div>
         )}
 
@@ -319,7 +404,7 @@ export default function AllVehiclesFilter() {
                   key={truck.id}
                   className="overflow-hidden hover:shadow-lg transition-shadow"
                 >
-                  <div className="relative -top-6">
+                  <div className="relative">
                     <ImageComponent
                       src={truck.images?.[0]?.url ?? '/placeholder-truck.jpg'}
                       alt={`${truck.year} ${truck.make} ${truck.model}`}
@@ -333,27 +418,33 @@ export default function AllVehiclesFilter() {
                     </Badge>
                   </div>
                   <CardContent className="p-6">
-                    <h3 className="text-xl font-bold mb-2 -mt-10">
-                      {truck.year} {truck.make.toUpperCase()}{' '}
-                      {truck.model.toUpperCase()}
+                    <h3 className="text-xl font-bold mb-2">
+                      {truck.year} {truck.make?.toUpperCase()}{' '}
+                      {truck.model?.toUpperCase()}
                     </h3>
                     <div className="flex justify-between items-center mb-4">
                       <span className="text-2xl font-bold text-yellow-600">
-                        R{truck.vatPrice.toLocaleString()}{' '}
+                        R{truck.vatPrice?.toLocaleString() ?? 'N/A'}{' '}
                         <span className="text-sm">incl. VAT</span>
                       </span>
                       <span className="text-gray-600 flex items-center">
                         <Gauge size={18} className="mr-1" />
-                        {truck.mileage.toLocaleString()} km
+                        {truck.mileage?.toLocaleString() ?? 'N/A'} km
                       </span>
                     </div>
                     <div className="flex flex-wrap gap-2 mb-4">
-                      <Badge variant="secondary">{truck.condition}</Badge>
-                      <Badge variant="secondary">{truck.fuelType}</Badge>
-                      <Badge variant="secondary">{truck.transmission}</Badge>
+                      {truck.condition && (
+                        <Badge variant="secondary">{truck.condition}</Badge>
+                      )}
+                      {truck.fuelType && (
+                        <Badge variant="secondary">{truck.fuelType}</Badge>
+                      )}
+                      {truck.transmission && (
+                        <Badge variant="secondary">{truck.transmission}</Badge>
+                      )}
                     </div>
                     <Button asChild className="w-full">
-                      <Link href={`/inventory/${truck.slug}`}>
+                      <Link href={`/inventory/${truck.slug || truck.id}`}>
                         View Details
                       </Link>
                     </Button>
@@ -363,7 +454,7 @@ export default function AllVehiclesFilter() {
             </div>
 
             {/* Pagination */}
-            <div className="mt-12 flex justify-end">
+            <div className="mt-12 flex justify-center">
               <Pagination
                 currentPage={paginationMeta.page}
                 totalPages={paginationMeta.totalPages}
