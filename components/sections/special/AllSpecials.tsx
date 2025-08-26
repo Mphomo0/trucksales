@@ -6,7 +6,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Gauge } from 'lucide-react'
 import { toast } from 'react-toastify'
 
 interface Image {
@@ -73,6 +72,14 @@ export default function AllSpecials() {
     )
   }
 
+  if (!loading && specials.length === 0) {
+    return (
+      <div className="text-center text-gray-500 py-10">
+        No specials available at the moment.
+      </div>
+    )
+  }
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', {
@@ -129,11 +136,10 @@ export default function AllSpecials() {
                 Valid from <strong>{formatDate(special.validFrom)}</strong> to{' '}
                 <strong>{formatDate(special.validTo)}</strong>
               </div>
-              <Link href={`/specials/${special.slug}`}>
-                <Button asChild className="w-full">
-                  View Details
-                </Button>
-              </Link>
+
+              <Button asChild className="w-full bg-black text-white mt-8">
+                <Link href={`/specials/${special.slug}`}>View Details</Link>
+              </Button>
             </CardContent>
           </Card>
         ))}

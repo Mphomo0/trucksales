@@ -133,7 +133,7 @@ export default function SpecialDetails() {
         }
 
         const data = await res.json()
-        console.log(data)
+
         if (!data || !data.special) {
           throw new Error('Invalid response format')
         }
@@ -149,10 +149,13 @@ export default function SpecialDetails() {
     fetchSpecial()
   }, [slug])
 
-  const handleThumbnailClick = useCallback((index: number) => {
-    sliderInstanceRef.current?.moveToIdx(index)
-    thumbnailInstanceRef.current?.moveToIdx(index)
-  }, [])
+  const handleThumbnailClick = useCallback(
+    (index: number) => {
+      sliderInstanceRef.current?.moveToIdx(index)
+      thumbnailInstanceRef.current?.moveToIdx(index)
+    },
+    [sliderInstanceRef, thumbnailInstanceRef]
+  )
 
   const handlePrevious = useCallback(() => {
     sliderInstanceRef.current?.prev()
@@ -208,7 +211,7 @@ export default function SpecialDetails() {
                       {special.inventory.images.map((img, index) => (
                         <div
                           className="keen-slider__slide relative flex items-center justify-center bg-neutral-100"
-                          key={index}
+                          key={img.fileId}
                         >
                           <div className="relative w-full h-full">
                             <Image
