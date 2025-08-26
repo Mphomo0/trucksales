@@ -27,13 +27,13 @@ interface UpdateVehicleBody {
 // Get /api/vehicles/slug to fetch a vehicle by ID
 export const GET = async (
   req: Request,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: { slug: string } }
 ) => {
-  const { slug } = await params
+  const { slug } = params
 
   try {
     const vehicle = await prisma.inventory.findUnique({
-      where: { slug: slug },
+      where: { slug },
     })
 
     if (!vehicle) {
@@ -47,12 +47,12 @@ export const GET = async (
 }
 
 // DELETE /api/vehicles/slug to delete a vehicle by slug
-export const DELETE = auth(async (req, ctx) => {
+export const DELETE = auth(async (req, { params }) => {
   if (!req.auth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { slug } = await ctx.params
+  const slug = (await params).slug
 
   try {
     await prisma.inventory.delete({
@@ -69,11 +69,11 @@ export const DELETE = auth(async (req, ctx) => {
 })
 
 // PATCH /api/vehicles/slug to update a vehicle by ID
-export const PATCH = auth(async (req, ctx) => {
+export const PATCH = auth(async (req, { params }) => {
   if (!req.auth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-  const { slug } = await ctx.params
+  const slug = (await params).slug
 
   try {
     const body: UpdateVehicleBody = await req.json()
@@ -85,6 +85,19 @@ export const PATCH = auth(async (req, ctx) => {
 
     if (!existingVehicle) {
       return NextResponse.json({ error: 'Vehicle not found' }, { status: 404 })
+    }
+
+    // Optional: check if new slug is already taken
+    if (slug !== body.slug) {
+      const slugExists = await prisma.inventory.findUnique({
+        where: { slug: body.slug },
+      })
+      if (slugExists) {
+        return NextResponse.json(
+          { error: 'Slug already in use' },
+          { status: 400 }
+        )
+      }
     }
 
     // Build the update payload
@@ -103,19 +116,6 @@ export const PATCH = auth(async (req, ctx) => {
       description: body.description,
       bodyType: body.bodyType,
       truckSize: body.truckSize,
-    }
-
-    // Include optional fields if defined
-    if (body.mileage != null) {
-      updateData.mileage = body.mileage
-    }
-
-    if (body.fuelType != null) {
-      updateData.fuelType = body.fuelType
-    }
-
-    if (body.transmission != null) {
-      updateData.transmission = body.transmission
     }
 
     // Update the vehicle

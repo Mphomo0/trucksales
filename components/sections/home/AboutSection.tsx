@@ -31,10 +31,10 @@ export default function AboutSection() {
           </div>
           <div>
             <Image
-              src="/images/workshop.webp"
+              src="/images/dealer.webp"
               alt="Dealership Image"
-              width={500}
-              height={400}
+              width={800}
+              height={600}
               className="w-full h-full rounded-lg shadow-lg"
               priority
             />

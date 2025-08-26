@@ -81,7 +81,7 @@ export function AnalyticsDashboard() {
 
   useEffect(() => {
     fetchAnalytics()
-  }, [dateRange, fetchAnalytics])
+  }, [dateRange])
 
   if (loading) {
     return (
