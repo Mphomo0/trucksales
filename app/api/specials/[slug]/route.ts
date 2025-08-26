@@ -12,9 +12,9 @@ interface UpdateSpecialsBody {
 
 export const GET = async (
   req: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) => {
-  const slug = (await params).slug
+  const { slug } = await params
 
   try {
     const special = await prisma.specials.findUnique({
@@ -34,12 +34,12 @@ export const GET = async (
   }
 }
 
-export const DELETE = auth(async (req, { params }) => {
+export const DELETE = auth(async (req, ctx) => {
   if (!req.auth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { slug } = (await params).slug // Get id from the URL params
+  const { slug } = await ctx.params // Get id from the URL params
 
   try {
     // Attempt to delete the special by ID
@@ -67,12 +67,12 @@ export const DELETE = auth(async (req, { params }) => {
 })
 
 // PATCH /api/specials/slug to update a special by ID
-export const PATCH = auth(async (req, { params }) => {
+export const PATCH = auth(async (req, ctx) => {
   if (!req.auth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const slug = (await params).slug
+  const slug = await ctx.params
 
   try {
     const body: UpdateSpecialsBody = await req.json()
@@ -106,9 +106,15 @@ export const PATCH = auth(async (req, { params }) => {
       )
     }
 
-    // Validate date logic
     const validFromDate = new Date(body.validFrom)
     const validToDate = new Date(body.validTo)
+
+    if (isNaN(validFromDate.getTime()) || isNaN(validToDate.getTime())) {
+      return NextResponse.json(
+        { error: 'Invalid date format' },
+        { status: 400 }
+      )
+    }
 
     if (validFromDate >= validToDate) {
       return NextResponse.json(
@@ -117,7 +123,6 @@ export const PATCH = auth(async (req, { params }) => {
       )
     }
 
-    // Validate amount is positive
     if (body.amount <= 0) {
       return NextResponse.json(
         { error: 'Amount must be greater than 0' },
@@ -125,12 +130,11 @@ export const PATCH = auth(async (req, { params }) => {
       )
     }
 
-    // Check for overlapping specials for the same inventory item
     const overlappingSpecials = await prisma.specials.findMany({
       where: {
         inventoryId: body.inventoryId,
         slug: {
-          not: slug, // Exclude current special
+          not: slug,
         },
         OR: [
           {
@@ -155,7 +159,6 @@ export const PATCH = auth(async (req, { params }) => {
       )
     }
 
-    // Update the special
     const updatedSpecial = await prisma.specials.update({
       where: { slug },
       data: {
@@ -176,23 +179,6 @@ export const PATCH = auth(async (req, { params }) => {
     })
   } catch (error) {
     console.error('Error updating special:', error)
-
-    // Handle Prisma-specific errors
-    if (error instanceof Error) {
-      if (error.message.includes('Unique constraint')) {
-        return NextResponse.json(
-          { error: 'A special with this slug already exists' },
-          { status: 409 }
-        )
-      }
-
-      if (error.message.includes('Foreign key constraint')) {
-        return NextResponse.json(
-          { error: 'Invalid inventory reference' },
-          { status: 400 }
-        )
-      }
-    }
 
     return NextResponse.json(
       { error: 'Internal server error' },
