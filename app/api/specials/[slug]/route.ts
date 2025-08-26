@@ -1,78 +1,9 @@
-import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { auth } from '@/auth'
-
-interface UpdateSpecialsBody {
-  amount: number
-  validFrom: string
-  validTo: string
-  inventoryId: string
-  slug: string
-}
-
-export const GET = async (
-  req: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) => {
-  const { slug } = await params
-
-  try {
-    const special = await prisma.specials.findUnique({
-      where: { slug },
-      include: {
-        inventory: true,
-      },
-    })
-
-    if (!special) {
-      return NextResponse.json({ error: 'Special not found' }, { status: 404 })
-    }
-
-    return NextResponse.json({ special }, { status: 200 })
-  } catch (error) {
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
-  }
-}
-
-export const DELETE = auth(async (req, ctx) => {
+export const PATCH = auth(async (req, { params }) => {
   if (!req.auth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { slug } = await ctx.params // Get id from the URL params
-
-  try {
-    // Attempt to delete the special by ID
-    const special = await prisma.specials.delete({
-      where: { slug },
-    })
-
-    // If the special is not found, this will throw and be caught below
-    if (!special) {
-      return NextResponse.json({ error: 'Special not found' }, { status: 404 })
-    }
-
-    // If successful, return a success response
-    return NextResponse.json(
-      { message: 'Special deleted successfully' },
-      { status: 200 }
-    )
-  } catch (error) {
-    // Handle errors (e.g., invalid ID, database errors, etc.)
-    return NextResponse.json(
-      { error: 'Server error or invalid ID' },
-      { status: 500 }
-    )
-  }
-})
-
-// PATCH /api/specials/slug to update a special by ID
-export const PATCH = auth(async (req, ctx) => {
-  if (!req.auth) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  const slug = await ctx.params
+  const { slug } = params
 
   try {
     const body: UpdateSpecialsBody = await req.json()
@@ -106,9 +37,12 @@ export const PATCH = auth(async (req, ctx) => {
       )
     }
 
-    // Validate date logic
     const validFromDate = new Date(body.validFrom)
     const validToDate = new Date(body.validTo)
+
+    if (isNaN(validFromDate.getTime()) || isNaN(validToDate.getTime())) {
+      return NextResponse.json({ error: 'Invalid date format' }, { status: 400 })
+    }
 
     if (validFromDate >= validToDate) {
       return NextResponse.json(
@@ -117,7 +51,6 @@ export const PATCH = auth(async (req, ctx) => {
       )
     }
 
-    // Validate amount is positive
     if (body.amount <= 0) {
       return NextResponse.json(
         { error: 'Amount must be greater than 0' },
@@ -125,12 +58,11 @@ export const PATCH = auth(async (req, ctx) => {
       )
     }
 
-    // Check for overlapping specials for the same inventory item
     const overlappingSpecials = await prisma.specials.findMany({
       where: {
         inventoryId: body.inventoryId,
         slug: {
-          not: slug, // Exclude current special
+          not: slug,
         },
         OR: [
           {
@@ -155,7 +87,6 @@ export const PATCH = auth(async (req, ctx) => {
       )
     }
 
-    // Update the special
     const updatedSpecial = await prisma.specials.update({
       where: { slug },
       data: {
@@ -176,23 +107,6 @@ export const PATCH = auth(async (req, ctx) => {
     })
   } catch (error) {
     console.error('Error updating special:', error)
-
-    // Handle Prisma-specific errors
-    if (error instanceof Error) {
-      if (error.message.includes('Unique constraint')) {
-        return NextResponse.json(
-          { error: 'A special with this slug already exists' },
-          { status: 409 }
-        )
-      }
-
-      if (error.message.includes('Foreign key constraint')) {
-        return NextResponse.json(
-          { error: 'Invalid inventory reference' },
-          { status: 400 }
-        )
-      }
-    }
 
     return NextResponse.json(
       { error: 'Internal server error' },
