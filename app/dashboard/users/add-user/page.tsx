@@ -1,29 +1,43 @@
 import { auth } from '@/auth'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button' // optional shared button
 import CreateUser from '@/components/sections/dashboardSection/usersSection/CreateUser'
 
 export default async function AddUser() {
-  const session = await auth()
+  let session
+
+  try {
+    session = await auth()
+  } catch (error) {
+    console.error('Authentication error:', error)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
+        <p className="text-xl text-red-600">
+          Authentication error. Please try again.
+        </p>
+      </div>
+    )
+  }
 
   if (!session) {
     return (
-      <div className="bg-gray-50 flex flex-col items-center justify-center h-screen gap-4">
-        <p className="text-xl">Not authenticated</p>
-        <Link href="/login">
-          <button className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
+        <p className="text-xl text-gray-700">You are not authenticated.</p>
+        <Link href="/login" passHref>
+          <Button className="mt-4 bg-black text-white hover:bg-gray-800 transition duration-200">
             Login
-          </button>
+          </Button>
         </Link>
       </div>
     )
   }
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
-          Add New User
-        </h2>
 
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
+        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          Add New User
+        </h1>
         <CreateUser />
       </div>
     </div>

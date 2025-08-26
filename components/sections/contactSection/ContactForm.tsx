@@ -30,22 +30,21 @@ export default function ContactForm() {
         body: JSON.stringify({ type: 'Contact', ...data }),
       })
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Failed to send email')
-      }
-
       const result = await response.json()
 
-      if (response.ok) {
-        toast.success('Message sent successfully!')
-        reset()
-      } else {
-        toast.error(`Error: ${result.message || 'Something went wrong'}`)
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to send email')
       }
+
+      toast.success('Message sent successfully!')
+      reset()
     } catch (error) {
       console.error('Error submitting form:', error)
-      toast.error('Failed to send message. Please try again later.')
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : 'Failed to send message. Please try again later.'
+      )
     }
   }
 
@@ -55,17 +54,21 @@ export default function ContactForm() {
         <h2 className="text-center text-3xl font-bold text-gray-900 mb-8">
           Contact Form
         </h2>
+
         <form className="px-8" onSubmit={handleSubmit(onSubmit)}>
           {/* Name and Email Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div className="w-full">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Name *
               </label>
               <input
                 id="name"
                 type="text"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                 placeholder="Your Name"
                 {...register('name')}
               />
@@ -75,14 +78,18 @@ export default function ContactForm() {
                 </p>
               )}
             </div>
+
             <div className="w-full">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Email *
               </label>
               <input
                 id="email"
                 type="email"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                 placeholder="Your Email"
                 {...register('email')}
               />
@@ -97,13 +104,16 @@ export default function ContactForm() {
           {/* Subject and Phone Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div className="w-full">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="subject"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Subject *
               </label>
               <input
                 id="subject"
                 type="text"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                 placeholder="Subject"
                 {...register('subject')}
               />
@@ -113,13 +123,18 @@ export default function ContactForm() {
                 </p>
               )}
             </div>
+
             <div className="w-full">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="phone"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Phone
               </label>
               <input
+                id="phone"
                 type="tel"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                 placeholder="Your Phone Number"
                 {...register('phone')}
               />
@@ -133,11 +148,15 @@ export default function ContactForm() {
 
           {/* Branch Selection */}
           <div className="w-full mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="branch"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Select Branch
             </label>
             <select
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              id="branch"
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
               {...register('branch')}
             >
               <option value="">Select Branch</option>
@@ -153,12 +172,15 @@ export default function ContactForm() {
 
           {/* Message */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="message"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Message *
             </label>
             <textarea
               id="message"
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
               rows={6}
               placeholder="Your Message"
               {...register('message')}

@@ -34,12 +34,12 @@ export const GET = async (
   }
 }
 
-export const DELETE = auth(async (req, ctx) => {
+export const DELETE = auth(async (req, { params }) => {
   if (!req.auth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { slug } = await ctx.params // Get id from the URL params
+  const slug = (await params).slug // Get id from the URL params
 
   try {
     // Attempt to delete the special by ID
@@ -67,12 +67,12 @@ export const DELETE = auth(async (req, ctx) => {
 })
 
 // PATCH /api/specials/slug to update a special by ID
-export const PATCH = auth(async (req, ctx) => {
+export const PATCH = auth(async (req, { params }) => {
   if (!req.auth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const slug = await ctx.params
+  const slug = (await params).slug
 
   try {
     const body: UpdateSpecialsBody = await req.json()

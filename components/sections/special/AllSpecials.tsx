@@ -17,7 +17,7 @@ interface Image {
 interface Special {
   id: string
   amount: number
-  slug: number
+  slug: string
   validFrom: string
   validTo: string
   inventoryId: string
@@ -28,10 +28,6 @@ interface Special {
     model: string
     year: number
     vatPrice: number
-    mileage: number
-    fuelType: string
-    condition: string
-    transmission: string
     images: Image[]
     description: string
     slug: string
@@ -49,7 +45,11 @@ export default function AllSpecials() {
         throw new Error('Failed to fetch specials')
       }
       const data = await response.json()
-      console.log(data.data)
+
+      if (!Array.isArray(data.data)) {
+        throw new Error('Invalid response format')
+      }
+
       setSpecials(data.data)
     } catch (error) {
       console.error('Error fetching specials:', error)
@@ -64,7 +64,22 @@ export default function AllSpecials() {
   }, [])
 
   if (loading) {
-    return <p className="flex items-center justify-center h-56">loading.....</p>
+    return (
+      <div className="flex items-center justify-center h-56">
+        <p className="text-lg text-gray-600 animate-pulse">
+          Loading specials...
+        </p>
+      </div>
+    )
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    })
   }
 
   return (
@@ -77,9 +92,7 @@ export default function AllSpecials() {
           >
             <div className="relative -top-6">
               <Image
-                src={
-                  special.inventory.images[0]?.url || '/placeholder-truck.jpg'
-                }
+                src={special.inventory.images[0]?.url}
                 alt={`${special.inventory.year} ${special.inventory.make} ${special.inventory.model}`}
                 width={400}
                 height={300}
@@ -111,21 +124,16 @@ export default function AllSpecials() {
                     </p>
                   </div>
                 </div>
-                <div className="mt-2 flex items-center text-sm text-gray-600">
-                  <Gauge size={16} className="mr-1" />
-                  {special.inventory.mileage.toLocaleString()} km
-                </div>
               </div>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge variant="secondary">{special.inventory.condition}</Badge>
-                <Badge variant="secondary">{special.inventory.fuelType}</Badge>
-                <Badge variant="secondary">
-                  {special.inventory.transmission}
-                </Badge>
+              <div className="text-sm text-gray-600 mt-2">
+                Valid from <strong>{formatDate(special.validFrom)}</strong> to{' '}
+                <strong>{formatDate(special.validTo)}</strong>
               </div>
-              <Button asChild className="w-full">
-                <Link href={`/specials/${special.slug}`}>View Details</Link>
-              </Button>
+              <Link href={`/specials/${special.slug}`}>
+                <Button asChild className="w-full">
+                  View Details
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         ))}
