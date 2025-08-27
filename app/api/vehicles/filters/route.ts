@@ -3,43 +3,26 @@ import { prisma } from '@/lib/prisma'
 
 export const GET = async (req: NextRequest) => {
   try {
-    // Get all unique makes
-    const makes = await prisma.inventory.findMany({
-      select: {
-        make: true,
-      },
-      distinct: ['make'],
-      orderBy: {
-        make: 'asc',
-      },
-    })
-
-    // Get all unique models
-    const models = await prisma.inventory.findMany({
-      select: {
-        model: true,
-      },
-      distinct: ['model'],
-      orderBy: {
-        model: 'asc',
-      },
-    })
-
-    // Get all unique body types
-    const bodyTypes = await prisma.inventory.findMany({
-      select: {
-        bodyType: true,
-      },
-      distinct: ['bodyType'],
-    })
-
-    // Get all unique truck sizes
-    const truckSizes = await prisma.inventory.findMany({
-      select: {
-        truckSize: true,
-      },
-      distinct: ['truckSize'],
-    })
+    const [makes, models, bodyTypes, truckSizes] = await Promise.all([
+      prisma.inventory.findMany({
+        select: { make: true },
+        distinct: ['make'],
+        orderBy: { make: 'asc' },
+      }),
+      prisma.inventory.findMany({
+        select: { model: true },
+        distinct: ['model'],
+        orderBy: { model: 'asc' },
+      }),
+      prisma.inventory.findMany({
+        select: { bodyType: true },
+        distinct: ['bodyType'],
+      }),
+      prisma.inventory.findMany({
+        select: { truckSize: true },
+        distinct: ['truckSize'],
+      }),
+    ])
 
     const filterOptions = {
       makes: makes.map((item) => item.make).filter(Boolean),

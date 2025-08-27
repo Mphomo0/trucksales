@@ -7,12 +7,9 @@ export const GET = async (req: NextRequest) => {
     // Fetching vehicles from the inventory table
     const vehicles = await prisma.inventory.findMany()
 
-    // If no vehicles found, could return a 404 or an empty array
+    // If no vehicles found, could return a 200 or an empty array
     if (vehicles.length === 0) {
-      return NextResponse.json(
-        { message: 'No vehicles found' },
-        { status: 404 }
-      )
+      return NextResponse.json([], { status: 200 })
     }
 
     // Return vehicles with a 200 OK response
@@ -21,7 +18,10 @@ export const GET = async (req: NextRequest) => {
     console.error('Error fetching vehicles:', error)
     // Handle the error and return a 500 Internal Server Error response
     return NextResponse.json(
-      { error: 'Failed to fetch vehicles' }, // Optional error details
+      {
+        error: 'Failed to fetch vehicles',
+        details: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 }
     )
   }

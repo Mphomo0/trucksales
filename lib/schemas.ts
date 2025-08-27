@@ -84,3 +84,11 @@ export const tradeInFormSchema = z.object({
     .transform((val) => val.trim()),
   mileage: z.string().min(1, { message: 'Mileage is required' }),
 })
+export const enquiryFormSchema = z.object({
+  name: z.string().min(1, { message: 'Name is required' }),
+  email: z.string().email({ message: 'Invalid email address' }),
+  phone: z
+    .string()
+    .regex(/^0[6-8][0-9]{8}$/, { message: 'Invalid SA phone number.' }),
+  message: z.string().min(10, { message: 'Message is required' }),
+})

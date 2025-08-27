@@ -27,9 +27,9 @@ interface UpdateVehicleBody {
 // Get /api/vehicles/slug to fetch a vehicle by ID
 export const GET = async (
   req: Request,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: { slug: string } }
 ) => {
-  const slug = (await params).slug
+  const slug = params.slug
 
   try {
     const vehicle = await prisma.inventory.findUnique({

@@ -4,18 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { toast } from 'react-toastify'
-
-const enquiryFormSchema = z.object({
-  name: z.string().min(1, { message: 'Name is required' }),
-  email: z.string().email({ message: 'Invalid email address' }),
-  phone: z.string().regex(
-    /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/, // Regex for validating international and local phone numbers
-    {
-      message: 'Invalid phone number.',
-    }
-  ),
-  message: z.string().min(10, { message: 'Message is required' }),
-})
+import { enquiryFormSchema } from '@/lib/schemas'
 
 type EnquiryFormData = z.infer<typeof enquiryFormSchema>
 
@@ -56,12 +45,13 @@ export default function EnquiryForm({ vehicleName }: { vehicleName: string }) {
   return (
     <div>
       <h2 className="text-xl font-semibold mb-2">Enquiry Form</h2>
-      <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+      <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         <div>
           <label className="block text-sm font-medium">Name & Surname</label>
           <input
             type="text"
             className="w-full border px-3 py-2 rounded"
+            aria-invalid={!!errors.name}
             {...register('name')}
           />
           {errors.name && <p className="text-red-500">{errors.name.message}</p>}
@@ -72,6 +62,7 @@ export default function EnquiryForm({ vehicleName }: { vehicleName: string }) {
           <input
             type="email"
             className="w-full border px-3 py-2 rounded"
+            aria-invalid={!!errors.email}
             {...register('email')}
           />
           {errors.email && (
@@ -84,6 +75,7 @@ export default function EnquiryForm({ vehicleName }: { vehicleName: string }) {
           <input
             type="tel"
             className="w-full border px-3 py-2 rounded"
+            aria-invalid={!!errors.phone}
             {...register('phone')}
           />
           {errors.phone && (
@@ -96,7 +88,10 @@ export default function EnquiryForm({ vehicleName }: { vehicleName: string }) {
           <textarea
             className="w-full border px-3 py-2 rounded"
             rows={4}
-            defaultValue={`I would like to check the availability of the ${vehicleName}`}
+            defaultValue={`I would like to check the availability of the ${
+              vehicleName || 'vehicle'
+            }`}
+            aria-invalid={!!errors.message}
             {...register('message')}
           />
           {errors.message && (
@@ -106,7 +101,9 @@ export default function EnquiryForm({ vehicleName }: { vehicleName: string }) {
 
         <button
           type="submit"
-          className="w-full bg-[#24603a] text-white py-2 rounded"
+          className={`w-full bg-[#24603a] text-white py-2 rounded transition-opacity ${
+            isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
           disabled={isSubmitting}
         >
           {isSubmitting ? 'Submitting...' : 'Send Enquiry'}

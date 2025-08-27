@@ -430,13 +430,11 @@ export default function SpecialDetails() {
                     <EnquiryForm vehicleName={special.inventory.name} />
                   </DialogContent>
                 </Dialog>
-                <Button
-                  className="w-full py-4"
-                  size="lg"
-                  onClick={() => (window.location.href = 'tel:(011) 902-6071')}
-                >
-                  <Phone className="h-4 w-4 mr-2" />
-                  Call (011) 902-6071
+                <Button asChild className="w-full py-4" size="lg">
+                  <a href="tel:(011) 902-6071">
+                    <Phone className="h-4 w-4 mr-2" />
+                    Call (011) 902-6071
+                  </a>
                 </Button>
               </CardContent>
             </Card>

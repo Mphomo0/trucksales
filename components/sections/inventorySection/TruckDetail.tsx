@@ -97,7 +97,7 @@ export default function TruckDetail() {
   )
 
   const params = useParams()
-  const slug = params?.slug as string
+  const slug = params?.slug
 
   useEffect(() => {
     const fetchVehicle = async () => {
@@ -192,7 +192,7 @@ export default function TruckDetail() {
                           className="keen-slider__slide relative flex items-center justify-center bg-neutral-100"
                           key={index}
                         >
-                          <div className="relative w-full h-full">
+                          <div className="relative w-full h-60 md:h-96">
                             <Image
                               src={img.url}
                               alt={`${vehicle.name} image ${index + 1}`}
@@ -271,7 +271,7 @@ export default function TruckDetail() {
                             sliderInstanceRef.current?.moveToIdx(index)
                           }
                         >
-                          <div className="relative w-full h-full">
+                          <div className="relative w-full h-60 md:h-96">
                             <Image
                               src={img.url}
                               alt={`Thumbnail ${index + 1}`}
@@ -344,7 +344,7 @@ export default function TruckDetail() {
                   </p>
                   <p className="text-gray-600 leading-relaxed">
                     <span className="font-bold">- Truck Size: </span>
-                    {vehicle.truckSize}
+                    {vehicle.truckSize || 'N/A'}
                   </p>
                   <p className="text-gray-600 leading-relaxed">
                     <span className="font-bold">- Body Type: </span>
@@ -392,13 +392,11 @@ export default function TruckDetail() {
                     <EnquiryForm vehicleName={vehicle.name} />
                   </DialogContent>
                 </Dialog>
-                <Button
-                  className="w-full py-4"
-                  size="lg"
-                  onClick={() => (window.location.href = 'tel:(011) 902-6071')}
-                >
-                  <Phone className="h-4 w-4 mr-2" />
-                  Call (011) 902-6071
+                <Button asChild className="w-full py-4" size="lg">
+                  <a href="tel:(011) 902-6071">
+                    <Phone className="h-4 w-4 mr-2" />
+                    Call (011) 902-6071
+                  </a>
                 </Button>
               </CardContent>
             </Card>

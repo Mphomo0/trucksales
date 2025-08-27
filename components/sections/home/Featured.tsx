@@ -32,6 +32,8 @@ interface Truck {
 
 export default function Featured() {
   const [trucks, setTrucks] = useState<Truck[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   const fetchTrucks = async () => {
     try {
@@ -40,12 +42,31 @@ export default function Featured() {
       setTrucks(data)
     } catch (error) {
       console.error('Error fetching trucks:', error)
+      setError(true)
+    } finally {
+      setLoading(false)
     }
   }
 
   useEffect(() => {
     fetchTrucks()
   }, [])
+
+  if (loading) {
+    return (
+      <section className="py-16 text-center">
+        <p className="text-gray-500">Loading featured vehicles...</p>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section className="py-16 text-center">
+        <p className="text-red-500">Failed to load featured vehicles.</p>
+      </section>
+    )
+  }
 
   return (
     <section className="py-16">
@@ -67,7 +88,6 @@ export default function Featured() {
             play={true}
             direction="left"
           >
-            {/* Card Wrapper with consistent sizing */}
             {trucks.map((truck) => (
               <div
                 key={truck.id}
@@ -76,14 +96,20 @@ export default function Featured() {
                 <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300">
                   {/* Image Section */}
                   <div className="relative">
-                    <Image
-                      src={truck.images[0].url}
-                      alt={`${truck.year} ${truck.make} ${truck.model}`}
-                      width={400}
-                      height={300}
-                      className="w-full h-48 object-cover"
-                      priority
-                    />
+                    {truck.images.length > 0 ? (
+                      <Image
+                        src={truck.images[0].url}
+                        alt={`${truck.year} ${truck.make} ${truck.model}`}
+                        width={400}
+                        height={300}
+                        className="w-full h-48 object-cover"
+                        priority
+                      />
+                    ) : (
+                      <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                        No Image Available
+                      </div>
+                    )}
                     <Badge className="absolute top-2 right-2 bg-amber-600">
                       {truck.condition}
                     </Badge>
@@ -94,7 +120,7 @@ export default function Featured() {
                     <h3 className="text-xl font-bold mb-2">
                       {truck.year} {truck.make} {truck.model}
                     </h3>
-                    <div className="flex flex-col justify-items-startitems-center mb-3">
+                    <div className="flex flex-col items-start mb-3">
                       <div>
                         <span className="text-2xl font-bold text-yellow-600">
                           R{truck.vatPrice.toLocaleString()}{' '}
@@ -102,7 +128,6 @@ export default function Featured() {
                         </span>
                       </div>
                       <div>
-                        {' '}
                         <span className="text-gray-600 flex items-center">
                           <Gauge size={18} className="mr-1" />
                           {truck.mileage.toLocaleString()} km
@@ -110,9 +135,15 @@ export default function Featured() {
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-2 mb-4">
-                      <Badge>{truck.condition}</Badge>
-                      <Badge>{truck.fuelType}</Badge>
-                      <Badge>{truck.transmission}</Badge>
+                      <Badge key={`${truck.id}-condition`}>
+                        {truck.condition}
+                      </Badge>
+                      <Badge key={`${truck.id}-fuelType`}>
+                        {truck.fuelType}
+                      </Badge>
+                      <Badge key={`${truck.id}-transmission`}>
+                        {truck.transmission}
+                      </Badge>
                     </div>
                     <Button asChild className="w-full mt-auto">
                       <Link href={`/inventory/${truck.slug}`}>

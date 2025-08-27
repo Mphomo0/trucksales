@@ -210,6 +210,8 @@ export const GET = async (req: NextRequest) => {
       // Remove individual make/model filters when searching
       delete filters.make
       delete filters.model
+      delete filters.bodyType
+      delete filters.truckSize
     }
 
     const total = await prisma.inventory.count({ where: filters })
