@@ -29,7 +29,7 @@ export const GET = async (
   req: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) => {
-  const slug = params.slug
+  const { slug } = await params
 
   try {
     const vehicle = await prisma.inventory.findUnique({
