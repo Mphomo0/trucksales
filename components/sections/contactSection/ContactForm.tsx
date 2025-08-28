@@ -50,12 +50,12 @@ export default function ContactForm() {
 
   return (
     <div className="py-16">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-6 md:bg-white shadow-lg rounded-lg p-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-6 bg-transparent md:bg-white md:shadow-lg rmd:ounded-lg p-12">
         <h2 className="text-center text-3xl font-bold text-gray-900 mb-8">
           Contact Form
         </h2>
 
-        <form className="px-8" onSubmit={handleSubmit(onSubmit)}>
+        <form className="px-4 md:px-8" onSubmit={handleSubmit(onSubmit)}>
           {/* Name and Email Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div className="w-full">
