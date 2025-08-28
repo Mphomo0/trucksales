@@ -122,7 +122,7 @@ export default function EditVehicle() {
   }
 
   const getAuthParams = async () => {
-    const res = await fetch('/api/upload-auth')
+    const res = await fetch('/api/images/upload-auth')
     if (!res.ok) throw new Error('Failed to fetch upload authentication')
     return res.json()
   }

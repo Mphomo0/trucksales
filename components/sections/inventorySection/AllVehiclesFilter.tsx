@@ -280,18 +280,18 @@ export default function AllVehiclesFilter() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-0 md:py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="hidden md:block text-3xl font-bold text-gray-900 mb-2">
             Our Inventory
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="hidden md:block text-lg text-gray-600">
             Browse our selection of quality pre-owned trucks
           </p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border mb-8">
+        <div className="bg-white p-6 rounded-lg shadow-sm border mb-2 md:mb-8">
           <div className="flex items-center gap-2 mb-4">
             <Filter className="h-5 w-5 text-gray-500" />
             <h2 className="text-lg font-semibold">Filter Results</h2>
@@ -307,6 +307,21 @@ export default function AllVehiclesFilter() {
                 className="pl-10"
               />
             </div>
+
+            {/* Truck Size */}
+            <Select value={truckSizeFilter} onValueChange={setTruckSizeFilter}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="All Truck Sizes" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Truck Size</SelectItem>
+                {(filterOptions.truckSizes || []).map((size) => (
+                  <SelectItem key={size} value={size}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             {/* Make */}
             <Select value={makeFilter} onValueChange={setMakeFilter}>
@@ -356,21 +371,6 @@ export default function AllVehiclesFilter() {
                 ))}
               </SelectContent>
             </Select>
-
-            {/* Truck Size */}
-            <Select value={truckSizeFilter} onValueChange={setTruckSizeFilter}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="All Truck Sizes" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Truck Sizes</SelectItem>
-                {(filterOptions.truckSizes || []).map((size) => (
-                  <SelectItem key={size} value={size}>
-                    {size}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
 
           <div className="mt-4">
@@ -382,7 +382,7 @@ export default function AllVehiclesFilter() {
 
         {/* Results */}
         <div className="mb-6">
-          <p className="text-gray-600">
+          <p className="hidden md:block text-gray-600">
             Showing {loading ? '...' : paginationMeta.total.toLocaleString()}{' '}
             trucks
           </p>
@@ -400,56 +400,58 @@ export default function AllVehiclesFilter() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {trucks.map((truck) => (
-                <Card
+                <Link
                   key={truck.id}
-                  className="overflow-hidden hover:shadow-lg transition-shadow"
+                  href={`/inventory/${truck.slug || truck.id}`}
                 >
-                  <div className="relative">
-                    <ImageComponent
-                      src={truck.images?.[0]?.url ?? '/placeholder-truck.jpg'}
-                      alt={`${truck.year} ${truck.make} ${truck.model}`}
-                      width={400}
-                      height={300}
-                      className="w-full h-48 object-cover"
-                      priority
-                    />
-                    <Badge className="absolute top-2 right-2 bg-amber-600">
-                      {truck.condition}
-                    </Badge>
-                  </div>
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-bold mb-2">
-                      {truck.year} {truck.make?.toUpperCase()}{' '}
-                      {truck.model?.toUpperCase()}
-                    </h3>
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-2xl font-bold text-yellow-600">
-                        R{truck.vatPrice?.toLocaleString() ?? 'N/A'}{' '}
-                        <span className="text-sm">incl. VAT</span>
-                      </span>
-                      <span className="text-gray-600 flex items-center">
-                        <Gauge size={18} className="mr-1" />
-                        {truck.mileage?.toLocaleString() ?? 'N/A'} km
-                      </span>
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <div className="relative">
+                      <ImageComponent
+                        src={truck.images?.[0]?.url ?? '/placeholder-truck.jpg'}
+                        alt={`${truck.year} ${truck.make} ${truck.model}`}
+                        width={400}
+                        height={300}
+                        className="w-full h-48 object-cover"
+                        priority
+                      />
+                      <Badge className="absolute top-2 right-2 bg-amber-600">
+                        {truck.condition}
+                      </Badge>
                     </div>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {truck.condition && (
-                        <Badge variant="secondary">{truck.condition}</Badge>
-                      )}
-                      {truck.fuelType && (
-                        <Badge variant="secondary">{truck.fuelType}</Badge>
-                      )}
-                      {truck.transmission && (
-                        <Badge variant="secondary">{truck.transmission}</Badge>
-                      )}
-                    </div>
-                    <Button asChild className="w-full">
-                      <Link href={`/inventory/${truck.slug || truck.id}`}>
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-bold mb-2">
+                        {truck.year} {truck.make?.toUpperCase()}{' '}
+                        {truck.model?.toUpperCase()}
+                      </h3>
+                      <div className="flex justify-between items-center mb-4">
+                        <span className="text-2xl font-bold text-yellow-600">
+                          R{truck.vatPrice?.toLocaleString() ?? 'N/A'}{' '}
+                          <span className="text-sm">incl. VAT</span>
+                        </span>
+                        <span className="text-gray-600 flex items-center">
+                          <Gauge size={18} className="mr-1" />
+                          {truck.mileage?.toLocaleString() ?? 'N/A'} km
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {truck.condition && (
+                          <Badge variant="secondary">{truck.condition}</Badge>
+                        )}
+                        {truck.fuelType && (
+                          <Badge variant="secondary">{truck.fuelType}</Badge>
+                        )}
+                        {truck.transmission && (
+                          <Badge variant="secondary">
+                            {truck.transmission}
+                          </Badge>
+                        )}
+                      </div>
+                      <Button asChild className="w-full">
                         View Details
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
 

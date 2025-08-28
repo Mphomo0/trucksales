@@ -81,7 +81,7 @@ export default function Featured() {
         {/* Marquee Container */}
         <div className="overflow-hidden">
           <Marquee
-            speed={20}
+            speed={80}
             pauseOnHover={true}
             pauseOnClick={true}
             delay={0}

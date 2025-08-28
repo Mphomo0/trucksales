@@ -148,7 +148,7 @@ export default function Navbar() {
         {isMobileMenuOpen && (
           <>
             <div
-              className="lg:hidden fixed inset-0 bg-black bg-opacity-25 z-40"
+              className="lg:hidden fixed inset-0 bg-transparent bg-opacity-25 z-40"
               onClick={() => {
                 setIsMobileMenuOpen(false)
                 document.body.style.overflow = 'unset'

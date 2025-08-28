@@ -1,10 +1,26 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { Phone, Mail, MapPin } from 'lucide-react'
 
 export default function AddressSection() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [mapLocation, setMapLocation] = useState('')
+
+  // Function to open the modal with a specific map location
+  const openModal = (location: string) => {
+    setMapLocation(location)
+    setIsModalOpen(true)
+  }
+
+  // Function to close the modal
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setMapLocation('')
+  }
+
   return (
     <section
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
@@ -61,6 +77,9 @@ export default function AddressSection() {
               9 Chrislou Crescent, Alberton North
             </p>
             <p className="text-sm text-gray-500">Alberton, Gauteng, 1449</p>
+            <Button className="my-4 p-5" onClick={() => openModal('alberton')}>
+              Visit Alberton Branch
+            </Button>
           </CardContent>
         </Card>
 
@@ -75,9 +94,55 @@ export default function AddressSection() {
               Cnr Trichardts & Ravenswood St, Ravenswood
             </p>
             <p className="text-sm text-gray-500">Boksburg, Gauteng, 1451</p>
+            <Button className="my-4 p-5" onClick={() => openModal('boksburg')}>
+              Visit Boksburg Branch
+            </Button>
           </CardContent>
         </Card>
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-8 rounded-lg w-3/4 max-w-4xl relative">
+            <button
+              onClick={closeModal}
+              className="absolute top-2 right-2 text-xl font-bold text-gray-600"
+            >
+              &times;
+            </button>
+
+            {/* Conditional map based on the selected branch */}
+            {mapLocation === 'alberton' ? (
+              <div>
+                <h2 className="text-2xl font-semibold text-center mb-4">
+                  Alberton Branch
+                </h2>
+                <iframe
+                  width="100%"
+                  height="400"
+                  style={{ border: 0 }}
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3578.1659030161427!2d28.13892337541691!3d-26.256278477044486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e9510722a7fd44d%3A0xd8a035093db1dfcd!2s9%20Chrislou%20Cres%2C%20Alberton%2C%201449!5e0!3m2!1sen!2sza!4v1756405416361!5m2!1sen!2sza"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            ) : mapLocation === 'boksburg' ? (
+              <div>
+                <h2 className="text-2xl font-semibold text-center mb-4">
+                  Boksburg Branch
+                </h2>
+                <iframe
+                  width="100%"
+                  height="400"
+                  style={{ border: 0 }}
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7160.33222406436!2d28.248800020438615!3d-26.191274132331046!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e9517a1cf6334c3%3A0x9fff6f42aafa7e45!2sA-Z%20Truck%20Sales%20Boksburg!5e0!3m2!1sen!2sza!4v1756405725892!5m2!1sen!2sza"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      )}
     </section>
   )
 }

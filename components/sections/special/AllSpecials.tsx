@@ -93,55 +93,55 @@ export default function AllSpecials() {
     <div className="bg-gray-100 py-12">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {specials.map((special) => (
-          <Card
-            key={special.slug}
-            className="overflow-hidden hover:shadow-lg transition-shadow"
-          >
-            <div className="relative -top-6">
-              <Image
-                src={special.inventory.images[0]?.url}
-                alt={`${special.inventory.year} ${special.inventory.make} ${special.inventory.model}`}
-                width={400}
-                height={300}
-                className="w-full h-48 object-cover"
-                priority
-              />
-              <Badge className="absolute top-2 right-2 bg-red-600">
-                SPECIAL
-              </Badge>
-            </div>
-            <CardContent className="p-6">
-              <h3 className="text-xl font-bold mb-2 -mt-10">
-                {special.inventory.year} {special.inventory.make.toUpperCase()}{' '}
-                {special.inventory.model.toUpperCase()}
-              </h3>
-              <div className="mb-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-sm text-gray-500">WAS</p>
-                    <p className="text-xl font-semibold text-red-600 line-through">
-                      R{special.inventory.vatPrice.toLocaleString()}{' '}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">NOW</p>
-                    <p className="text-2xl font-bold text-green-600">
-                      R{special.amount.toLocaleString()}{' '}
-                      <span className="text-sm">incl. VAT</span>
-                    </p>
+          <Link href={`/specials/${special.slug}`} key={special.slug}>
+            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="relative -top-6">
+                <Image
+                  src={special.inventory.images[0]?.url}
+                  alt={`${special.inventory.year} ${special.inventory.make} ${special.inventory.model}`}
+                  width={400}
+                  height={300}
+                  className="w-full h-48 object-cover"
+                  priority
+                />
+                <Badge className="absolute top-2 right-2 bg-red-600">
+                  SPECIAL
+                </Badge>
+              </div>
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold mb-2 -mt-10">
+                  {special.inventory.year}{' '}
+                  {special.inventory.make.toUpperCase()}{' '}
+                  {special.inventory.model.toUpperCase()}
+                </h3>
+                <div className="mb-4">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-sm text-gray-500">WAS</p>
+                      <p className="text-xl font-semibold text-red-600 line-through">
+                        R{special.inventory.vatPrice.toLocaleString()}{' '}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">NOW</p>
+                      <p className="text-2xl font-bold text-green-600">
+                        R{special.amount.toLocaleString()}{' '}
+                        <span className="text-sm">incl. VAT</span>
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="text-sm text-gray-600 mt-2">
-                Valid from <strong>{formatDate(special.validFrom)}</strong> to{' '}
-                <strong>{formatDate(special.validTo)}</strong>
-              </div>
+                <div className="text-sm text-gray-600 mt-2">
+                  Valid from <strong>{formatDate(special.validFrom)}</strong> to{' '}
+                  <strong>{formatDate(special.validTo)}</strong>
+                </div>
 
-              <Button asChild className="w-full bg-black text-white mt-8">
-                <Link href={`/specials/${special.slug}`}>View Details</Link>
-              </Button>
-            </CardContent>
-          </Card>
+                <Button asChild className="w-full bg-black text-white mt-8">
+                  View Details
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
         ))}
       </div>
     </div>
