@@ -460,9 +460,14 @@ export default function AllVehiclesFilter() {
               <Pagination
                 currentPage={paginationMeta.page}
                 totalPages={paginationMeta.totalPages}
-                onPageChange={handlePageChange}
+                onPageChange={(page) =>
+                  setPaginationMeta({ ...paginationMeta, page })
+                }
                 limit={limit}
-                onLimitChange={handleLimitChange}
+                onLimitChange={(newLimit) => {
+                  setLimit(newLimit)
+                  setPaginationMeta({ ...paginationMeta, page: 1 }) // reset to first page
+                }}
                 showLimitSelector={true}
               />
             </div>

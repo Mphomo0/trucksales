@@ -22,6 +22,7 @@ interface UpdateVehicleBody {
   description: string
   bodyType: string
   truckSize: string
+  registrationNo: string
 }
 
 // Get /api/vehicles/slug to fetch a vehicle by ID
@@ -116,6 +117,7 @@ export const PATCH = auth(async (req, { params }) => {
       description: body.description,
       bodyType: body.bodyType,
       truckSize: body.truckSize,
+      registrationNo: body.registrationNo,
     }
 
     // Update the vehicle

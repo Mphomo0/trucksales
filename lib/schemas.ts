@@ -38,6 +38,10 @@ export const vehicleSchema = z.object({
     .string()
     .min(1, 'Enter Your Description')
     .transform((val) => val.trim()),
+  registrationNo: z
+    .string()
+    .min(1, 'Enter Vehicle Registration Number')
+    .transform((val) => val.trim()),
   bodyType: z
     .string()
     .min(1, 'Enter Your Truck Body Type')

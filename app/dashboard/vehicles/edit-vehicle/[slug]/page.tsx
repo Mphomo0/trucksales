@@ -35,7 +35,7 @@ export default async function EditVehiclePage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
-      <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-8">
+      <div className="w-full max-w-4xl p-8">
         <div className="flex items-center justify-between mb-6">
           <Link href="/dashboard/vehicles" passHref>
             <Button variant="outline" className="flex items-center gap-2">

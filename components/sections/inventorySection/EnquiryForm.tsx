@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -8,7 +9,19 @@ import { enquiryFormSchema } from '@/lib/schemas'
 
 type EnquiryFormData = z.infer<typeof enquiryFormSchema>
 
-export default function EnquiryForm({ vehicleName }: { vehicleName: string }) {
+interface EnquiryFormProps {
+  vehicleSlug: string
+}
+
+export default function EnquiryForm({ vehicleSlug }: EnquiryFormProps) {
+  const [currentUrl, setCurrentUrl] = useState<string>('')
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setCurrentUrl(window.location.href)
+    }
+  }, [])
+
   const {
     register,
     handleSubmit,
@@ -25,7 +38,12 @@ export default function EnquiryForm({ vehicleName }: { vehicleName: string }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ type: 'Enquiry', ...data }),
+        body: JSON.stringify({
+          type: 'Enquiry',
+          vehicleSlug,
+          currentUrl,
+          ...data,
+        }),
       })
 
       const result = await response.json()
@@ -44,7 +62,6 @@ export default function EnquiryForm({ vehicleName }: { vehicleName: string }) {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-2">Enquiry Form</h2>
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         <div>
           <label className="block text-sm font-medium">Name & Surname</label>
@@ -88,9 +105,7 @@ export default function EnquiryForm({ vehicleName }: { vehicleName: string }) {
           <textarea
             className="w-full border px-3 py-2 rounded"
             rows={4}
-            defaultValue={`I would like to check the availability of the ${
-              vehicleName || 'vehicle'
-            }`}
+            defaultValue={`I would like to check the availability of the http://localhost:3000/inventory/${vehicleSlug}`}
             aria-invalid={!!errors.message}
             {...register('message')}
           />

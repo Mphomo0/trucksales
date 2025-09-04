@@ -40,6 +40,8 @@ export const POST = auth(async (req) => {
       description,
       bodyType,
       truckSize,
+      registrationNo,
+      videoLink,
     } = body
 
     const requiredFields = [
@@ -140,6 +142,8 @@ export const POST = auth(async (req) => {
         description,
         bodyType,
         truckSize,
+        registrationNo,
+        videoLink,
         slug,
         images,
       },
@@ -162,7 +166,10 @@ export const GET = async (req: NextRequest) => {
     const { searchParams } = new URL(req.url)
 
     const page = Number.parseInt(searchParams.get('page') || '1', 10)
-    const limit = Number.parseInt(searchParams.get('limit') || '50', 10)
+    const limit = Math.min(
+      Number.parseInt(searchParams.get('limit') || '100', 10),
+      100
+    )
     const skip = (page - 1) * limit
 
     // Filter parameters

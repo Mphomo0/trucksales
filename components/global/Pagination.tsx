@@ -13,7 +13,7 @@ export function Pagination({
   currentPage,
   totalPages,
   onPageChange,
-  limit,
+  limit = 10,
   onLimitChange,
   showLimitSelector = false,
 }: PaginationProps) {
@@ -79,10 +79,10 @@ export function Pagination({
             onChange={(e) => onLimitChange(Number(e.target.value))}
             className="px-2 py-1 border rounded text-sm"
           >
-            <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={25}>25</option>
             <option value={50}>50</option>
+            <option value={100}>100</option>
           </select>
         </div>
       )}

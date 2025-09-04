@@ -25,6 +25,7 @@ model inventory {
   make              String
   model             String
   year              Int
+  registrationNo    String?        
   vatPrice          Float
   pricenoVat        Float
   mileage           Float?
@@ -32,6 +33,7 @@ model inventory {
   condition         Condition
   transmission      Transmission?
   images            Json 
+  videoLink         String?
   description       String
   bodyType          String?
   truckSize         String?

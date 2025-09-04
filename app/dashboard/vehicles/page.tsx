@@ -33,7 +33,7 @@ export default async function InventoryDashboard() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
+    <div className="flex items-center justify-center min-h-scree px-4">
       <div className="w-full max-w-7xl bg-white rounded-lg shadow-md p-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">

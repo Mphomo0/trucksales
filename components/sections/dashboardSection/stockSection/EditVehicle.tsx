@@ -34,6 +34,7 @@ interface Vehicle {
   truckSize: string
   featured: string
   slug: string
+  registrationNo: string
   images: VehicleImage[]
 }
 
@@ -199,19 +200,35 @@ export default function EditVehicle() {
   }
   return (
     <div className="py-16">
-      <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl p-6 px-12 py-12">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-4 space-y-2">
-            <Label htmlFor="name">Vehicle Name</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="Enter vehicle name"
-              {...register('name')}
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
-            )}
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="name">Vehicle Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Enter vehicle name"
+                {...register('name')}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name.message}</p>
+              )}
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="name">Registration Number</Label>
+              <Input
+                id="registrationNo"
+                type="text"
+                placeholder="Enter Registration Number"
+                {...register('registrationNo')}
+              />
+              {errors.registrationNo && (
+                <p className="text-red-500 text-sm">
+                  {errors.registrationNo.message}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-4">

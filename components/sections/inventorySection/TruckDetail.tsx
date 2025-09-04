@@ -48,7 +48,7 @@ interface Vehicle {
   condition: string
   transmission: string
   description: string
-  slug?: string
+  slug: string
   images: VehicleImage[]
   bodyType?: string
   truckSize?: string
@@ -271,7 +271,7 @@ export default function TruckDetail() {
                             sliderInstanceRef.current?.moveToIdx(index)
                           }
                         >
-                          <div className="relative w-full h-60 md:h-96">
+                          <div className="relative w-full h-full">
                             <Image
                               src={img.url}
                               alt={`Thumbnail ${index + 1}`}
@@ -370,7 +370,7 @@ export default function TruckDetail() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <WhatsAppButton />
+                <WhatsAppButton vehicleSlug={vehicle.slug} />
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
@@ -389,7 +389,7 @@ export default function TruckDetail() {
                     <DialogHeader>
                       <DialogTitle>Enquire About This Vehicle</DialogTitle>
                     </DialogHeader>
-                    <EnquiryForm vehicleName={vehicle.name} />
+                    <EnquiryForm vehicleSlug={vehicle.slug} />
                   </DialogContent>
                 </Dialog>
                 <Button asChild className="w-full py-4" size="lg">

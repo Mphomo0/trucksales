@@ -408,7 +408,7 @@ export default function SpecialDetails() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <WhatsAppButton />
+                <WhatsAppButton vehicleSlug={special.inventory.slug} />
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
@@ -427,7 +427,7 @@ export default function SpecialDetails() {
                     <DialogHeader>
                       <DialogTitle>Enquire About This Vehicle</DialogTitle>
                     </DialogHeader>
-                    <EnquiryForm vehicleName={special.inventory.name} />
+                    <EnquiryForm vehicleSlug={special.inventory.slug} />
                   </DialogContent>
                 </Dialog>
                 <Button asChild className="w-full py-4" size="lg">
