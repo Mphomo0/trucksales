@@ -13,7 +13,7 @@ interface UpdateSparesBody {
   images: string[]
   description: string
   slug: string
-  videoLink?: string[]
+  videoLink?: string
 }
 
 // Get /api/spares/slug to fetch a spares by slug
