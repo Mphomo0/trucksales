@@ -23,12 +23,18 @@ interface Vehicle {
   condition: string
   transmission: string
   images: ImageFile[]
+  videoLink?: VideoFile | null
   description: string
   registrationNo: string
   slug: string
 }
 
 interface ImageFile {
+  fileId: string
+  url: string
+}
+
+interface VideoFile {
   fileId: string
   url: string
 }
@@ -75,30 +81,34 @@ export default function GetVehicles() {
 
       if (!vehicle) throw new Error('Vehicle data not found')
 
-      const fileIds = vehicle.images
-        ?.map((img: ImageFile) => img.fileId)
-        .filter(Boolean)
+      // Collect file IDs (images + video)
+      const fileIds = [
+        ...(vehicle.images?.map((img: ImageFile) => img.fileId) || []),
+        ...(vehicle.videoLink?.fileId ? [vehicle.videoLink.fileId] : []),
+      ]
 
-      if (fileIds?.length > 0) {
+      //  Delete from ImageKit if any fileIds exist
+      if (fileIds.length > 0) {
         const delRes = await fetch('/api/images/delete-images', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ fileIds }),
         })
 
-        if (!delRes.ok) throw new Error('Failed to delete images from ImageKit')
+        if (!delRes.ok) throw new Error('Failed to delete files from ImageKit')
       }
 
+      //  Delete vehicle itself
       const vehicleDeleteRes = await fetch(`/api/vehicles/${slug}`, {
         method: 'DELETE',
       })
       if (!vehicleDeleteRes.ok) throw new Error('Failed to delete vehicle')
 
-      toast.success('Vehicle and associated images deleted successfully')
+      toast.success('Vehicle and associated files deleted successfully')
       getAllVehicles(paginationMeta.page, paginationMeta.limit)
     } catch (error) {
       console.error('Delete operation failed:', error)
-      toast.error('Error deleting vehicle and/or images')
+      toast.error('Error deleting vehicle and/or files')
     }
   }
 
@@ -118,11 +128,40 @@ export default function GetVehicles() {
       enableSorting: false,
       enableColumnFilter: false,
     },
-    { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'registrationNo', header: 'Reg Number' },
-    { accessorKey: 'make', header: 'Make' },
-    { accessorKey: 'model', header: 'Model' },
-    { accessorKey: 'year', header: 'Year' },
+    {
+      accessorKey: 'name',
+      header: 'Name',
+    },
+    {
+      accessorKey: 'registrationNo',
+      header: () => <span className="hidden sm:inline">Reg Number</span>,
+      cell: ({ row }) => (
+        <span className="hidden sm:table-cell">
+          {row.original.registrationNo}
+        </span>
+      ),
+    },
+    {
+      accessorKey: 'make',
+      header: () => <span className="hidden md:inline">Make</span>,
+      cell: ({ row }) => (
+        <span className="hidden md:table-cell">{row.original.make}</span>
+      ),
+    },
+    {
+      accessorKey: 'model',
+      header: () => <span className="hidden md:inline">Model</span>,
+      cell: ({ row }) => (
+        <span className="hidden md:table-cell">{row.original.model}</span>
+      ),
+    },
+    {
+      accessorKey: 'year',
+      header: () => <span className="hidden lg:inline">Year</span>,
+      cell: ({ row }) => (
+        <span className="hidden lg:table-cell">{row.original.year}</span>
+      ),
+    },
     {
       accessorKey: 'vatPrice',
       header: 'Price',
@@ -136,6 +175,7 @@ export default function GetVehicles() {
           <Button
             variant="ghost"
             size="icon"
+            className="h-8 w-8 sm:h-10 sm:w-10"
             onClick={() => handleDeleteVehicle(row.original.slug)}
           >
             <Trash2 className="h-4 w-4 text-red-500" />
@@ -152,12 +192,13 @@ export default function GetVehicles() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      {/* Top controls */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <Input
           placeholder="Search vehicles..."
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="max-w-sm"
+          className="w-full sm:max-w-sm"
         />
         <div className="text-sm text-gray-500">
           Showing {vehicles.length} of {paginationMeta.total} vehicles (Limit:{' '}
@@ -165,19 +206,23 @@ export default function GetVehicles() {
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex items-center justify-center h-64">
-          <p>Loading vehicles...</p>
-        </div>
-      ) : (
-        <DataTable
-          columns={columns}
-          data={vehicles}
-          globalFilter={globalFilter}
-        />
-      )}
+      {/* Table container for responsiveness */}
+      <div className="w-full overflow-x-auto">
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <p>Loading vehicles...</p>
+          </div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={vehicles}
+            globalFilter={globalFilter}
+          />
+        )}
+      </div>
 
-      <div className="mt-4 flex justify-end">
+      {/* Pagination */}
+      <div className="mt-4 flex flex-col sm:flex-row sm:justify-between items-center gap-3">
         <Pagination
           currentPage={paginationMeta.page}
           totalPages={paginationMeta.totalPages}

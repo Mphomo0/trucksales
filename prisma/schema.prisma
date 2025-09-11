@@ -33,7 +33,7 @@ model inventory {
   condition         Condition
   transmission      Transmission?
   images            Json 
-  videoLink         String?
+  videoLink         Json?
   description       String
   bodyType          String?
   truckSize         String?
@@ -55,6 +55,21 @@ model specials {
   updatedAt     DateTime   @updatedAt
 }
 
+model spares {
+  id                String     @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  description       String
+  make              String
+  price             Float
+  condition         Condition
+  category          Category
+  images            Json
+  videoLink         Json?
+  slug              String     @unique
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
 enum FuelType {
   PETROL
   DIESEL
@@ -68,4 +83,11 @@ enum Condition {
 enum Transmission {
   AUTOMATIC
   MANUAL
+}
+
+enum Category {
+  ENGINE
+  GEARBOX
+  DIFF
+  OTHER
 }

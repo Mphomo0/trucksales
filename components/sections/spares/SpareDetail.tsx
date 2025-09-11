@@ -30,38 +30,25 @@ import EnquiryForm from '@/components/sections/inventorySection/EnquiryForm'
 import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
 
-interface VehicleImage {
+interface SparePartImage {
   url: string
   fileId?: string
 }
 
-interface VehicleVideo {
-  url: string
-  fileId?: string
-}
-
-interface Vehicle {
+interface SparePart {
   id: string
   name: string
   make: string
-  model: string
-  year: number
-  vatPrice: number
-  pricenoVat: number
-  mileage: number
-  fuelType: string
+  price: number
+  category: string
   condition: string
-  transmission: string
   description: string
   slug: string
-  images: VehicleImage[]
-  bodyType?: string
-  truckSize?: string
-  videoLink?: VehicleVideo | null
+  images: SparePartImage[]
 }
 
-export default function TruckDetail() {
-  const [vehicle, setVehicle] = useState<Vehicle | null>(null)
+export default function SpareDetail() {
+  const [spares, setSpares] = useState<SparePart | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -106,9 +93,9 @@ export default function TruckDetail() {
   const slug = params?.slug
 
   useEffect(() => {
-    const fetchVehicle = async () => {
+    const fetchSparePart = async () => {
       if (!slug) {
-        setError('No vehicle slug provided')
+        setError('No spare part slug provided')
         setLoading(false)
         return
       }
@@ -117,11 +104,11 @@ export default function TruckDetail() {
         setLoading(true)
         setError(null)
 
-        const res = await fetch(`/api/vehicles/${slug}`)
+        const res = await fetch(`/api/spares/${slug}`)
 
         if (!res.ok) {
           if (res.status === 404) {
-            throw new Error('Vehicle not found')
+            throw new Error('Spare Part not found')
           }
           const errorData = await res.json().catch(() => ({}))
           throw new Error(
@@ -130,20 +117,20 @@ export default function TruckDetail() {
         }
 
         const data = await res.json()
-        if (!data || !data.vehicle) {
+        if (!data.data || !data.data) {
           throw new Error('Invalid response format')
         }
 
-        setVehicle(data.vehicle)
+        setSpares(data.data)
       } catch (error) {
-        console.error('Error fetching vehicle:', error)
-        setError('Failed to load vehicle data')
+        console.error('Error fetching spares:', error)
+        setError('Failed to load spares data')
       } finally {
         setLoading(false)
       }
     }
 
-    fetchVehicle()
+    fetchSparePart()
   }, [slug])
 
   const handleThumbnailClick = useCallback((index: number) => {
@@ -162,9 +149,11 @@ export default function TruckDetail() {
   if (loading)
     return <p className="flex justify-center items-center h-96">Loading...</p>
   if (error) return <p>{error}</p>
-  if (!vehicle)
+  if (!spares)
     return (
-      <p className="flex justify-center items-center h-96">Vehicle not found</p>
+      <p className="flex justify-center items-center h-96">
+        Spare Part not found
+      </p>
     )
 
   return (
@@ -173,9 +162,9 @@ export default function TruckDetail() {
         {/* Back Button */}
         <div className="mb-6">
           <Button asChild variant="outline">
-            <Link href="/inventory">
+            <Link href="/spares">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Inventory
+              Back to Spares
             </Link>
           </Button>
         </div>
@@ -185,7 +174,7 @@ export default function TruckDetail() {
           <div className="lg:col-span-2">
             {/* Images */}
             <div className="mb-8">
-              {vehicle.images.length > 0 && (
+              {spares.images.length > 0 && (
                 <>
                   {/* Main image slider */}
                   <div className="relative">
@@ -193,7 +182,7 @@ export default function TruckDetail() {
                       ref={sliderRef}
                       className="keen-slider aspect-[16/9] w-full mb-4 rounded-lg overflow-hidden shadow-lg border bg-neutral-50"
                     >
-                      {vehicle.images.map((img, index) => (
+                      {spares.images.map((img, index) => (
                         <div
                           className="keen-slider__slide relative flex items-center justify-center bg-neutral-100"
                           key={index}
@@ -201,7 +190,7 @@ export default function TruckDetail() {
                           <div className="relative w-full h-60 md:h-96">
                             <Image
                               src={img.url}
-                              alt={`${vehicle.name} image ${index + 1}`}
+                              alt={`${spares.name} image ${index + 1}`}
                               fill
                               className="object-cover"
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
@@ -213,7 +202,7 @@ export default function TruckDetail() {
                     </div>
 
                     {/* Navigation arrows */}
-                    {vehicle.images.length > 1 && (
+                    {spares.images.length > 1 && (
                       <>
                         <button
                           onClick={() => sliderInstanceRef.current?.prev()}
@@ -260,12 +249,12 @@ export default function TruckDetail() {
                   </div>
 
                   {/* Thumbnail slider */}
-                  {vehicle.images.length > 1 && (
+                  {spares.images.length > 1 && (
                     <div
                       ref={thumbnailRef}
                       className="keen-slider mb-8 cursor-pointer px-2"
                     >
-                      {vehicle.images.map((img, index) => (
+                      {spares.images.map((img, index) => (
                         <div
                           key={index}
                           className={`keen-slider__slide transition-all rounded overflow-hidden aspect-video ${
@@ -293,20 +282,6 @@ export default function TruckDetail() {
                   )}
                 </>
               )}
-
-              {/* Vehicle Video */}
-              {vehicle.videoLink?.url && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-2">Vehicle Video</h3>
-                  <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-lg border">
-                    <video
-                      src={vehicle.videoLink.url}
-                      controls
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Vehicle Info */}
@@ -315,60 +290,21 @@ export default function TruckDetail() {
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-2xl md:text-3xl">
-                      {vehicle.year} {vehicle.make} {vehicle.model}
+                      {spares.name}
                     </CardTitle>
                   </div>
-                  <Badge className="bg-amber-600">{vehicle.condition}</Badge>
+                  <Badge className="bg-amber-600">{spares.condition}</Badge>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-gray-500" />
-                    <div>
-                      <p className="text-sm text-gray-500">Year</p>
-                      <p className="font-semibold">{vehicle.year}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Gauge className="h-5 w-5 text-gray-500" />
-                    <div>
-                      <p className="text-sm text-gray-500">Mileage</p>
-                      <p className="font-semibold">
-                        {vehicle.mileage.toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Fuel className="h-5 w-5 text-gray-500" />
-                    <div>
-                      <p className="text-sm text-gray-500">Fuel Type</p>
-                      <p className="font-semibold">{vehicle.fuelType}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Settings className="h-5 w-5 text-gray-500" />
-                    <div>
-                      <p className="text-sm text-gray-500">Transmission</p>
-                      <p className="font-semibold">{vehicle.transmission}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator className="my-6" />
-
                 <div>
                   <h3 className="text-lg font-semibold mb-4">Description</h3>
                   <p className="text-gray-600 leading-relaxed">
-                    {vehicle.description}
+                    {spares.description}
                   </p>
                   <p className="text-gray-600 leading-relaxed">
-                    <span className="font-bold">- Truck Size: </span>
-                    {vehicle.truckSize || 'N/A'}
-                  </p>
-                  <p className="text-gray-600 leading-relaxed">
-                    <span className="font-bold">- Body Type: </span>
-                    {vehicle.bodyType}
+                    <span className="font-bold">- Spares Category: </span>
+                    {spares.category || 'N/A'}
                   </p>
                 </div>
               </CardContent>
@@ -382,15 +318,12 @@ export default function TruckDetail() {
               <CardHeader>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-amber-600 mb-2">
-                    R{vehicle.vatPrice.toLocaleString()}
+                    R{spares.price.toLocaleString()}
                   </div>
-                  <p className="text-gray-600">
-                    R{vehicle.pricenoVat.toLocaleString()} excl. VAT
-                  </p>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <WhatsAppButton vehicleSlug={vehicle.slug} />
+                <WhatsAppButton vehicleSlug={spares.slug} />
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
@@ -407,9 +340,9 @@ export default function TruckDetail() {
                     aria-describedby="Description"
                   >
                     <DialogHeader>
-                      <DialogTitle>Enquire About This Vehicle</DialogTitle>
+                      <DialogTitle>Enquire About This Spare Part</DialogTitle>
                     </DialogHeader>
-                    <EnquiryForm vehicleSlug={vehicle.slug} />
+                    <EnquiryForm vehicleSlug={spares.slug} />
                   </DialogContent>
                 </Dialog>
                 <Button asChild className="w-full py-4" size="lg">
@@ -445,7 +378,7 @@ export default function TruckDetail() {
                 </div>
                 <p className="text-sm text-gray-600">
                   Highly rated dealer with excellent customer service and
-                  quality vehicles.
+                  quality spares.
                 </p>
               </CardContent>
             </Card>

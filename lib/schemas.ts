@@ -56,6 +56,7 @@ export const vehicleSchema = z.object({
       fileId: z.string().min(1, 'File ID is required'),
     })
   ),
+  videoLink: z.array(z.string().url().optional()).optional(),
 })
 
 export const tradeInFormSchema = z.object({
@@ -88,6 +89,7 @@ export const tradeInFormSchema = z.object({
     .transform((val) => val.trim()),
   mileage: z.string().min(1, { message: 'Mileage is required' }),
 })
+
 export const enquiryFormSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
   email: z.string().email({ message: 'Invalid email address' }),
@@ -95,4 +97,28 @@ export const enquiryFormSchema = z.object({
     .string()
     .regex(/^0[6-8][0-9]{8}$/, { message: 'Invalid SA phone number.' }),
   message: z.string().min(10, { message: 'Message is required' }),
+})
+
+export const spareSchema = z.object({
+  name: z
+    .string()
+    .min(2, 'Spare part name is required')
+    .transform((val) => val.trim()),
+  make: z
+    .string()
+    .min(1, 'Make is required')
+    .transform((val) => val.trim()),
+  price: z.coerce.number<number>(),
+  condition: z.string().min(1, 'Condition is required'),
+  category: z.string().min(1, 'Category is required'),
+  description: z
+    .string()
+    .min(1, 'Enter Your Description')
+    .transform((val) => val.trim()),
+  images: z.array(
+    z.object({
+      url: z.url(),
+      fileId: z.string().min(1, 'File ID is required'),
+    })
+  ),
 })
