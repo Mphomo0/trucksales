@@ -27,11 +27,6 @@ type VehicleFormData = z.infer<typeof vehicleSchema>
 
 export default function CreateVehicle() {
   const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null)
-  const [selectedVideo, setSelectedVideo] = useState<File | null>(null)
-  const [uploadedVideo, setUploadedVideo] = useState<{
-    url: string
-    fileId: string
-  } | null>(null)
   const [isUploading, setIsUploading] = useState(false)
 
   const router = useRouter()
@@ -94,35 +89,6 @@ export default function CreateVehicle() {
         }
       }
 
-      //Upload video if available
-      let videoData: { url: string; fileId: string } | null = null
-
-      if (selectedVideo) {
-        try {
-          const { token, signature, publicKey, expire } = await getAuthParams()
-          const uniqueFileName = `${uuidv4()}_${selectedVideo.name}`
-
-          const res = await upload({
-            file: selectedVideo,
-            fileName: uniqueFileName,
-            folder: 'videos',
-            expire,
-            token,
-            signature,
-            publicKey,
-          })
-
-          if (!res || !res.url || !res.fileId)
-            throw new Error('Video upload failed')
-
-          videoData = { url: res.url, fileId: res.fileId }
-          setUploadedVideo(videoData)
-        } catch (err) {
-          console.error(err)
-          toast.error('Failed to upload video')
-        }
-      }
-
       setIsUploading(false)
 
       if (uploadedImages.length === 0) {
@@ -134,7 +100,6 @@ export default function CreateVehicle() {
       const payload = {
         ...data,
         images: uploadedImages,
-        videoLink: videoData,
         fuelType: data.fuelType?.toUpperCase() ?? null,
         condition: data.condition.toUpperCase(),
         transmission: data.transmission?.toUpperCase() ?? null,
@@ -149,8 +114,7 @@ export default function CreateVehicle() {
       if (res.ok) {
         toast.success('Vehicle created successfully!')
         setSelectedFiles(null)
-        setSelectedVideo(null)
-        setUploadedVideo(null)
+
         router.push('/dashboard/vehicles')
       } else {
         const err = await res.json()
@@ -441,18 +405,15 @@ export default function CreateVehicle() {
             />
           </div>
 
-          {/* Video */}
           <div className="mb-4 space-y-2">
-            <label className="space-y-4">Upload Video</label>
-            <UploadVideo
-              onFileSelected={(file, preview) => {
-                setSelectedVideo(file)
-              }}
+            <Label htmlFor="description">Video Link</Label>
+            <Input
+              id="videoLink"
+              placeholder="e.g https://www.youtube.com/watch?v=T6i6L6vSxBU"
+              {...register('videoLink')}
             />
-            {uploadedVideo && (
-              <p className="text-sm text-green-600">
-                Video uploaded: {uploadedVideo.url}
-              </p>
+            {errors.videoLink && (
+              <p className="text-red-500 text-sm">{errors.videoLink.message}</p>
             )}
           </div>
 

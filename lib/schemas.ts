@@ -56,7 +56,7 @@ export const vehicleSchema = z.object({
       fileId: z.string().min(1, 'File ID is required'),
     })
   ),
-  videoLink: z.array(z.string().url().optional()).optional(),
+  videoLink: z.string().optional(),
 })
 
 export const tradeInFormSchema = z.object({
@@ -121,4 +121,5 @@ export const spareSchema = z.object({
       fileId: z.string().min(1, 'File ID is required'),
     })
   ),
+  videoLink: z.string().optional(),
 })

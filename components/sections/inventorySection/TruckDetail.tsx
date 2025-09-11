@@ -35,11 +35,6 @@ interface VehicleImage {
   fileId?: string
 }
 
-interface VehicleVideo {
-  url: string
-  fileId?: string
-}
-
 interface Vehicle {
   id: string
   name: string
@@ -57,7 +52,7 @@ interface Vehicle {
   images: VehicleImage[]
   bodyType?: string
   truckSize?: string
-  videoLink?: VehicleVideo | null
+  videoLink?: string | null
 }
 
 export default function TruckDetail() {
@@ -166,6 +161,13 @@ export default function TruckDetail() {
     return (
       <p className="flex justify-center items-center h-96">Vehicle not found</p>
     )
+
+  function convertYouTubeLink(url: any) {
+    const regExp =
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/
+    const match = url.match(regExp)
+    return match ? `https://www.youtube.com/embed/${match[1]}` : url
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -294,16 +296,17 @@ export default function TruckDetail() {
                 </>
               )}
 
-              {/* Vehicle Video */}
-              {vehicle.videoLink?.url && (
-                <div className="mt-6">
+              {/* Video Link */}
+              {vehicle.videoLink && (
+                <div className="mt-4">
                   <h3 className="text-lg font-semibold mb-2">Vehicle Video</h3>
-                  <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-lg border">
-                    <video
-                      src={vehicle.videoLink.url}
-                      controls
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="aspect-w-16 aspect-h-9">
+                    <iframe
+                      src={convertYouTubeLink(vehicle.videoLink)}
+                      title="Vehicle Video"
+                      className="w-full h-64 md:h-96 rounded-lg shadow-lg border"
+                      allowFullScreen
+                    ></iframe>
                   </div>
                 </div>
               )}

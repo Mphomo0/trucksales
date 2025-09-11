@@ -45,6 +45,7 @@ interface SparePart {
   description: string
   slug: string
   images: SparePartImage[]
+  videoLink?: string | null
 }
 
 export default function SpareDetail() {
@@ -155,6 +156,13 @@ export default function SpareDetail() {
         Spare Part not found
       </p>
     )
+
+  function convertYouTubeLink(url: any) {
+    const regExp =
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/
+    const match = url.match(regExp)
+    return match ? `https://www.youtube.com/embed/${match[1]}` : url
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -281,6 +289,21 @@ export default function SpareDetail() {
                     </div>
                   )}
                 </>
+              )}
+
+              {/* Video Link */}
+              {spares.videoLink && (
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold mb-2">Vehicle Video</h3>
+                  <div className="aspect-w-16 aspect-h-9">
+                    <iframe
+                      src={convertYouTubeLink(spares.videoLink)}
+                      title="Vehicle Video"
+                      className="w-full h-64 md:h-96 rounded-lg shadow-lg border"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </div>
               )}
             </div>
 

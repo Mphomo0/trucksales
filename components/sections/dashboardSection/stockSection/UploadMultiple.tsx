@@ -1,6 +1,7 @@
 'use client'
 
 import type React from 'react'
+import { ReactSortable } from 'react-sortablejs'
 
 import { useRef, useState, useEffect } from 'react'
 import Image from 'next/image'
@@ -114,9 +115,12 @@ const UploadMultiple = ({
   // Cleanup
   useEffect(() => {
     return () => {
-      previews.forEach((p) => URL.revokeObjectURL(p.preview))
+      // Revoke all previews on unmount
+      previews.forEach((p) => {
+        URL.revokeObjectURL(p.preview)
+      })
     }
-  }, [previews])
+  }, [])
 
   const canAddMore = previews.length < maxFiles
 
@@ -192,13 +196,24 @@ const UploadMultiple = ({
             </Button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <ReactSortable
+            list={previews}
+            setList={(newState) => {
+              setPreviews(newState)
+              onFilesSelected(
+                newState.map((p) => p.file),
+                newState
+              )
+            }}
+            animation={200}
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+          >
             {previews.map((img) => (
               <Card key={img.id} className="group relative overflow-hidden">
                 <CardContent className="p-0">
                   <div className="relative aspect-square">
                     <Image
-                      src={img.preview || '/placeholder.svg'}
+                      src={img.preview}
                       alt={img.file.name}
                       className="object-cover w-full h-full transition-transform group-hover:scale-105"
                       width={200}
@@ -235,7 +250,7 @@ const UploadMultiple = ({
                 </CardContent>
               </Card>
             ))}
-          </div>
+          </ReactSortable>
         </div>
       )}
     </div>

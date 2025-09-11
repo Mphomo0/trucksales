@@ -18,11 +18,6 @@ interface VehicleImage {
   fileId: string
 }
 
-interface VehicleVideo {
-  url: string
-  fileId: string
-}
-
 interface Vehicle {
   id: string
   name: string
@@ -42,7 +37,7 @@ interface Vehicle {
   slug: string
   registrationNo: string
   images: VehicleImage[]
-  videoLink: VehicleVideo | null
+  videoLink: string | null
 }
 
 export default function EditVehicle() {
@@ -51,8 +46,6 @@ export default function EditVehicle() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [previewImages, setPreviewImages] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
-  const [selectedVideo, setSelectedVideo] = useState<File | null>(null)
-  const [previewVideo, setPreviewVideo] = useState<string | null>(null)
 
   const {
     register,
@@ -64,7 +57,6 @@ export default function EditVehicle() {
   } = useForm<Vehicle>({
     defaultValues: {
       images: [],
-      videoLink: null,
     },
   })
 
@@ -73,7 +65,6 @@ export default function EditVehicle() {
   const slug = params.slug as string
 
   const watchedImages = watch('images') || []
-  const watchedVideo = watch('videoLink')
 
   useEffect(() => {
     const fetchVehicle = async () => {
@@ -96,9 +87,8 @@ export default function EditVehicle() {
     return () => {
       // Clean up preview URLs when component unmounts
       previewImages.forEach((url) => URL.revokeObjectURL(url))
-      if (previewVideo) URL.revokeObjectURL(previewVideo)
     }
-  }, [previewImages, previewVideo])
+  }, [previewImages])
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -134,22 +124,6 @@ export default function EditVehicle() {
     setPreviewImages(newPreviews)
   }
 
-  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    if (previewVideo) URL.revokeObjectURL(previewVideo)
-
-    setSelectedVideo(file)
-    setPreviewVideo(URL.createObjectURL(file))
-  }
-
-  const removeVideo = () => {
-    if (previewVideo) URL.revokeObjectURL(previewVideo)
-    setSelectedVideo(null)
-    setPreviewVideo(null)
-  }
-
   const getAuthParams = async () => {
     const res = await fetch('/api/images/upload-auth')
     if (!res.ok) throw new Error('Failed to fetch upload authentication')
@@ -162,7 +136,6 @@ export default function EditVehicle() {
 
       // Upload new images if any selected
       const newUploadedImages: VehicleImage[] = []
-      let newUploadedVideo: VehicleVideo | null = null
 
       if (selectedFiles.length > 0) {
         for (const file of selectedFiles) {
@@ -192,40 +165,13 @@ export default function EditVehicle() {
         }
       }
 
-      if (selectedVideo) {
-        try {
-          const { token, signature, publicKey, expire } = await getAuthParams()
-          const uniqueFileName = `${uuidv4()}_${selectedVideo.name}`
-
-          const res = await upload({
-            file: selectedVideo,
-            fileName: uniqueFileName,
-            folder: 'videos',
-            expire,
-            token,
-            signature,
-            publicKey,
-          })
-
-          if (!res || !res.url || !res.fileId)
-            throw new Error(`Upload failed for ${selectedVideo.name}`)
-
-          newUploadedVideo = { url: res.url, fileId: res.fileId }
-        } catch (err) {
-          console.error(err)
-          toast.error(`Failed to upload video`)
-        }
-      }
-
       // Combine existing images with newly uploaded ones
       const allImages = [...(formData.images || []), ...newUploadedImages]
-      const finalVideo = newUploadedVideo || formData.videoLink || null
 
       // Update the formData with all images
       const updatedFormData = {
         ...formData,
         images: allImages,
-        videoLink: finalVideo,
         fuelType: formData.fuelType?.toUpperCase() ?? null,
         condition: formData.condition?.toUpperCase(),
         transmission: formData.transmission?.toUpperCase() ?? null,
@@ -244,7 +190,6 @@ export default function EditVehicle() {
 
       // Clean up preview URLs
       previewImages.forEach((url) => URL.revokeObjectURL(url))
-      if (previewVideo) URL.revokeObjectURL(previewVideo)
 
       toast.success('Vehicle updated successfully')
       router.push('/dashboard/vehicles')
@@ -583,51 +528,16 @@ export default function EditVehicle() {
             )}
           </div>
 
-          {/* Video Section */}
-          <div className="space-y-4 mt-6">
-            <Label>Vehicle Video</Label>
-
-            {watchedVideo && !previewVideo && (
-              <div className="rounded-lg border overflow-hidden p-2">
-                <video src={watchedVideo.url} controls className="w-full" />
-              </div>
+          <div className="mb-4 space-y-2 mt-4">
+            <Label htmlFor="videoLink">Video Link</Label>
+            <Input
+              id="videoLink"
+              placeholder="Enter vehicle description"
+              {...register('videoLink')}
+            />
+            {errors.videoLink && (
+              <p className="text-red-500 text-sm">{errors.videoLink.message}</p>
             )}
-
-            {previewVideo && (
-              <div className="relative group rounded-lg border-2 border-dashed border-primary/50 overflow-hidden">
-                <video src={previewVideo} controls className="w-full" />
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={removeVideo}
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
-              </div>
-            )}
-
-            <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6">
-              <div className="text-center">
-                <Upload className="mx-auto h-12 w-12 text-muted-foreground/50" />
-                <div className="mt-4">
-                  <Label htmlFor="videoUpload" className="cursor-pointer">
-                    <span className="text-sm font-medium text-primary hover:text-primary/80">
-                      Click to upload a video
-                    </span>
-                    <Input
-                      id="videoUpload"
-                      type="file"
-                      accept="video/*"
-                      className="hidden"
-                      onChange={handleVideoUpload}
-                      disabled={isUploading}
-                    />
-                  </Label>
-                </div>
-              </div>
-            </div>
           </div>
 
           <div className="mb-4 space-y-2">

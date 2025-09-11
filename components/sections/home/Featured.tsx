@@ -93,65 +93,65 @@ export default function Featured() {
                 key={truck.id}
                 className="min-w-[300px] max-w-[300px] mx-4 flex-shrink-0"
               >
-                <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                  {/* Image Section */}
-                  <div className="relative">
-                    {truck.images.length > 0 ? (
-                      <Image
-                        src={truck.images[0].url}
-                        alt={`${truck.year} ${truck.make} ${truck.model}`}
-                        width={400}
-                        height={300}
-                        className="w-full h-48 object-cover"
-                        priority
-                      />
-                    ) : (
-                      <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
-                        No Image Available
-                      </div>
-                    )}
-                    <Badge className="absolute top-2 right-2 bg-amber-600">
-                      {truck.condition}
-                    </Badge>
-                  </div>
-
-                  {/* Card Content */}
-                  <CardContent className="p-4 flex flex-col justify-between flex-grow">
-                    <h3 className="text-xl font-bold mb-2">
-                      {truck.year} {truck.make} {truck.model}
-                    </h3>
-                    <div className="flex flex-col items-start mb-3">
-                      <div>
-                        <span className="text-2xl font-bold text-yellow-600">
-                          R{truck.vatPrice.toLocaleString()}{' '}
-                          <span className="text-sm">inc. VAT</span>
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-gray-600 flex items-center">
-                          <Gauge size={18} className="mr-1" />
-                          {truck.mileage.toLocaleString()} km
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      <Badge key={`${truck.id}-condition`}>
+                <Link href={`/inventory/${truck.slug}`}>
+                  <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    {/* Image Section */}
+                    <div className="relative">
+                      {truck.images.length > 0 ? (
+                        <Image
+                          src={truck.images[0].url}
+                          alt={`${truck.year} ${truck.make} ${truck.model}`}
+                          width={400}
+                          height={300}
+                          className="w-full h-48 object-cover"
+                          priority
+                        />
+                      ) : (
+                        <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+                          No Image Available
+                        </div>
+                      )}
+                      <Badge className="absolute top-2 right-2 bg-amber-600">
                         {truck.condition}
                       </Badge>
-                      <Badge key={`${truck.id}-fuelType`}>
-                        {truck.fuelType}
-                      </Badge>
-                      <Badge key={`${truck.id}-transmission`}>
-                        {truck.transmission}
-                      </Badge>
                     </div>
-                    <Button asChild className="w-full mt-auto">
-                      <Link href={`/inventory/${truck.slug}`}>
+
+                    {/* Card Content */}
+                    <CardContent className="p-4 flex flex-col justify-between flex-grow">
+                      <h3 className="text-xl font-bold mb-2">
+                        {truck.year} {truck.make} {truck.model}
+                      </h3>
+                      <div className="flex flex-col items-start mb-3">
+                        <div>
+                          <span className="text-2xl font-bold text-yellow-600">
+                            R{truck.vatPrice.toLocaleString()}{' '}
+                            <span className="text-sm">inc. VAT</span>
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600 flex items-center">
+                            <Gauge size={18} className="mr-1" />
+                            {truck.mileage.toLocaleString()} km
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        <Badge key={`${truck.id}-condition`}>
+                          {truck.condition}
+                        </Badge>
+                        <Badge key={`${truck.id}-fuelType`}>
+                          {truck.fuelType}
+                        </Badge>
+                        <Badge key={`${truck.id}-transmission`}>
+                          {truck.transmission}
+                        </Badge>
+                      </div>
+                      <Button asChild className="w-full mt-auto">
                         View Details
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Link>
               </div>
             ))}
           </Marquee>

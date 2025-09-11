@@ -18,11 +18,6 @@ interface SparesImage {
   fileId: string
 }
 
-interface SparesVideo {
-  url: string
-  fileId: string
-}
-
 interface SparesItem {
   id: string
   name: string
@@ -33,16 +28,13 @@ interface SparesItem {
   description?: string
   slug: string
   images: SparesImage[]
-  videoLink?: SparesVideo | null
+  videoLink?: string | null
 }
 
 export default function EditSpares() {
   const [loading, setLoading] = useState(true)
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [previewImages, setPreviewImages] = useState<string[]>([])
-  const [selectedVideo, setSelectedVideo] = useState<File | null>(null)
-  const [previewVideo, setPreviewVideo] = useState<string | null>(null)
-  const [uploadedVideo, setUploadedVideo] = useState<SparesVideo | null>(null)
   const [isUploading, setIsUploading] = useState(false)
 
   const {
@@ -53,7 +45,7 @@ export default function EditSpares() {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<SparesItem>({
-    defaultValues: { images: [], videoLink: null },
+    defaultValues: { images: [] },
   })
 
   const router = useRouter()
@@ -61,7 +53,6 @@ export default function EditSpares() {
   const slug = params.slug as string
 
   const watchedImages = watch('images') || []
-  const watchedVideo = watch('videoLink') || uploadedVideo || null
 
   useEffect(() => {
     const fetchSpares = async () => {
@@ -76,10 +67,6 @@ export default function EditSpares() {
         }
 
         reset(data.data)
-
-        if (data.data.videoLink) {
-          setUploadedVideo(data.data.videoLink)
-        }
       } catch (error) {
         console.error('Error fetching spare item:', error)
         toast.error(
@@ -97,9 +84,8 @@ export default function EditSpares() {
   useEffect(() => {
     return () => {
       previewImages.forEach((url) => URL.revokeObjectURL(url))
-      if (previewVideo) URL.revokeObjectURL(previewVideo)
     }
-  }, [previewImages, previewVideo])
+  }, [previewImages])
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -114,10 +100,6 @@ export default function EditSpares() {
   const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-
-    if (previewVideo) URL.revokeObjectURL(previewVideo)
-    setSelectedVideo(file)
-    setPreviewVideo(URL.createObjectURL(file))
   }
 
   const removeImage = (index: number) => {
@@ -132,14 +114,6 @@ export default function EditSpares() {
     const newPreviews = previewImages.filter((_, i) => i !== index)
     setSelectedFiles(newFiles)
     setPreviewImages(newPreviews)
-  }
-
-  const removeVideo = () => {
-    if (previewVideo) URL.revokeObjectURL(previewVideo)
-    setSelectedVideo(null)
-    setPreviewVideo(null)
-    setUploadedVideo(null)
-    setValue('videoLink', null)
   }
 
   const getAuthParams = async () => {
@@ -178,34 +152,10 @@ export default function EditSpares() {
         }
       }
 
-      let videoData = uploadedVideo
-      if (selectedVideo) {
-        try {
-          const { token, signature, publicKey, expire } = await getAuthParams()
-          const uniqueFileName = `${uuidv4()}_${selectedVideo.name}`
-          const res = await upload({
-            file: selectedVideo,
-            fileName: uniqueFileName,
-            folder: 'spares-videos',
-            expire,
-            token,
-            signature,
-            publicKey,
-          })
-          if (!res?.url || !res?.fileId) throw new Error('Video upload failed')
-          videoData = { url: res.url, fileId: res.fileId }
-          setUploadedVideo(videoData)
-        } catch (err) {
-          console.error(err)
-          toast.error('Failed to upload video')
-        }
-      }
-
       const allImages = [...watchedImages, ...newUploadedImages]
       const updatedFormData = {
         ...formData,
         images: allImages,
-        videoLink: videoData,
       }
 
       const res = await fetch(`/api/spares/${slug}`, {
@@ -219,7 +169,6 @@ export default function EditSpares() {
       }
 
       previewImages.forEach((url) => URL.revokeObjectURL(url))
-      if (previewVideo) URL.revokeObjectURL(previewVideo)
 
       toast.success('Spares Item updated successfully')
       router.push('/dashboard/spares')
@@ -351,40 +300,12 @@ export default function EditSpares() {
           </div>
 
           {/* Video Section */}
-          <div className="space-y-2 mt-6">
-            <Label htmlFor="videoUpload" className="cursor-pointer">
-              <span className="text-sm font-medium text-primary">
-                Click to upload images
-              </span>
-              <div className="border-2 border-dashed rounded-lg p-6 text-center">
-                <Upload className="mx-auto h-12 w-12 text-muted-foreground/50" />
-                <Input
-                  type="file"
-                  accept="video/*"
-                  className="hidden"
-                  onChange={handleVideoUpload}
-                />
-              </div>
-              Video
-            </Label>
-            {(previewVideo || uploadedVideo) && (
-              <div className="relative mt-2">
-                <video
-                  src={previewVideo || uploadedVideo?.url}
-                  controls
-                  className="w-full rounded-lg"
-                />
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  className="absolute top-2 right-2"
-                  onClick={removeVideo}
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
-              </div>
-            )}
+          <div className="mb-4 space-y-2 mt-6">
+            <Label>Video Link</Label>
+            <Input
+              {...register('videoLink')}
+              placeholder="e.g https://www.youtube.com/watch?v=example"
+            />
           </div>
 
           <div className="mb-4 space-y-2 mt-6">

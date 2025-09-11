@@ -18,7 +18,7 @@ interface UpdateVehicleBody {
   condition: Condition
   transmission?: Transmission | null
   images: string[]
-  videoLink?: string[]
+  videoLink?: string | null
   slug: string
   description: string
   bodyType: string
@@ -114,7 +114,7 @@ export const PATCH = auth(async (req, { params }) => {
       condition: body.condition,
       transmission: body.transmission ?? null,
       images: body.images,
-      videoLink: body.videoLink ?? [],
+      videoLink: body.videoLink ?? null,
       slug: body.slug,
       description: body.description,
       bodyType: body.bodyType,
