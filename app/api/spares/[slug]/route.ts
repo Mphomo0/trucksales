@@ -8,6 +8,7 @@ interface UpdateSparesBody {
   name: string
   make: string
   price: number
+  noVatPrice: number
   condition: string
   category: string
   images: string[]
@@ -103,7 +104,8 @@ export const PATCH = auth(async (req, { params }) => {
       name: body.name,
       make: body.make,
       category: body.category as Category,
-      price: body.price,
+      price: Number(body.price),
+      noVatPrice: body.noVatPrice ? Number(body.noVatPrice) : null,
       condition: body.condition as Condition,
       images: body.images,
       slug: body.slug,

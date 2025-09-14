@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import slugify from 'slugify'
+import { no } from 'zod/v4/locales'
 
 interface Filters {
   make?: string
@@ -32,6 +33,7 @@ export const POST = auth(async (req) => {
       description,
       make,
       price,
+      noVatPrice,
       condition,
       category,
       images,
@@ -83,6 +85,16 @@ export const POST = auth(async (req) => {
       )
     }
 
+    // Parse numeric values
+    const parsedVatPrice = Number.parseFloat(noVatPrice)
+
+    if (isNaN(parsedVatPrice)) {
+      return NextResponse.json(
+        { error: 'Price must be valid numbers' },
+        { status: 400 }
+      )
+    }
+
     // Normalize enum values
     const upperCondition = condition.toUpperCase()
     const upperCategory = category.toUpperCase()
@@ -104,6 +116,7 @@ export const POST = auth(async (req) => {
         name,
         make: lowerMake,
         price: parsedPrice,
+        noVatPrice: parsedVatPrice,
         condition: upperCondition,
         category: upperCategory,
         description,

@@ -13,16 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import {
-  ArrowLeft,
-  Phone,
-  Mail,
-  Calendar,
-  Gauge,
-  Fuel,
-  Settings,
-  Star,
-} from 'lucide-react'
+import { ArrowLeft, Phone, Mail, Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { WhatsAppButton } from '@/components/sections/inventorySection/WhatsAppButton'
@@ -40,6 +31,7 @@ interface SparePart {
   name: string
   make: string
   price: number
+  noVatPrice: number
   category: string
   condition: string
   description: string
@@ -343,6 +335,16 @@ export default function SpareDetail() {
                   <div className="text-3xl font-bold text-amber-600 mb-2">
                     R{spares.price.toLocaleString()}
                   </div>
+                  {spares.noVatPrice && (
+                    <p className="text-gray-600">
+                      R
+                      {spares.noVatPrice.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}{' '}
+                      excl. VAT
+                    </p>
+                  )}
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">

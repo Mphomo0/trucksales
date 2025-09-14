@@ -23,6 +23,7 @@ interface SparesItem {
   name: string
   make: string
   price: number
+  noVatPrice: number
   category: string
   condition: string
   description?: string
@@ -182,6 +183,14 @@ export default function EditSpares() {
     }
   }
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96 p-8">
+        Loading...
+      </div>
+    )
+  }
+
   return (
     <div className="py-16">
       <div className="max-w-4xl mx-auto bg-white rounded-2xl p-6 px-12 py-12">
@@ -198,11 +207,18 @@ export default function EditSpares() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-2 gap-4">
             <div className="mb-4 space-y-2">
-              <Label>Price</Label>
+              <Label>Price VAT Included</Label>
               <Input {...register('price')} placeholder="Enter price" />
             </div>
+            <div className="mb-4 space-y-2">
+              <Label>Price No VAT</Label>
+              <Input {...register('noVatPrice')} placeholder="Enter price" />
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
             <div className="mb-4 space-y-2">
               <Label>Condition</Label>
               <select
@@ -242,6 +258,7 @@ export default function EditSpares() {
                       width={200}
                       height={200}
                       className="object-cover rounded-lg border"
+                      priority
                     />
                     <Button
                       type="button"
@@ -283,6 +300,7 @@ export default function EditSpares() {
                       width={200}
                       height={200}
                       className="object-cover rounded-lg border-2 border-dashed border-primary/50"
+                      priority
                     />
                     <Button
                       type="button"

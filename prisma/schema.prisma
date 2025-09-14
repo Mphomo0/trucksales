@@ -61,6 +61,7 @@ model spares {
   description       String
   make              String
   price             Float
+  noVatPrice        Float?
   condition         Condition
   category          Category
   images            Json

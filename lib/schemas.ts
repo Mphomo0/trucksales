@@ -109,6 +109,7 @@ export const spareSchema = z.object({
     .min(1, 'Make is required')
     .transform((val) => val.trim()),
   price: z.coerce.number<number>(),
+  noVatPrice: z.coerce.number<number>(),
   condition: z.string().min(1, 'Condition is required'),
   category: z.string().min(1, 'Category is required'),
   description: z

@@ -289,10 +289,10 @@ export default function AllSparesFilter() {
                       <h3 className="text-lg font-bold mb-1 truncate">
                         {spare.name}
                       </h3>
-                      <p className="text-sm text-gray-600 capitalize truncate mb-1">
+                      <p className="text-lg text-gray-600 capitalize truncate mb-1">
                         {spare.make}
                       </p>
-                      <p className="text-yellow-600 font-semibold text-base mb-3">
+                      <p className="text-2xl font-bold text-yellow-600 mb-3">
                         R{spare.price.toLocaleString()}
                         <span className="text-xs text-gray-500">
                           {' '}

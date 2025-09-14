@@ -21,7 +21,6 @@ import { v4 as uuidv4 } from 'uuid'
 import { useRouter } from 'next/navigation'
 import UploadMultiple from '../stockSection/UploadMultiple'
 import { spareSchema } from '@/lib/schemas'
-import UploadVideo from '@/components/global/UploadVideo'
 
 type SparesFormData = z.infer<typeof spareSchema>
 
@@ -158,9 +157,9 @@ export default function CreateSpares() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-2 gap-4">
             <div className="mb-4 space-y-2">
-              <Label htmlFor="price">Price</Label>
+              <Label htmlFor="price">Price VAT Included</Label>
               <Input
                 id="price"
                 type="text"
@@ -171,6 +170,23 @@ export default function CreateSpares() {
                 <p className="text-red-500 text-sm">{errors.price.message}</p>
               )}
             </div>
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="noVatPrice">Price No VAT</Label>
+              <Input
+                id="noVatPrice"
+                type="text"
+                placeholder="Enter Spares Price"
+                {...register('noVatPrice')}
+              />
+              {errors.noVatPrice && (
+                <p className="text-red-500 text-sm">
+                  {errors.noVatPrice.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
             <div className="mb-4 space-y-2">
               <Label>Condition</Label>
               <Controller
