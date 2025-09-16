@@ -63,7 +63,7 @@ export default function GetVehicles() {
     if (!confirm('Are you sure you want to delete this spares Item?')) return
 
     try {
-      const res = await fetch(`/api/spares/${slug}`)
+      const res = await fetch(`/api/spares/${slug}`, { method: 'GET' })
       if (!res.ok) throw new Error('Failed to fetch spares details')
 
       const response = await res.json()
