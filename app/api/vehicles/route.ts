@@ -57,7 +57,7 @@ export const POST = auth(async (req) => {
       truckSize,
     ]
 
-    if (requiredFields.some((field) => field === undefined || field === '')) {
+    if (requiredFields.some((field) => !field)) {
       return NextResponse.json(
         { error: 'All required fields must be provided' },
         { status: 400 }
@@ -93,7 +93,7 @@ export const POST = auth(async (req) => {
       isNaN(parsedYear) ||
       isNaN(parsedVatPrice) ||
       isNaN(parsedPricenoVat) ||
-      isNaN(parsedMileage ?? 0)
+      (parsedMileage !== null && isNaN(parsedMileage))
     ) {
       return NextResponse.json(
         { error: 'Year, price, and mileage must be valid numbers' },

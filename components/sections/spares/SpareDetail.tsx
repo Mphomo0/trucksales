@@ -305,7 +305,7 @@ export default function SpareDetail() {
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-2xl md:text-3xl">
-                      {spares.name}
+                      {spares.name.toUpperCase()}
                     </CardTitle>
                   </div>
                   <Badge className="bg-amber-600">{spares.condition}</Badge>

@@ -118,8 +118,9 @@ export default function Featured() {
 
                     {/* Card Content */}
                     <CardContent className="p-4 flex flex-col justify-between flex-grow">
-                      <h3 className="text-xl font-bold mb-2">
-                        {truck.year} {truck.make} {truck.model}
+                      <h3 className="text-xl font-bold mb-2 line-clamp-1">
+                        {truck.year} {truck.make.toUpperCase()}{' '}
+                        {truck.model.toUpperCase()}
                       </h3>
                       <div className="flex flex-col items-start mb-3">
                         <div>

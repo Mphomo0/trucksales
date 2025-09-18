@@ -332,7 +332,7 @@ export default function AllVehiclesFilter() {
                 <SelectItem value="all">All Makes</SelectItem>
                 {(filterOptions.makes || []).map((make) => (
                   <SelectItem key={make} value={make}>
-                    {make}
+                    {make.toUpperCase()}
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -145,14 +145,18 @@ export default function GetVehicles() {
       accessorKey: 'make',
       header: () => <span className="hidden md:inline">Make</span>,
       cell: ({ row }) => (
-        <span className="hidden md:table-cell">{row.original.make}</span>
+        <span className="hidden md:table-cell">
+          {row.original.make.toUpperCase()}
+        </span>
       ),
     },
     {
       accessorKey: 'model',
       header: () => <span className="hidden md:inline">Model</span>,
       cell: ({ row }) => (
-        <span className="hidden md:table-cell">{row.original.model}</span>
+        <span className="hidden md:table-cell">
+          {row.original.model.toUpperCase()}
+        </span>
       ),
     },
     {

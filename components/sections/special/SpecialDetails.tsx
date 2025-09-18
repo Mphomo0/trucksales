@@ -318,8 +318,9 @@ export default function SpecialDetails() {
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-2xl md:text-3xl">
-                      {special.inventory.year} {special.inventory.make}{' '}
-                      {special.inventory.model}
+                      {special.inventory.year}{' '}
+                      {special.inventory.make.toUpperCase()}{' '}
+                      {special.inventory.model.toUpperCase()}
                     </CardTitle>
                   </div>
                   <Badge className="bg-red-600 uppercase">on special</Badge>

@@ -130,6 +130,7 @@ export const PATCH = auth(async (req, { params }) => {
 
     return NextResponse.json({ updatedVehicle }, { status: 200 })
   } catch (error) {
+    console.error('Update failed:', error)
     return NextResponse.json({ error: 'Update failed' }, { status: 500 })
   }
 })

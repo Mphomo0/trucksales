@@ -318,7 +318,8 @@ export default function TruckDetail() {
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-2xl md:text-3xl">
-                      {vehicle.year} {vehicle.make} {vehicle.model}
+                      {vehicle.year} {vehicle.make.toUpperCase()}{' '}
+                      {vehicle.model.toUpperCase()}
                     </CardTitle>
                   </div>
                   <Badge className="bg-amber-600">{vehicle.condition}</Badge>

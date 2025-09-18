@@ -149,7 +149,7 @@ export default function GetSpecials() {
           <TableBody>
             {specials?.map((special) => (
               <TableRow key={special.slug}>
-                <TableCell>{special.inventory.name}</TableCell>
+                <TableCell>{special.inventory.name.toUpperCase()}</TableCell>
                 <TableCell>R{special.amount.toFixed(2)}</TableCell>
                 <TableCell>{formatDate(special.validFrom)}</TableCell>
                 <TableCell>{formatDate(special.validTo)}</TableCell>
