@@ -215,19 +215,20 @@ export default function EditVehicle() {
       <div className="max-w-4xl mx-auto bg-white rounded-2xl p-6 px-12 py-12">
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* --- Basic Info --- */}
+          <div className="mb-4 space-y-2">
+            <Label htmlFor="name">Vehicle Name</Label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="Enter vehicle name"
+              {...register('name')}
+            />
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            )}
+          </div>
+
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="mb-4 space-y-2">
-              <Label htmlFor="name">Vehicle Name</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Enter vehicle name"
-                {...register('name')}
-              />
-              {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name.message}</p>
-              )}
-            </div>
             <div className="mb-4 space-y-2">
               <Label htmlFor="registrationNo">Registration Number</Label>
               <Input
@@ -242,10 +243,209 @@ export default function EditVehicle() {
                 </p>
               )}
             </div>
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="make">Vehicle Make</Label>
+              <Input
+                id="make"
+                type="text"
+                placeholder="Enter Vehicle Make"
+                {...register('make')}
+              />
+              {errors.make && (
+                <p className="text-red-500 text-sm">{errors.make.message}</p>
+              )}
+            </div>
           </div>
 
-          {/* --- Other Fields (make, model, year, prices, etc.) --- */}
-          {/* You keep your original fields here, unchanged (make, model, year, prices, mileage, fuel, condition, transmission, bodyType, truckSize) */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="model">Vehicle Model</Label>
+              <Input
+                id="model"
+                type="text"
+                placeholder="Enter Vehicle Model"
+                {...register('model')}
+              />
+              {errors.registrationNo && (
+                <p className="text-red-500 text-sm">
+                  {errors.registrationNo.message}
+                </p>
+              )}
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="year">Year Manufactured</Label>
+              <Input
+                id="year"
+                type="text"
+                placeholder="Year Manufactured"
+                {...register('year')}
+              />
+              {errors.year && (
+                <p className="text-red-500 text-sm">{errors.year.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="vatPrice">Price VAT Included</Label>
+              <Input
+                id="vatPrice"
+                type="text"
+                placeholder="Price VAT Included"
+                {...register('vatPrice')}
+              />
+              {errors.vatPrice && (
+                <p className="text-red-500 text-sm">
+                  {errors.vatPrice.message}
+                </p>
+              )}
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="pricenoVat">Price No VAT Included</Label>
+              <Input
+                id="pricenoVat"
+                type="text"
+                placeholder="Price No VAT Included"
+                {...register('pricenoVat')}
+              />
+              {errors.pricenoVat && (
+                <p className="text-red-500 text-sm">
+                  {errors.pricenoVat.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="vatPrice">Mileage</Label>
+              <Input
+                id="mileage"
+                type="text"
+                placeholder="Vehicle Mileage"
+                {...register('mileage')}
+              />
+              {errors.mileage && (
+                <p className="text-red-500 text-sm">{errors.mileage.message}</p>
+              )}
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="fuelType">Fuel Type</Label>
+              <select
+                id="fuelType"
+                {...register('fuelType')}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Select Fuel Type</option>
+                <option value="DIESEL">Diesel</option>
+                <option value="PETROL">Petrol</option>
+              </select>
+              {errors.fuelType && (
+                <p className="text-red-500 text-sm">
+                  {errors.fuelType.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="mb-4 space-y-2">
+              <Label>Condition</Label>
+              <select
+                id="condition"
+                {...register('condition')}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Select Condition</option>
+                <option value="USED">Used</option>
+                <option value="NEW">New</option>
+              </select>
+              {errors.condition && (
+                <p className="text-red-500 text-sm">
+                  {errors.condition.message}
+                </p>
+              )}
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label>Transmission</Label>
+              <select
+                id="transmission"
+                {...register('transmission')}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Select Transmission</option>
+                <option value="MANUAL">Manual</option>
+                <option value="AUTOMATIC">Automatic</option>
+              </select>
+              {errors.transmission && (
+                <p className="text-red-500 text-sm">
+                  {errors.transmission.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="mb-4 space-y-2">
+              <Label>Body Type</Label>
+              <select
+                id="bodyType"
+                {...register('bodyType')}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Select Body Type</option>
+                <option value="Bower Truck">Bower Truck</option>
+                <option value="Cage">Cage</option>
+                <option value="Cattle Body">Cattle Body</option>
+                <option value="Chassis Cab">Chassis Cab</option>
+                <option value="Cherry Picker Truck">Cherry Picker Truck</option>
+                <option value="Crane Truck">Crane Truck</option>
+                <option value="Curtain Side Truck">Curtain Side Truck</option>
+                <option value="Dropside Truck">Dropside Truck</option>
+                <option value="Fire Fighting Unit">Fire Fighting Unit</option>
+                <option value="Flatbed">Flatbed</option>
+                <option value="Honey Sucker">Honey Sucker</option>
+                <option value="Hooklift">Hooklift</option>
+                <option value="Insulated Body">Insulated Body</option>
+                <option value="Mass Side">Mass Side</option>
+                <option value="Other Specialized">Other Specialized</option>
+                <option value="Refrigerated Body">Refrigerated Body</option>
+                <option value="Roll Back">Roll Back</option>
+                <option value="Skip Loader">Skip Loader</option>
+                <option value="Tanker">Tanker</option>
+                <option value="Tipper Truck">Tipper Truck</option>
+                <option value="Truck Tractor">Truck Tractor</option>
+                <option value="Volume Body">Volume Body</option>
+              </select>
+              {errors.bodyType && (
+                <p className="text-red-500 text-sm">
+                  {errors.bodyType.message}
+                </p>
+              )}
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label>Truck Size</Label>
+              <select
+                id="truckSize"
+                {...register('truckSize')}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Select Truck Size</option>
+                <option value="1 to 2.5 Ton">1 to 2.5 Ton</option>
+                <option value="3 to 5 Ton">3 to 5 Ton</option>
+                <option value="6 to 7 Ton">6 to 7 Ton</option>
+                <option value="8 to 9 Ton">8 to 9 Ton</option>{' '}
+                <option value="10 to 18 Ton">10 to 18 Ton</option>
+                <option value="18 to 35 Ton">18 to 35 Ton</option>
+              </select>
+              {errors.truckSize && (
+                <p className="text-red-500 text-sm">
+                  {errors.truckSize.message}
+                </p>
+              )}
+            </div>
+          </div>
 
           {/* --- Images Section --- */}
           <div className="space-y-4 mt-6">

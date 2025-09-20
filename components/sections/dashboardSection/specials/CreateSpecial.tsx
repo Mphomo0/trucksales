@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation'
 interface Vehicle {
   id: string
   name: string
+  registrationNo: string
 }
 
 const specialFormSchema = z.object({
@@ -90,19 +91,19 @@ export default function CreateSpecial() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Vehicle Name */}
           <div className="space-y-2">
-            <Label htmlFor="inventoryId">Vehicle Name</Label>
+            <Label htmlFor="inventoryId">Vehicle Registration Number</Label>
             <Controller
               control={control}
               name="inventoryId"
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Vehicle Name" />
+                    <SelectValue placeholder="Select registration Number" />
                   </SelectTrigger>
                   <SelectContent>
                     {vehicles.map((vehicle) => (
                       <SelectItem key={vehicle.id} value={vehicle.id}>
-                        {vehicle.name}
+                        {vehicle.registrationNo}
                       </SelectItem>
                     ))}
                   </SelectContent>

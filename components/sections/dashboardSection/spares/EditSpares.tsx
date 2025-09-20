@@ -61,13 +61,13 @@ export default function EditSpares() {
         const res = await fetch(`/api/spares/${slug}`)
         if (!res.ok) throw new Error('Failed to fetch spare item')
         const data = await res.json()
-        console.log(data.data)
+        console.log(data.sparesItem)
 
-        if (!data.data) {
+        if (!data.sparesItem) {
           throw new Error('Spares item not found')
         }
 
-        reset(data.data)
+        reset(data.sparesItem)
       } catch (error) {
         console.error('Error fetching spare item:', error)
         toast.error(
