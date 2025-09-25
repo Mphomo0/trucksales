@@ -41,7 +41,7 @@ export function DataTable<TData, TValue>({
     pageSize: number
   }>({
     pageIndex: 0,
-    pageSize: 50,
+    pageSize: 550,
   })
 
   const table = useReactTable({

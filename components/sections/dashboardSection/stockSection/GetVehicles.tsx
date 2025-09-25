@@ -9,7 +9,6 @@ import { Trash2, SquarePen } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
-import { Pagination } from '@/components/global/Pagination'
 
 interface Vehicle {
   id: string
@@ -42,22 +41,15 @@ interface VideoFile {
 export default function GetVehicles() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
   const [loading, setLoading] = useState(true)
-  const [paginationMeta, setPaginationMeta] = useState({
-    page: 1,
-    limit: 50,
-    totalPages: 1,
-    total: 0,
-  })
   const [globalFilter, setGlobalFilter] = useState('')
 
-  const getAllVehicles = async (page = 1, limit = 50) => {
+  const getAllVehicles = async () => {
     try {
-      const response = await fetch(`/api/vehicles?page=${page}&limit=${limit}`)
+      const response = await fetch('/api/vehicles')
       if (!response.ok) throw new Error('Failed to fetch vehicles')
 
       const data = await response.json()
       setVehicles(data.vehicles)
-      setPaginationMeta(data.meta)
     } catch (error) {
       console.error('Error fetching vehicles:', error)
     } finally {
@@ -66,8 +58,8 @@ export default function GetVehicles() {
   }
 
   useEffect(() => {
-    getAllVehicles(paginationMeta.page, paginationMeta.limit)
-  }, [paginationMeta.page, paginationMeta.limit])
+    getAllVehicles()
+  }, [])
 
   const handleDeleteVehicle = async (slug: string) => {
     if (!confirm('Are you sure you want to delete this vehicle?')) return
@@ -81,13 +73,11 @@ export default function GetVehicles() {
 
       if (!vehicle) throw new Error('Vehicle data not found')
 
-      // Collect file IDs (images + video)
       const fileIds = [
         ...(vehicle.images?.map((img: ImageFile) => img.fileId) || []),
         ...(vehicle.videoLink?.fileId ? [vehicle.videoLink.fileId] : []),
       ]
 
-      //  Delete from ImageKit if any fileIds exist
       if (fileIds.length > 0) {
         const delRes = await fetch('/api/images/delete-images', {
           method: 'POST',
@@ -98,14 +88,13 @@ export default function GetVehicles() {
         if (!delRes.ok) throw new Error('Failed to delete files from ImageKit')
       }
 
-      //  Delete vehicle itself
       const vehicleDeleteRes = await fetch(`/api/vehicles/${slug}`, {
         method: 'DELETE',
       })
       if (!vehicleDeleteRes.ok) throw new Error('Failed to delete vehicle')
 
       toast.success('Vehicle and associated files deleted successfully')
-      getAllVehicles(paginationMeta.page, paginationMeta.limit)
+      getAllVehicles()
     } catch (error) {
       console.error('Delete operation failed:', error)
       toast.error('Error deleting vehicle and/or files')
@@ -128,10 +117,7 @@ export default function GetVehicles() {
       enableSorting: false,
       enableColumnFilter: false,
     },
-    {
-      accessorKey: 'name',
-      header: 'Name',
-    },
+    { accessorKey: 'name', header: 'Name' },
     {
       accessorKey: 'registrationNo',
       header: () => <span className="hidden sm:inline">Reg Number</span>,
@@ -205,8 +191,7 @@ export default function GetVehicles() {
           className="w-full sm:max-w-sm"
         />
         <div className="text-sm text-gray-500">
-          Showing {vehicles.length} of {paginationMeta.total} vehicles (Limit:{' '}
-          {paginationMeta.limit})
+          Showing {vehicles.length} vehicles
         </div>
       </div>
 
@@ -223,22 +208,6 @@ export default function GetVehicles() {
             globalFilter={globalFilter}
           />
         )}
-      </div>
-
-      {/* Pagination */}
-      <div className="mt-4 flex flex-col sm:flex-row sm:justify-between items-center gap-3">
-        <Pagination
-          currentPage={paginationMeta.page}
-          totalPages={paginationMeta.totalPages}
-          onPageChange={(page) =>
-            setPaginationMeta({ ...paginationMeta, page })
-          }
-          limit={paginationMeta.limit}
-          onLimitChange={(newLimit) =>
-            setPaginationMeta({ ...paginationMeta, page: 1, limit: newLimit })
-          }
-          showLimitSelector={true}
-        />
       </div>
     </div>
   )

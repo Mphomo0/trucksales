@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import {
   Dialog,
   DialogContent,
@@ -110,11 +109,12 @@ export default function SpareDetail() {
         }
 
         const data = await res.json()
-        if (!data.data || !data.data) {
+        console.log('Fetched spares data:', data.sparesItem)
+        if (!data.sparesItem || !data.sparesItem) {
           throw new Error('Invalid response format')
         }
 
-        setSpares(data.data)
+        setSpares(data.sparesItem)
       } catch (error) {
         console.error('Error fetching spares:', error)
         setError('Failed to load spares data')

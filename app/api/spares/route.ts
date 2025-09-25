@@ -136,17 +136,10 @@ export const POST = auth(async (req) => {
   }
 })
 
-// GET /api/spares to fetch all vehicles
+// GET /api/spares to fetch all vehicle spares
 export const GET = async (req: NextRequest) => {
   try {
     const { searchParams } = new URL(req.url)
-
-    const page = Number.parseInt(searchParams.get('page') || '1', 10)
-    const limit = Math.min(
-      Number.parseInt(searchParams.get('limit') || '100', 10),
-      100
-    )
-    const skip = (page - 1) * limit
 
     const make = searchParams.get('make')
     const category = searchParams.get('category')
@@ -178,29 +171,14 @@ export const GET = async (req: NextRequest) => {
       ]
     }
 
-    const total = await prisma.spares.count({ where: filters })
-
     const spares = await prisma.spares.findMany({
-      skip,
-      take: limit,
       where: filters,
       orderBy: {
         [sortBy]: sortOrder,
       },
     })
 
-    return NextResponse.json(
-      {
-        spares,
-        meta: {
-          total,
-          page,
-          limit,
-          totalPages: Math.ceil(total / limit),
-        },
-      },
-      { status: 200 }
-    )
+    return NextResponse.json({ spares }, { status: 200 })
   } catch (error) {
     console.error('Spares fetch error:', error)
     return NextResponse.json(

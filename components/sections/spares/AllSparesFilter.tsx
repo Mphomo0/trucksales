@@ -38,13 +38,6 @@ export default function AllSparesFilter() {
   const [spares, setSpares] = useState<SparesItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [limit, setLimit] = useState(50)
-
-  const [paginationMeta, setPaginationMeta] = useState({
-    page: 1,
-    totalPages: 1,
-    total: 0,
-  })
 
   const [searchTerm, setSearchTerm] = useState('')
   const [makeFilter, setMakeFilter] = useState('all')
@@ -78,68 +71,53 @@ export default function AllSparesFilter() {
     return filters
   }, [searchTerm, makeFilter, categoryFilter])
 
-  const fetchSpares = useCallback(
-    async (page = 1, limitValue = 50, filters = {}) => {
-      try {
-        setLoading(true)
-        setError(null)
+  const fetchSpares = useCallback(async (filters = {}) => {
+    try {
+      setLoading(true)
+      setError(null)
 
-        const params = new URLSearchParams({
-          page: page.toString(),
-          limit: limitValue.toString(),
-          ...filters,
-        })
+      const params = new URLSearchParams({
+        ...filters,
+      })
 
-        const res = await fetch(`/api/spares?${params.toString()}`)
+      const res = await fetch(`/api/spares?${params.toString()}`)
 
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}))
-          throw new Error(
-            errorData.message || `HTTP ${res.status}: ${res.statusText}`
-          )
-        }
-
-        const data = await res.json()
-
-        setSpares(Array.isArray(data.spares) ? data.spares : [])
-
-        if (data.meta) {
-          setPaginationMeta({
-            page: data.meta.page || page,
-            totalPages: data.meta.totalPages || 1,
-            total: data.meta.total || 0,
-          })
-        }
-      } catch (error: unknown) {
-        console.error('Error fetching spares:', error)
-        if (error instanceof Error) {
-          setError(error.message)
-        } else {
-          setError('An unexpected error occurred while fetching spares')
-        }
-        setSpares([])
-        setPaginationMeta({ page: 1, totalPages: 1, total: 0 })
-      } finally {
-        setLoading(false)
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        throw new Error(
+          errorData.message || `HTTP ${res.status}: ${res.statusText}`
+        )
       }
-    },
-    []
-  )
+
+      const data = await res.json()
+
+      setSpares(Array.isArray(data.spares) ? data.spares : [])
+    } catch (error: unknown) {
+      console.error('Error fetching spares:', error)
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError('An unexpected error occurred while fetching spares')
+      }
+      setSpares([])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
-    fetchSpares(1, limit, {})
+    fetchSpares({})
   }, [])
 
   useEffect(() => {
     const filters = buildFilters()
-    setPaginationMeta((prev) => ({ ...prev, page: 1 }))
 
     const timeoutId = setTimeout(() => {
-      fetchSpares(1, limit, filters)
+      fetchSpares(filters)
     }, 500)
 
     return () => clearTimeout(timeoutId)
-  }, [searchTerm, makeFilter, categoryFilter, limit, buildFilters, fetchSpares])
+  }, [searchTerm, makeFilter, categoryFilter, buildFilters, fetchSpares])
 
   const clearFilters = useCallback(() => {
     setSearchTerm('')
@@ -150,28 +128,22 @@ export default function AllSparesFilter() {
   const handlePageChange = useCallback(
     (page: number) => {
       const filters = buildFilters()
-      fetchSpares(page, limit, filters)
-    },
-    [buildFilters, fetchSpares, limit]
-  )
-
-  const handleLimitChange = useCallback(
-    (newLimit: number) => {
-      setLimit(newLimit)
-      const filters = buildFilters()
-      fetchSpares(1, newLimit, filters)
+      fetchSpares(filters)
     },
     [buildFilters, fetchSpares]
   )
+
+  const handleLimitChange = useCallback(() => {
+    const filters = buildFilters()
+    fetchSpares(filters)
+  }, [buildFilters, fetchSpares])
 
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center max-w-md">
           <p className="text-red-500 text-lg mb-4">Error: {error}</p>
-          <Button onClick={() => fetchSpares(1, limit, buildFilters())}>
-            Try Again
-          </Button>
+          <Button onClick={() => fetchSpares(buildFilters())}>Try Again</Button>
         </div>
       </div>
     )
@@ -250,9 +222,8 @@ export default function AllSparesFilter() {
         {/* Total Count */}
         <div className="mb-6 text-center sm:text-left">
           <p className="text-gray-600">
-            Showing {loading ? '...' : paginationMeta.total.toLocaleString()}{' '}
-            spare
-            {paginationMeta.total === 1 ? '' : 's'}
+            Showing {loading ? '...' : spares.length} spare
+            {spares.length === 1 ? '' : 's'}
           </p>
         </div>
 
@@ -306,18 +277,6 @@ export default function AllSparesFilter() {
                   </Card>
                 </Link>
               ))}
-            </div>
-
-            {/* Pagination */}
-            <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-              <Pagination
-                currentPage={paginationMeta.page}
-                totalPages={paginationMeta.totalPages}
-                onPageChange={handlePageChange}
-                limit={limit}
-                onLimitChange={handleLimitChange}
-                showLimitSelector={true}
-              />
             </div>
           </>
         )}

@@ -9,7 +9,6 @@ import { Trash2, SquarePen } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
-import { Pagination } from '@/components/global/Pagination'
 
 interface SparesItem {
   id: string
@@ -31,23 +30,16 @@ interface ImageFile {
 export default function GetVehicles() {
   const [spareItem, setSpareItem] = useState<SparesItem[]>([])
   const [loading, setLoading] = useState(true)
-  const [paginationMeta, setPaginationMeta] = useState({
-    page: 1,
-    limit: 50,
-    totalPages: 1,
-    total: 0,
-  })
   const [globalFilter, setGlobalFilter] = useState('')
 
-  const getAllSpares = async (page = 1, limit = 50) => {
+  const getAllSpares = async () => {
     try {
-      const response = await fetch(`/api/spares?page=${page}&limit=${limit}`)
+      const response = await fetch('/api/spares') // No pagination params
       if (!response.ok) throw new Error('Failed to fetch spares')
 
       const data = await response.json()
       console.log('Fetched Spares:', data)
       setSpareItem(data.spares)
-      setPaginationMeta(data.meta)
     } catch (error) {
       console.error('Error fetching Spares:', error)
     } finally {
@@ -56,8 +48,8 @@ export default function GetVehicles() {
   }
 
   useEffect(() => {
-    getAllSpares(paginationMeta.page, paginationMeta.limit)
-  }, [paginationMeta.page, paginationMeta.limit])
+    getAllSpares()
+  }, [])
 
   const handleDeleteSpares = async (slug: string) => {
     if (!confirm('Are you sure you want to delete this spares Item?')) return
@@ -91,7 +83,7 @@ export default function GetVehicles() {
       if (!sparesRes.ok) throw new Error('Failed to delete spares item')
 
       toast.success('Spares Item and associated images deleted successfully')
-      getAllSpares(paginationMeta.page, paginationMeta.limit)
+      getAllSpares()
     } catch (error) {
       console.error('Delete operation failed:', error)
       toast.error('Error deleting spares and/or images')
@@ -151,8 +143,7 @@ export default function GetVehicles() {
           className="max-w-sm"
         />
         <div className="text-sm text-gray-500">
-          Showing {spareItem.length} of {paginationMeta.total} spares (Limit:{' '}
-          {paginationMeta.limit})
+          Showing {spareItem.length} spares
         </div>
       </div>
 
@@ -167,21 +158,6 @@ export default function GetVehicles() {
           globalFilter={globalFilter}
         />
       )}
-
-      <div className="mt-4 flex justify-end">
-        <Pagination
-          currentPage={paginationMeta.page}
-          totalPages={paginationMeta.totalPages}
-          onPageChange={(page) =>
-            setPaginationMeta({ ...paginationMeta, page })
-          }
-          limit={paginationMeta.limit}
-          onLimitChange={(newLimit) =>
-            setPaginationMeta({ ...paginationMeta, page: 1, limit: newLimit })
-          }
-          showLimitSelector={true}
-        />
-      </div>
     </div>
   )
 }

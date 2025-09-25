@@ -25,17 +25,6 @@ export function WhatsAppButton({ vehicleSlug }: WhatsAppButtonProps) {
   return (
     <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
       <Button className="w-full bg-green-500 hover:bg-green-600 text-white flex items-center gap-2">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          shapeRendering="geometricPrecision"
-          textRendering="geometricPrecision"
-          imageRendering="optimizeQuality"
-          fillRule="evenodd"
-          clipRule="evenodd"
-          viewBox="0 0 510 512.459"
-        >
-          <path fill="#ffffff" d="M435.689 74.468C387.754 26.471 324 .025..." />
-        </svg>
         Chat on WhatsApp
       </Button>
     </a>
