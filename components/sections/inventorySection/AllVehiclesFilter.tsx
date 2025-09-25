@@ -46,14 +46,6 @@ export default function AllVehiclesFilter() {
   const [trucks, setTrucks] = useState<Truck[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [limit, setLimit] = useState(50)
-
-  const [paginationMeta, setPaginationMeta] = useState({
-    page: 1,
-    totalPages: 1,
-    total: 0,
-  })
-
   const [searchTerm, setSearchTerm] = useState('')
   const [makeFilter, setMakeFilter] = useState('all')
   const [modelFilter, setModelFilter] = useState('all')
@@ -77,76 +69,63 @@ export default function AllVehiclesFilter() {
     return filters
   }, [searchTerm, makeFilter, modelFilter, bodyTypeFilter, truckSizeFilter])
 
-  const fetchTrucks = useCallback(
-    async (page = 1, limitValue = 50, filters = {}) => {
-      try {
-        setLoading(true)
-        setError(null) // Clear previous errors
+  const fetchTrucks = useCallback(async (filters = {}) => {
+    try {
+      setLoading(true)
+      setError(null) // Clear previous errors
 
-        const params = new URLSearchParams({
-          page: page.toString(),
-          limit: limitValue.toString(),
-          ...filters,
-        })
+      const params = new URLSearchParams({
+        ...filters,
+        limit: '450',
+      })
 
-        const res = await fetch(`/api/vehicles?${params.toString()}`)
+      const res = await fetch(`/api/vehicles?${params.toString()}`)
 
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}))
-          throw new Error(
-            errorData.message || `HTTP ${res.status}: ${res.statusText}`
-          )
-        }
-
-        const data = await res.json()
-
-        // Validate response structure
-        if (!data || typeof data !== 'object') {
-          throw new Error('Invalid response format from server')
-        }
-
-        setTrucks(Array.isArray(data.vehicles) ? data.vehicles : [])
-
-        if (data.meta) {
-          setPaginationMeta({
-            page: data.meta.page || page,
-            totalPages: data.meta.totalPages || 1,
-            total: data.meta.total || 0,
-          })
-        }
-
-        if (data.filterOptions) {
-          setFilterOptions({
-            makes: Array.isArray(data.filterOptions.makes)
-              ? data.filterOptions.makes
-              : [],
-            models: Array.isArray(data.filterOptions.models)
-              ? data.filterOptions.models
-              : [],
-            bodyTypes: Array.isArray(data.filterOptions.bodyTypes)
-              ? data.filterOptions.bodyTypes
-              : [],
-            truckSizes: Array.isArray(data.filterOptions.truckSizes)
-              ? data.filterOptions.truckSizes
-              : [],
-          })
-        }
-      } catch (error: unknown) {
-        console.error('Error fetching trucks:', error)
-        if (error instanceof Error) {
-          setError(error.message)
-        } else {
-          setError('An unexpected error occurred while fetching vehicles')
-        }
-        // Set empty state on error
-        setTrucks([])
-        setPaginationMeta({ page: 1, totalPages: 1, total: 0 })
-      } finally {
-        setLoading(false)
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        throw new Error(
+          errorData.message || `HTTP ${res.status}: ${res.statusText}`
+        )
       }
-    },
-    []
-  )
+
+      const data = await res.json()
+
+      // Validate response structure
+      if (!data || typeof data !== 'object') {
+        throw new Error('Invalid response format from server')
+      }
+
+      setTrucks(Array.isArray(data.vehicles) ? data.vehicles : [])
+
+      if (data.filterOptions) {
+        setFilterOptions({
+          makes: Array.isArray(data.filterOptions.makes)
+            ? data.filterOptions.makes
+            : [],
+          models: Array.isArray(data.filterOptions.models)
+            ? data.filterOptions.models
+            : [],
+          bodyTypes: Array.isArray(data.filterOptions.bodyTypes)
+            ? data.filterOptions.bodyTypes
+            : [],
+          truckSizes: Array.isArray(data.filterOptions.truckSizes)
+            ? data.filterOptions.truckSizes
+            : [],
+        })
+      }
+    } catch (error: unknown) {
+      console.error('Error fetching trucks:', error)
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError('An unexpected error occurred while fetching vehicles')
+      }
+      // Set empty state on error
+      setTrucks([])
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
   const fetchFilterOptions = useCallback(async () => {
     try {
@@ -178,7 +157,7 @@ export default function AllVehiclesFilter() {
   // Initial load
   useEffect(() => {
     const loadInitialData = async () => {
-      await Promise.all([fetchTrucks(1, limit, {}), fetchFilterOptions()])
+      await Promise.all([fetchTrucks(), fetchFilterOptions()])
     }
 
     loadInitialData()
@@ -187,12 +166,8 @@ export default function AllVehiclesFilter() {
   // Filter change effect with debouncing
   useEffect(() => {
     const filters = buildFilters()
-
-    // Reset to page 1 when filters change
-    setPaginationMeta((prev) => ({ ...prev, page: 1 }))
-
     const timeoutId = setTimeout(() => {
-      fetchTrucks(1, limit, filters)
+      fetchTrucks(filters)
     }, 500)
 
     return () => clearTimeout(timeoutId)
@@ -202,7 +177,6 @@ export default function AllVehiclesFilter() {
     modelFilter,
     bodyTypeFilter,
     truckSizeFilter,
-    limit,
     buildFilters,
     fetchTrucks,
   ])
@@ -251,28 +225,22 @@ export default function AllVehiclesFilter() {
   const handlePageChange = useCallback(
     (page: number) => {
       const filters = buildFilters()
-      fetchTrucks(page, limit, filters)
-    },
-    [buildFilters, fetchTrucks, limit]
-  )
-
-  const handleLimitChange = useCallback(
-    (newLimit: number) => {
-      setLimit(newLimit)
-      const filters = buildFilters()
-      fetchTrucks(1, newLimit, filters)
+      fetchTrucks(filters)
     },
     [buildFilters, fetchTrucks]
   )
+
+  const handleLimitChange = useCallback(() => {
+    const filters = buildFilters()
+    fetchTrucks(filters)
+  }, [buildFilters, fetchTrucks])
 
   if (error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center max-w-md">
           <p className="text-red-500 text-lg mb-4">Error: {error}</p>
-          <Button onClick={() => fetchTrucks(1, limit, buildFilters())}>
-            Try Again
-          </Button>
+          <Button onClick={() => fetchTrucks(buildFilters())}>Try Again</Button>
         </div>
       </div>
     )
@@ -383,8 +351,7 @@ export default function AllVehiclesFilter() {
         {/* Results */}
         <div className="mb-6">
           <p className="hidden md:block text-gray-600">
-            Showing {loading ? '...' : paginationMeta.total.toLocaleString()}{' '}
-            trucks
+            Showing {loading ? '...' : trucks.length} trucks
           </p>
         </div>
 
@@ -453,21 +420,6 @@ export default function AllVehiclesFilter() {
                   </Card>
                 </Link>
               ))}
-            </div>
-
-            {/* Pagination */}
-            <div className="mt-12 flex justify-center">
-              <Pagination
-                currentPage={paginationMeta.page}
-                totalPages={paginationMeta.totalPages}
-                onPageChange={handlePageChange}
-                limit={limit}
-                onLimitChange={(newLimit) => {
-                  setLimit(newLimit)
-                  setPaginationMeta({ ...paginationMeta, page: 1 }) // reset to first page
-                }}
-                showLimitSelector={true}
-              />
             </div>
           </>
         )}
