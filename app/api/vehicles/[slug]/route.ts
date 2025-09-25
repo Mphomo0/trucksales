@@ -13,6 +13,7 @@ interface UpdateVehicleBody {
   model: string
   year: number
   vatPrice: number
+  pricenoVat: number
   mileage?: number | null
   fuelType?: FuelType
   condition: Condition
@@ -109,6 +110,7 @@ export const PATCH = auth(async (req, { params }) => {
       model: body.model,
       year: body.year,
       vatPrice: body.vatPrice,
+      pricenoVat: body.pricenoVat,
       mileage: body.mileage ?? null,
       fuelType: body.fuelType ?? null,
       condition: body.condition,
