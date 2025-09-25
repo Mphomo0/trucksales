@@ -4,13 +4,13 @@ import { useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod/v4'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -68,21 +68,48 @@ export default function CreateSpecial() {
   const todayString = today.toISOString().split('T')[0]
 
   const onSubmit = async (data: SpecialFormData) => {
+    // Find the vehicle by registration number
+
+    console.log('data', vehicles)
+    const matchedVehicle = vehicles.find(
+      (v) =>
+        v.registrationNo.toLowerCase() === data.inventoryId.trim().toLowerCase()
+    )
+
+    if (!matchedVehicle) {
+      toast.error('Vehicle with that registration number does not exist.')
+      return
+    }
+
+    // Replace inventoryId with the vehicle's actual ID
+    const payload = {
+      ...data,
+      inventoryId: matchedVehicle.id,
+    }
+
     try {
       const res = await fetch('/api/specials', {
         method: 'POST',
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
         headers: { 'Content-Type': 'application/json' },
       })
 
       if (res.ok) {
-        toast.success('User created successfully!')
+        toast.success('Special created successfully!')
         router.push('/dashboard/specials')
+      } else if (res.status === 409) {
+        toast.error(
+          'A special already exists for this vehicle during the selected date range.'
+        )
       } else {
         const err = await res.json()
-        toast.error('An error occurred while creating the special')
+        toast.error(
+          err.message || 'An error occurred while creating the special'
+        )
       }
-    } catch (error) {}
+    } catch (error) {
+      toast.error('Unexpected error occurred.')
+    }
   }
 
   return (
@@ -92,7 +119,7 @@ export default function CreateSpecial() {
           {/* Vehicle Name */}
           <div className="space-y-2">
             <Label htmlFor="inventoryId">Vehicle Registration Number</Label>
-            <Controller
+            {/* <Controller
               control={control}
               name="inventoryId"
               render={({ field }) => (
@@ -109,6 +136,11 @@ export default function CreateSpecial() {
                   </SelectContent>
                 </Select>
               )}
+            /> */}
+            <Input
+              id="inventoryId"
+              placeholder="Enter vehicle registration number"
+              {...register('inventoryId')}
             />
             {errors.inventoryId && (
               <p className="text-sm text-red-500">
