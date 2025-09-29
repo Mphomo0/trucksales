@@ -8,6 +8,7 @@ import GlobalWhatsAppButton from '@/components/global/GlobalWhatsAppButton'
 import Navbar from '@/components/global/Navbar'
 import Footer from '@/components/global/Footer'
 import { PostHogProvider } from './providers'
+import GoogleAnalytics from '@/components/global/GoogleAnalytics'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -37,6 +38,7 @@ export default function RootLayout({
       >
         <SessionProvider>
           <PostHogProvider>
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
             <Navbar />
             {children}
             <ToastContainer />
