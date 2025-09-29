@@ -1,22 +1,16 @@
 'use client'
 
 import Script from 'next/script'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 
 export default function GoogleAnalytics({ gaId }: { gaId: string }) {
   const pathname = usePathname()
-  const searchParams = useSearchParams()
 
   useEffect(() => {
     if (!pathname) return
-
-    const url: string = searchParams.toString()
-      ? `${pathname}?${searchParams.toString()}`
-      : pathname
-
-    ;(window as any).gtag?.('config', gaId, { page_path: url })
-  }, [pathname, searchParams, gaId])
+    ;(window as any).gtag?.('config', gaId, { page_path: pathname })
+  }, [pathname, gaId])
 
   return (
     <>
