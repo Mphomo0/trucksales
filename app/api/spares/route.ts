@@ -2,7 +2,6 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import slugify from 'slugify'
-import { no } from 'zod/v4/locales'
 
 interface Filters {
   make?: string
@@ -106,7 +105,7 @@ export const POST = auth(async (req) => {
     const baseSlug = slugify(`${make}-${price}-${category}`, { lower: true })
     let slug = baseSlug
     let counter = 1
-    while (await prisma.inventory.findUnique({ where: { slug } })) {
+    while (await prisma.spares.findUnique({ where: { slug } })) {
       slug = `${baseSlug}-${counter++}`
     }
 
