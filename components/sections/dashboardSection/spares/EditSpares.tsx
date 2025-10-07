@@ -253,7 +253,7 @@ export default function EditSpares() {
                 {watchedImages.map((img, idx) => (
                   <div key={idx} className="relative group">
                     <Image
-                      src={img.url}
+                      src={`${img.url}?tr=f-auto,q-75`}
                       alt={`image ${idx}`}
                       width={200}
                       height={200}

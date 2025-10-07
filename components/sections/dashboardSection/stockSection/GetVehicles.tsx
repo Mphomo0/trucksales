@@ -107,7 +107,7 @@ export default function GetVehicles() {
       header: 'Thumbnail',
       cell: ({ row }) => (
         <Image
-          src={row.original.images[0]?.url}
+          src={`${row.original.images[0]?.url}?tr=f-auto,q-75`}
           alt={row.original.name}
           width={50}
           height={50}
