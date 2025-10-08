@@ -215,7 +215,7 @@ export default function SpecialDetails() {
                         >
                           <div className="relative w-full h-full">
                             <Image
-                              src={`${img.url}?tr=f-auto,q-75`}
+                              src={`${img.url}?tr=f-auto`}
                               alt={`${special.inventory.name} image ${
                                 index + 1
                               }`}
