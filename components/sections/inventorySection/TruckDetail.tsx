@@ -202,7 +202,7 @@ export default function TruckDetail() {
                         >
                           <div className="relative w-full h-60 md:h-96">
                             <Image
-                              src={img.url}
+                              src={`${img.url}?tr=f-auto,q-75`}
                               alt={`${vehicle.name} image ${index + 1}`}
                               fill
                               className="object-cover"
