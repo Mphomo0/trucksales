@@ -189,7 +189,7 @@ export default function SpareDetail() {
                         >
                           <div className="relative w-full h-60 md:h-96">
                             <Image
-                              src={`${img.url}?tr=f-auto`}
+                              src={img.url}
                               alt={`${spares.name} image ${index + 1}`}
                               fill
                               className="object-cover"
