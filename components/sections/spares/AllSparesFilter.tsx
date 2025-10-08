@@ -243,7 +243,7 @@ export default function AllSparesFilter() {
                   <Card className="overflow-hidden hover:shadow-md transition-shadow">
                     <div className="relative">
                       <Image
-                        src={spare.images[0]?.url}
+                        src={spare.images?.[0]?.url}
                         alt={spare.name}
                         width={400}
                         height={250}
