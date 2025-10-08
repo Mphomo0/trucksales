@@ -1,8 +1,14 @@
 import type { NextConfig } from 'next'
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   images: {
-    domains: ['ik.imagekit.io'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'ik.imagekit.io',
+        pathname: '/mbk8n6mrn/**',
+      },
+    ],
   },
 }
 
