@@ -374,7 +374,7 @@ export default function AllVehiclesFilter() {
                   <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                     <div className="relative">
                       <ImageComponent
-                        src={`${truck.images?.[0]?.url}?tr=f-auto`}
+                        src={truck.images?.[0]?.url}
                         alt={`${truck.year} ${truck.make} ${truck.model}`}
                         width={400}
                         height={300}

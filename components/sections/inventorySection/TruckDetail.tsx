@@ -281,7 +281,7 @@ export default function TruckDetail() {
                         >
                           <div className="relative w-full h-full">
                             <Image
-                              src={`${img.url}?tr=f-auto`}
+                              src={img.url}
                               alt={`Thumbnail ${index + 1}`}
                               fill
                               className="object-cover"

@@ -473,7 +473,7 @@ export default function EditVehicle() {
                 <div key={item.id} className="relative group">
                   <div className="aspect-square relative overflow-hidden rounded-lg border">
                     <Image
-                      src={`${item.url}?tr=f-auto`}
+                      src={item.url}
                       alt={`Image ${idx + 1}`}
                       width={200}
                       height={200}

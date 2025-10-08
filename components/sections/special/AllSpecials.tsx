@@ -97,7 +97,7 @@ export default function AllSpecials() {
             <Card className="overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative -top-6">
                 <Image
-                  src={`${special.inventory.images[0]?.url}?tr=f-auto`}
+                  src={special.inventory.images[0]?.url}
                   alt={`${special.inventory.year} ${special.inventory.make} ${special.inventory.model}`}
                   width={400}
                   height={300}
