@@ -174,7 +174,7 @@ export default function EditVehicle() {
         ...formData,
         images: uploadedImages,
         year: Number(formData.year),
-        vatPrice: Number(formData.vatPrice),
+        vatPrice: Number(formData?.vatPrice),
         pricenoVat: Number(formData?.pricenoVat),
         fuelType: formData.fuelType?.toUpperCase() ?? null,
         condition: formData.condition?.toUpperCase(),
