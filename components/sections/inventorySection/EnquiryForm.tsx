@@ -105,7 +105,7 @@ export default function EnquiryForm({ vehicleSlug }: EnquiryFormProps) {
           <textarea
             className="w-full border px-3 py-2 rounded"
             rows={4}
-            defaultValue={`I would like to check the availability of the http://localhost:3000/inventory/${vehicleSlug}`}
+            defaultValue={`I would like to check the availability of the https://www.a-ztrucksales.com/inventory/${vehicleSlug}`}
             aria-invalid={!!errors.message}
             {...register('message')}
           />
