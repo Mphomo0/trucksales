@@ -20,7 +20,7 @@ const NavLinks = [
   { name: 'Specials', href: '/specials' },
   { name: 'Spares', href: '/spares' },
   { name: 'Sell-Your-Truck', href: '/sell-your-truck' },
-  { name: 'Contact', href: '/contact' },
+  { name: 'Contact Us', href: '/contact' },
 ]
 
 export default function Navbar() {
