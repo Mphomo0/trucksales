@@ -27,18 +27,9 @@ export default function Hero() {
             <Button
               asChild
               size="lg"
-              className="bg-white text-black hover:bg-gray-100 transition"
+              className="bg-white text-black text-lg hover:bg-gray-100 transition p-6"
             >
-              <Link href="/inventory">Browse Inventory</Link>
-            </Button>
-
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="border-white text-white hover:bg-white hover:text-black bg-transparent transition"
-            >
-              <Link href="/contact">Contact Us</Link>
+              <Link href="/inventory">Browse our Inventory</Link>
             </Button>
           </div>
         </div>

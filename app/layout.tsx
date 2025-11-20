@@ -4,7 +4,7 @@ import './globals.css'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { SessionProvider } from 'next-auth/react'
-import GlobalWhatsAppButton from '@/components/global/GlobalWhatsAppButton'
+// import GlobalWhatsAppButton from '@/components/global/GlobalWhatsAppButton'
 import Navbar from '@/components/global/Navbar'
 import Footer from '@/components/global/Footer'
 import { PostHogProvider } from './providers'
@@ -43,7 +43,7 @@ export default function RootLayout({
             {children}
             <ToastContainer />
             <Footer />
-            <GlobalWhatsAppButton />
+            {/* <GlobalWhatsAppButton /> */}
           </PostHogProvider>
         </SessionProvider>
       </body>
