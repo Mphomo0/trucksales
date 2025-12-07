@@ -91,11 +91,7 @@ export default function GetVehicles() {
       const vehicleDeleteRes = await fetch(`/api/vehicles/${slug}`, {
         method: 'DELETE',
       })
-      if (!vehicleDeleteRes.ok) {
-        const msg = await vehicleDeleteRes.text()
-        console.error('Delete API responded with:', msg)
-        throw new Error('Failed to delete vehicle')
-      }
+      if (!vehicleDeleteRes.ok) throw new Error('Failed to delete vehicle')
 
       toast.success('Vehicle and associated files deleted successfully')
       getAllVehicles()
@@ -109,21 +105,15 @@ export default function GetVehicles() {
     {
       accessorKey: 'thumbnail',
       header: 'Thumbnail',
-      cell: ({ row }) => {
-        const thumbnailUrl = row.original.images?.[0]?.url
-
-        if (!thumbnailUrl) return null
-
-        return (
-          <Image
-            src={thumbnailUrl}
-            alt={row.original.name}
-            width={50}
-            height={50}
-            className="rounded-md object-cover h-12 w-12"
-          />
-        )
-      },
+      cell: ({ row }) => (
+        <Image
+          src={row.original.images[0]?.url}
+          alt={row.original.name}
+          width={50}
+          height={50}
+          className="rounded-md object-cover h-12 w-12"
+        />
+      ),
       enableSorting: false,
       enableColumnFilter: false,
     },
