@@ -4,13 +4,32 @@ import { prisma } from '@/lib/prisma'
 // Get all vehicles
 export const GET = async (req: NextRequest) => {
   try {
-    // Fetching vehicles from the inventory table
-    const vehicles = await prisma.inventory.findMany()
-
-    // If no vehicles found, could return a 200 or an empty array
-    if (vehicles.length === 0) {
-      return NextResponse.json([], { status: 200 })
-    }
+    // Fetching vehicles from the inventory table with performance optimizations
+    const vehicles = await prisma.inventory.findMany({
+      take: 500, // Safety limit even for unfiltered
+      select: {
+        id: true,
+        name: true,
+        make: true,
+        model: true,
+        year: true,
+        registrationNo: true,
+        vatPrice: true,
+        pricenoVat: true,
+        mileage: true,
+        fuelType: true,
+        condition: true,
+        transmission: true,
+        images: true,
+        videoLink: true,
+        bodyType: true,
+        truckSize: true,
+        slug: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
 
     // Return vehicles with a 200 OK response
     return NextResponse.json(vehicles, { status: 200 })

@@ -35,12 +35,20 @@ export const POST = auth(async (req) => {
     // Destructure values from inventory
     const { make, model, year } = inventoryExists
 
-    // Generate unique slug
+    // Generate unique slug with optimized collision check (1 DB roundtrip)
     const baseSlug = slugify(`${make}-${model}-${year}`, { lower: true })
+    const existingSlugs = await prisma.specials.findMany({
+      where: { slug: { startsWith: baseSlug } },
+      select: { slug: true },
+    })
+
     let slug = baseSlug
-    let counter = 1
-    while (await prisma.specials.findUnique({ where: { slug } })) {
-      slug = `${baseSlug}-${counter++}`
+    if (existingSlugs.some((s) => s.slug === baseSlug)) {
+      let counter = 1
+      while (existingSlugs.some((s) => s.slug === `${baseSlug}-${counter}`)) {
+        counter++
+      }
+      slug = `${baseSlug}-${counter}`
     }
 
     // Check if special already exists for this inventory
@@ -123,36 +131,54 @@ export const POST = auth(async (req) => {
 // GET - Get all specials or filter by query params
 export const GET = async (req: NextRequest) => {
   try {
-    // Fetch specials from the database with filtering and related inventory info
-    const specials = await prisma.specials.findMany({
-      include: {
-        inventory: {
-          select: {
-            id: true,
-            name: true,
-            make: true,
-            model: true,
-            year: true,
-            vatPrice: true,
-            pricenoVat: true,
-            mileage: true,
-            fuelType: true,
-            condition: true,
-            transmission: true,
-            slug: true,
-            description: true,
-            images: true,
+    const { searchParams } = new URL(req.url)
+    const page = Number.parseInt(searchParams.get('page') || '1', 10)
+    const limit = Math.min(
+      Number.parseInt(searchParams.get('limit') || '10', 10),
+      500
+    )
+    const skip = (page - 1) * limit
+
+    // Execute count and findMany in parallel
+    const [total, specials] = await Promise.all([
+      prisma.specials.count(),
+      prisma.specials.findMany({
+        skip,
+        take: limit,
+        include: {
+          inventory: {
+            select: {
+              id: true,
+              name: true,
+              make: true,
+              model: true,
+              year: true,
+              vatPrice: true,
+              pricenoVat: true,
+              mileage: true,
+              fuelType: true,
+              condition: true,
+              transmission: true,
+              slug: true,
+              images: true, // List view still needs images, but we can exclude description if needed.
+            },
           },
         },
-      },
-      orderBy: {
-        createdAt: 'desc', // Sort by the newest specials first
-      },
-    })
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+    ])
 
     // Return a successful response with data and count
     return NextResponse.json({
       data: specials,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
     })
   } catch (error) {
     // Log the error and return a failure response

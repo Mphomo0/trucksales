@@ -118,12 +118,20 @@ export const POST = auth(async (req) => {
     const lowerMake = make.toLowerCase()
     const lowerModel = model.toLowerCase()
 
-    // Generate unique slug
+    // Generate unique slug with optimized collision check (1 DB roundtrip)
     const baseSlug = slugify(`${make}-${model}-${year}`, { lower: true })
+    const existingSlugs = await prisma.inventory.findMany({
+      where: { slug: { startsWith: baseSlug } },
+      select: { slug: true },
+    })
+
     let slug = baseSlug
-    let counter = 1
-    while (await prisma.inventory.findUnique({ where: { slug } })) {
-      slug = `${baseSlug}-${counter++}`
+    if (existingSlugs.some((s) => s.slug === baseSlug)) {
+      let counter = 1
+      while (existingSlugs.some((s) => s.slug === `${baseSlug}-${counter}`)) {
+        counter++
+      }
+      slug = `${baseSlug}-${counter}`
     }
 
     // Create vehicle in the database
@@ -167,7 +175,7 @@ export const GET = async (req: NextRequest) => {
 
     const page = Number.parseInt(searchParams.get('page') || '1', 10)
     const limit = Math.min(
-      Number.parseInt(searchParams.get('limit') || '500', 10),
+      Number.parseInt(searchParams.get('limit') || '10', 10),
       500
     )
     const skip = (page - 1) * limit
@@ -206,7 +214,7 @@ export const GET = async (req: NextRequest) => {
       filters.truckSize = { equals: truckSize, mode: 'insensitive' } as any
     }
 
-    // Handle search term (searches both make and model)
+    // Handle search term (searches multiple fields)
     if (search) {
       filters.OR = [
         { make: { contains: search, mode: 'insensitive' } },
@@ -214,23 +222,47 @@ export const GET = async (req: NextRequest) => {
         { bodyType: { contains: search, mode: 'insensitive' } },
         { truckSize: { contains: search, mode: 'insensitive' } },
       ]
-      // Remove individual make/model filters when searching
+      // Remove individual filters when searching for broad match
       delete filters.make
       delete filters.model
       delete filters.bodyType
       delete filters.truckSize
     }
 
-    const total = await prisma.inventory.count({ where: filters })
-
-    const vehicles = await prisma.inventory.findMany({
-      skip,
-      take: limit,
-      where: filters,
-      orderBy: {
-        [sortBy]: sortOrder,
-      },
-    })
+    // Execute count and fetch in parallel to reduce response time
+    const [total, vehicles] = await Promise.all([
+      prisma.inventory.count({ where: filters }),
+      prisma.inventory.findMany({
+        skip,
+        take: limit,
+        where: filters,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+        // Optimize CPU by selecting only necessary fields (exclude description for lists)
+        select: {
+          id: true,
+          name: true,
+          make: true,
+          model: true,
+          year: true,
+          registrationNo: true,
+          vatPrice: true,
+          pricenoVat: true,
+          mileage: true,
+          fuelType: true,
+          condition: true,
+          transmission: true,
+          images: true,
+          videoLink: true,
+          bodyType: true,
+          truckSize: true,
+          slug: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      }),
+    ])
 
     return NextResponse.json(
       {

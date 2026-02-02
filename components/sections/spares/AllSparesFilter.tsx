@@ -42,6 +42,13 @@ export default function AllSparesFilter() {
   const [searchTerm, setSearchTerm] = useState('')
   const [makeFilter, setMakeFilter] = useState('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [meta, setMeta] = useState({
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPages: 0,
+  })
 
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     makes: [],
@@ -63,22 +70,26 @@ export default function AllSparesFilter() {
     loadFilterOptions()
   }, [])
 
-  const buildFilters = useCallback(() => {
-    const filters: Record<string, string> = {}
-    if (searchTerm.trim()) filters.search = searchTerm.trim()
-    if (makeFilter !== 'all') filters.make = makeFilter
-    if (categoryFilter !== 'all') filters.category = categoryFilter
-    return filters
-  }, [searchTerm, makeFilter, categoryFilter])
+  const buildFilters = useCallback(
+    (page = 1) => {
+      const filters: Record<string, string> = {
+        page: page.toString(),
+        limit: '12',
+      }
+      if (searchTerm.trim()) filters.search = searchTerm.trim()
+      if (makeFilter !== 'all') filters.make = makeFilter
+      if (categoryFilter !== 'all') filters.category = categoryFilter
+      return filters
+    },
+    [searchTerm, makeFilter, categoryFilter]
+  )
 
   const fetchSpares = useCallback(async (filters = {}) => {
     try {
       setLoading(true)
       setError(null)
 
-      const params = new URLSearchParams({
-        ...filters,
-      })
+      const params = new URLSearchParams(filters)
 
       const res = await fetch(`/api/spares?${params.toString()}`)
 
@@ -92,6 +103,11 @@ export default function AllSparesFilter() {
       const data = await res.json()
 
       setSpares(Array.isArray(data.spares) ? data.spares : [])
+
+      if (data.meta) {
+        setMeta(data.meta)
+        setCurrentPage(data.meta.page)
+      }
     } catch (error: unknown) {
       console.error('Error fetching spares:', error)
       if (error instanceof Error) {
@@ -106,13 +122,12 @@ export default function AllSparesFilter() {
   }, [])
 
   useEffect(() => {
-    fetchSpares({})
+    fetchSpares(buildFilters(1))
   }, [])
 
   useEffect(() => {
-    const filters = buildFilters()
-
     const timeoutId = setTimeout(() => {
+      const filters = buildFilters(1)
       fetchSpares(filters)
     }, 500)
 
@@ -123,20 +138,28 @@ export default function AllSparesFilter() {
     setSearchTerm('')
     setMakeFilter('all')
     setCategoryFilter('all')
+    setCurrentPage(1)
   }, [])
 
   const handlePageChange = useCallback(
     (page: number) => {
-      const filters = buildFilters()
+      const filters = buildFilters(page)
       fetchSpares(filters)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     },
     [buildFilters, fetchSpares]
   )
 
-  const handleLimitChange = useCallback(() => {
-    const filters = buildFilters()
-    fetchSpares(filters)
-  }, [buildFilters, fetchSpares])
+  const handleLimitChange = useCallback(
+    (newLimit: number) => {
+      const filters = {
+        ...buildFilters(1),
+        limit: newLimit.toString(),
+      }
+      fetchSpares(filters)
+    },
+    [buildFilters, fetchSpares]
+  )
 
   if (error) {
     return (
@@ -237,7 +260,7 @@ export default function AllSparesFilter() {
         {/* Cards */}
         {!loading && spares.length > 0 && (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {spares.map((spare) => (
                 <Link key={spare.id} href={`/spares/${spare.slug || spare.id}`}>
                   <Card className="overflow-hidden hover:shadow-md transition-shadow">
@@ -278,6 +301,19 @@ export default function AllSparesFilter() {
                 </Link>
               ))}
             </div>
+
+            {meta.totalPages > 1 && (
+              <div className="mt-8 mb-12">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={meta.totalPages}
+                  onPageChange={handlePageChange}
+                  limit={meta.limit}
+                  onLimitChange={handleLimitChange}
+                  showLimitSelector={true}
+                />
+              </div>
+            )}
           </>
         )}
 

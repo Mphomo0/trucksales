@@ -9,6 +9,7 @@ import { Trash2, SquarePen } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
+import { Pagination } from '@/components/global/Pagination'
 
 interface SparesItem {
   id: string
@@ -27,19 +28,35 @@ interface ImageFile {
   url: string
 }
 
-export default function GetVehicles() {
+export default function GetSpares() {
   const [spareItem, setSpareItem] = useState<SparesItem[]>([])
   const [loading, setLoading] = useState(true)
   const [globalFilter, setGlobalFilter] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [meta, setMeta] = useState({
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPages: 0,
+  })
 
-  const getAllSpares = async () => {
+  const getAllSpares = async (page = 1) => {
     try {
-      const response = await fetch('/api/spares') // No pagination params
+      setLoading(true)
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: '10',
+      })
+      const response = await fetch(`/api/spares?${params.toString()}`)
       if (!response.ok) throw new Error('Failed to fetch spares')
 
       const data = await response.json()
       console.log('Fetched Spares:', data)
       setSpareItem(data.spares)
+      if (data.meta) {
+        setMeta(data.meta)
+        setCurrentPage(data.meta.page)
+      }
     } catch (error) {
       console.error('Error fetching Spares:', error)
     } finally {
@@ -48,7 +65,7 @@ export default function GetVehicles() {
   }
 
   useEffect(() => {
-    getAllSpares()
+    getAllSpares(1)
   }, [])
 
   const handleDeleteSpares = async (slug: string) => {
@@ -152,11 +169,23 @@ export default function GetVehicles() {
           <p>Loading spares...</p>
         </div>
       ) : (
-        <DataTable
-          columns={columns}
-          data={spareItem}
-          globalFilter={globalFilter}
-        />
+        <>
+          <DataTable
+            columns={columns}
+            data={spareItem}
+            globalFilter={globalFilter}
+          />
+          {meta.totalPages > 1 && (
+            <div className="mt-6 flex justify-center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={meta.totalPages}
+                onPageChange={(page) => getAllSpares(page)}
+                limit={meta.limit}
+              />
+            </div>
+          )}
+        </>
       )}
     </div>
   )

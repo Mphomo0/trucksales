@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
+import { Pagination } from '@/components/global/Pagination'
 
 interface Image {
   fileId: string
@@ -36,10 +37,22 @@ interface Special {
 export default function AllSpecials() {
   const [specials, setSpecials] = useState<Special[]>([])
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [meta, setMeta] = useState({
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPages: 0,
+  })
 
-  const fetchSpecials = async () => {
+  const fetchSpecials = async (page = 1) => {
     try {
-      const response = await fetch('/api/specials')
+      setLoading(true)
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: '12',
+      })
+      const response = await fetch(`/api/specials?${params.toString()}`)
       if (!response.ok) {
         throw new Error('Failed to fetch specials')
       }
@@ -50,6 +63,10 @@ export default function AllSpecials() {
       }
 
       setSpecials(data.data)
+      if (data.meta) {
+        setMeta(data.meta)
+        setCurrentPage(data.meta.page)
+      }
     } catch (error) {
       console.error('Error fetching specials:', error)
       toast.error('Error fetching specials')
@@ -59,8 +76,19 @@ export default function AllSpecials() {
   }
 
   useEffect(() => {
-    fetchSpecials()
+    fetchSpecials(1)
   }, [])
+
+  const handlePageChange = (page: number) => {
+    fetchSpecials(page)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleLimitChange = (newLimit: number) => {
+    // Current API doesn't fully support limit change from frontend easily without re-fetching page 1
+    // but we'll implement it for consistency if needed.
+    fetchSpecials(1)
+  }
 
   if (loading) {
     return (
@@ -91,7 +119,7 @@ export default function AllSpecials() {
 
   return (
     <div className="bg-gray-100 py-12">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         {specials.map((special) => (
           <Link href={`/specials/${special.slug}`} key={special.slug}>
             <Card className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -144,6 +172,19 @@ export default function AllSpecials() {
           </Link>
         ))}
       </div>
+
+      {meta.totalPages > 1 && (
+        <div className="mt-8 mb-12">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={meta.totalPages}
+            onPageChange={handlePageChange}
+            limit={meta.limit}
+            onLimitChange={handleLimitChange}
+            showLimitSelector={true}
+          />
+        </div>
+      )}
     </div>
   )
 }

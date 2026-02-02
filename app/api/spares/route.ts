@@ -2,7 +2,6 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import slugify from 'slugify'
-import { no } from 'zod/v4/locales'
 
 interface Filters {
   make?: string
@@ -102,12 +101,20 @@ export const POST = auth(async (req) => {
     // Convert make to lowercase before saving
     const lowerMake = make.toLowerCase()
 
-    // Generate unique slug
+    // Generate unique slug with optimized collision check (1 DB roundtrip)
     const baseSlug = slugify(`${make}-${price}-${category}`, { lower: true })
+    const existingSlugs = await prisma.spares.findMany({
+      where: { slug: { startsWith: baseSlug } },
+      select: { slug: true },
+    })
+
     let slug = baseSlug
-    let counter = 1
-    while (await prisma.inventory.findUnique({ where: { slug } })) {
-      slug = `${baseSlug}-${counter++}`
+    if (existingSlugs.some((s) => s.slug === baseSlug)) {
+      let counter = 1
+      while (existingSlugs.some((s) => s.slug === `${baseSlug}-${counter}`)) {
+        counter++
+      }
+      slug = `${baseSlug}-${counter}`
     }
 
     // Create vehicle in the database
@@ -141,6 +148,13 @@ export const GET = async (req: NextRequest) => {
   try {
     const { searchParams } = new URL(req.url)
 
+    const page = Number.parseInt(searchParams.get('page') || '1', 10)
+    const limit = Math.min(
+      Number.parseInt(searchParams.get('limit') || '10', 10),
+      500
+    )
+    const skip = (page - 1) * limit
+
     const make = searchParams.get('make')
     const category = searchParams.get('category')
     const search = searchParams.get('search')
@@ -171,14 +185,46 @@ export const GET = async (req: NextRequest) => {
       ]
     }
 
-    const spares = await prisma.spares.findMany({
-      where: filters,
-      orderBy: {
-        [sortBy]: sortOrder,
-      },
-    })
+    // Parallelize count and findMany for better performance
+    const [total, spares] = await Promise.all([
+      prisma.spares.count({ where: filters }),
+      prisma.spares.findMany({
+        skip,
+        take: limit,
+        where: filters,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+        // Optimize CPU by selecting only necessary fields
+        select: {
+          id: true,
+          name: true,
+          make: true,
+          price: true,
+          noVatPrice: true,
+          condition: true,
+          category: true,
+          images: true,
+          videoLink: true,
+          slug: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      }),
+    ])
 
-    return NextResponse.json({ spares }, { status: 200 })
+    return NextResponse.json(
+      {
+        spares,
+        meta: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+      { status: 200 }
+    )
   } catch (error) {
     console.error('Spares fetch error:', error)
     return NextResponse.json(

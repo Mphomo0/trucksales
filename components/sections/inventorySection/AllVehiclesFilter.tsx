@@ -51,6 +51,13 @@ export default function AllVehiclesFilter() {
   const [modelFilter, setModelFilter] = useState('all')
   const [bodyTypeFilter, setBodyTypeFilter] = useState('all')
   const [truckSizeFilter, setTruckSizeFilter] = useState('all')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [meta, setMeta] = useState({
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPages: 0,
+  })
 
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
     makes: [],
@@ -59,25 +66,28 @@ export default function AllVehiclesFilter() {
     truckSizes: [],
   })
 
-  const buildFilters = useCallback(() => {
-    const filters: Record<string, string> = {}
-    if (searchTerm.trim()) filters.search = searchTerm.trim()
-    if (makeFilter !== 'all') filters.make = makeFilter
-    if (modelFilter !== 'all') filters.model = modelFilter
-    if (bodyTypeFilter !== 'all') filters.bodyType = bodyTypeFilter
-    if (truckSizeFilter !== 'all') filters.truckSize = truckSizeFilter
-    return filters
-  }, [searchTerm, makeFilter, modelFilter, bodyTypeFilter, truckSizeFilter])
+  const buildFilters = useCallback(
+    (page = 1) => {
+      const filters: Record<string, string> = {
+        page: page.toString(),
+        limit: '12',
+      }
+      if (searchTerm.trim()) filters.search = searchTerm.trim()
+      if (makeFilter !== 'all') filters.make = makeFilter
+      if (modelFilter !== 'all') filters.model = modelFilter
+      if (bodyTypeFilter !== 'all') filters.bodyType = bodyTypeFilter
+      if (truckSizeFilter !== 'all') filters.truckSize = truckSizeFilter
+      return filters
+    },
+    [searchTerm, makeFilter, modelFilter, bodyTypeFilter, truckSizeFilter]
+  )
 
   const fetchTrucks = useCallback(async (filters = {}) => {
     try {
       setLoading(true)
-      setError(null) // Clear previous errors
+      setError(null)
 
-      const params = new URLSearchParams({
-        ...filters,
-        limit: '450',
-      })
+      const params = new URLSearchParams(filters)
 
       const res = await fetch(`/api/vehicles?${params.toString()}`)
 
@@ -90,12 +100,16 @@ export default function AllVehiclesFilter() {
 
       const data = await res.json()
 
-      // Validate response structure
       if (!data || typeof data !== 'object') {
         throw new Error('Invalid response format from server')
       }
 
       setTrucks(Array.isArray(data.vehicles) ? data.vehicles : [])
+
+      if (data.meta) {
+        setMeta(data.meta)
+        setCurrentPage(data.meta.page)
+      }
 
       if (data.filterOptions) {
         setFilterOptions({
@@ -120,7 +134,6 @@ export default function AllVehiclesFilter() {
       } else {
         setError('An unexpected error occurred while fetching vehicles')
       }
-      // Set empty state on error
       setTrucks([])
     } finally {
       setLoading(false)
@@ -150,23 +163,22 @@ export default function AllVehiclesFilter() {
       }
     } catch (error) {
       console.error('Filter options fetch error:', error)
-      // Keep default empty arrays on error
     }
   }, [])
 
   // Initial load
   useEffect(() => {
     const loadInitialData = async () => {
-      await Promise.all([fetchTrucks(), fetchFilterOptions()])
+      await Promise.all([fetchTrucks(buildFilters(1)), fetchFilterOptions()])
     }
 
     loadInitialData()
-  }, []) // Only run once on mount
+  }, [])
 
-  // Filter change effect with debouncing
+  // Filter change effect with debouncing - resets to page 1
   useEffect(() => {
-    const filters = buildFilters()
     const timeoutId = setTimeout(() => {
+      const filters = buildFilters(1)
       fetchTrucks(filters)
     }, 500)
 
@@ -186,27 +198,23 @@ export default function AllVehiclesFilter() {
     if (makeFilter === 'all') {
       setModelFilter('all')
     } else {
-      // Check if current model is valid for the selected make
       const validModels = getModelsForMake
       if (modelFilter !== 'all' && !validModels.includes(modelFilter)) {
         setModelFilter('all')
       }
     }
-  }, [makeFilter]) // Note: getModelsForMake is not included to avoid circular dependency
+  }, [makeFilter])
 
   const getModelsForMake = useMemo(() => {
     if (makeFilter === 'all') return filterOptions.models || []
 
-    // Filter models based on available trucks for the selected make
     const availableModels = trucks
       .filter((truck) => truck.make?.toLowerCase() === makeFilter.toLowerCase())
       .map((truck) => truck.model)
-      .filter(Boolean) // Remove null/undefined
+      .filter(Boolean)
 
-    // Get unique models and sort
     const uniqueModels = [...new Set(availableModels)].sort()
 
-    // Return intersection with filterOptions.models to ensure consistency
     return filterOptions.models.filter((model) =>
       uniqueModels.some(
         (availableModel) => availableModel.toLowerCase() === model.toLowerCase()
@@ -220,27 +228,37 @@ export default function AllVehiclesFilter() {
     setModelFilter('all')
     setBodyTypeFilter('all')
     setTruckSizeFilter('all')
+    setCurrentPage(1)
   }, [])
 
   const handlePageChange = useCallback(
     (page: number) => {
-      const filters = buildFilters()
+      const filters = buildFilters(page)
       fetchTrucks(filters)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     },
     [buildFilters, fetchTrucks]
   )
 
-  const handleLimitChange = useCallback(() => {
-    const filters = buildFilters()
-    fetchTrucks(filters)
-  }, [buildFilters, fetchTrucks])
+  const handleLimitChange = useCallback(
+    (newLimit: number) => {
+      const filters = {
+        ...buildFilters(1),
+        limit: newLimit.toString(),
+      }
+      fetchTrucks(filters)
+    },
+    [buildFilters, fetchTrucks]
+  )
 
   if (error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center max-w-md">
           <p className="text-red-500 text-lg mb-4">Error: {error}</p>
-          <Button onClick={() => fetchTrucks(buildFilters())}>Try Again</Button>
+          <Button onClick={() => fetchTrucks(buildFilters(1))}>
+            Try Again
+          </Button>
         </div>
       </div>
     )
@@ -365,7 +383,7 @@ export default function AllVehiclesFilter() {
 
         {!loading && trucks.length > 0 && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {trucks.map((truck) => (
                 <Link
                   key={truck.id}
@@ -421,6 +439,19 @@ export default function AllVehiclesFilter() {
                 </Link>
               ))}
             </div>
+
+            {meta.totalPages > 1 && (
+              <div className="mt-8 mb-12">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={meta.totalPages}
+                  onPageChange={handlePageChange}
+                  limit={meta.limit}
+                  onLimitChange={handleLimitChange}
+                  showLimitSelector={true}
+                />
+              </div>
+            )}
           </>
         )}
 

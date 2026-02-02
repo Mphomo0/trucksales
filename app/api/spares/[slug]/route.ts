@@ -83,7 +83,10 @@ export const PATCH = auth(async (req, { params }) => {
     })
 
     if (!existingSpares) {
-      return NextResponse.json({ error: 'Vehicle not found' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Spare part not found' },
+        { status: 404 }
+      )
     }
 
     // Optional: check if new slug is already taken

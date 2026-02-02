@@ -1,5 +1,4 @@
 import { NextResponse, NextRequest } from 'next/server'
-import * as https from 'https'
 
 // The POST handler for the API route (i.e., when a POST request is sent to this endpoint)
 export async function POST(req: NextRequest) {
@@ -32,51 +31,27 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// Helper function to delete files from ImageKit using their file IDs
+// Native fetch is available in Next.js/Node 18+ and is preferred for cleaner code and performance.
 async function deleteFilesFromImageKit(fileIds: string[]) {
-  // Define HTTPS request options
-  const options = {
+  const privateKey = process.env.IMAGEKIT_PRIVATE_KEY
+  if (!privateKey) {
+    throw new Error('IMAGEKIT_PRIVATE_KEY is not defined')
+  }
+
+  const response = await fetch('https://api.imagekit.io/v1/files/batch/deleteByFileIds', {
     method: 'POST',
-    hostname: 'api.imagekit.io',
-    path: '/v1/files/batch/deleteByFileIds',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      // Replace with your actual ImageKit private API key
-      // Note: In production, store this in environment variables
-      Authorization: `Basic ${Buffer.from(
-        `${process.env.IMAGEKIT_PRIVATE_KEY}:`
-      ).toString('base64')}`,
+      Authorization: `Basic ${Buffer.from(`${privateKey}:`).toString('base64')}`,
     },
+    body: JSON.stringify({ fileIds }),
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    throw new Error(`ImageKit API error: ${response.status} ${errorText}`)
   }
 
-  // Return a Promise that wraps the HTTPS request
-  return new Promise((resolve, reject) => {
-    // Create HTTPS request with defined options
-    const req = https.request(options, (res) => {
-      let data = ''
-
-      // Listen for data events
-      res.on('data', (chunk) => {
-        data += chunk
-      })
-
-      // On end of response, parse JSON and resolve the Promise
-      res.on('end', () => {
-        try {
-          const parsedData = JSON.parse(data)
-          resolve(parsedData)
-        } catch (error) {
-          reject(error)
-        }
-      })
-    })
-
-    req.on('error', (error) => {
-      reject(error)
-    })
-
-    req.write(JSON.stringify({ fileIds }))
-    req.end()
-  })
+  return response.json()
 }

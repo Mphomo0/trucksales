@@ -9,6 +9,7 @@ import { Trash2, SquarePen } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
+import { Pagination } from '@/components/global/Pagination'
 
 interface Vehicle {
   id: string
@@ -42,14 +43,30 @@ export default function GetVehicles() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
   const [loading, setLoading] = useState(true)
   const [globalFilter, setGlobalFilter] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [meta, setMeta] = useState({
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPages: 0,
+  })
 
-  const getAllVehicles = async () => {
+  const getAllVehicles = async (page = 1) => {
     try {
-      const response = await fetch('/api/vehicles')
+      setLoading(true)
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: '10',
+      })
+      const response = await fetch(`/api/vehicles?${params.toString()}`)
       if (!response.ok) throw new Error('Failed to fetch vehicles')
 
       const data = await response.json()
       setVehicles(data.vehicles)
+      if (data.meta) {
+        setMeta(data.meta)
+        setCurrentPage(data.meta.page)
+      }
     } catch (error) {
       console.error('Error fetching vehicles:', error)
     } finally {
@@ -58,7 +75,7 @@ export default function GetVehicles() {
   }
 
   useEffect(() => {
-    getAllVehicles()
+    getAllVehicles(1)
   }, [])
 
   const handleDeleteVehicle = async (slug: string) => {
@@ -202,11 +219,23 @@ export default function GetVehicles() {
             <p>Loading vehicles...</p>
           </div>
         ) : (
-          <DataTable
-            columns={columns}
-            data={vehicles}
-            globalFilter={globalFilter}
-          />
+          <>
+            <DataTable
+              columns={columns}
+              data={vehicles}
+              globalFilter={globalFilter}
+            />
+            {meta.totalPages > 1 && (
+              <div className="mt-6 flex justify-center">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={meta.totalPages}
+                  onPageChange={(page) => getAllVehicles(page)}
+                  limit={meta.limit}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
