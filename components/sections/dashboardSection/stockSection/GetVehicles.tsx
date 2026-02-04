@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
 import { DataTable } from './data-table'
 import { Button } from '@/components/ui/button'
@@ -39,43 +39,76 @@ interface VideoFile {
   url: string
 }
 
+interface Meta {
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
 export default function GetVehicles() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
   const [loading, setLoading] = useState(true)
-  const [globalFilter, setGlobalFilter] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
-  const [meta, setMeta] = useState({
+  const [limit, setLimit] = useState(25)
+  const [meta, setMeta] = useState<Meta>({
     total: 0,
     page: 1,
-    limit: 10,
+    limit: 25,
     totalPages: 0,
   })
 
-  const getAllVehicles = async (page = 1) => {
-    try {
-      setLoading(true)
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: '10',
-      })
-      const response = await fetch(`/api/vehicles?${params.toString()}`)
-      if (!response.ok) throw new Error('Failed to fetch vehicles')
-
-      const data = await response.json()
-      setVehicles(data.vehicles)
-      if (data.meta) {
-        setMeta(data.meta)
-        setCurrentPage(data.meta.page)
-      }
-    } catch (error) {
-      console.error('Error fetching vehicles:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
+  // Debounce search input
   useEffect(() => {
-    getAllVehicles(1)
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchInput)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [searchInput])
+
+  // Fetch vehicles when page, limit, or debounced search changes
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        setLoading(true)
+        const params = new URLSearchParams({
+          page: currentPage.toString(),
+          limit: limit.toString(),
+        })
+        if (debouncedSearch && debouncedSearch.trim()) {
+          params.append('search', debouncedSearch.trim())
+        }
+        
+        const response = await fetch(`/api/vehicles?${params.toString()}`)
+        if (!response.ok) {
+          throw new Error('Failed to fetch vehicles')
+        }
+
+        const data = await response.json()
+        setVehicles(data.vehicles || [])
+        if (data.meta) {
+          setMeta(data.meta)
+        }
+      } catch (error) {
+        console.error('Error fetching vehicles:', error)
+        toast.error('Failed to fetch vehicles')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchVehicles()
+  }, [currentPage, limit, debouncedSearch])
+
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page)
+  }, [])
+
+  const handleLimitChange = useCallback((newLimit: number) => {
+    setLimit(newLimit)
+    setCurrentPage(1) // Reset to page 1 when limit changes
   }, [])
 
   const handleDeleteVehicle = async (slug: string) => {
@@ -111,7 +144,8 @@ export default function GetVehicles() {
       if (!vehicleDeleteRes.ok) throw new Error('Failed to delete vehicle')
 
       toast.success('Vehicle and associated files deleted successfully')
-      getAllVehicles()
+      // Refresh current page by triggering a re-fetch
+      setCurrentPage(prev => prev)
     } catch (error) {
       console.error('Delete operation failed:', error)
       toast.error('Error deleting vehicle and/or files')
@@ -197,18 +231,26 @@ export default function GetVehicles() {
     },
   ]
 
+  // Calculate display range
+  const startItem = meta.total > 0 ? (currentPage - 1) * limit + 1 : 0
+  const endItem = meta.total > 0 ? Math.min(currentPage * limit, meta.total) : 0
+
   return (
     <div className="space-y-4">
       {/* Top controls */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <Input
-          placeholder="Search vehicles..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="w-full sm:max-w-sm"
+          placeholder="Search vehicles (name, make, model, reg, body type, size)..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          className="w-full sm:max-w-md"
         />
         <div className="text-sm text-gray-500">
-          Showing {vehicles.length} vehicles
+          {loading ? (
+            <>Loading...</>
+          ) : (
+            <>{meta.total > 0 ? `Showing ${startItem} - ${endItem} of ${meta.total} vehicles` : 'No vehicles found'}</>
+          )}
         </div>
       </div>
 
@@ -223,15 +265,16 @@ export default function GetVehicles() {
             <DataTable
               columns={columns}
               data={vehicles}
-              globalFilter={globalFilter}
             />
-            {meta.totalPages > 1 && (
+            {meta.totalPages > 0 && (
               <div className="mt-6 flex justify-center">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={meta.totalPages}
-                  onPageChange={(page) => getAllVehicles(page)}
-                  limit={meta.limit}
+                  onPageChange={handlePageChange}
+                  limit={limit}
+                  onLimitChange={handleLimitChange}
+                  showLimitSelector={true}
                 />
               </div>
             )}

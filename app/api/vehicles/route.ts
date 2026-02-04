@@ -4,13 +4,17 @@ import { auth } from '@/auth'
 import slugify from 'slugify'
 
 interface Filters {
+  name?: string
   make?: string
   model?: string
+  registrationNo?: string
   bodyType?: string
   truckSize?: string
   OR?: Array<{
+    name?: { contains: string; mode: 'insensitive' }
     make?: { contains: string; mode: 'insensitive' }
     model?: { contains: string; mode: 'insensitive' }
+    registrationNo?: { contains: string; mode: 'insensitive' }
     bodyType?: { contains: string; mode: 'insensitive' }
     truckSize?: { contains: string; mode: 'insensitive' }
   }>
@@ -217,8 +221,10 @@ export const GET = async (req: NextRequest) => {
     // Handle search term (searches multiple fields)
     if (search) {
       filters.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
         { make: { contains: search, mode: 'insensitive' } },
         { model: { contains: search, mode: 'insensitive' } },
+        { registrationNo: { contains: search, mode: 'insensitive' } },
         { bodyType: { contains: search, mode: 'insensitive' } },
         { truckSize: { contains: search, mode: 'insensitive' } },
       ]

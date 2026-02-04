@@ -52,10 +52,11 @@ export default function AllVehiclesFilter() {
   const [bodyTypeFilter, setBodyTypeFilter] = useState('all')
   const [truckSizeFilter, setTruckSizeFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
+  const [limit, setLimit] = useState(25)
   const [meta, setMeta] = useState({
     total: 0,
     page: 1,
-    limit: 10,
+    limit: 25,
     totalPages: 0,
   })
 
@@ -67,10 +68,10 @@ export default function AllVehiclesFilter() {
   })
 
   const buildFilters = useCallback(
-    (page = 1) => {
+    (page = 1, itemsPerPage = limit) => {
       const filters: Record<string, string> = {
         page: page.toString(),
-        limit: '12',
+        limit: itemsPerPage.toString(),
       }
       if (searchTerm.trim()) filters.search = searchTerm.trim()
       if (makeFilter !== 'all') filters.make = makeFilter
@@ -79,7 +80,7 @@ export default function AllVehiclesFilter() {
       if (truckSizeFilter !== 'all') filters.truckSize = truckSizeFilter
       return filters
     },
-    [searchTerm, makeFilter, modelFilter, bodyTypeFilter, truckSizeFilter]
+    [searchTerm, makeFilter, modelFilter, bodyTypeFilter, truckSizeFilter, limit]
   )
 
   const fetchTrucks = useCallback(async (filters = {}) => {
@@ -229,6 +230,7 @@ export default function AllVehiclesFilter() {
     setBodyTypeFilter('all')
     setTruckSizeFilter('all')
     setCurrentPage(1)
+    setLimit(25)
   }, [])
 
   const handlePageChange = useCallback(
@@ -242,10 +244,9 @@ export default function AllVehiclesFilter() {
 
   const handleLimitChange = useCallback(
     (newLimit: number) => {
-      const filters = {
-        ...buildFilters(1),
-        limit: newLimit.toString(),
-      }
+      setLimit(newLimit)
+      setCurrentPage(1)
+      const filters = buildFilters(1, newLimit)
       fetchTrucks(filters)
     },
     [buildFilters, fetchTrucks]
