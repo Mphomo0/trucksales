@@ -134,7 +134,7 @@ export const GET = async (req: NextRequest) => {
     const { searchParams } = new URL(req.url)
     const page = Number.parseInt(searchParams.get('page') || '1', 10)
     const limit = Math.min(
-      Number.parseInt(searchParams.get('limit') || '10', 10),
+      Number.parseInt(searchParams.get('limit') || '25', 10),
       500
     )
     const skip = (page - 1) * limit

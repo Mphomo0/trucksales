@@ -13,7 +13,6 @@ import { Card } from '@/components/ui/card'
 import { Trash2, SquarePen } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { Modal } from '@/components/global/Modal'
-import { Pagination } from '@/components/global/Pagination'
 
 interface Special {
   id: string
@@ -32,20 +31,12 @@ export default function GetSpecials() {
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [currentSpecial, setCurrentSpecial] = useState<Special | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [meta, setMeta] = useState({
-    total: 0,
-    page: 1,
-    limit: 10,
-    totalPages: 0,
-  })
 
-  const GetAllSpecials = async (page = 1) => {
+  const GetAllSpecials = async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
-        page: page.toString(),
-        limit: '10',
+        limit: '100', // Fetch up to 100 specials without pagination
       })
       const response = await fetch(`/api/specials?${params.toString()}`)
       if (!response.ok) {
@@ -53,10 +44,6 @@ export default function GetSpecials() {
       }
       const data = await response.json()
       setSpecials(data.data)
-      if (data.meta) {
-        setMeta(data.meta)
-        setCurrentPage(data.meta.page)
-      }
     } catch (error) {
       console.error('Error fetching specials:', error)
       toast.error('Error fetching specials')
@@ -66,7 +53,7 @@ export default function GetSpecials() {
   }
 
   useEffect(() => {
-    GetAllSpecials(1)
+    GetAllSpecials()
   }, [])
 
   // Handle the deletion of a special
@@ -233,17 +220,6 @@ export default function GetSpecials() {
           ))}
         </div>
       </div>
-
-      {meta.totalPages > 1 && (
-        <div className="flex justify-center mt-6">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={meta.totalPages}
-            onPageChange={(page) => GetAllSpecials(page)}
-            limit={meta.limit}
-          />
-        </div>
-      )}
 
       {/* Modal */}
       <Modal

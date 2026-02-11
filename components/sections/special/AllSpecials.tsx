@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
-import { Pagination } from '@/components/global/Pagination'
 
 interface Image {
   fileId: string
@@ -37,20 +36,12 @@ interface Special {
 export default function AllSpecials() {
   const [specials, setSpecials] = useState<Special[]>([])
   const [loading, setLoading] = useState(true)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [meta, setMeta] = useState({
-    total: 0,
-    page: 1,
-    limit: 10,
-    totalPages: 0,
-  })
 
-  const fetchSpecials = async (page = 1) => {
+  const fetchSpecials = async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
-        page: page.toString(),
-        limit: '12',
+        limit: '100', // Fetch up to 100 specials without pagination
       })
       const response = await fetch(`/api/specials?${params.toString()}`)
       if (!response.ok) {
@@ -63,10 +54,6 @@ export default function AllSpecials() {
       }
 
       setSpecials(data.data)
-      if (data.meta) {
-        setMeta(data.meta)
-        setCurrentPage(data.meta.page)
-      }
     } catch (error) {
       console.error('Error fetching specials:', error)
       toast.error('Error fetching specials')
@@ -76,19 +63,8 @@ export default function AllSpecials() {
   }
 
   useEffect(() => {
-    fetchSpecials(1)
+    fetchSpecials()
   }, [])
-
-  const handlePageChange = (page: number) => {
-    fetchSpecials(page)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  const handleLimitChange = (newLimit: number) => {
-    // Current API doesn't fully support limit change from frontend easily without re-fetching page 1
-    // but we'll implement it for consistency if needed.
-    fetchSpecials(1)
-  }
 
   if (loading) {
     return (
@@ -164,7 +140,7 @@ export default function AllSpecials() {
                   <strong>{formatDate(special.validTo)}</strong>
                 </div>
 
-                <Button asChild className="w-full bg-black text-white mt-8">
+                <Button className="w-full bg-black text-white mt-8">
                   View Details
                 </Button>
               </CardContent>
@@ -173,18 +149,6 @@ export default function AllSpecials() {
         ))}
       </div>
 
-      {meta.totalPages > 1 && (
-        <div className="mt-8 mb-12">
-          <Pagination
-            currentPage={currentPage}
-            totalPages={meta.totalPages}
-            onPageChange={handlePageChange}
-            limit={meta.limit}
-            onLimitChange={handleLimitChange}
-            showLimitSelector={true}
-          />
-        </div>
-      )}
     </div>
   )
 }
