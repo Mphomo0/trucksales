@@ -91,6 +91,15 @@ export default function Footer() {
 
       <div className="mt-12 text-center text-xs text-white">
         &copy; {new Date().getFullYear()} A-Z Truck Sales. All rights reserved.
+        Designed by{' '}
+        <a
+          href="https://nostalgic-studio.co.za"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Nostalgic Studio
+        </a>
+        .
       </div>
     </footer>
   )
