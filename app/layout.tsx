@@ -8,7 +8,7 @@ import { SessionProvider } from 'next-auth/react'
 import Navbar from '@/components/global/Navbar'
 import Footer from '@/components/global/Footer'
 import { PostHogProvider } from './providers'
-import GoogleAnalytics from '@/components/global/GoogleAnalytics'
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -50,3 +50,4 @@ export default function RootLayout({
     </html>
   )
 }
+
