@@ -398,7 +398,7 @@ export default function SpareDetail() {
                     ))}
                   </div>
                   <span className="text-sm text-gray-600">
-                    4.1 (211 reviews)
+                    4.0 (242 reviews)
                   </span>
                 </div>
                 <p className="text-sm text-gray-600">

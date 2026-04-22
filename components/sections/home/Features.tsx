@@ -45,7 +45,7 @@ export default function Features() {
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-gray-600">
-                Our 4.1 customer rating reflects our commitment to quality and
+                Our 4.0 customer rating reflects our commitment to quality and
                 reliability.
               </p>
             </CardContent>
