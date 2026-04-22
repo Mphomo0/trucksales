@@ -3,11 +3,16 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { toast } from 'react-toastify'
 import { enquiryFormSchema } from '@/lib/schemas'
 
-type EnquiryFormData = z.infer<typeof enquiryFormSchema>
+type EnquiryFormData = {
+  name: string
+  email: string
+  phone: string
+  message: string
+  captchaAnswer: string
+}
 
 interface EnquiryFormProps {
   vehicleSlug: string
@@ -15,10 +20,18 @@ interface EnquiryFormProps {
 
 export default function EnquiryForm({ vehicleSlug }: EnquiryFormProps) {
   const [currentUrl, setCurrentUrl] = useState<string>('')
+  const [captcha, setCaptcha] = useState<{ question: string; answer: number }>({ question: '', answer: 0 })
+
+  function generateCaptcha() {
+    const a = Math.floor(Math.random() * 10) + 1
+    const b = Math.floor(Math.random() * 10) + 1
+    return { question: `${a} + ${b} = ?`, answer: a + b }
+  }
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setCurrentUrl(window.location.href)
+      setCaptcha(generateCaptcha())
     }
   }, [])
 
@@ -43,6 +56,8 @@ export default function EnquiryForm({ vehicleSlug }: EnquiryFormProps) {
           vehicleSlug,
           currentUrl,
           ...data,
+          captchaAnswer: parseInt(data.captchaAnswer, 10),
+          captchaExpected: captcha.answer,
         }),
       })
 
@@ -51,6 +66,7 @@ export default function EnquiryForm({ vehicleSlug }: EnquiryFormProps) {
       if (response.ok) {
         toast.success('Message sent successfully!')
         reset()
+        setCaptcha(generateCaptcha())
       } else {
         toast.error(`Error: ${result.message || 'Something went wrong'}`)
       }
@@ -111,6 +127,22 @@ export default function EnquiryForm({ vehicleSlug }: EnquiryFormProps) {
           />
           {errors.message && (
             <p className="text-red-500">{errors.message.message}</p>
+          )}
+        </div>
+
+        <div className="p-3 bg-gray-50 rounded border">
+          <label className="block text-sm font-medium">Security Check</label>
+          <p className="text-sm text-gray-600 mb-2">
+            Please solve: <span className="font-bold">{captcha.question}</span>
+          </p>
+          <input
+            type="number"
+            className="w-full border px-3 py-2 rounded"
+            placeholder="Your Answer"
+            {...register('captchaAnswer')}
+          />
+          {errors.captchaAnswer && (
+            <p className="text-red-500">{errors.captchaAnswer.message}</p>
           )}
         </div>
 

@@ -8,6 +8,39 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024
 // Total files limit
 const MAX_FILES = 10
 
+function validateMessageQuality(message: string) {
+  const trimmed = message?.trim() || ''
+  if (trimmed.length === 0) {
+    return { valid: true } // Comments are optional
+  }
+  const wordCount = trimmed.split(/\s+/).filter(w => w.length > 0).length
+  if (wordCount < 3 && wordCount > 0) {
+    return { valid: false, message: 'Comments must contain at least 3 words' }
+  }
+  if (/^[0-9\s]+$/.test(trimmed)) {
+    return { valid: false, message: 'Comments cannot be only numbers' }
+  }
+  const nonWordChars = trimmed.replace(/[\w\s]/g, '').length
+  if (trimmed.length > 0 && nonWordChars / trimmed.length > 0.3) {
+    return { valid: false, message: 'Comments contains too many special characters' }
+  }
+  return { valid: true }
+}
+
+const disposableDomains = [
+  'tempmail.com', 'throwaway.email', '10minutemail.com', 'guerrillamail.com',
+  'mailinator.com', 'getnada.com', 'fakeinbox.com', 'yopmail.com',
+  'trashmail.com', 'dispostable.com', 'mintemail.com', 'sharklasers.com'
+]
+
+function validateEmailQuality(email: string) {
+  const domain = email?.split('@')[1]?.toLowerCase()
+  if (domain && disposableDomains.some(d => domain.includes(d))) {
+    return { valid: false, message: 'Please use a permanent email address' }
+  }
+  return { valid: true }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
@@ -26,11 +59,39 @@ export async function POST(req: NextRequest) {
     const condition = formData.get('condition')?.toString() || ''
     const vin = formData.get('vin')?.toString() || ''
     const comments = formData.get('comments')?.toString() || ''
+    const captchaAnswer = parseInt(formData.get('captchaAnswer')?.toString() || '0', 10)
+    const captchaExpected = parseInt(formData.get('captchaExpected')?.toString() || '0', 10)
 
     // Validate required fields
     if (!firstName || !lastName || !email || !phone) {
       return NextResponse.json(
         { message: 'Missing required fields' },
+        { status: 400 }
+      )
+    }
+
+    // Server-side CAPTCHA validation
+    if (captchaAnswer !== captchaExpected || captchaAnswer === 0) {
+      return NextResponse.json(
+        { message: 'Incorrect CAPTCHA answer. Please try again.' },
+        { status: 400 }
+      )
+    }
+
+    // Server-side message quality validation for comments
+    const messageQuality = validateMessageQuality(comments)
+    if (!messageQuality.valid) {
+      return NextResponse.json(
+        { message: messageQuality.message },
+        { status: 400 }
+      )
+    }
+
+    // Server-side email quality validation
+    const emailQuality = validateEmailQuality(email)
+    if (!emailQuality.valid) {
+      return NextResponse.json(
+        { message: emailQuality.message },
         { status: 400 }
       )
     }

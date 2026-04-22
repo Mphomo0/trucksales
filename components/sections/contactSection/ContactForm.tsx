@@ -1,15 +1,34 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { z } from 'zod/v4'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
 import { contactFormSchema } from '@/lib/schemas'
 
-type ContactFormData = z.infer<typeof contactFormSchema>
+type ContactFormData = {
+  name: string
+  email: string
+  phone: string
+  branch: string
+  subject: string
+  message: string
+  captchaAnswer: string
+}
+
+function generateCaptcha() {
+  const a = Math.floor(Math.random() * 10) + 1
+  const b = Math.floor(Math.random() * 10) + 1
+  return { question: `${a} + ${b} = ?`, answer: a + b }
+}
 
 export default function ContactForm() {
+  const [captcha, setCaptcha] = useState<{ question: string; answer: number }>({ question: '', answer: 0 })
+
+  useEffect(() => {
+    setCaptcha(generateCaptcha())
+  }, [])
   const {
     register,
     handleSubmit,
@@ -27,7 +46,12 @@ export default function ContactForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ type: 'Contact', ...data }),
+        body: JSON.stringify({ 
+          type: 'Contact', 
+          ...data,
+          captchaAnswer: parseInt(data.captchaAnswer, 10),
+          captchaExpected: captcha.answer 
+        }),
       })
 
       const result = await response.json()
@@ -38,6 +62,7 @@ export default function ContactForm() {
 
       toast.success('Message sent successfully!')
       reset()
+      setCaptcha(generateCaptcha())
     } catch (error) {
       console.error('Error submitting form:', error)
       toast.error(
@@ -188,6 +213,27 @@ export default function ContactForm() {
             {errors.message && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.message.message}
+              </p>
+            )}
+          </div>
+
+          {/* CAPTCHA */}
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Security Check
+            </label>
+            <p className="text-sm text-gray-600 mb-2">
+              Please solve this simple math problem: <span className="font-bold">{captcha.question}</span>
+            </p>
+            <input
+              type="number"
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              placeholder="Your Answer"
+              {...register('captchaAnswer')}
+            />
+            {errors.captchaAnswer && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.captchaAnswer.message}
               </p>
             )}
           </div>

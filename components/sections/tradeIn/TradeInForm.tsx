@@ -1,9 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod/v4'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -20,8 +19,21 @@ import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'react-toastify'
 import { tradeInFormSchema } from '@/lib/schemas'
 import { X, Upload, Image as ImageIcon } from 'lucide-react'
+import { z } from 'zod/v4'
 
-type TradeInFormData = z.infer<typeof tradeInFormSchema>
+type TradeInFormData = {
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  preferredContact: string
+  year: string
+  make: string
+  model: string
+  mileage: string
+  comments?: string
+  captchaAnswer: string
+}
 
 interface ImagePreview {
   file: File
@@ -29,8 +41,19 @@ interface ImagePreview {
   id: string
 }
 
+function generateCaptcha() {
+  const a = Math.floor(Math.random() * 10) + 1
+  const b = Math.floor(Math.random() * 10) + 1
+  return { question: `${a} + ${b} = ?`, answer: a + b }
+}
+
 export default function TradeInForm() {
   const [selectedImages, setSelectedImages] = useState<ImagePreview[]>([])
+  const [captcha, setCaptcha] = useState<{ question: string; answer: number }>({ question: '', answer: 0 })
+
+  useEffect(() => {
+    setCaptcha(generateCaptcha())
+  }, [])
 
   const {
     register,
@@ -42,6 +65,8 @@ export default function TradeInForm() {
     resolver: zodResolver(tradeInFormSchema),
     defaultValues: {
       preferredContact: '',
+      comments: '',
+      captchaAnswer: '',
     },
   })
 
@@ -84,7 +109,11 @@ export default function TradeInForm() {
 
     // Append all form fields except images
     for (const [key, value] of Object.entries(data)) {
-      formData.append(key, value as string)
+      if (key === 'captchaExpected') {
+        formData.append(key, captcha.answer.toString())
+      } else {
+        formData.append(key, value as string)
+      }
     }
 
     // Append images
@@ -104,6 +133,7 @@ export default function TradeInForm() {
         toast.success('Message sent successfully!')
         reset()
         clearAllImages()
+        setCaptcha(generateCaptcha())
       } else {
         toast.error(result.message || 'Something went wrong')
       }
@@ -402,7 +432,31 @@ export default function TradeInForm() {
                     id="comments"
                     placeholder="Tell us about any recent repairs, modifications, or other details that might affect your vehicle's value..."
                     className="resize h-36"
+                    {...register('comments')}
                   />
+                  {errors.comments && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.comments.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2 mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <Label htmlFor="captchaAnswer">Security Check</Label>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Please solve this simple math problem: <span className="font-bold">{captcha.question}</span>
+                  </p>
+                  <Input
+                    id="captchaAnswer"
+                    type="number"
+                    placeholder="Your Answer"
+                    {...register('captchaAnswer')}
+                  />
+                  {errors.captchaAnswer && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.captchaAnswer.message}
+                    </p>
+                  )}
                 </div>
 
                 <Button size="lg" className="w-full" disabled={isSubmitting}>

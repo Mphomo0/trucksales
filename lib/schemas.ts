@@ -3,15 +3,16 @@ import { z } from 'zod/v4'
 export const contactFormSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
   phone: z.string().regex(
-    /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/, // Regex for validating international and local phone numbers
-    {
-      message: 'Invalid phone number.',
-    }
+    /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/,
+    { message: 'Invalid phone number.' }
   ),
-  email: z.email({ message: 'Invalid email address' }),
+  email: z.string()
+    .min(1, { message: 'Email is required' })
+    .email({ message: 'Invalid email address' }),
   branch: z.string().min(1, { message: 'Select a branch' }),
   subject: z.string().min(1, { message: 'Subject is required' }),
-  message: z.string().min(1, { message: 'Message is required' }),
+  message: z.string().min(10, { message: 'Message must be at least 10 characters' }),
+  captchaAnswer: z.string().min(1, { message: 'Please answer the math question' }),
 })
 
 export const vehicleSchema = z.object({
@@ -68,12 +69,12 @@ export const tradeInFormSchema = z.object({
     .string()
     .min(1, { message: 'Last name is required' })
     .transform((val) => val.trim()),
-  email: z.email({ message: 'Invalid email address' }),
+  email: z.string()
+    .min(1, { message: 'Email is required' })
+    .email({ message: 'Invalid email address' }),
   phone: z.string().regex(
-    /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/, // Regex for validating international and local phone numbers
-    {
-      message: 'Invalid phone number.',
-    }
+    /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/,
+    { message: 'Invalid phone number.' }
   ),
   preferredContact: z
     .string()
@@ -88,15 +89,20 @@ export const tradeInFormSchema = z.object({
     .min(1, { message: 'Model is required' })
     .transform((val) => val.trim()),
   mileage: z.string().min(1, { message: 'Mileage is required' }),
+  comments: z.string().optional().default(''),
+  captchaAnswer: z.string().min(1, { message: 'Please answer the math question' }),
 })
 
 export const enquiryFormSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
-  email: z.string().email({ message: 'Invalid email address' }),
+  email: z.string()
+    .min(1, { message: 'Email is required' })
+    .email({ message: 'Invalid email address' }),
   phone: z
     .string()
     .regex(/^0[6-8][0-9]{8}$/, { message: 'Invalid SA phone number.' }),
-  message: z.string().min(10, { message: 'Message is required' }),
+  message: z.string().min(10, { message: 'Message must be at least 10 characters' }),
+  captchaAnswer: z.string().min(1, { message: 'Please answer the math question' }),
 })
 
 export const spareSchema = z.object({
