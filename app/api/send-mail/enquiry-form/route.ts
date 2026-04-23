@@ -1,4 +1,5 @@
 import { sendMail } from '@/lib/email'
+import { validateLanguage } from '@/lib/validateLanguage'
 import { NextRequest } from 'next/server'
 
 function validateMessageQuality(message: string) {
@@ -86,6 +87,23 @@ export async function POST(req: NextRequest) {
           status: 400,
           headers: { 'Content-Type': 'application/json' },
         }
+      )
+    }
+
+    // Language / gibberish validation
+    const nameCheck = validateLanguage(name, 'Name')
+    if (!nameCheck.valid) {
+      return new Response(
+        JSON.stringify({ message: nameCheck.message }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const messageCheck = validateLanguage(message, 'Message')
+    if (!messageCheck.valid) {
+      return new Response(
+        JSON.stringify({ message: messageCheck.message }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
       )
     }
 

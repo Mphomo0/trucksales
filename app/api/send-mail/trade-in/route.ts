@@ -1,4 +1,5 @@
 import { sendMail } from '@/lib/email'
+import { validateLanguage } from '@/lib/validateLanguage'
 import { NextRequest, NextResponse } from 'next/server'
 import { Readable } from 'stream'
 import { ReadableStream } from 'stream/web'
@@ -94,6 +95,27 @@ export async function POST(req: NextRequest) {
         { message: emailQuality.message },
         { status: 400 }
       )
+    }
+
+    // Language / gibberish validation
+    const nameFields: Array<[string, string]> = [
+      [firstName, 'First name'],
+      [lastName, 'Last name'],
+      [make, 'Make'],
+      [model, 'Model'],
+    ]
+    for (const [value, label] of nameFields) {
+      const check = validateLanguage(value, label)
+      if (!check.valid) {
+        return NextResponse.json({ message: check.message }, { status: 400 })
+      }
+    }
+
+    if (comments) {
+      const commentsCheck = validateLanguage(comments, 'Comments')
+      if (!commentsCheck.valid) {
+        return NextResponse.json({ message: commentsCheck.message }, { status: 400 })
+      }
     }
 
     // Multiple files (e.g. images)
