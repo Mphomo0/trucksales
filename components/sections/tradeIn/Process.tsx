@@ -1,6 +1,10 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 import React from 'react'
 
-export default function Process() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function Process() {
   return (
     <div className="py-18 bg-gradient-to-r from-amber-600 to-yellow-300 text-accent-foreground ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">

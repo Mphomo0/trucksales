@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -28,7 +32,7 @@ interface ImageFile {
   url: string
 }
 
-export default function GetSpares() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function GetSpares() {
   const [spareItem, setSpareItem] = useState<SparesItem[]>([])
   const [loading, setLoading] = useState(true)
   const [globalFilter, setGlobalFilter] = useState('')

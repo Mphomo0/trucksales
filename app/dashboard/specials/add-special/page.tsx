@@ -1,41 +1,43 @@
-import { auth } from '@/auth'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button' // Assuming you have a reusable Button
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+
 import CreateSpecial from '@/components/sections/dashboardSection/specials/CreateSpecial'
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 
-export default async function AddSpecial() {
-  let session
-
-  try {
-    session = await auth()
-  } catch (error) {
-    console.error('Auth error:', error)
-    return (
-      <div className="bg-gray-50 flex flex-col items-center justify-center h-screen gap-4">
-        <p className="text-xl text-red-500">Authentication error</p>
-      </div>
-    )
-  }
-
-  if (!session) {
-    return (
-      <div className="bg-gray-50 flex flex-col items-center justify-center h-screen gap-4">
-        <p className="text-xl">Not authenticated</p>
-        <Link href="/login" passHref>
-          <Button className="bg-black text-white hover:bg-gray-800">
-            Login
-          </Button>
-        </Link>
-      </div>
-    )
-  }
-
+/* application/ld+json */ export default async function AddSpecial() {
   return (
-    <div className="bg-gray-50 min-h-screen p-4">
-      <div className="max-w-4xl mx-auto py-8">
-        <h1 className="text-2xl font-bold mb-6">Add New Special</h1>
-        <CreateSpecial />
+    <>
+      <DashboardHeader
+        title="Add New Special"
+        subtitle="Create a new promotional deal or special offer"
+      />
+      <div className="dashboard-main">
+        <div className="dash-page-header">
+          <div className="flex items-center gap-4">
+            <Link href="/dashboard/specials" passHref>
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <ArrowLeft size={16} />
+                Back
+              </Button>
+            </Link>
+            <div>
+              <h1 className="dash-page-title">
+                Add <span>Special</span>
+              </h1>
+            </div>
+          </div>
+        </div>
+        <div className="dash-card max-w-4xl">
+          <CreateSpecial />
+        </div>
       </div>
-    </div>
+    </>
   )
 }

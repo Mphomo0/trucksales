@@ -1,9 +1,13 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
-export default function Hero() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function Hero() {
   return (
     <section
       className="relative text-white bg-cover bg-center bg-no-repeat md:h-[700px] h-[500px]"

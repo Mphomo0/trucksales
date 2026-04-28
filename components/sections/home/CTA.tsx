@@ -1,7 +1,11 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
-export default function CTA() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function CTA() {
   return (
     <section className="py-28 bg-gradient-to-r from-amber-600 to-yellow-300 text-accent-foreground">
       <div className="container mx-auto px-4 text-center">

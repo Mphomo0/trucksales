@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -34,7 +38,7 @@ interface FilterOptions {
   categories: string[]
 }
 
-export default function AllSparesFilter() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function AllSparesFilter() {
   const [spares, setSpares] = useState<SparesItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

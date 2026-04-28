@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useForm } from 'react-hook-form'
@@ -24,7 +28,7 @@ const loginSchema = z.object({
 
 type LoginFormInputs = z.infer<typeof loginSchema>
 
-export default function LoginForm() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function LoginForm() {
   const router = useRouter()
 
   const {

@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -47,7 +51,7 @@ function generateCaptcha() {
   return { question: `${a} + ${b} = ?`, answer: a + b }
 }
 
-export default function TradeInForm() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function TradeInForm() {
   const [selectedImages, setSelectedImages] = useState<ImagePreview[]>([])
   const [captcha, setCaptcha] = useState<{ question: string; answer: number }>({ question: '', answer: 0 })
 

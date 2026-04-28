@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -32,7 +36,7 @@ interface SparesItem {
   videoLink?: string | null
 }
 
-export default function EditSpares() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function EditSpares() {
   const [loading, setLoading] = useState(true)
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [previewImages, setPreviewImages] = useState<string[]>([])

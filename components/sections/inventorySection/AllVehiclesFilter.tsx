@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
@@ -42,7 +46,7 @@ interface FilterOptions {
   truckSizes: string[]
 }
 
-export default function AllVehiclesFilter() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function AllVehiclesFilter() {
   const [trucks, setTrucks] = useState<Truck[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

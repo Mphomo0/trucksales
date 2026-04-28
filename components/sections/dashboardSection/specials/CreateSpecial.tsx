@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -36,7 +40,7 @@ const specialFormSchema = z.object({
 
 type SpecialFormData = z.infer<typeof specialFormSchema>
 
-export default function CreateSpecial() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function CreateSpecial() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
 
   const router = useRouter()

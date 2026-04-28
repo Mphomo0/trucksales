@@ -1,7 +1,6 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
-import { prisma } from './lib/prisma'
 
 // Define proper types for our user
 interface AppUser {
@@ -23,6 +22,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Email and password are required')
         }
+
+        // Dynamically import prisma to avoid loading it in the Edge Runtime
+        const { prisma } = await import('./lib/prisma')
 
         //Find user in the database
         const user = await prisma.users.findUnique({

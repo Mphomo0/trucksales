@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useState } from 'react'
@@ -24,7 +28,7 @@ import { spareSchema } from '@/lib/schemas'
 
 type SparesFormData = z.infer<typeof spareSchema>
 
-export default function CreateSpares() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function CreateSpares() {
   const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null)
   const [isUploading, setIsUploading] = useState(false)
 

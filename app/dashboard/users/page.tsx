@@ -1,47 +1,38 @@
-import { auth } from '@/auth'
-import Link from 'next/link'
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+
 import GetUsers from '@/components/sections/dashboardSection/usersSection/GetUsers'
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
-export default async function Users() {
-  let session
-
-  try {
-    session = await auth()
-  } catch (error) {
-    console.error('Authentication error:', error)
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
-        <p className="text-xl text-red-600">
-          Authentication error. Please try again.
-        </p>
-      </div>
-    )
-  }
-
-  if (!session) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
-        <p className="text-xl text-gray-700">You are not authenticated.</p>
-        <Link href="/login" passHref>
-          <Button className="mt-4 bg-black text-white hover:bg-gray-800 transition duration-200">
-            Login
-          </Button>
-        </Link>
-      </div>
-    )
-  }
-
+/* application/ld+json */ export default async function Users() {
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10">
-        <h1 className="text-4xl font-bold text-amber-600">Users</h1>
-        <Link href="/dashboard/users/add-user" passHref>
-          <Button className="w-full sm:w-auto">Add User</Button>
-        </Link>
+    <>
+      <DashboardHeader
+        title="Users"
+        subtitle="Manage admin and staff access"
+      />
+      <div className="dashboard-main">
+        <div className="dash-page-header">
+          <div>
+            <h1 className="dash-page-title">
+              <span>Users</span>
+            </h1>
+            <p className="dash-page-subtitle">All registered admin accounts</p>
+          </div>
+          <Link href="/dashboard/users/add-user" passHref>
+            <Button className="bg-black text-white hover:bg-gray-800">+ Add User</Button>
+          </Link>
+        </div>
+        <div className="dash-card">
+          <GetUsers />
+        </div>
       </div>
-
-      <GetUsers />
-    </section>
+    </>
   )
 }

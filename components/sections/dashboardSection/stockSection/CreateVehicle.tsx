@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useState } from 'react'
@@ -24,7 +28,7 @@ import { vehicleSchema } from '@/lib/schemas'
 
 type VehicleFormData = z.infer<typeof vehicleSchema>
 
-export default function CreateVehicle() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function CreateVehicle() {
   const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null)
   const [isUploading, setIsUploading] = useState(false)
 

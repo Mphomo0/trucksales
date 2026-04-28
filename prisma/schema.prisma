@@ -1,12 +1,10 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
-  engineType = "library"
 }
 
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL")
 }
 
 model users {

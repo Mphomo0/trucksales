@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -10,6 +14,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { Pagination } from '@/components/global/Pagination'
+import { useSearchParams } from 'next/navigation'
 
 interface Vehicle {
   id: string
@@ -46,7 +51,7 @@ interface Meta {
   totalPages: number
 }
 
-export default function GetVehicles() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function GetVehicles() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
   const [loading, setLoading] = useState(true)
   const [searchInput, setSearchInput] = useState('')
@@ -59,6 +64,17 @@ export default function GetVehicles() {
     limit: 25,
     totalPages: 0,
   })
+
+  const searchParams = useSearchParams()
+  const urlSearch = searchParams.get('search')
+
+  // Initialize search from URL params on mount
+  useEffect(() => {
+    if (urlSearch) {
+      setSearchInput(urlSearch)
+      setDebouncedSearch(urlSearch)
+    }
+  }, [urlSearch])
 
   // Debounce search input
   useEffect(() => {

@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -55,7 +59,7 @@ interface Vehicle {
   videoLink?: string | null
 }
 
-export default function TruckDetail() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function TruckDetail() {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

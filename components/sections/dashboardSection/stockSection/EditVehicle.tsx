@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -49,7 +53,7 @@ interface Vehicle {
   videoLink: string | null
 }
 
-export default function EditVehicle() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function EditVehicle() {
   const [loading, setLoading] = useState(true)
   const [isUploading, setIsUploading] = useState(false)
   const [sortableImages, setSortableImages] = useState<SortableImage[]>([])

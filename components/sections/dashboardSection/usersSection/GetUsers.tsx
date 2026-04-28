@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import {
@@ -22,7 +26,7 @@ interface User {
   password?: string // Add password as optional
 }
 
-export default function GetUsers() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function GetUsers() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [formUser, setFormUser] = useState<Partial<User> | null>(null)

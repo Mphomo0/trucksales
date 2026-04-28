@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -18,7 +22,7 @@ interface EnquiryFormProps {
   vehicleSlug: string
 }
 
-export default function EnquiryForm({ vehicleSlug }: EnquiryFormProps) {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function EnquiryForm({ vehicleSlug }: EnquiryFormProps) {
   const [currentUrl, setCurrentUrl] = useState<string>('')
   const [captcha, setCaptcha] = useState<{ question: string; answer: number }>({ question: '', answer: 0 })
 

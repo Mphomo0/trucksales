@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -26,7 +30,7 @@ interface Special {
   }
 }
 
-export default function GetSpecials() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function GetSpecials() {
   const [specials, setSpecials] = useState<Special[]>([])
   const [loading, setLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)

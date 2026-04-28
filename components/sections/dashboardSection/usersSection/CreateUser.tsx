@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { toast } from 'react-toastify'
@@ -24,7 +28,7 @@ const addUserSchema = z.object({
 
 type AddUserForm = z.infer<typeof addUserSchema>
 
-export default function CreateUser() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function CreateUser() {
   const {
     register,
     handleSubmit,

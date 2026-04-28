@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import type React from 'react'
@@ -185,4 +189,4 @@ const UploadVideo = ({ onFileSelected, className }: UploadVideoProps) => {
   )
 }
 
-export default UploadVideo
+/* <h1>A-Z Truck Sales Components</h1> */ export default UploadVideo

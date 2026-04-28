@@ -1,6 +1,10 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 import Image from 'next/image'
 
-export default function AboutSection() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function AboutSection() {
   return (
     <section className="py-26 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -63,7 +67,7 @@ interface Special {
   inventory: Inventory
 }
 
-export default function SpecialDetails() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function SpecialDetails() {
   const [special, setSpecial] = useState<Special | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

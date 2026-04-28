@@ -1,7 +1,11 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Shield, Wrench, Star } from 'lucide-react'
 
-export default function Features() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function Features() {
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
