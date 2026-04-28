@@ -12,6 +12,7 @@ import { SessionProvider } from 'next-auth/react'
 import ClientLayout from '@/components/global/ClientLayout'
 import { PostHogProvider } from './providers'
 import { GoogleAnalytics } from '@next/third-parties/google'
+import Script from 'next/script'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -76,6 +77,9 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  verification: {
+    google: 'NSttRQu748qaKY6XHYe8AVd8vlsBpvXA_q8EcB7BI_Q',
+  },
 }
 
 const organizationSchema = {
@@ -130,6 +134,7 @@ export default function RootLayout({
         <SessionProvider>
           <PostHogProvider>
             <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
+            <Script src="https://analytics.ahrefs.com/analytics.js" data-key="azIimokFbaOWQUGS+ZhBzA" strategy="afterInteractive" />
             <h1 className="sr-only">A-Z Truck Sales | Premium Commercial Vehicles</h1>
             <GeoHints />
             <JsonLd data={organizationSchema} />
