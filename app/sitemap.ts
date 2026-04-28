@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.aztrucksales.co.za'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.a-ztrucksales.com'
 
   // Fetch all slugs for dynamic pages
   const [vehicles, spareParts, activeSpecials] = await Promise.all([

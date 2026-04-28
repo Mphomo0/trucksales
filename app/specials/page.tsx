@@ -35,6 +35,7 @@ export const metadata: Metadata = {
 
   return (
     <div className="bg-gray-100">
+      <h1 className="sr-only">Truck Specials & Discounts | Limited Time Offers | A-Z Truck Sales</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-04-27</span>
@@ -43,9 +44,9 @@ export const metadata: Metadata = {
       <JsonLd data={breadcrumbSchema} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Our Specials
-          </h1>
+          </h2>
           <p className="text-lg text-gray-600 mb-8">
             Don&lsquo;t miss out on our latest truck specials — limited-time
             deals, exclusive discounts, and unbeatable offers available now!

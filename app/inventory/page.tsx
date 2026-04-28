@@ -35,6 +35,7 @@ export const metadata: Metadata = {
 
   return (
     <div>
+      <h1 className="sr-only">Truck Inventory | Used Rigid Trucks for Sale | A-Z Truck Sales</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-04-27</span>
@@ -45,7 +46,7 @@ export const metadata: Metadata = {
       
       <div className="bg-neutral-50 py-12 border-b">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold mb-4">Our Truck Inventory</h1>
+          <h2 className="text-4xl font-bold mb-4">Our Truck Inventory</h2>
           <p className="text-lg text-neutral-600 max-w-2xl mx-auto mb-8">
             Explore our collection of quality used rigid trucks. All vehicles are workshop-tested and ready for the job.
           </p>

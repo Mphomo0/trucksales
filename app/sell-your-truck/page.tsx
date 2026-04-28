@@ -10,8 +10,9 @@ import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 
 export const metadata: Metadata = {
-  title: 'Sell Your Truck | Trade-In Your Vehicle | A-Z Truck Sales',
-  description: 'Looking to sell or trade-in your used truck? We offer competitive prices and a transparent process for buying commercial vehicles in Gauteng.',
+  title: 'Truck Trade-In & Selling | A-Z Truck Sales',
+  description:
+    'Looking to sell or trade-in your used truck? We offer competitive prices and a transparent process for buying commercial vehicles in Gauteng.',
 }
 
 /* application/ld+json */ export default function SellYourTruck() {
@@ -36,6 +37,7 @@ export const metadata: Metadata = {
 
   return (
     <>
+      <h1 className="sr-only">Truck Trade-In & Selling | A-Z Truck Sales</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-04-27</span>
@@ -45,9 +47,9 @@ export const metadata: Metadata = {
       <section className="bg-gray-50 py-12 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Sell Your Truck or Trade In
-            </h1>
+            </h2>
             <p className="text-lg text-gray-600 mb-8">
               Looking to upgrade your truck? Our simple and transparent trade-in
               program makes it easy to get top value for your current truck.

@@ -14,14 +14,15 @@ import Link from 'next/link'
       style={{ backgroundImage: 'url(/images/truckBg.webp)' }}
       aria-label="Hero section with promotional message"
     >
+      <h1 className="sr-only">A-Z Truck Sales | Quality Used Commercial Vehicles in Alberton, Gauteng</h1>
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-yellow-600 opacity-60" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
+          <h2 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
             Find the Right Truck for the Job
-          </h1>
+          </h2>
 
           <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-2xl mx-auto">
             We Are Celebrating 25 Years Of Excellent Service

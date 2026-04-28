@@ -108,6 +108,7 @@ const localBusinessSchema = {
 
   return (
     <div className="bg-gray-50 py-12">
+      <h1 className="sr-only">Contact Us | Visit A-Z Truck Sales in Alberton</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-04-27</span>
@@ -117,7 +118,7 @@ const localBusinessSchema = {
       <JsonLd data={localBusinessSchema} />
       
       <div className="container mx-auto px-4 text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
+        <h2 className="text-4xl font-bold mb-4">Contact Us</h2>
         <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
           Have a question or need a quote? Reach out to our team of experts.
         </p>

@@ -35,6 +35,7 @@ export const metadata: Metadata = {
 
   return (
     <div>
+      <h1 className="sr-only">Truck Spares & Parts | Engines, Gearboxes & Diffs | A-Z Truck Sales</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-04-27</span>
@@ -45,7 +46,7 @@ export const metadata: Metadata = {
       
       <div className="bg-neutral-50 py-12 border-b">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold mb-4">Quality Used Truck Spares</h1>
+          <h2 className="text-4xl font-bold mb-4">Quality Used Truck Spares</h2>
           <p className="text-lg text-neutral-600 max-w-2xl mx-auto mb-8">
             Find the right parts for your commercial vehicle. We stock engines, gearboxes, diffs, and more.
           </p>

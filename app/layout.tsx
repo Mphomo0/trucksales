@@ -28,14 +28,22 @@ import JsonLd from '@/components/global/JsonLd'
 import GeoHints from '@/components/global/GeoHints'
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://www.a-ztrucksales.com'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL || 'https://www.a-ztrucksales.com',
+  ),
   title: {
     default: 'A-Z Truck Sales | Quality Used Commercial Vehicles in Gauteng',
     template: '%s | A-Z Truck Sales',
   },
   description:
-    'A-Z Truck Sales are your commercial vehicle specialists in Alberton North, Gauteng. 25+ years experience in selling and restoring quality used rigid trucks (1.5-16 ton).',
-  keywords: ['truck sales', 'used trucks gauteng', 'commercial vehicles south africa', 'rigid trucks', 'truck restoration'],
+    'A-Z Truck Sales are commercial vehicle specialists in Alberton North, Gauteng. 25+ years’ experience selling and restoring quality used rigid trucks (1.5–16 ton).',
+  keywords: [
+    'truck sales',
+    'used trucks gauteng',
+    'commercial vehicles south africa',
+    'rigid trucks',
+    'truck restoration',
+  ],
   authors: [{ name: 'A-Z Truck Sales' }],
   creator: 'A-Z Truck Sales',
   publisher: 'A-Z Truck Sales',
@@ -50,7 +58,8 @@ export const metadata: Metadata = {
     url: 'https://www.a-ztrucksales.com',
     siteName: 'A-Z Truck Sales',
     title: 'A-Z Truck Sales | Quality Used Commercial Vehicles',
-    description: 'Specialists in used commercial vehicles, rigid trucks, and truck restoration in Gauteng.',
+    description:
+      'Specialists in used commercial vehicles, rigid trucks, and truck restoration in Gauteng.',
     images: [
       {
         url: '/og-image.jpg', // Make sure this exists or I'll need to generate/suggest it
@@ -63,7 +72,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'A-Z Truck Sales | Quality Used Commercial Vehicles',
-    description: 'Specialists in used commercial vehicles, rigid trucks, and truck restoration in Gauteng.',
+    description:
+      'Specialists in used commercial vehicles, rigid trucks, and truck restoration in Gauteng.',
     images: ['/og-image.jpg'],
   },
   robots: {
@@ -116,7 +126,8 @@ const websiteSchema = {
   url: 'https://www.a-ztrucksales.com',
   potentialAction: {
     '@type': 'SearchAction',
-    target: 'https://www.a-ztrucksales.com/inventory?search={search_term_string}',
+    target:
+      'https://www.a-ztrucksales.com/inventory?search={search_term_string}',
     'query-input': 'required name=search_term_string',
   },
 }
@@ -134,14 +145,18 @@ export default function RootLayout({
         <SessionProvider>
           <PostHogProvider>
             <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
-            <Script src="https://analytics.ahrefs.com/analytics.js" data-key="azIimokFbaOWQUGS+ZhBzA" strategy="afterInteractive" />
-            <h1 className="sr-only">A-Z Truck Sales | Premium Commercial Vehicles</h1>
+            <Script
+              src="https://analytics.ahrefs.com/analytics.js"
+              data-key="azIimokFbaOWQUGS+ZhBzA"
+              strategy="afterInteractive"
+            />
+            <h1 className="sr-only">
+              A-Z Truck Sales | Premium Commercial Vehicles
+            </h1>
             <GeoHints />
             <JsonLd data={organizationSchema} />
             <JsonLd data={websiteSchema} />
-            <ClientLayout>
-              {children}
-            </ClientLayout>
+            <ClientLayout>{children}</ClientLayout>
             <ToastContainer />
             {/* <GlobalWhatsAppButton /> */}
           </PostHogProvider>

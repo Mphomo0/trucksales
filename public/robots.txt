@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.a-ztrucksales.com/sitemap.xml
+
+User-agent: GPTBot
+Allow: /llms.txt
+
+User-agent: Claude-Web
+Allow: /llms.txt
+
+User-agent: Google-Extended
+Allow: /llms.txt
