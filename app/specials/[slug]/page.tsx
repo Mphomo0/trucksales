@@ -39,6 +39,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
     },
+    alternates: {
+      canonical: `https://www.a-ztrucksales.com/specials/${special.slug}`,
+    },
   }
 }
 

@@ -42,6 +42,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       images: images.length > 0 ? [images[0]] : [],
     },
+    alternates: {
+      canonical: `https://www.a-ztrucksales.com/inventory/${vehicle.slug}`,
+    },
   }
 }
 
