@@ -7,6 +7,7 @@
 
 import { AnalyticsDashboard } from '@/components/global/AnalyticsDashboard'
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
+import { ExportButton } from '@/components/dashboard/ExportButton'
 import GeoHints from '@/components/global/GeoHints'
 
 /* application/ld+json */ export default async function Dashboard() {
@@ -19,6 +20,10 @@ import GeoHints from '@/components/global/GeoHints'
         subtitle="Welcome back — here's what's happening on your site"
       />
       <div className="dashboard-main">
+        <div className="flex justify-end gap-2 mb-4">
+          <ExportButton type="spares" />
+          <ExportButton type="vehicles" />
+        </div>
         <AnalyticsDashboard />
       </div>
     </>
