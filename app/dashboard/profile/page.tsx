@@ -1,41 +1,33 @@
-import { auth } from '@/auth'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button' // assuming you're using a shared button component
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+
 import UserProfile from '@/components/sections/dashboardSection/usersSection/UserProfile'
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
 
-export default async function Profile() {
-  let session
-
-  try {
-    session = await auth()
-  } catch (error) {
-    console.error('Auth error:', error)
-    return (
-      <div className="bg-gray-50 flex flex-col items-center justify-center min-h-screen gap-4">
-        <p className="text-xl text-red-500">Authentication error</p>
-      </div>
-    )
-  }
-
-  if (!session) {
-    return (
-      <div className="bg-gray-50 flex flex-col items-center justify-center min-h-screen gap-4">
-        <p className="text-xl">Not authenticated</p>
-        <Link href="/login" passHref>
-          <Button className="bg-black text-white hover:bg-gray-800">
-            Login
-          </Button>
-        </Link>
-      </div>
-    )
-  }
-
+/* application/ld+json */ export default async function Profile() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-      <div className="bg-white shadow-md rounded-lg w-full max-w-3xl p-6">
-        <h1 className="text-2xl font-bold mb-6">Your Profile</h1>
-        <UserProfile />
+    <>
+      <DashboardHeader
+        title="Your Profile"
+        subtitle="Manage your personal information and settings"
+      />
+      <div className="dashboard-main">
+        <div className="dash-card max-w-2xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="dash-page-title">
+              Your <span>Profile</span>
+            </h1>
+            <p className="dash-page-subtitle">View and update your account details</p>
+          </div>
+          <div className="max-w-md mx-auto">
+            <UserProfile />
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   )
 }

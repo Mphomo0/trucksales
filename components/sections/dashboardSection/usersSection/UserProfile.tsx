@@ -1,3 +1,7 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -5,25 +9,28 @@ import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'react-toastify'
-import { Loader2, User, Mail, Lock, Save } from 'lucide-react'
+import { Loader2, User, Mail, Lock, Save, Eye, EyeOff } from 'lucide-react'
 
 interface FormData {
   name: string
   email: string
   password: string
+  currentPassword: string
 }
 
-export default function UserProfile() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function UserProfile() {
   const { data: session, update: updateSession } = useSession()
   const [form, setForm] = useState<FormData>({
     name: '',
     email: '',
     password: '',
+    currentPassword: '',
   })
   const [loading, setLoading] = useState(false)
   const [initializing, setInitializing] = useState(true)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
 
   // Initialize form with session data
   useEffect(() => {
@@ -32,6 +39,7 @@ export default function UserProfile() {
         name: session.user.name || '',
         email: session.user.email || '',
         password: '',
+        currentPassword: '',
       })
       setInitializing(false)
     }
@@ -50,7 +58,6 @@ export default function UserProfile() {
     setLoading(true)
 
     try {
-      // Only send fields that have been changed or are not empty
       const updateData: Partial<FormData> = {}
 
       if (form.name.trim() && form.name !== session?.user?.name) {
@@ -65,17 +72,15 @@ export default function UserProfile() {
         updateData.password = form.password
       }
 
-      // Check if there are any changes to make
       if (Object.keys(updateData).length === 0) {
         toast.info('No changes to save')
+        setLoading(false)
         return
       }
 
       const response = await fetch('/api/users/profile', {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updateData),
       })
 
@@ -83,11 +88,8 @@ export default function UserProfile() {
 
       if (response.ok) {
         toast.success('Profile updated successfully!')
+        setForm((prev) => ({ ...prev, password: '', currentPassword: '' }))
 
-        // Clear password field after successful update
-        setForm((prev) => ({ ...prev, password: '' }))
-
-        // Update session if email or name changed
         if (updateData.name || updateData.email) {
           await updateSession({
             ...session,
@@ -99,7 +101,6 @@ export default function UserProfile() {
           })
         }
 
-        // Show re-login message if email was changed
         if (data.message) {
           toast.warning(data.message)
         }
@@ -116,109 +117,150 @@ export default function UserProfile() {
 
   if (initializing) {
     return (
-      <Card className="w-full max-w-md mx-auto">
-        <CardContent className="flex items-center justify-center py-8">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <span className="ml-2">Loading profile...</span>
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+      </div>
     )
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-lg">
-      <CardHeader className="text-center">
-        <CardTitle className="flex items-center justify-center gap-2 text-2xl">
-          <User className="h-6 w-6" />
-          User Profile
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Name Field */}
-          <div className="space-y-2">
-            <Label htmlFor="name" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              Name
-            </Label>
-            <Input
-              id="name"
-              name="name"
-              type="text"
-              value={form.name}
-              onChange={handleInputChange}
-              placeholder="Enter your name"
-              disabled={loading}
-              className="w-full"
-            />
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Name Field */}
+      <div className="space-y-2">
+        <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+          Full Name
+        </Label>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <User className="h-4 w-4 text-gray-400" />
           </div>
-
-          {/* Email Field */}
-          <div className="space-y-2">
-            <Label htmlFor="email" className="flex items-center gap-2">
-              <Mail className="h-4 w-4" />
-              Email
-            </Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleInputChange}
-              placeholder="Enter your email"
-              disabled={loading}
-              className="w-full"
-            />
-          </div>
-
-          {/* Password Field */}
-          <div className="space-y-2">
-            <Label htmlFor="password" className="flex items-center gap-2">
-              <Lock className="h-4 w-4" />
-              New Password (optional)
-            </Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={handleInputChange}
-              placeholder="Enter new password"
-              disabled={loading}
-              className="w-full"
-            />
-            <p className="text-xs text-gray-500">
-              Leave empty to keep current password
-            </p>
-          </div>
-
-          {/* Submit Button */}
-          <Button type="submit" disabled={loading} className="w-full">
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Updating...
-              </>
-            ) : (
-              <>
-                <Save className="mr-2 h-4 w-4" />
-                Save Changes
-              </>
-            )}
-          </Button>
-        </form>
-
-        {/* Current Session Info */}
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">
-            Current Session
-          </h4>
-          <div className="text-xs text-gray-500 space-y-1">
-            <p>Name: {session?.user?.name || 'Not set'}</p>
-            <p>Email: {session?.user?.email || 'Not set'}</p>
-          </div>
+          <Input
+            id="name"
+            name="name"
+            type="text"
+            value={form.name}
+            onChange={handleInputChange}
+            placeholder="Enter your full name"
+            disabled={loading}
+            className="pl-10 w-full"
+          />
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Email Field */}
+      <div className="space-y-2">
+        <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+          Email Address
+        </Label>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Mail className="h-4 w-4 text-gray-400" />
+          </div>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleInputChange}
+            placeholder="Enter your email"
+            disabled={loading}
+            className="pl-10 w-full"
+          />
+        </div>
+      </div>
+
+      {/* Current Password Field */}
+      <div className="space-y-2">
+        <Label htmlFor="currentPassword" className="text-sm font-medium text-gray-700">
+          Current Password
+        </Label>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Lock className="h-4 w-4 text-gray-400" />
+          </div>
+          <Input
+            id="currentPassword"
+            name="currentPassword"
+            type={showCurrentPassword ? 'text' : 'password'}
+            value={form.currentPassword}
+            onChange={handleInputChange}
+            placeholder="Enter current password to make changes"
+            disabled={loading}
+            className="pl-10 pr-10 w-full"
+          />
+          <button
+            type="button"
+            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+          >
+            {showCurrentPassword ? (
+              <EyeOff className="h-4 w-4 text-gray-400" />
+            ) : (
+              <Eye className="h-4 w-4 text-gray-400" />
+            )}
+          </button>
+        </div>
+        <p className="text-xs text-gray-500">
+          Required to change your name, email, or password
+        </p>
+      </div>
+
+      {/* New Password Field */}
+      <div className="space-y-2">
+        <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+          New Password
+        </Label>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Lock className="h-4 w-4 text-gray-400" />
+          </div>
+          <Input
+            id="password"
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            value={form.password}
+            onChange={handleInputChange}
+            placeholder="Enter new password"
+            disabled={loading}
+            className="pl-10 pr-10 w-full"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4 text-gray-400" />
+            ) : (
+              <Eye className="h-4 w-4 text-gray-400" />
+            )}
+          </button>
+        </div>
+        <p className="text-xs text-gray-500">
+          Leave empty to keep your current password
+        </p>
+      </div>
+
+      {/* Submit Button */}
+      <div className="pt-2">
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-black text-white hover:bg-gray-800"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Save className="mr-2 h-4 w-4" />
+              Save Changes
+            </>
+          )}
+        </Button>
+      </div>
+    </form>
   )
 }

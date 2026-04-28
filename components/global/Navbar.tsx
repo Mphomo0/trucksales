@@ -1,18 +1,13 @@
+/* author: A-Z Truck Sales */
+/* datePublished: 2026-04-27 */
+/* application/ld+json */
+
 'use client'
 import { useState, useEffect } from 'react'
 import { Menu, X, User } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useSession } from 'next-auth/react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { signOut } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 
 const NavLinks = [
   { name: 'Home', href: '/' },
@@ -23,7 +18,7 @@ const NavLinks = [
   { name: 'Contact Us', href: '/contact' },
 ]
 
-export default function Navbar() {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { data: session, status } = useSession()
 
@@ -96,44 +91,13 @@ export default function Navbar() {
             {status === 'loading' ? (
               <div className="w-20 h-8 bg-gray-200 animate-pulse rounded"></div>
             ) : session ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 text-gray-800 hover:text-gray-600 rounded-md transition-colors">
-                  <User size={18} />
-                  <span>Account</span>
-                </DropdownMenuTrigger>
-
-                <DropdownMenuContent className="w-48 mt-2 bg-white shadow-lg rounded-md border border-gray-200">
-                  <DropdownMenuLabel>
-                    {session.user?.name || session.user?.email}
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <Link href="/dashboard">
-                    <DropdownMenuItem>Dashboard</DropdownMenuItem>
-                  </Link>
-                  <Link href="/dashboard/profile">
-                    <DropdownMenuItem>Profile</DropdownMenuItem>
-                  </Link>
-                  <Link href="/dashboard/users">
-                    <DropdownMenuItem>Users</DropdownMenuItem>
-                  </Link>
-                  <Link href="/dashboard/vehicles">
-                    <DropdownMenuItem>Vehicles</DropdownMenuItem>
-                  </Link>
-                  <Link href="/dashboard/specials">
-                    <DropdownMenuItem>Specials</DropdownMenuItem>
-                  </Link>
-                  <Link href="/dashboard/spares">
-                    <DropdownMenuItem>Spares</DropdownMenuItem>
-                  </Link>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={handleLogout}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer"
-                  >
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 px-3 py-2 text-gray-800 hover:text-gray-600 rounded-md transition-colors"
+              >
+                <User size={18} />
+                <span>Dashboard</span>
+              </Link>
             ) : null}
           </div>
 
@@ -178,44 +142,18 @@ export default function Navbar() {
                 {status === 'loading' ? (
                   <div className="w-full h-10 bg-gray-200 animate-pulse rounded mt-2"></div>
                 ) : session ? (
-                  <div className="pt-2 mt-2 border-t border-gray-200">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger className="flex items-center gap-2 px-3 py-2 w-full text-left text-gray-800 hover:text-gray-600 hover:bg-gray-50 rounded-md transition-colors">
-                        <User size={18} />
-                        <span>Account</span>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-64 mt-2 bg-white shadow-lg rounded-md border border-gray-200">
-                        <DropdownMenuLabel>
-                          {session.user?.name || session.user?.email}
-                        </DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <Link href="/dashboard">
-                          <DropdownMenuItem>Dashboard</DropdownMenuItem>
-                        </Link>
-                        <Link href="/dashboard/profile">
-                          <DropdownMenuItem>Profile</DropdownMenuItem>
-                        </Link>
-                        <Link href="/dashboard/users">
-                          <DropdownMenuItem>Users</DropdownMenuItem>
-                        </Link>
-                        <Link href="/dashboard/vehicles">
-                          <DropdownMenuItem>Inventory</DropdownMenuItem>
-                        </Link>
-                        <Link href="/dashboard/specials">
-                          <DropdownMenuItem>Specials</DropdownMenuItem>
-                        </Link>
-                        <Link href="/dashboard/spares">
-                          <DropdownMenuItem>Spares</DropdownMenuItem>
-                        </Link>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={handleLogout}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer"
-                        >
-                          Logout
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                  <div className="pt-2 mt-2 border-t border-gray-200 flex flex-col space-y-1">
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center gap-2 px-3 py-2 text-gray-800 hover:text-gray-600 hover:bg-gray-50 rounded-md transition-colors"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false)
+                        document.body.style.overflow = 'unset'
+                      }}
+                    >
+                      <User size={18} />
+                      <span>Dashboard</span>
+                    </Link>
                   </div>
                 ) : null}
               </div>
