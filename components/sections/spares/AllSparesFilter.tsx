@@ -20,6 +20,7 @@ import { Search, Filter } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Pagination } from '@/components/global/Pagination'
+import { getCurrentPrice } from '@/lib/pricing'
 
 interface SparesItem {
   id: string
@@ -31,6 +32,10 @@ interface SparesItem {
   images: { fileId: string; url: string }[]
   description: string
   slug: string
+  specialPrice?: number | null
+  specialPriceNoVat?: number | null
+  specialValidFrom?: Date | string | null
+  specialValidTo?: Date | string | null
 }
 
 interface FilterOptions {
@@ -270,7 +275,7 @@ interface FilterOptions {
                   <Card className="overflow-hidden hover:shadow-md transition-shadow">
                     <div className="relative">
                       <Image
-                        src={spare.images?.[0]?.url}
+                        src={spare.images?.[0]?.url || '/placeholder-truck.jpg'}
                         alt={spare.name}
                         width={400}
                         height={250}
@@ -282,6 +287,19 @@ interface FilterOptions {
                       <Badge className="absolute top-2 left-2 bg-blue-600 capitalize">
                         {spare.category.toLowerCase()}
                       </Badge>
+                      {(() => {
+                        const priceInfo = getCurrentPrice(
+                          spare.price,
+                          spare.specialPrice ?? null,
+                          spare.specialValidFrom ?? null,
+                          spare.specialValidTo ?? null
+                        )
+                        return priceInfo.isSpecial ? (
+                          <Badge className="absolute top-10 left-2 bg-red-600">
+                            SPECIAL
+                          </Badge>
+                        ) : null
+                      })()}
                     </div>
                     <CardContent className="p-4">
                       <h3 className="text-lg font-bold mb-1 truncate">
@@ -290,13 +308,42 @@ interface FilterOptions {
                       <p className="text-lg text-gray-600 capitalize truncate mb-1">
                         {spare.make}
                       </p>
-                      <p className="text-2xl font-bold text-yellow-600 mb-3">
-                        R{spare.price.toLocaleString()}
-                        <span className="text-xs text-gray-500">
-                          {' '}
-                          incl. VAT
-                        </span>
-                      </p>
+                      {(() => {
+                        const priceInfo = getCurrentPrice(
+                          spare.price,
+                          spare.specialPrice ?? null,
+                          spare.specialValidFrom ?? null,
+                          spare.specialValidTo ?? null
+                        )
+                        const validUntil = spare.specialValidTo 
+                          ? new Date(spare.specialValidTo).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+                          : null
+                        return (
+                          <div className="mb-3">
+                            {priceInfo.isSpecial ? (
+                              <div className="flex flex-col gap-1">
+                                <span className="text-lg font-bold text-red-500 line-through">
+                                  R{spare.price.toLocaleString()}
+                                </span>
+                                <span className="text-2xl font-bold text-yellow-600">
+                                  R{priceInfo.currentPrice.toLocaleString()}
+                                  <span className="text-xs font-normal text-gray-500 ml-1">incl. VAT</span>
+                                </span>
+                                {validUntil && (
+                                  <span className="text-xs text-green-600 font-medium">
+                                    Valid until {validUntil}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <p className="text-2xl font-bold text-yellow-600">
+                                R{spare.price.toLocaleString()}
+                                <span className="text-xs font-normal text-gray-500 ml-1">incl. VAT</span>
+                              </p>
+                            )}
+                          </div>
+                        )
+                      })()}
                       <Button asChild className="w-full text-sm">
                         <span>View Details</span>
                       </Button>

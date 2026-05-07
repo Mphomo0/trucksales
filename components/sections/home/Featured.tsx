@@ -12,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Gauge } from 'lucide-react'
 import Marquee from 'react-fast-marquee'
+import { getCurrentPrice } from '@/lib/pricing'
 
 interface Image {
   fileId: string
@@ -32,6 +33,9 @@ interface Truck {
   images: Image[]
   description: string
   slug: string
+  specialPrice: number | null
+  specialValidFrom: Date | null
+  specialValidTo: Date | null
 }
 
 /* <h1>A-Z Truck Sales Components</h1> */ export default function Featured() {
@@ -43,10 +47,14 @@ interface Truck {
     try {
       const res = await fetch('/api/vehicles/featured')
       const data = await res.json()
-      setTrucks(data)
+      if (data.fallback) {
+        setTrucks([])
+      } else {
+        setTrucks(Array.isArray(data) ? data : data.vehicles || [])
+      }
     } catch (error) {
       console.error('Error fetching trucks:', error)
-      setError(true)
+      setTrucks([])
     } finally {
       setLoading(false)
     }
@@ -64,10 +72,24 @@ interface Truck {
     )
   }
 
-  if (error) {
+  if (trucks.length === 0 && !loading) {
     return (
-      <section className="py-16 text-center">
-        <p className="text-red-500">Failed to load featured vehicles.</p>
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <p className="text-lg text-gray-600">
+              Check out our most popular vehicles
+            </p>
+          </div>
+          <div className="text-center py-12">
+            <p className="text-gray-500">
+              No vehicles available at the moment. Please check back soon or{' '}
+              <Link href="/inventory" className="text-amber-600 hover:underline">
+                browse our full inventory
+              </Link>.
+            </p>
+          </div>
+        </div>
       </section>
     )
   }
@@ -101,7 +123,7 @@ interface Truck {
                   <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300">
                     {/* Image Section */}
                     <div className="relative">
-                      {truck.images.length > 0 ? (
+                      {truck.images?.[0]?.url ? (
                         <Image
                           src={truck.images[0].url}
                           alt={`${truck.year} ${truck.make} ${truck.model}`}
@@ -127,12 +149,40 @@ interface Truck {
                         {truck.model.toUpperCase()}
                       </h3>
                       <div className="flex flex-col items-start mb-3">
-                        <div>
-                          <span className="text-2xl font-bold text-yellow-600">
-                            R{truck.vatPrice.toLocaleString()}{' '}
-                            <span className="text-sm">inc. VAT</span>
-                          </span>
-                        </div>
+                        {(() => {
+                          const priceInfo = getCurrentPrice(
+                            truck.vatPrice,
+                            truck.specialPrice ?? null,
+                            truck.specialValidFrom ?? null,
+                            truck.specialValidTo ?? null
+                          )
+                          const validUntil = truck.specialValidTo 
+                            ? new Date(truck.specialValidTo).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+                            : null
+                          return priceInfo.isSpecial ? (
+                            <div className="flex flex-col">
+                              <span className="text-xl font-bold text-red-500 line-through">
+                                R{priceInfo.originalPrice.toLocaleString()}
+                              </span>
+                              <span className="text-2xl font-bold text-yellow-600">
+                                R{priceInfo.currentPrice.toLocaleString()}
+                              </span>
+                              <span className="text-xs text-gray-500">inc. VAT</span>
+                              {validUntil && (
+                                <span className="text-xs text-green-600 font-medium">
+                                  Valid until {validUntil}
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <div>
+                              <span className="text-2xl font-bold text-yellow-600">
+                                R{truck.vatPrice.toLocaleString()}{' '}
+                                <span className="text-sm">inc. VAT</span>
+                              </span>
+                            </div>
+                          )
+                        })()}
                         <div>
                           <span className="text-gray-600 flex items-center">
                             <Gauge size={18} className="mr-1" />

@@ -95,7 +95,10 @@ interface ImageFile {
           body: JSON.stringify({ fileIds }),
         })
 
-        if (!delRes.ok) throw new Error('Failed to delete images from ImageKit')
+        if (!delRes.ok) {
+          const errData = await delRes.json()
+          console.error('Image deletion error:', errData)
+        }
       }
 
       const sparesRes = await fetch(`/api/spares/${slug}`, {
@@ -117,7 +120,7 @@ interface ImageFile {
       header: 'Thumbnail',
       cell: ({ row }) => (
         <Image
-          src={row.original.images[0]?.url}
+          src={row.original.images?.[0]?.url || '/placeholder-truck.jpg'}
           alt={row.original.name}
           width={50}
           height={50}

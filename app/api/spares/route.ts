@@ -10,17 +10,18 @@ interface Filters {
   diff?: string
   other?: string
   OR?: Array<
-    | { make: { contains: string; mode: 'insensitive' } }
-    | { engine: { contains: string; mode: 'insensitive' } }
-    | { gearbox: { contains: string; mode: 'insensitive' } }
-    | { diff: { contains: string; mode: 'insensitive' } }
-    | { other: { contains: string; mode: 'insensitive' } }
+    | { make: { contains: string } }
+    | { engine: { contains: string } }
+    | { gearbox: { contains: string } }
+    | { diff: { contains: string } }
+    | { other: { contains: string } }
   >
 }
 
 // POST /api/spares to create a new vehicle spares
-export const POST = auth(async (req) => {
-  if (!req.auth) {
+export async function POST(req: Request) {
+  const session = await auth()
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -37,6 +38,10 @@ export const POST = auth(async (req) => {
       category,
       images,
       videoLink,
+      specialPrice,
+      specialPriceNoVat,
+      specialValidFrom,
+      specialValidTo,
     } = body
 
     const requiredFields = [
@@ -130,6 +135,10 @@ export const POST = auth(async (req) => {
         videoLink,
         slug,
         images,
+        specialPrice: specialPrice ? Number.parseFloat(specialPrice) : null,
+        specialPriceNoVat: specialPriceNoVat ? Number.parseFloat(specialPriceNoVat) : null,
+        specialValidFrom: specialValidFrom ? new Date(specialValidFrom) : null,
+        specialValidTo: specialValidTo ? new Date(specialValidTo) : null,
       },
     })
 
@@ -141,7 +150,7 @@ export const POST = auth(async (req) => {
       { status: 500 }
     )
   }
-})
+}
 
 // GET /api/spares to fetch all vehicle spares
 export const GET = async (req: NextRequest) => {
@@ -170,7 +179,7 @@ export const GET = async (req: NextRequest) => {
     const filters: any = {}
 
     if (make && make !== 'all') {
-      filters.make = { contains: make, mode: 'insensitive' }
+      filters.make = { contains: make }
     }
 
     if (category && category !== 'all') {
@@ -179,9 +188,9 @@ export const GET = async (req: NextRequest) => {
 
     if (search) {
       filters.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { make: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
+        { name: { contains: search } },
+        { make: { contains: search } },
+        { description: { contains: search } },
       ]
     }
 
@@ -195,10 +204,11 @@ export const GET = async (req: NextRequest) => {
         orderBy: {
           [sortBy]: sortOrder,
         },
-        // Optimize CPU by selecting only necessary fields
+        // Optimize CPU by selecting all fields
         select: {
           id: true,
           name: true,
+          description: true,
           make: true,
           price: true,
           noVatPrice: true,
@@ -207,6 +217,10 @@ export const GET = async (req: NextRequest) => {
           images: true,
           videoLink: true,
           slug: true,
+          specialPrice: true,
+          specialPriceNoVat: true,
+          specialValidFrom: true,
+          specialValidTo: true,
           createdAt: true,
           updatedAt: true,
         },

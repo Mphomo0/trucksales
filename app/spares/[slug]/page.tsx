@@ -91,7 +91,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         {/* application/ld+json */}
       </div>
       <JsonLd data={productSchema} />
-      <SpareDetail />
+      <SpareDetail spare={spare} />
     </div>
   )
 }

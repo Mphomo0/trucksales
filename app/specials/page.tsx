@@ -4,16 +4,93 @@
 
 import AllSpecials from '@/components/sections/special/AllSpecials'
 import SpecialsFeatures from '@/components/sections/specials/SpecialsFeatures'
-import React from 'react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
+import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
   title: 'Truck Specials & Discounts | Limited Time Offers',
   description: 'View our latest truck specials and exclusive discounts on quality used commercial vehicles in Gauteng.',
 }
 
-/* application/ld+json */ export default function Specials() {
+async function getSpecialsData() {
+  const now = new Date()
+  
+  const vehicles = await prisma.inventory.findMany({
+    where: {
+      specialPrice: { not: null },
+      AND: [
+        { specialPrice: { gt: 0 } },
+        {
+          OR: [
+            { specialValidTo: null },
+            { specialValidTo: { gte: now } },
+          ],
+        },
+      ],
+    },
+    select: {
+      id: true,
+      name: true,
+      make: true,
+      model: true,
+      year: true,
+      vatPrice: true,
+      pricenoVat: true,
+      images: true,
+      description: true,
+      slug: true,
+      specialPrice: true,
+      specialValidFrom: true,
+      specialValidTo: true,
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 20,
+  })
+
+  const spares = await prisma.spares.findMany({
+    where: {
+      specialPrice: { not: null },
+      AND: [
+        { specialPrice: { gt: 0 } },
+        {
+          OR: [
+            { specialValidTo: null },
+            { specialValidTo: { gte: now } },
+          ],
+        },
+      ],
+    },
+    select: {
+      id: true,
+      name: true,
+      make: true,
+      price: true,
+      noVatPrice: true,
+      images: true,
+      description: true,
+      slug: true,
+      category: true,
+      condition: true,
+      specialPrice: true,
+      specialPriceNoVat: true,
+      specialValidFrom: true,
+      specialValidTo: true,
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 20,
+  })
+
+  return { vehicles, spares }
+}
+
+/* application/ld+json */ export default async function Specials() {
+  const { vehicles, spares } = await getSpecialsData()
+
+  const hasVehicles = vehicles.length > 0
+  const hasSpares = spares.length > 0
+  const hasAnySpecial = hasVehicles || hasSpares
+
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -39,7 +116,6 @@ export const metadata: Metadata = {
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-04-27</span>
-        {/* application/ld+json */}
       </div>
       <JsonLd data={breadcrumbSchema} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -57,7 +133,21 @@ export const metadata: Metadata = {
           </div>
         </div>
 
-        <AllSpecials />
+        {!hasAnySpecial ? (
+          <div className="text-center py-12 bg-white rounded-lg shadow-sm">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              No Specials Currently Available
+            </h3>
+            <p className="text-lg text-gray-600">
+              Be on the lookout — the next special is on the way!
+            </p>
+          </div>
+        ) : (
+          <AllSpecials 
+            vehicles={vehicles as any[]} 
+            spares={spares as any[]} 
+          />
+        )}
       </div>
     </div>
   )

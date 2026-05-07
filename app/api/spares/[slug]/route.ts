@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
-import { Condition, Category } from '@/lib/generated/prisma/client'
 
 interface UpdateSparesBody {
   id: string
@@ -15,6 +14,10 @@ interface UpdateSparesBody {
   description: string
   slug: string
   videoLink?: string
+  specialPrice?: number | null
+  specialPriceNoVat?: number | null
+  specialValidFrom?: string | null
+  specialValidTo?: string | null
 }
 
 // Get /api/spares/slug to fetch a spares by slug
@@ -43,8 +46,9 @@ export const GET = async (
 }
 
 // DELETE /api/spares/slug to delete a vehicle by slug
-export const DELETE = auth(async (req, { params }) => {
-  if (!req.auth) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const session = await auth()
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -65,11 +69,12 @@ export const DELETE = auth(async (req, { params }) => {
     console.error('Delete failed:', error)
     return NextResponse.json({ error: 'Delete failed' }, { status: 500 })
   }
-})
+}
 
 // PATCH /api/spares/slug to update a vehicle by ID
-export const PATCH = auth(async (req, { params }) => {
-  if (!req.auth) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const session = await auth()
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const slug = (await params).slug
@@ -106,14 +111,18 @@ export const PATCH = auth(async (req, { params }) => {
     const updateData = {
       name: body.name,
       make: body.make,
-      category: body.category as Category,
+      category: String(body.category).toUpperCase(),
       price: Number(body.price),
       noVatPrice: body.noVatPrice ? Number(body.noVatPrice) : null,
-      condition: body.condition as Condition,
+      condition: String(body.condition).toUpperCase(),
       images: body.images,
       slug: body.slug,
       description: body.description,
       videoLink: body.videoLink || null,
+      specialPrice: body.specialPrice !== undefined ? (body.specialPrice ? Number(body.specialPrice) : null) : undefined,
+      specialPriceNoVat: body.specialPriceNoVat !== undefined ? (body.specialPriceNoVat ? Number(body.specialPriceNoVat) : null) : undefined,
+      specialValidFrom: body.specialValidFrom ? new Date(body.specialValidFrom) : null,
+      specialValidTo: body.specialValidTo ? new Date(body.specialValidTo) : null,
     }
 
     // Update the vehicle
@@ -126,4 +135,4 @@ export const PATCH = auth(async (req, { params }) => {
   } catch (error) {
     return NextResponse.json({ error: 'Update failed' }, { status: 500 })
   }
-})
+}

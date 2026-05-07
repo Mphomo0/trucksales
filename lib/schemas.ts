@@ -58,6 +58,9 @@ export const vehicleSchema = z.object({
     })
   ),
   videoLink: z.string().optional(),
+  specialPrice: z.coerce.number<number>().optional(),
+  specialValidFrom: z.string().optional(),
+  specialValidTo: z.string().optional(),
 })
 
 export const tradeInFormSchema = z.object({
@@ -129,4 +132,8 @@ export const spareSchema = z.object({
     })
   ),
   videoLink: z.string().optional(),
+  specialPrice: z.coerce.number<number>().optional(),
+  specialPriceNoVat: z.coerce.number<number>().optional(),
+  specialValidFrom: z.string().optional(),
+  specialValidTo: z.string().optional(),
 })

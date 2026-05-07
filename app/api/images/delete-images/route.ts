@@ -1,8 +1,14 @@
 import { NextResponse, NextRequest } from 'next/server'
+import { auth } from '@/auth'
 
 // The POST handler for the API route (i.e., when a POST request is sent to this endpoint)
 export async function POST(req: NextRequest) {
   try {
+    const session = await auth()
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     // Parse the JSON body from the incoming request
     const { fileIds } = await req.json()
 
@@ -38,20 +44,33 @@ async function deleteFilesFromImageKit(fileIds: string[]) {
     throw new Error('IMAGEKIT_PRIVATE_KEY is not defined')
   }
 
-  const response = await fetch('https://api.imagekit.io/v1/files/batch/deleteByFileIds', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Authorization: `Basic ${Buffer.from(`${privateKey}:`).toString('base64')}`,
-    },
-    body: JSON.stringify({ fileIds }),
-  })
+  console.log('Deleting from ImageKit:', { fileIds, keyPrefix: privateKey.slice(0, 8) })
 
-  if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`ImageKit API error: ${response.status} ${errorText}`)
+  const results = []
+  
+  for (const fileId of fileIds) {
+    try {
+      const response = await fetch(`https://api.imagekit.io/v1/files/${fileId}`, {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Basic ${Buffer.from(`${privateKey}:`).toString('base64')}`,
+        },
+      })
+
+      const responseText = await response.text()
+      console.log('ImageKit delete response:', fileId, response.status, responseText)
+
+      if (!response.ok && response.status !== 404) {
+        console.error('ImageKit delete error:', response.status, responseText)
+      }
+      
+      results.push({ fileId, status: response.status, response: responseText })
+    } catch (err) {
+      console.error('Error deleting file:', fileId, err)
+      results.push({ fileId, error: String(err) })
+    }
   }
 
-  return response.json()
+  return { results }
 }

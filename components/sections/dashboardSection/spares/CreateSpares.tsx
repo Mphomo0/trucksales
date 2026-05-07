@@ -273,6 +273,58 @@ type SparesFormData = z.infer<typeof spareSchema>
             )}
           </div>
 
+          <div className="grid md:grid-cols-2 gap-4 mt-6">
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="specialPrice">Special Price (VAT Incl)</Label>
+              <Input
+                id="specialPrice"
+                type="text"
+                placeholder="Enter Special Price"
+                {...register('specialPrice')}
+              />
+              {errors.specialPrice && (
+                <p className="text-red-500 text-sm">{errors.specialPrice.message}</p>
+              )}
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="specialPriceNoVat">Special Price (No VAT)</Label>
+              <Input
+                id="specialPriceNoVat"
+                type="text"
+                placeholder="Enter Special Price"
+                {...register('specialPriceNoVat')}
+              />
+              {errors.specialPriceNoVat && (
+                <p className="text-red-500 text-sm">{errors.specialPriceNoVat.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="specialValidFrom">Special Valid From</Label>
+              <Input
+                id="specialValidFrom"
+                type="date"
+                {...register('specialValidFrom')}
+              />
+              {errors.specialValidFrom && (
+                <p className="text-red-500 text-sm">{errors.specialValidFrom.message}</p>
+              )}
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="specialValidTo">Special Valid To</Label>
+              <Input
+                id="specialValidTo"
+                type="date"
+                {...register('specialValidTo')}
+              />
+              {errors.specialValidTo && (
+                <p className="text-red-500 text-sm">{errors.specialValidTo.message}</p>
+              )}
+            </div>
+          </div>
+
           <Button type="submit" disabled={isSubmitting || isUploading}>
             {isSubmitting || isUploading ? 'Creating...' : 'Create Spare'}
           </Button>

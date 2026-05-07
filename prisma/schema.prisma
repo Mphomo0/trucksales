@@ -1,93 +1,68 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "../lib/generated/prisma"
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL")
 }
 
 model users {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(cuid())
   email     String   @unique
   name      String
-  password  String
-  role      String  @default("USER")
+  password  String?
+  role      String   @default("USER")
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model inventory {
-  id                String        @id @default(auto()) @map("_id") @db.ObjectId
-  name              String
-  make              String
-  model             String
-  year              Int
-  registrationNo    String?        
-  vatPrice          Float
-  pricenoVat        Float
-  mileage           Float?
-  fuelType          FuelType?
-  condition         Condition
-  transmission      Transmission?
-  images            Json 
-  videoLink         String?
-  description       String
-  bodyType          String?
-  truckSize         String?
-  slug              String        @unique
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-  special           specials?
-}
+  id              String    @id @default(cuid())
+  name            String
+  make            String
+  model           String
+  year            Int
+  registrationNo String?
+  vatPrice        Float
+  pricenoVat       Float
+  mileage        Float?
+  fuelType       String?
+  condition      String
+  transmission   String?
+  images         Json
+  videoLink      String?
+  description    String
+  bodyType       String?
+  truckSize      String?
+  slug           String    @unique
+  specialPrice   Float?
+  specialValidFrom DateTime?
+specialValidTo   DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-model specials {
-  id            String     @id @default(auto()) @map("_id") @db.ObjectId
-  inventory     inventory  @relation(fields: [inventoryId], references: [id])
-  inventoryId   String     @unique @db.ObjectId
-  amount        Float      // either a percentage or fixed value, based on discountType
-  slug          String     @unique
-  validFrom     DateTime
-  validTo       DateTime
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  @@index([createdAt(sort: Desc)])
 }
 
 model spares {
-  id                String     @id @default(auto()) @map("_id") @db.ObjectId
-  name              String
-  description       String
-  make              String
-  price             Float
-  noVatPrice        Float?
-  condition         Condition
-  category          Category
-  images            Json
-  videoLink         String?
-  slug              String     @unique
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
-}
-
-enum FuelType {
-  PETROL
-  DIESEL
-}
-
-enum Condition {
-  NEW
-  USED
-}
-
-enum Transmission {
-  AUTOMATIC
-  MANUAL
-}
-
-enum Category {
-  ENGINE
-  GEARBOX
-  DIFF
-  OTHER
+  id             String   @id @default(cuid())
+  name           String
+  description    String
+  make           String
+  price          Float
+  noVatPrice     Float?
+  condition      String
+  category      String
+  images         Json
+  videoLink     String?
+  slug          String   @unique
+  specialPrice  Float?
+  specialPriceNoVat Float?
+  specialValidFrom DateTime?
+  specialValidTo   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }

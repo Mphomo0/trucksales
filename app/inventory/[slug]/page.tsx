@@ -92,7 +92,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         {/* application/ld+json */}
       </div>
       <JsonLd data={productSchema} />
-      <TruckDetail />
+      <TruckDetail vehicle={vehicle} />
     </div>
   )
 }

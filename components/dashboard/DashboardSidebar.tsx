@@ -9,17 +9,15 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
   Truck,
-  Users,
   Wrench,
-  Tag,
   ChevronRight,
   Zap,
   LogOut,
   X,
 } from 'lucide-react'
-import { signOut } from 'next-auth/react'
 import { cn } from '@/lib/utils'
 import { useDashboard } from './DashboardContext'
+import { useClerk } from '@clerk/nextjs'
 
 const navItems = [
   {
@@ -38,21 +36,12 @@ const navItems = [
     href: '/dashboard/spares',
     icon: Wrench,
   },
-  {
-    label: 'Specials',
-    href: '/dashboard/specials',
-    icon: Tag,
-  },
-  {
-    label: 'Users',
-    href: '/dashboard/users',
-    icon: Users,
-  },
 ]
 
 export function DashboardSidebar() {
   const pathname = usePathname()
   const { isSidebarOpen, setIsSidebarOpen } = useDashboard()
+  const { signOut } = useClerk()
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href
@@ -112,7 +101,9 @@ export function DashboardSidebar() {
         </Link>
         <button
           className="nav-item nav-item-danger"
-          onClick={() => signOut({ callbackUrl: '/login' })}
+          onClick={async () => {
+            await signOut({ redirectUrl: '/login' })
+          }}
         >
           <LogOut className="nav-icon" />
           <span className="nav-label">Sign Out</span>

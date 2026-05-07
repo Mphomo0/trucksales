@@ -4,8 +4,7 @@
 
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { useParams } from 'next/navigation'
+import { useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -32,6 +31,7 @@ import Link from 'next/link'
 import { WhatsAppButton } from '@/components/sections/inventorySection/WhatsAppButton'
 import EnquiryForm from '@/components/sections/inventorySection/EnquiryForm'
 import { useKeenSlider } from 'keen-slider/react'
+import { getCurrentPrice } from '@/lib/pricing'
 import 'keen-slider/keen-slider.min.css'
 
 interface VehicleImage {
@@ -47,22 +47,26 @@ interface Vehicle {
   year: number
   vatPrice: number
   pricenoVat: number
-  mileage: number
-  fuelType: string
+  mileage: number | null
+  fuelType: string | null
   condition: string
-  transmission: string
+  transmission: string | null
   description: string
   slug: string
-  images: VehicleImage[]
-  bodyType?: string
-  truckSize?: string
+  images: any
   videoLink?: string | null
+  truckSize?: string | null
+  bodyType?: string | null
+  specialPrice?: number | null
+  specialValidFrom?: Date | string | null
+  specialValidTo?: Date | string | null
 }
 
-/* <h1>A-Z Truck Sales Components</h1> */ export default function TruckDetail() {
-  const [vehicle, setVehicle] = useState<Vehicle | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+interface Props {
+  vehicle: Vehicle
+}
+
+/* <h1>A-Z Truck Sales Components</h1> */ export default function TruckDetail({ vehicle }: Props) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [loaded, setLoaded] = useState(false)
 
@@ -101,54 +105,21 @@ interface Vehicle {
     []
   )
 
-  const params = useParams()
-  const slug = params?.slug
+  const getVideoLinkUrl = (link: any): string | null => {
+    if (!link) return null
+    if (typeof link === 'string') return link.trim() || null
+    if (typeof link === 'object' && link.url) return link.url.trim() || null
+    return null
+  }
 
-  useEffect(() => {
-    const fetchVehicle = async () => {
-      if (!slug) {
-        setError('No vehicle slug provided')
-        setLoading(false)
-        return
-      }
+  const convertYouTubeLink = (url: string) => {
+    const regExp =
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/
+    const match = url.match(regExp)
+    return match ? `https://www.youtube.com/embed/${match[1]}` : url
+  }
 
-      try {
-        setLoading(true)
-        setError(null)
-
-        const res = await fetch(`/api/vehicles/${slug}`)
-
-        if (!res.ok) {
-          if (res.status === 404) {
-            throw new Error('Vehicle not found')
-          }
-          const errorData = await res.json().catch(() => ({}))
-          throw new Error(
-            errorData.message || `HTTP ${res.status}: ${res.statusText}`
-          )
-        }
-
-        const data = await res.json()
-        if (!data || !data.vehicle) {
-          throw new Error('Invalid response format')
-        }
-
-        setVehicle(data.vehicle)
-      } catch (error) {
-        console.error('Error fetching vehicle:', error)
-        setError('Failed to load vehicle data')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchVehicle()
-  }, [slug])
-
-  const handleThumbnailClick = useCallback((index: number) => {
-    sliderInstanceRef.current?.moveToIdx(index)
-    thumbnailInstanceRef.current?.moveToIdx(index)
-  }, [])
+  const videoLinkUrl = getVideoLinkUrl(vehicle.videoLink)
 
   const handlePrevious = useCallback(() => {
     sliderInstanceRef.current?.prev()
@@ -157,21 +128,6 @@ interface Vehicle {
   const handleNext = useCallback(() => {
     sliderInstanceRef.current?.next()
   }, [])
-
-  if (loading)
-    return <p className="flex justify-center items-center h-96">Loading...</p>
-  if (error) return <p>{error}</p>
-  if (!vehicle)
-    return (
-      <p className="flex justify-center items-center h-96">Vehicle not found</p>
-    )
-
-  function convertYouTubeLink(url: any) {
-    const regExp =
-      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/
-    const match = url.match(regExp)
-    return match ? `https://www.youtube.com/embed/${match[1]}` : url
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -199,7 +155,7 @@ interface Vehicle {
                       ref={sliderRef}
                       className="keen-slider aspect-[16/9] w-full mb-4 rounded-lg overflow-hidden shadow-lg border bg-neutral-50"
                     >
-                      {vehicle.images.map((img, index) => (
+                      {(vehicle.images || []).map((img: any, index: number) => (
                         <div
                           className="keen-slider__slide relative flex items-center justify-center bg-neutral-100"
                           key={index}
@@ -271,7 +227,7 @@ interface Vehicle {
                       ref={thumbnailRef}
                       className="keen-slider mb-8 cursor-pointer px-2"
                     >
-                      {vehicle.images.map((img, index) => (
+                      {(vehicle.images || []).map((img: any, index: number) => (
                         <div
                           key={index}
                           className={`keen-slider__slide transition-all rounded overflow-hidden aspect-video ${
@@ -301,12 +257,12 @@ interface Vehicle {
               )}
 
               {/* Video Link */}
-              {vehicle.videoLink && (
+              {videoLinkUrl && (
                 <div className="mt-4">
                   <h3 className="text-lg font-semibold mb-2">Vehicle Video</h3>
                   <div className="aspect-w-16 aspect-h-9">
                     <iframe
-                      src={convertYouTubeLink(vehicle.videoLink)}
+                      src={convertYouTubeLink(videoLinkUrl)}
                       title="Vehicle Video"
                       className="w-full h-64 md:h-96 rounded-lg shadow-lg border"
                       allowFullScreen
@@ -343,7 +299,7 @@ interface Vehicle {
                     <div>
                       <p className="text-sm text-gray-500">Mileage</p>
                       <p className="font-semibold">
-                        {vehicle.mileage.toLocaleString()}
+                        {(vehicle.mileage || 0).toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -389,9 +345,39 @@ interface Vehicle {
             <Card className="mb-6 sticky top-24">
               <CardHeader>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-amber-600 mb-2">
-                    R{vehicle.vatPrice.toLocaleString()}
-                  </div>
+                  {(() => {
+                    const priceInfo = getCurrentPrice(
+                      vehicle.vatPrice,
+                      vehicle.specialPrice ?? null,
+                      vehicle.specialValidFrom ?? null,
+                      vehicle.specialValidTo ?? null
+                    )
+                    const validUntil = vehicle.specialValidTo 
+                      ? new Date(vehicle.specialValidTo).toLocaleDateString('en-GB')
+                      : null
+                    if (priceInfo.isSpecial) {
+                      return (
+                        <div className="flex flex-col">
+                          <span className="text-xl font-bold text-red-500 line-through">
+                            R{vehicle.vatPrice.toLocaleString()}
+                          </span>
+                          <span className="text-3xl font-bold text-amber-600">
+                            R{priceInfo.currentPrice.toLocaleString()}
+                          </span>
+                          {validUntil && (
+                            <span className="text-sm text-gray-500">
+                              Valid until {validUntil}
+                            </span>
+                          )}
+                        </div>
+                      )
+                    }
+                    return (
+                      <div className="text-3xl font-bold text-amber-600 mb-2">
+                        R{vehicle.vatPrice.toLocaleString()}
+                      </div>
+                    )
+                  })()}
                   <p className="text-gray-600">
                     R{vehicle.pricenoVat.toLocaleString()} excl. VAT
                   </p>

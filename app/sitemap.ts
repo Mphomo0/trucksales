@@ -3,12 +3,18 @@ import { prisma } from '@/lib/prisma'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.a-ztrucksales.com'
+  const now = new Date()
 
-  // Fetch all slugs for dynamic pages
   const [vehicles, spareParts, activeSpecials] = await Promise.all([
     prisma.inventory.findMany({ select: { slug: true, updatedAt: true } }),
     prisma.spares.findMany({ select: { slug: true, updatedAt: true } }),
-    prisma.specials.findMany({ select: { slug: true, updatedAt: true } }),
+    prisma.inventory.findMany({
+      where: {
+        specialValidTo: { gt: now },
+        specialValidFrom: { lte: now },
+      },
+      select: { slug: true, updatedAt: true },
+    }),
   ])
 
   const staticPages = [

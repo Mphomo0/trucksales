@@ -7,7 +7,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { SessionProvider } from 'next-auth/react'
+import { ClerkProvider } from '@clerk/nextjs'
 // import GlobalWhatsAppButton from '@/components/global/GlobalWhatsAppButton'
 import ClientLayout from '@/components/global/ClientLayout'
 import { PostHogProvider } from './providers'
@@ -142,7 +142,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProvider>
+        <ClerkProvider>
           <PostHogProvider>
             <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
             <Script
@@ -158,9 +158,9 @@ export default function RootLayout({
             <JsonLd data={websiteSchema} />
             <ClientLayout>{children}</ClientLayout>
             <ToastContainer />
-            {/* <GlobalWhatsAppButton /> */}
           </PostHogProvider>
-        </SessionProvider>
+          {/* <GlobalWhatsAppButton /> */}
+        </ClerkProvider>
       </body>
     </html>
   )

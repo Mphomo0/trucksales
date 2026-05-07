@@ -34,6 +34,10 @@ interface SparesItem {
   slug: string
   images: SparesImage[]
   videoLink?: string | null
+  specialPrice?: number | null
+  specialPriceNoVat?: number | null
+  specialValidFrom?: Date | string | null
+  specialValidTo?: Date | string | null
 }
 
 /* <h1>A-Z Truck Sales Components</h1> */ export default function EditSpares() {
@@ -50,7 +54,7 @@ interface SparesItem {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<SparesItem>({
-    defaultValues: { images: [] },
+    defaultValues: { images: [] } as Partial<SparesItem>,
   })
 
   const router = useRouter()
@@ -71,7 +75,14 @@ interface SparesItem {
           throw new Error('Spares item not found')
         }
 
-        reset(data.sparesItem)
+        const item = data.sparesItem
+        reset({
+          ...item,
+          specialPrice: item.specialPrice ?? '',
+          specialPriceNoVat: item.specialPriceNoVat ?? '',
+          specialValidFrom: item.specialValidFrom ? new Date(item.specialValidFrom).toISOString().split('T')[0] : '',
+          specialValidTo: item.specialValidTo ? new Date(item.specialValidTo).toISOString().split('T')[0] : '',
+        })
       } catch (error) {
         console.error('Error fetching spare item:', error)
         toast.error(
@@ -337,6 +348,42 @@ interface SparesItem {
               placeholder="Enter description"
               className="h-56 resize"
             />
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4 mt-6">
+            <div className="mb-4 space-y-2">
+              <Label>Special Price (VAT Incl)</Label>
+              <Input
+                {...register('specialPrice')}
+                type="number"
+                placeholder="Enter special price"
+              />
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label>Special Price (No VAT)</Label>
+              <Input
+                {...register('specialPriceNoVat')}
+                type="number"
+                placeholder="Enter special price"
+              />
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="mb-4 space-y-2">
+              <Label>Special Valid From</Label>
+              <Input
+                {...register('specialValidFrom')}
+                type="date"
+              />
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label>Special Valid To</Label>
+              <Input
+                {...register('specialValidTo')}
+                type="date"
+              />
+            </div>
           </div>
 
           <Button type="submit" disabled={isSubmitting || isUploading}>

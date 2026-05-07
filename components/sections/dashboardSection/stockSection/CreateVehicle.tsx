@@ -234,6 +234,37 @@ type VehicleFormData = z.infer<typeof vehicleSchema>
             </div>
           </div>
 
+          <div className="border-t pt-4 mt-4 mb-4">
+            <h3 className="text-lg font-semibold mb-4 text-red-600">Special Offer (Optional)</h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="mb-4 space-y-2">
+                <Label htmlFor="specialPrice">Special Price (VAT Incl)</Label>
+                <Input
+                  id="specialPrice"
+                  type="text"
+                  placeholder="Special price"
+                  {...register('specialPrice')}
+                />
+              </div>
+              <div className="mb-4 space-y-2">
+                <Label htmlFor="specialValidFrom">Special Valid From</Label>
+                <Input
+                  id="specialValidFrom"
+                  type="datetime-local"
+                  {...register('specialValidFrom')}
+                />
+              </div>
+              <div className="mb-4 space-y-2">
+                <Label htmlFor="specialValidTo">Special Valid To</Label>
+                <Input
+                  id="specialValidTo"
+                  type="datetime-local"
+                  {...register('specialValidTo')}
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-2 gap-4">
             <div className="mb-4 space-y-2">
               <Label htmlFor="mileage">Mileage</Label>

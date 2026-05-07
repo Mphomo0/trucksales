@@ -4,155 +4,192 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import Link from 'next/link'
-import { toast } from 'react-toastify'
 
 interface Image {
   fileId: string
   url: string
 }
 
-interface Special {
+interface VehicleSpecial {
   id: string
-  amount: number
+  name: string
+  make: string
+  model: string
+  year: number
+  vatPrice: number
+  pricenoVat?: number | null
+  images: Image[] | any[]
+  description: string
   slug: string
-  validFrom: string
-  validTo: string
-  inventoryId: string
-  inventory: {
-    id: string
-    name: string
-    make: string
-    model: string
-    year: number
-    vatPrice: number
-    images: Image[]
-    description: string
-    slug: string
-  }
+  specialPrice: number
+  specialValidFrom?: Date | string | null
+  specialValidTo?: Date | string | null
 }
 
-/* <h1>A-Z Truck Sales Components</h1> */ export default function AllSpecials() {
-  const [specials, setSpecials] = useState<Special[]>([])
-  const [loading, setLoading] = useState(true)
+interface SpareSpecial {
+  id: string
+  name: string
+  make: string
+  price: number
+  noVatPrice?: number | null
+  images: Image[] | any[]
+  description: string
+  slug: string
+  category: string
+  condition: string
+  specialPrice: number
+  specialPriceNoVat?: number | null
+  specialValidFrom?: Date | string | null
+  specialValidTo?: Date | string | null
+}
 
-  const fetchSpecials = async () => {
-    try {
-      setLoading(true)
-      const params = new URLSearchParams({
-        limit: '100', // Fetch up to 100 specials without pagination
-      })
-      const response = await fetch(`/api/specials?${params.toString()}`)
-      if (!response.ok) {
-        throw new Error('Failed to fetch specials')
-      }
-      const data = await response.json()
+interface Props {
+  vehicles?: VehicleSpecial[]
+  spares?: SpareSpecial[]
+}
 
-      if (!Array.isArray(data.data)) {
-        throw new Error('Invalid response format')
-      }
+export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
+  const hasVehicles = vehicles.length > 0
+  const hasSpares = spares.length > 0
 
-      setSpecials(data.data)
-    } catch (error) {
-      console.error('Error fetching specials:', error)
-      toast.error('Error fetching specials')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchSpecials()
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-56">
-        <p className="text-lg text-gray-600 animate-pulse">
-          Loading specials...
-        </p>
-      </div>
-    )
-  }
-
-  if (!loading && specials.length === 0) {
-    return (
-      <div className="text-center text-gray-500 py-10">
-        No specials available at the moment.
-      </div>
-    )
-  }
-
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: Date | string | null | undefined) => {
+    if (!dateString) return ''
     const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
+    return date.toLocaleDateString('en-GB', {
       day: 'numeric',
+      month: 'short',
       year: 'numeric',
     })
   }
 
   return (
-    <div className="bg-gray-100 py-12">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {specials.map((special) => (
-          <Link href={`/specials/${special.slug}`} key={special.slug}>
-            <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="relative -top-6">
-                <Image
-                  src={special.inventory.images[0]?.url}
-                  alt={`${special.inventory.year} ${special.inventory.make} ${special.inventory.model}`}
-                  width={400}
-                  height={300}
-                  className="w-full h-48 object-cover"
-                  priority
-                />
-                <Badge className="absolute top-2 right-2 bg-red-600">
-                  SPECIAL
-                </Badge>
-              </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2 -mt-10">
-                  {special.inventory.year}{' '}
-                  {special.inventory.make.toUpperCase()}{' '}
-                  {special.inventory.model.toUpperCase()}
-                </h3>
-                <div className="mb-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-sm text-gray-500">WAS</p>
-                      <p className="text-xl font-semibold text-red-600 line-through">
-                        R{special.inventory.vatPrice.toLocaleString()}{' '}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">NOW</p>
-                      <p className="text-2xl font-bold text-green-600">
-                        R{special.amount.toLocaleString()}{' '}
-                        <span className="text-sm">incl. VAT</span>
-                      </p>
-                    </div>
+    <div className="space-y-16">
+      {hasVehicles && (
+        <section>
+          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            Vehicles on Special
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {vehicles.map((vehicle) => (
+              <Link href={`/inventory/${vehicle.slug}`} key={vehicle.slug}>
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="relative">
+                    <Image
+                      src={vehicle.images?.[0]?.url || '/placeholder-truck.jpg'}
+                      alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                      width={400}
+                      height={300}
+                      className="w-full h-48 object-cover"
+                      priority
+                    />
+                    <Badge className="absolute top-2 right-2 bg-red-600">
+                      SPECIAL
+                    </Badge>
                   </div>
-                </div>
-                <div className="text-sm text-gray-600 mt-2">
-                  Valid from <strong>{formatDate(special.validFrom)}</strong> to{' '}
-                  <strong>{formatDate(special.validTo)}</strong>
-                </div>
+                  <CardContent className="p-6">
+                    <h4 className="text-xl font-bold mb-2">
+                      {vehicle.year} {vehicle.make.toUpperCase()} {vehicle.model.toUpperCase()}
+                    </h4>
+                    <div className="mb-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm text-gray-500">WAS</p>
+                          <p className="text-xl font-semibold text-red-600 line-through">
+                            R{vehicle.vatPrice.toLocaleString()}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">NOW</p>
+                          <p className="text-2xl font-bold text-green-600">
+                            R{vehicle.specialPrice.toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    {vehicle.specialValidTo && (
+                      <div className="text-sm text-gray-600">
+                        Valid until <strong>{formatDate(vehicle.specialValidTo)}</strong>
+                      </div>
+                    )}
+                    <Button className="w-full bg-black text-white mt-4">
+                      View Details
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
-                <Button className="w-full bg-black text-white mt-8">
-                  View Details
-                </Button>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
-
+      {hasSpares && (
+        <section>
+          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            Spare Parts on Special
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {spares.map((spare) => (
+              <Link href={`/spares/${spare.slug}`} key={spare.slug}>
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="relative">
+                    <Image
+                      src={spare.images?.[0]?.url || '/placeholder-truck.jpg'}
+                      alt={spare.name}
+                      width={400}
+                      height={300}
+                      className="w-full h-48 object-cover"
+                      priority
+                    />
+                    <Badge className="absolute top-2 right-2 bg-red-600">
+                      SPECIAL
+                    </Badge>
+                    <Badge className="absolute top-2 left-2 bg-blue-600 capitalize">
+                      {spare.condition.toLowerCase()}
+                    </Badge>
+                  </div>
+                  <CardContent className="p-6">
+                    <h4 className="text-lg font-bold mb-1 truncate">
+                      {spare.name}
+                    </h4>
+                    <p className="text-sm text-gray-600 capitalize mb-2">
+                      {spare.make} - {spare.category.toLowerCase()}
+                    </p>
+                    <div className="mb-4">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-sm text-gray-500">WAS</p>
+                          <p className="text-xl font-semibold text-red-600 line-through">
+                            R{spare.price.toLocaleString()}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-500">NOW</p>
+                          <p className="text-2xl font-bold text-green-600">
+                            R{spare.specialPrice.toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    {spare.specialValidTo && (
+                      <div className="text-sm text-gray-600">
+                        Valid until <strong>{formatDate(spare.specialValidTo)}</strong>
+                      </div>
+                    )}
+                    <Button className="w-full bg-black text-white mt-4">
+                      View Details
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   )
 }

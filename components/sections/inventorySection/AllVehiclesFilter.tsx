@@ -20,6 +20,7 @@ import { Search, Filter, Gauge } from 'lucide-react'
 import ImageComponent from 'next/image'
 import Link from 'next/link'
 import { Pagination } from '@/components/global/Pagination'
+import { getCurrentPrice } from '@/lib/pricing'
 
 interface Truck {
   id: string
@@ -28,6 +29,7 @@ interface Truck {
   model: string
   year: number
   vatPrice: number
+  pricenoVat: number
   mileage: number
   fuelType: string
   condition: string
@@ -37,6 +39,9 @@ interface Truck {
   bodyType: string
   truckSize: string
   slug: string
+  specialPrice: number | null
+  specialValidFrom: Date | null
+  specialValidTo: Date | null
 }
 
 interface FilterOptions {
@@ -397,32 +402,80 @@ interface FilterOptions {
                   <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                     <div className="relative">
                       <ImageComponent
-                        src={truck.images?.[0]?.url}
+                        src={truck.images?.[0]?.url || '/placeholder-truck.jpg'}
                         alt={`${truck.year} ${truck.make} ${truck.model}`}
                         width={400}
                         height={300}
                         className="w-full h-48 object-cover"
                         priority
                       />
-                      <Badge className="absolute top-2 right-2 bg-amber-600">
-                        {truck.condition}
-                      </Badge>
+                      {(() => {
+                        const priceInfo = getCurrentPrice(
+                          truck.vatPrice,
+                          truck.specialPrice ?? null,
+                          truck.specialValidFrom ?? null,
+                          truck.specialValidTo ?? null
+                        )
+                        return priceInfo.isSpecial ? (
+                          <>
+                            <Badge className="absolute top-2 left-2 bg-red-600">
+                              SPECIAL
+                            </Badge>
+                            <Badge className="absolute top-2 right-2 bg-amber-600">
+                              {truck.condition}
+                            </Badge>
+                          </>
+                        ) : (
+                          <Badge className="absolute top-2 right-2 bg-amber-600">
+                            {truck.condition}
+                          </Badge>
+                        )
+                      })()}
                     </div>
                     <CardContent className="p-6">
                       <h3 className="text-xl font-bold mb-2">
                         {truck.year} {truck.make?.toUpperCase()}{' '}
                         {truck.model?.toUpperCase()}
                       </h3>
-                      <div className="flex justify-between items-center mb-4">
-                        <span className="text-2xl font-bold text-yellow-600">
-                          R{truck.vatPrice?.toLocaleString() ?? 'N/A'}{' '}
-                          <span className="text-sm">incl. VAT</span>
-                        </span>
-                        <span className="text-gray-600 flex items-center">
-                          <Gauge size={18} className="mr-1" />
-                          {truck.mileage?.toLocaleString() ?? 'N/A'} km
-                        </span>
-                      </div>
+                      {(() => {
+                        const priceInfo = getCurrentPrice(
+                          truck.vatPrice,
+                          truck.specialPrice ?? null,
+                          truck.specialValidFrom ?? null,
+                          truck.specialValidTo ?? null
+                        )
+                        return (
+                          <div className="flex justify-between items-start mb-4">
+                            <div className="flex flex-col gap-1">
+                              {priceInfo.isSpecial ? (
+                                <>
+                                  <span className="text-lg font-bold text-red-500 line-through">
+                                    R{priceInfo.originalPrice.toLocaleString()}
+                                  </span>
+                                  <span className="text-2xl font-bold text-yellow-600">
+                                    R{priceInfo.currentPrice.toLocaleString()}
+                                    <span className="text-xs font-normal text-gray-500 ml-1">incl. VAT</span>
+                                  </span>
+                                  {truck.specialValidTo && (
+                                    <span className="text-xs text-green-600 font-medium">
+                                      Valid until {new Date(truck.specialValidTo).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                    </span>
+                                  )}
+                                </>
+                              ) : (
+                                <span className="text-2xl font-bold text-yellow-600">
+                                  R{truck.vatPrice?.toLocaleString() ?? 'N/A'}
+                                  <span className="text-sm font-normal text-gray-500 ml-1">incl. VAT</span>
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-gray-600 flex items-center">
+                              <Gauge size={18} className="mr-1" />
+                              {truck.mileage?.toLocaleString() ?? 'N/A'} km
+                            </span>
+                          </div>
+                        )
+                      })()}
                       <div className="flex flex-wrap gap-2 mb-4">
                         {truck.condition && (
                           <Badge variant="secondary">{truck.condition}</Badge>

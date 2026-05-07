@@ -4,8 +4,7 @@
 
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { useParams } from 'next/navigation'
+import { useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -23,6 +22,7 @@ import { WhatsAppButton } from '@/components/sections/inventorySection/WhatsAppB
 import EnquiryForm from '@/components/sections/inventorySection/EnquiryForm'
 import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
+import { getCurrentPrice } from '@/lib/pricing'
 
 interface SparePartImage {
   url: string
@@ -34,19 +34,24 @@ interface SparePart {
   name: string
   make: string
   price: number
-  noVatPrice: number
+  noVatPrice: number | null
   category: string
   condition: string
   description: string
   slug: string
-  images: SparePartImage[]
+  images: any
   videoLink?: string | null
+  specialPrice?: number | null
+  specialPriceNoVat?: number | null
+  specialValidFrom?: Date | string | null
+  specialValidTo?: Date | string | null
 }
 
-/* <h1>A-Z Truck Sales Components</h1> */ export default function SpareDetail() {
-  const [spares, setSpares] = useState<SparePart | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+interface Props {
+  spare: SparePart
+}
+
+/* <h1>A-Z Truck Sales Components</h1> */ export default function SpareDetail({ spare }: Props) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [loaded, setLoaded] = useState(false)
 
@@ -85,51 +90,6 @@ interface SparePart {
     []
   )
 
-  const params = useParams()
-  const slug = params?.slug
-
-  useEffect(() => {
-    const fetchSparePart = async () => {
-      if (!slug) {
-        setError('No spare part slug provided')
-        setLoading(false)
-        return
-      }
-
-      try {
-        setLoading(true)
-        setError(null)
-
-        const res = await fetch(`/api/spares/${slug}`)
-
-        if (!res.ok) {
-          if (res.status === 404) {
-            throw new Error('Spare Part not found')
-          }
-          const errorData = await res.json().catch(() => ({}))
-          throw new Error(
-            errorData.message || `HTTP ${res.status}: ${res.statusText}`
-          )
-        }
-
-        const data = await res.json()
-        console.log('Fetched spares data:', data.sparesItem)
-        if (!data.sparesItem || !data.sparesItem) {
-          throw new Error('Invalid response format')
-        }
-
-        setSpares(data.sparesItem)
-      } catch (error) {
-        console.error('Error fetching spares:', error)
-        setError('Failed to load spares data')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchSparePart()
-  }, [slug])
-
   const handleThumbnailClick = useCallback((index: number) => {
     sliderInstanceRef.current?.moveToIdx(index)
     thumbnailInstanceRef.current?.moveToIdx(index)
@@ -143,22 +103,21 @@ interface SparePart {
     sliderInstanceRef.current?.next()
   }, [])
 
-  if (loading)
-    return <p className="flex justify-center items-center h-96">Loading...</p>
-  if (error) return <p>{error}</p>
-  if (!spares)
-    return (
-      <p className="flex justify-center items-center h-96">
-        Spare Part not found
-      </p>
-    )
-
   function convertYouTubeLink(url: any) {
     const regExp =
       /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/
     const match = url.match(regExp)
     return match ? `https://www.youtube.com/embed/${match[1]}` : url
   }
+
+  const getVideoLinkUrl = (link: any): string | null => {
+    if (!link) return null
+    if (typeof link === 'string') return link.trim() || null
+    if (typeof link === 'object' && link.url) return link.url.trim() || null
+    return null
+  }
+
+  const videoLinkUrl = getVideoLinkUrl(spare.videoLink)
 
   return (
     <div className="min-h-screen bg-background">
@@ -178,7 +137,7 @@ interface SparePart {
           <div className="lg:col-span-2">
             {/* Images */}
             <div className="mb-8">
-              {spares.images.length > 0 && (
+              {spare.images.length > 0 && (
                 <>
                   {/* Main image slider */}
                   <div className="relative">
@@ -186,7 +145,7 @@ interface SparePart {
                       ref={sliderRef}
                       className="keen-slider aspect-[16/9] w-full mb-4 rounded-lg overflow-hidden shadow-lg border bg-neutral-50"
                     >
-                      {spares.images.map((img, index) => (
+                      {(spare.images || []).map((img: any, index: number) => (
                         <div
                           className="keen-slider__slide relative flex items-center justify-center bg-neutral-100"
                           key={index}
@@ -194,7 +153,7 @@ interface SparePart {
                           <div className="relative w-full h-60 md:h-96">
                             <Image
                               src={img.url}
-                              alt={`${spares.name} image ${index + 1}`}
+                              alt={`${spare.name} image ${index + 1}`}
                               fill
                               className="object-cover"
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
@@ -206,7 +165,7 @@ interface SparePart {
                     </div>
 
                     {/* Navigation arrows */}
-                    {spares.images.length > 1 && (
+                    {spare.images.length > 1 && (
                       <>
                         <button
                           onClick={() => sliderInstanceRef.current?.prev()}
@@ -253,12 +212,12 @@ interface SparePart {
                   </div>
 
                   {/* Thumbnail slider */}
-                  {spares.images.length > 1 && (
+                  {spare.images.length > 1 && (
                     <div
                       ref={thumbnailRef}
                       className="keen-slider mb-8 cursor-pointer px-2"
                     >
-                      {spares.images.map((img, index) => (
+                      {(spare.images || []).map((img: any, index: number) => (
                         <div
                           key={index}
                           className={`keen-slider__slide transition-all rounded overflow-hidden aspect-video ${
@@ -288,12 +247,12 @@ interface SparePart {
               )}
 
               {/* Video Link */}
-              {spares.videoLink && (
+              {videoLinkUrl && (
                 <div className="mt-4">
                   <h3 className="text-lg font-semibold mb-2">Vehicle Video</h3>
                   <div className="aspect-w-16 aspect-h-9">
                     <iframe
-                      src={convertYouTubeLink(spares.videoLink)}
+                      src={convertYouTubeLink(videoLinkUrl)}
                       title="Vehicle Video"
                       className="w-full h-64 md:h-96 rounded-lg shadow-lg border"
                       allowFullScreen
@@ -309,21 +268,21 @@ interface SparePart {
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-2xl md:text-3xl">
-                      {spares.name.toUpperCase()}
+                      {spare.name.toUpperCase()}
                     </CardTitle>
                   </div>
-                  <Badge className="bg-amber-600">{spares.condition}</Badge>
+                  <Badge className="bg-amber-600">{spare.condition}</Badge>
                 </div>
               </CardHeader>
               <CardContent>
                 <div>
                   <h3 className="text-lg font-semibold mb-4">Description</h3>
                   <p className="text-gray-600 leading-relaxed">
-                    {spares.description}
+                    {spare.description}
                   </p>
                   <p className="text-gray-600 leading-relaxed">
                     <span className="font-bold">- Spares Category: </span>
-                    {spares.category || 'N/A'}
+                    {spare.category || 'N/A'}
                   </p>
                 </div>
               </CardContent>
@@ -336,23 +295,53 @@ interface SparePart {
             <Card className="mb-6 sticky top-24">
               <CardHeader>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-amber-600 mb-2">
-                    R{spares.price.toLocaleString()}
-                  </div>
-                  {spares.noVatPrice && (
-                    <p className="text-gray-600">
-                      R
-                      {spares.noVatPrice.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}{' '}
-                      excl. VAT
-                    </p>
-                  )}
+                  {(() => {
+                    const priceInfo = getCurrentPrice(
+                      spare.price,
+                      spare.specialPrice ?? null,
+                      spare.specialValidFrom ?? null,
+                      spare.specialValidTo ?? null
+                    )
+                    const validUntil = spare.specialValidTo 
+                      ? new Date(spare.specialValidTo).toLocaleDateString('en-GB')
+                      : null
+                    if (priceInfo.isSpecial) {
+                      return (
+                        <div className="flex flex-col">
+                          <span className="text-xl font-bold text-red-500 line-through">
+                            R{spare.price.toLocaleString()}
+                          </span>
+                          <span className="text-3xl font-bold text-amber-600">
+                            R{priceInfo.currentPrice.toLocaleString()}
+                          </span>
+                          <Badge className="mt-2 bg-red-600">SPECIAL</Badge>
+                          {validUntil && (
+                            <span className="text-sm text-green-600">
+                              Valid until {validUntil}
+                            </span>
+                          )}
+                        </div>
+                      )
+                    }
+                    return (
+                      <div className="text-3xl font-bold text-amber-600">
+                        R{spare.price.toLocaleString()}
+                      </div>
+                    )
+                  })()}
+                  {(() => {
+                    const noVatPrice = spare.specialPriceNoVat ?? spare.noVatPrice
+                    if (!noVatPrice) return null
+                    return (
+                      <p className="text-gray-600">
+                        R{noVatPrice.toLocaleString()} excl. VAT
+                      </p>
+                    )
+                  })()}
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <WhatsAppButton vehicleSlug={spares.slug} />
+                <WhatsAppButton vehicleSlug={spare.slug} />
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
@@ -371,7 +360,7 @@ interface SparePart {
                     <DialogHeader>
                       <DialogTitle>Enquire About This Spare Part</DialogTitle>
                     </DialogHeader>
-                    <EnquiryForm vehicleSlug={spares.slug} />
+                    <EnquiryForm vehicleSlug={spare.slug} />
                   </DialogContent>
                 </Dialog>
                 <Button asChild className="w-full py-4" size="lg">
@@ -407,7 +396,7 @@ interface SparePart {
                 </div>
                 <p className="text-sm text-gray-600">
                   Highly rated dealer with excellent customer service and
-                  quality spares.
+                  quality spare.
                 </p>
               </CardContent>
             </Card>

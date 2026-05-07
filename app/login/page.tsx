@@ -2,10 +2,7 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
-/* author: A-Z Truck Sales */
-/* datePublished: 2026-04-27 */
-
-import Loginform from '@/components/global/Loginform'
+import { SignIn } from '@clerk/nextjs'
 import { Metadata } from 'next'
 import GeoHints from '@/components/global/GeoHints'
 
@@ -15,12 +12,24 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-/* application/ld+json */ export default function Login() {
+export default function Login() {
   return (
     <>
       <h1 className="sr-only">Login to A-Z Truck Sales</h1>
       <GeoHints />
-      <Loginform />
+      <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
+        <SignIn
+          appearance={{
+            elements: {
+              rootBox: 'mx-auto',
+              card: 'shadow-md rounded-lg',
+              footer: 'hidden',
+            },
+          }}
+          routing="hash"
+          forceRedirectUrl="/dashboard"
+        />
+      </div>
     </>
   )
 }

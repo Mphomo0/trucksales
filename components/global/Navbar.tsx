@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'
 import { Menu, X, User } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useSession, signOut } from 'next-auth/react'
+import { useUser } from '@clerk/nextjs'
 
 const NavLinks = [
   { name: 'Home', href: '/' },
@@ -20,15 +20,11 @@ const NavLinks = [
 
 /* <h1>A-Z Truck Sales Components</h1> */ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const { data: session, status } = useSession()
+  const { isSignedIn, isLoaded } = useUser()
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
     document.body.style.overflow = !isMobileMenuOpen ? 'hidden' : 'unset'
-  }
-
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: '/' })
   }
 
   // Cleanup overflow style when component unmounts
@@ -88,9 +84,7 @@ const NavLinks = [
 
           {/* Desktop Auth Section */}
           <div className="hidden lg:flex items-center space-x-4">
-            {status === 'loading' ? (
-              <div className="w-20 h-8 bg-gray-200 animate-pulse rounded"></div>
-            ) : session ? (
+            {isLoaded && isSignedIn && (
               <Link
                 href="/dashboard"
                 className="flex items-center gap-2 px-3 py-2 text-gray-800 hover:text-gray-600 rounded-md transition-colors"
@@ -98,7 +92,7 @@ const NavLinks = [
                 <User size={18} />
                 <span>Dashboard</span>
               </Link>
-            ) : null}
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -139,9 +133,7 @@ const NavLinks = [
                 ))}
 
                 {/* Mobile Auth Section */}
-                {status === 'loading' ? (
-                  <div className="w-full h-10 bg-gray-200 animate-pulse rounded mt-2"></div>
-                ) : session ? (
+                {isLoaded && isSignedIn && (
                   <div className="pt-2 mt-2 border-t border-gray-200 flex flex-col space-y-1">
                     <Link
                       href="/dashboard"
@@ -155,7 +147,7 @@ const NavLinks = [
                       <span>Dashboard</span>
                     </Link>
                   </div>
-                ) : null}
+                )}
               </div>
             </div>
           </>

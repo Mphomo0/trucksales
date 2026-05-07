@@ -4,11 +4,9 @@
 
 'use client'
 
-import { useSession } from 'next-auth/react'
-import { Bell, Search, Menu } from 'lucide-react'
+import { Search, Menu } from 'lucide-react'
 import { useState } from 'react'
 import { useDashboard } from './DashboardContext'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 interface DashboardHeaderProps {
@@ -17,15 +15,12 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
-  const { data: session } = useSession()
   const { toggleSidebar } = useDashboard()
   const [searchFocused, setSearchFocused] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const router = useRouter()
 
-  const initials = session?.user?.name
-    ? session.user.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
-    : 'AU'
+  const initials = 'AU'
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -62,16 +57,10 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
           />
         </form>
 
-        {/* Notifications */}
-        <button className="header-icon-btn" aria-label="Notifications">
-          <Bell size={18} />
-          <span className="notification-dot" />
-        </button>
-
         {/* Avatar */}
-        <Link href="/dashboard/profile" className="header-avatar" title={session?.user?.name ?? 'User profile'}>
+        <div className="header-avatar" title="User profile">
           {initials}
-        </Link>
+        </div>
       </div>
     </header>
   )

@@ -4,7 +4,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import {
   Card,
   CardContent,
@@ -67,6 +67,11 @@ export function AnalyticsDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [dateRange, setDateRange] = useState('7d')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const fetchAnalytics = async () => {
     setLoading(true)
@@ -87,8 +92,13 @@ export function AnalyticsDashboard() {
   }
 
   useEffect(() => {
+    if (!mounted) return
     fetchAnalytics()
-  }, [dateRange])
+  }, [dateRange, mounted])
+
+  if (!mounted) {
+    return null
+  }
 
   if (loading) {
     return (
@@ -202,7 +212,7 @@ export function AnalyticsDashboard() {
         <div className="lg:col-span-2 dash-card">
           <h2 className="dash-card-title">Page Views Over Time</h2>
           <p className="dash-card-desc">Monitoring daily traffic fluctuations</p>
-          <div className="h-[300px] mt-6">
+          <div style={{ height: 300 }} className="mt-6">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data.pageviewsOverTime}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
@@ -240,7 +250,7 @@ export function AnalyticsDashboard() {
         <div className="dash-card">
           <h2 className="dash-card-title">Device Distribution</h2>
           <p className="dash-card-desc">How users access your site</p>
-          <div className="h-[300px] flex items-center justify-center">
+          <div style={{ height: 300 }} className="flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -312,7 +322,7 @@ export function AnalyticsDashboard() {
         <div className="dash-card">
           <h2 className="dash-card-title">User Engagement (Events)</h2>
           <p className="dash-card-desc">Tracking key interactions on site</p>
-          <div className="h-[280px] mt-6">
+          <div style={{ height: 280 }} className="mt-6">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data.topEvents.slice(0, 5)}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />

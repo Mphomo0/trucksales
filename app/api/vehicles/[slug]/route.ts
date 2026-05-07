@@ -1,11 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
-import {
-  Condition,
-  FuelType,
-  Transmission,
-} from '@/lib/generated/prisma/client'
 
 interface UpdateVehicleBody {
   name: string
@@ -15,9 +10,9 @@ interface UpdateVehicleBody {
   vatPrice: number
   pricenoVat: number
   mileage?: number | null
-  fuelType?: FuelType
-  condition: Condition
-  transmission?: Transmission | null
+  fuelType?: string
+  condition: string
+  transmission?: string | null
   images: string[]
   videoLink?: string | null
   slug: string
@@ -25,6 +20,9 @@ interface UpdateVehicleBody {
   bodyType: string
   truckSize: string
   registrationNo: string
+  specialPrice?: number | null
+  specialValidFrom?: string | null
+  specialValidTo?: string | null
 }
 
 // Get /api/vehicles/slug to fetch a vehicle by ID
@@ -50,8 +48,9 @@ export const GET = async (
 }
 
 // DELETE /api/vehicles/slug to delete a vehicle by slug
-export const DELETE = auth(async (req, { params }) => {
-  if (!req.auth) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const session = await auth()
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -69,11 +68,12 @@ export const DELETE = auth(async (req, { params }) => {
   } catch (error) {
     return NextResponse.json({ error: 'Delete failed' }, { status: 500 })
   }
-})
+}
 
 // PATCH /api/vehicles/slug to update a vehicle by ID
-export const PATCH = auth(async (req, { params }) => {
-  if (!req.auth) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const session = await auth()
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const slug = (await params).slug
@@ -122,6 +122,9 @@ export const PATCH = auth(async (req, { params }) => {
       bodyType: body.bodyType,
       truckSize: body.truckSize,
       registrationNo: body.registrationNo,
+      specialPrice: body.specialPrice ?? null,
+      specialValidFrom: body.specialValidFrom ? new Date(body.specialValidFrom) : null,
+      specialValidTo: body.specialValidTo ? new Date(body.specialValidTo) : null,
     }
 
     // Update the vehicle
@@ -135,4 +138,4 @@ export const PATCH = auth(async (req, { params }) => {
     console.error('Update failed:', error)
     return NextResponse.json({ error: 'Update failed' }, { status: 500 })
   }
-})
+}

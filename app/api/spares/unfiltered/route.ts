@@ -6,17 +6,21 @@ export const GET = async (req: NextRequest) => {
   try {
     // Fetching spares from the database with performance optimizations
     const spares = await prisma.spares.findMany({
-      take: 500, // Safety limit
+      take: 1000,
       select: {
         id: true,
         name: true,
+        description: true,
         make: true,
         price: true,
         noVatPrice: true,
         condition: true,
         category: true,
         images: true,
+        videoLink: true,
         slug: true,
+        createdAt: true,
+        updatedAt: true,
       },
       orderBy: {
         createdAt: 'desc',

@@ -6,7 +6,7 @@ export const GET = async (req: NextRequest) => {
   try {
     // Fetching vehicles from the inventory table with performance optimizations
     const vehicles = await prisma.inventory.findMany({
-      take: 500, // Safety limit even for unfiltered
+      take: 1000,
       select: {
         id: true,
         name: true,
@@ -22,9 +22,12 @@ export const GET = async (req: NextRequest) => {
         transmission: true,
         images: true,
         videoLink: true,
+        description: true,
         bodyType: true,
         truckSize: true,
         slug: true,
+        createdAt: true,
+        updatedAt: true,
       },
       orderBy: {
         createdAt: 'desc',

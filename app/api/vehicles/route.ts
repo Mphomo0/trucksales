@@ -11,18 +11,19 @@ interface Filters {
   bodyType?: string
   truckSize?: string
   OR?: Array<{
-    name?: { contains: string; mode: 'insensitive' }
-    make?: { contains: string; mode: 'insensitive' }
-    model?: { contains: string; mode: 'insensitive' }
-    registrationNo?: { contains: string; mode: 'insensitive' }
-    bodyType?: { contains: string; mode: 'insensitive' }
-    truckSize?: { contains: string; mode: 'insensitive' }
+    name?: { contains: string }
+    make?: { contains: string }
+    model?: { contains: string }
+    registrationNo?: { contains: string }
+    bodyType?: { contains: string }
+    truckSize?: { contains: string }
   }>
 }
 
 // POST /api/vehicles to create a new vehicle
-export const POST = auth(async (req) => {
-  if (!req.auth) {
+export async function POST(req: Request) {
+  const session = await auth()
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -46,6 +47,9 @@ export const POST = auth(async (req) => {
       truckSize,
       registrationNo,
       videoLink,
+      specialPrice,
+      specialValidFrom,
+      specialValidTo,
     } = body
 
     const requiredFields = [
@@ -158,6 +162,9 @@ export const POST = auth(async (req) => {
         videoLink,
         slug,
         images,
+        specialPrice: specialPrice ? parseFloat(specialPrice) : null,
+        specialValidFrom: specialValidFrom ? new Date(specialValidFrom) : null,
+        specialValidTo: specialValidTo ? new Date(specialValidTo) : null,
       },
     })
 
@@ -169,7 +176,7 @@ export const POST = auth(async (req) => {
       { status: 500 }
     )
   }
-})
+}
 
 // GET /api/vehicles to fetch all vehicles
 export const GET = async (req: NextRequest) => {
@@ -200,33 +207,33 @@ export const GET = async (req: NextRequest) => {
     const sortOrder = validOrder.includes(order) ? order : 'desc'
 
     // Build filters object
-    const filters: Filters = {}
+    const filters: any = {}
 
     if (make && make !== 'all') {
-      filters.make = { equals: make, mode: 'insensitive' } as any
+      filters.make = { equals: make }
     }
 
     if (model && model !== 'all') {
-      filters.model = { equals: model, mode: 'insensitive' } as any
+      filters.model = { equals: model }
     }
 
     if (bodyType && bodyType !== 'all') {
-      filters.bodyType = { equals: bodyType, mode: 'insensitive' } as any
+      filters.bodyType = { equals: bodyType }
     }
 
     if (truckSize && truckSize !== 'all') {
-      filters.truckSize = { equals: truckSize, mode: 'insensitive' } as any
+      filters.truckSize = { equals: truckSize }
     }
 
     // Handle search term (searches multiple fields)
     if (search) {
       filters.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { make: { contains: search, mode: 'insensitive' } },
-        { model: { contains: search, mode: 'insensitive' } },
-        { registrationNo: { contains: search, mode: 'insensitive' } },
-        { bodyType: { contains: search, mode: 'insensitive' } },
-        { truckSize: { contains: search, mode: 'insensitive' } },
+        { name: { contains: search } },
+        { make: { contains: search } },
+        { model: { contains: search } },
+        { registrationNo: { contains: search } },
+        { bodyType: { contains: search } },
+        { truckSize: { contains: search } },
       ]
       // Remove individual filters when searching for broad match
       delete filters.make
@@ -245,7 +252,7 @@ export const GET = async (req: NextRequest) => {
         orderBy: {
           [sortBy]: sortOrder,
         },
-        // Optimize CPU by selecting only necessary fields (exclude description for lists)
+        // Select all fields including images and description
         select: {
           id: true,
           name: true,
@@ -261,9 +268,13 @@ export const GET = async (req: NextRequest) => {
           transmission: true,
           images: true,
           videoLink: true,
+          description: true,
           bodyType: true,
           truckSize: true,
           slug: true,
+          specialPrice: true,
+          specialValidFrom: true,
+          specialValidTo: true,
           createdAt: true,
           updatedAt: true,
         },

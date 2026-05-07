@@ -3,35 +3,39 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
-    const total = await prisma.inventory.count()
+    const vehicles = await prisma.inventory.findMany({
+      take: 20,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        make: true,
+        model: true,
+        year: true,
+        vatPrice: true,
+        mileage: true,
+        fuelType: true,
+        condition: true,
+        transmission: true,
+        images: true,
+        description: true,
+        slug: true,
+        specialPrice: true,
+        specialValidFrom: true,
+        specialValidTo: true,
+      },
+    })
 
-    const numToFetch = 30
-
-    // If nothing to fetch, return early
-    if (total === 0) {
-      return NextResponse.json([], { status: 200 })
-    }
-
-    const randomIndexes = new Set<number>()
-    while (randomIndexes.size < Math.min(numToFetch, total)) {
-      randomIndexes.add(Math.floor(Math.random() * total))
-    }
-
-    const randomVehicles = await Promise.all(
-      Array.from(randomIndexes).map((skip) =>
-        prisma.inventory.findFirst({ skip })
-      )
-    )
-
-    // Filter out any potential nulls
-    const filteredVehicles = randomVehicles.filter(Boolean)
-
-    return NextResponse.json(filteredVehicles, { status: 200 })
+    return NextResponse.json(vehicles, { status: 200 })
   } catch (error) {
-    console.error('Random vehicle fetch error:', error)
+    console.error('Featured vehicle fetch error:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch random vehicles' },
-      { status: 500 }
+      { 
+        error: 'Database unavailable', 
+        details: error instanceof Error ? error.message : 'Unknown error',
+        fallback: true 
+      },
+      { status: 200 }
     )
   }
 }
