@@ -14,7 +14,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { Pagination } from '@/components/global/Pagination'
-import { useSearchParams } from 'next/navigation'
 
 interface Vehicle {
   id: string
@@ -57,24 +56,13 @@ interface Meta {
   const [searchInput, setSearchInput] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
-  const [limit, setLimit] = useState(25)
+  const [limit, setLimit] = useState(10)
   const [meta, setMeta] = useState<Meta>({
     total: 0,
     page: 1,
-    limit: 25,
+    limit: 10,
     totalPages: 0,
   })
-
-  const searchParams = useSearchParams()
-  const urlSearch = searchParams.get('search')
-
-  // Initialize search from URL params on mount
-  useEffect(() => {
-    if (urlSearch) {
-      setSearchInput(urlSearch)
-      setDebouncedSearch(urlSearch)
-    }
-  }, [urlSearch])
 
   // Debounce search input
   useEffect(() => {

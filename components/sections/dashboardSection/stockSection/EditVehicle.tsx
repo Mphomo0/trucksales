@@ -4,106 +4,101 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter, useParams } from 'next/navigation'
-import Image from 'next/image'
-import { useForm } from 'react-hook-form'
+import { useState, useEffect } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod/v4'
 import { toast } from 'react-toastify'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { v4 as uuidv4 } from 'uuid'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { upload } from '@imagekit/next'
-import { Trash2, Upload } from 'lucide-react'
-import { ReactSortable } from 'react-sortablejs'
+import { v4 as uuidv4 } from 'uuid'
+import { useRouter, useParams } from 'next/navigation'
+import UploadMultiple from './UploadMultiple'
+import { vehicleSchema } from '@/lib/schemas'
 
-type SortableImage = {
-  id: string
-  url: string
-  file?: File // present if it's a new image
-  fileId?: string // present if it’s already uploaded
-  isNew: boolean
-}
+type VehicleFormData = z.infer<typeof vehicleSchema>
 
-interface VehicleImage {
-  url: string
-  fileId: string
-}
-
-interface Vehicle {
-  id: string
-  name: string
-  make: string
-  model: string
-  year: number
-  vatPrice: number
-  pricenoVat: number
-  mileage: number
-  fuelType: string
-  condition: string
-  transmission: string
-  description?: string
-  bodyType: string
-  truckSize: string
-  featured: string
-  slug: string
-  registrationNo: string
-  images: VehicleImage[]
-  videoLink: string | null
-  specialPrice: number | null
-  specialValidFrom: Date | null
-  specialValidTo: Date | null
-}
-
-/* <h1>A-Z Truck Sales Components</h1> */ export default function EditVehicle() {
-  const [loading, setLoading] = useState(true)
+export default function EditVehicle() {
+  const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null)
   const [isUploading, setIsUploading] = useState(false)
-  const [sortableImages, setSortableImages] = useState<SortableImage[]>([])
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors, isSubmitting },
-  } = useForm<Vehicle>({
-    defaultValues: {
-      images: [],
-    },
-  })
+  const [loading, setLoading] = useState(true)
+  const [existingImages, setExistingImages] = useState<
+    { url: string; fileId: string }[]
+  >([])
+  const [allPreviews, setAllPreviews] = useState<
+    { file: File; id: string; preview: string; isExisting?: boolean }[]
+  >([])
 
   const router = useRouter()
   const params = useParams()
   const slug = params.slug as string
 
-  // Fetch vehicle data
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<VehicleFormData>({
+    resolver: zodResolver(vehicleSchema),
+    defaultValues: {
+      images: [],
+    },
+  })
+
   useEffect(() => {
     const fetchVehicle = async () => {
       try {
         const res = await fetch(`/api/vehicles/${slug}`)
         if (!res.ok) throw new Error('Failed to fetch vehicle')
         const data = await res.json()
+        const vehicle = data.vehicle
 
-        const existingImages: SortableImage[] = (data.vehicle.images || []).map(
-          (img: VehicleImage) => ({
+        setExistingImages(vehicle.images || [])
+        setAllPreviews(
+          (vehicle.images || []).map((img: { url: string; fileId: string }) => ({
+            file: new File([], img.url, { type: 'image/jpeg' }),
             id: img.fileId,
-            url: img.url,
-            fileId: img.fileId,
-            isNew: false,
-          })
+            preview: img.url,
+            isExisting: true,
+          }))
         )
 
-        setSortableImages(existingImages)
-        const vehicle = data.vehicle
         reset({
-          ...vehicle,
-          specialValidFrom: vehicle.specialValidFrom 
-            ? new Date(vehicle.specialValidFrom).toISOString().slice(0, 16) 
-            : null,
-          specialValidTo: vehicle.specialValidTo 
-            ? new Date(vehicle.specialValidTo).toISOString().slice(0, 16) 
-            : null,
+          name: vehicle.name,
+          make: vehicle.make,
+          model: vehicle.model,
+          year: vehicle.year,
+          registrationNo: vehicle.registrationNo || '',
+          vatPrice: vehicle.vatPrice,
+          pricenoVat: vehicle.pricenoVat,
+          mileage: vehicle.mileage ?? '',
+          fuelType: vehicle.fuelType || '',
+          condition: vehicle.condition,
+          transmission: vehicle.transmission || '',
+          bodyType: vehicle.bodyType || '',
+          truckSize: vehicle.truckSize || '',
+          description: vehicle.description || '',
+          videoLink: vehicle.videoLink || '',
+          images: vehicle.images || [],
+          specialPrice: vehicle.specialPrice ?? '',
+          specialValidFrom: vehicle.specialValidFrom
+            ? new Date(vehicle.specialValidFrom).toISOString().slice(0, 16)
+            : '',
+          specialValidTo: vehicle.specialValidTo
+            ? new Date(vehicle.specialValidTo).toISOString().slice(0, 16)
+            : '',
         })
       } catch (error) {
         console.error('Error fetching vehicle:', error)
@@ -115,109 +110,102 @@ interface Vehicle {
     fetchVehicle()
   }, [slug, reset])
 
-  // Handle image upload (local preview)
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files || files.length === 0) return
-
-    const newImages: SortableImage[] = Array.from(files).map((file) => ({
-      id: uuidv4(),
-      url: URL.createObjectURL(file),
-      file,
-      isNew: true,
-    }))
-
-    const updated = [...sortableImages, ...newImages]
-    setSortableImages(updated)
-    setValue(
-      'images',
-      updated.map((img) => ({
-        url: img.url,
-        fileId: img.fileId ?? '',
-      })),
-      { shouldValidate: true }
-    )
-  }
-
-  // Fetch auth params for ImageKit upload
   const getAuthParams = async () => {
     const res = await fetch('/api/images/upload-auth')
-    if (!res.ok) throw new Error('Failed to fetch upload authentication')
+    if (!res.ok) throw new Error('Failed to fetch upload auth')
     return res.json()
   }
 
-  // Submit form
-  const onSubmit = async (formData: Vehicle) => {
+  const onSubmit = async (data: VehicleFormData) => {
     try {
+      const stillSelected = allPreviews.filter((p) => p.isExisting)
+      const finalImages: { url: string; fileId: string }[] = stillSelected.map(
+        (p) => ({ url: p.preview, fileId: p.id })
+      )
+      const newFiles = (selectedFiles || []).filter(
+        (f) => !existingImages.some((img) => img.url === f.name)
+      )
+
+      if (finalImages.length === 0 && newFiles.length === 0) {
+        toast.error('Please select at least one image.')
+        return
+      }
+
       setIsUploading(true)
 
-      const uploadedImages: VehicleImage[] = []
+      for (let i = 0; i < newFiles.length; i++) {
+        const file = newFiles[i]
+        const { token, signature, publicKey, expire } = await getAuthParams()
+        const uniqueFileName = `${uuidv4()}_${file.name}`
 
-      for (const item of sortableImages) {
-        if (item.isNew && item.file) {
-          try {
-            const { token, signature, publicKey, expire } =
-              await getAuthParams()
-            const uniqueFileName = `${uuidv4()}_${item.file.name}`
+        try {
+          const res = await upload({
+            file,
+            fileName: uniqueFileName,
+            folder: 'inventory',
+            expire,
+            token,
+            signature,
+            publicKey,
+          })
 
-            const res = await upload({
-              file: item.file,
-              fileName: uniqueFileName,
-              folder: 'inventory',
-              expire,
-              token,
-              signature,
-              publicKey,
-            })
+          if (!res || !res.url || !res.fileId)
+            throw new Error(`Upload failed for ${file.name}`)
 
-            if (!res || !res.url || !res.fileId)
-              throw new Error(`Upload failed for ${item.file.name}`)
-
-            uploadedImages.push({ url: res.url, fileId: res.fileId })
-
-            // cleanup local preview
-            URL.revokeObjectURL(item.url)
-          } catch (err) {
-            console.error(err)
-            toast.error(`Failed to upload ${item.file.name}`)
-          }
-        } else if (!item.isNew && item.fileId) {
-          uploadedImages.push({ url: item.url, fileId: item.fileId })
+          finalImages.push({ url: res.url, fileId: res.fileId })
+        } catch (err) {
+          console.error(err)
+          toast.error(`Failed to upload ${file.name}`)
         }
       }
 
-      const updatedFormData = {
-        ...formData,
-        images: uploadedImages,
-        year: Number(formData.year),
-        vatPrice: Number(formData?.vatPrice),
-        pricenoVat: Number(formData?.pricenoVat),
-        fuelType: formData.fuelType?.toUpperCase() ?? null,
-        condition: formData.condition?.toUpperCase(),
-        transmission: formData.transmission?.toUpperCase() ?? null,
-        specialPrice: formData.specialPrice ? Number(formData.specialPrice) : null,
-        specialValidFrom: formData.specialValidFrom ? new Date(formData.specialValidFrom) : null,
-        specialValidTo: formData.specialValidTo ? new Date(formData.specialValidTo) : null,
+      setIsUploading(false)
+
+      if (finalImages.length === 0) {
+        toast.error('No images available. Please try again.')
+        return
+      }
+
+      setValue('images', finalImages, { shouldValidate: true })
+      const payload = {
+        name: data.name,
+        make: data.make,
+        model: data.model,
+        year: data.year,
+        registrationNo: data.registrationNo,
+        vatPrice: data.vatPrice,
+        pricenoVat: data.pricenoVat,
+        mileage: data.mileage,
+        fuelType: data.fuelType?.toUpperCase() ?? null,
+        condition: data.condition.toUpperCase(),
+        transmission: data.transmission?.toUpperCase() ?? null,
+        bodyType: data.bodyType,
+        truckSize: data.truckSize,
+        description: data.description,
+        videoLink: data.videoLink || null,
+        images: finalImages,
+        slug,
+        specialPrice: data.specialPrice ? Number(data.specialPrice) : null,
+        specialValidFrom: data.specialValidFrom || null,
+        specialValidTo: data.specialValidTo || null,
       }
 
       const res = await fetch(`/api/vehicles/${slug}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedFormData),
+        body: JSON.stringify(payload),
       })
 
-      if (!res.ok) {
-        const errorData = await res.json()
-        throw new Error(errorData?.error || 'Failed to update vehicle')
+      if (res.ok) {
+        toast.success('Vehicle updated successfully!')
+        router.push('/dashboard/vehicles')
+      } else {
+        const err = await res.json()
+        toast.error(err.error || 'Failed to update vehicle')
       }
-
-      toast.success('Vehicle updated successfully')
-      router.push('/dashboard/vehicles')
     } catch (error) {
-      console.error('PATCH request error:', error)
-      toast.error(
-        error instanceof Error ? error.message : 'Failed to update vehicle'
-      )
+      console.error(error)
+      toast.error('Something went wrong')
     } finally {
       setIsUploading(false)
     }
@@ -232,24 +220,22 @@ interface Vehicle {
   }
 
   return (
-    <div className="py-16">
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl p-6 px-12 py-12">
+    <div className="py-8 bg-gray-50 min-h-screen">
+      <div className="w-full mx-4 p-6 bg-white shadow-xl rounded-lg">
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* --- Basic Info --- */}
-          <div className="mb-4 space-y-2">
-            <Label htmlFor="name">Vehicle Name</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="Enter vehicle name"
-              {...register('name')}
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
-            )}
-          </div>
-
           <div className="grid md:grid-cols-2 gap-4">
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="name">Vehicle Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Enter vehicle name"
+                {...register('name')}
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name.message}</p>
+              )}
+            </div>
             <div className="mb-4 space-y-2">
               <Label htmlFor="registrationNo">Registration Number</Label>
               <Input
@@ -264,33 +250,82 @@ interface Vehicle {
                 </p>
               )}
             </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-4">
             <div className="mb-4 space-y-2">
-              <Label htmlFor="make">Vehicle Make</Label>
+              <Label htmlFor="make">Make</Label>
               <Input
                 id="make"
                 type="text"
-                placeholder="Enter Vehicle Make"
+                placeholder="Enter vehicle Make"
                 {...register('make')}
               />
               {errors.make && (
                 <p className="text-red-500 text-sm">{errors.make.message}</p>
               )}
             </div>
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="model">Model</Label>
+              <Input
+                id="model"
+                type="text"
+                placeholder="Enter vehicle Model"
+                {...register('model')}
+              />
+              {errors.model && (
+                <p className="text-red-500 text-sm">{errors.model.message}</p>
+              )}
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="year">Year</Label>
+              <Input
+                id="year"
+                type="text"
+                placeholder="Enter vehicle Year"
+                {...register('year')}
+              />
+              {errors.year && (
+                <p className="text-red-500 text-sm">{errors.year.message}</p>
+              )}
+            </div>
           </div>
 
-<div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-4">
             <div className="mb-4 space-y-2">
-              <Label htmlFor="description">Video Link</Label>
+              <Label htmlFor="vatPrice">Price VAT Included</Label>
               <Input
-                id="videoLink"
-                placeholder="e.g https://www.youtube.com/watch?v=T6i6L6vSxBU"
-                {...register('videoLink')}
+                id="vatPrice"
+                type="text"
+                placeholder="Enter vehicle Price with VAT"
+                {...register('vatPrice')}
               />
+              {errors.vatPrice && (
+                <p className="text-red-500 text-sm">
+                  {errors.vatPrice.message}
+                </p>
+              )}
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="pricenoVat">Price no VAT</Label>
+              <Input
+                id="pricenoVat"
+                type="text"
+                placeholder="Enter vehicle Price"
+                {...register('pricenoVat')}
+              />
+              {errors.pricenoVat && (
+                <p className="text-red-500 text-sm">
+                  {errors.pricenoVat.message}
+                </p>
+              )}
             </div>
           </div>
 
           <div className="border-t pt-4 mt-4 mb-4">
-            <h3 className="text-lg font-semibold mb-4 text-red-600">Special Offer (Optional)</h3>
+            <h3 className="text-lg font-semibold mb-4 text-red-600">
+              Special Offer (Optional)
+            </h3>
             <div className="grid md:grid-cols-3 gap-4">
               <div className="mb-4 space-y-2">
                 <Label htmlFor="specialPrice">Special Price (VAT Incl)</Label>
@@ -318,6 +353,210 @@ interface Vehicle {
                 />
               </div>
             </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="mb-4 space-y-2">
+              <Label htmlFor="mileage">Mileage</Label>
+              <Input
+                id="mileage"
+                type="text"
+                placeholder="Enter vehicle Mileage"
+                {...register('mileage')}
+              />
+              {errors.mileage && (
+                <p className="text-red-500 text-sm">{errors.mileage.message}</p>
+              )}
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label>Fuel Type</Label>
+              <Controller
+                control={control}
+                name="fuelType"
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value as string}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Fuel Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="diesel">Diesel</SelectItem>
+                      <SelectItem value="petrol">Petrol</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.fuelType && (
+                <p className="text-red-500">{errors.fuelType.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="mb-4 space-y-2">
+              <Label>Condition</Label>
+              <Controller
+                control={control}
+                name="condition"
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value as string}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Condition" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="used">Used</SelectItem>
+                      <SelectItem value="new">New</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.condition && (
+                <p className="text-red-500">{errors.condition.message}</p>
+              )}
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label>Transmission</Label>
+              <Controller
+                control={control}
+                name="transmission"
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value as string}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Transmission" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="manual">Manual</SelectItem>
+                      <SelectItem value="automatic">Automatic</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.transmission && (
+                <p className="text-red-500">{errors.transmission.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="mb-4 space-y-2">
+              <Label>Body Type</Label>
+              <Controller
+                control={control}
+                name="bodyType"
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value as string}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Body Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Bower Truck">Bower Truck</SelectItem>
+                      <SelectItem value="Cage">Cage</SelectItem>
+                      <SelectItem value="Cattle Body">Cattle Body</SelectItem>
+                      <SelectItem value="Chassis Cab">Chassis Cab</SelectItem>
+                      <SelectItem value="Cherry Picker Truck">
+                        Cherry Picker Truck
+                      </SelectItem>
+                      <SelectItem value="Crane Truck">Crane Truck</SelectItem>
+                      <SelectItem value="Curtain Side Truck">
+                        Curtain Side Truck
+                      </SelectItem>
+                      <SelectItem value="Dropside Truck">
+                        Dropside Truck
+                      </SelectItem>
+                      <SelectItem value="Fire Fighting Unit">
+                        Fire Fighting Unit
+                      </SelectItem>
+                      <SelectItem value="Flatbed">Flatbed</SelectItem>
+                      <SelectItem value="Honey Sucker">Honey Sucker</SelectItem>
+                      <SelectItem value="Hooklift">Hooklift</SelectItem>
+                      <SelectItem value="Insulated Body">
+                        Insulated Body
+                      </SelectItem>
+                      <SelectItem value="Mass Side">Mass Side</SelectItem>
+                      <SelectItem value="Other Specialized">
+                        Other Specialized
+                      </SelectItem>
+                      <SelectItem value="Refrigerated Body">
+                        Refrigerated Body
+                      </SelectItem>
+                      <SelectItem value="Roll Back">Roll Back</SelectItem>
+                      <SelectItem value="Skip Loader">Skip Loader</SelectItem>
+                      <SelectItem value="Tanker">Tanker</SelectItem>
+                      <SelectItem value="Tipper Truck">Tipper Truck</SelectItem>
+                      <SelectItem value="Truck Tractor">
+                        Truck Tractor
+                      </SelectItem>
+                      <SelectItem value="Volume Body">Volume Body</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.bodyType && (
+                <p className="text-red-500">{errors.bodyType.message}</p>
+              )}
+            </div>
+            <div className="mb-4 space-y-2">
+              <Label>Truck Size</Label>
+              <Controller
+                control={control}
+                name="truckSize"
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value as string}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Truck Size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1 to 2.5 Ton">1 to 2.5 Ton</SelectItem>
+                      <SelectItem value="3 to 5 Ton">3 to 5 Ton</SelectItem>
+                      <SelectItem value="6 to 7 Ton">6 to 7 Ton</SelectItem>
+                      <SelectItem value="8 to 9 Ton">8 to 9 Ton</SelectItem>
+                      <SelectItem value="10 to 18 Ton">10 to 18 Ton</SelectItem>
+                      <SelectItem value="18 to 35 Ton">18 to 35 Ton</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.truckSize && (
+                <p className="text-red-500">{errors.truckSize.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="mb-4 space-y-2">
+            <label className="space-y-4">Images</label>
+            <UploadMultiple
+              onFilesSelected={(files, previews) => {
+                setSelectedFiles(files)
+                setAllPreviews(previews)
+              }}
+              existingImages={existingImages}
+            />
+          </div>
+
+          <div className="mb-4 space-y-2">
+            <Label htmlFor="videoLink">Video Link</Label>
+            <Input
+              id="videoLink"
+              placeholder="e.g https://www.youtube.com/watch?v=T6i6L6vSxBU"
+              {...register('videoLink')}
+            />
+            {errors.videoLink && (
+              <p className="text-red-500 text-sm">{errors.videoLink.message}</p>
+            )}
           </div>
 
           <div className="mb-4 space-y-2">

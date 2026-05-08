@@ -15,26 +15,48 @@ import { Badge } from '@/components/ui/badge'
 import { Upload, Trash2, ImageIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+type ExistingImage = {
+  url: string
+  fileId: string
+}
+
 type PreviewFile = {
   file: File
   id: string
   preview: string
+  isExisting?: boolean
 }
 
 type UploadMultipleProps = {
   onFilesSelected: (files: File[], previews: PreviewFile[]) => void
   maxFiles?: number
   className?: string
+  existingImages?: ExistingImage[]
 }
 
 const UploadMultiple = ({
   onFilesSelected,
   maxFiles = 16,
   className,
+  existingImages = [],
 }: UploadMultipleProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [previews, setPreviews] = useState<PreviewFile[]>([])
   const [isDragOver, setIsDragOver] = useState(false)
+
+  useEffect(() => {
+    if (existingImages.length > 0) {
+      const initialPreviews: PreviewFile[] = existingImages.map((img) => ({
+        file: new File([], img.url, { type: 'image/jpeg' }),
+        id: img.fileId,
+        preview: img.url,
+        isExisting: true,
+      }))
+      setPreviews(initialPreviews)
+    } else {
+      setPreviews([])
+    }
+  }, [existingImages.length])
 
   const handleFileChange = () => {
     const inputFiles = fileInputRef.current?.files
@@ -48,17 +70,19 @@ const UploadMultiple = ({
       file,
       id: `${file.name}-${file.lastModified}`,
       preview: URL.createObjectURL(file),
+      isExisting: false,
     }))
 
-    // Filter out duplicates based on ID
     const existingIds = new Set(previews.map((p) => p.id))
     const filteredNewPreviews = newPreviewData.filter(
       (p) => !existingIds.has(p.id)
     )
 
-    // Respect max files limit
     const availableSlots = maxFiles - previews.length
-    const finalPreviews = filteredNewPreviews.slice(0, availableSlots)
+    const finalPreviews = filteredNewPreviews.slice(
+      0,
+      Math.max(0, availableSlots)
+    )
 
     const updatedPreviews = [...previews, ...finalPreviews]
 
@@ -69,9 +93,19 @@ const UploadMultiple = ({
     )
   }
 
+  useEffect(() => {
+    return () => {
+      previews.forEach((p) => {
+        if (!p.isExisting) {
+          URL.revokeObjectURL(p.preview)
+        }
+      })
+    }
+  }, [])
+
   const removeFile = (id: string) => {
     const fileToRemove = previews.find((p) => p.id === id)
-    if (fileToRemove) {
+    if (fileToRemove && !fileToRemove.isExisting) {
       URL.revokeObjectURL(fileToRemove.preview)
     }
 
@@ -119,9 +153,10 @@ const UploadMultiple = ({
   // Cleanup
   useEffect(() => {
     return () => {
-      // Revoke all previews on unmount
       previews.forEach((p) => {
-        URL.revokeObjectURL(p.preview)
+        if (!p.isExisting) {
+          URL.revokeObjectURL(p.preview)
+        }
       })
     }
   }, [])
@@ -191,7 +226,9 @@ const UploadMultiple = ({
               variant="outline"
               size="sm"
               onClick={() => {
-                previews.forEach((p) => URL.revokeObjectURL(p.preview))
+                previews.forEach((p) => {
+                  if (!p.isExisting) URL.revokeObjectURL(p.preview)
+                })
                 setPreviews([])
                 onFilesSelected([], [])
               }}
@@ -222,6 +259,7 @@ const UploadMultiple = ({
                       className="object-cover w-full h-full transition-transform group-hover:scale-105"
                       width={200}
                       height={200}
+                      unoptimized={img.isExisting}
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
 
@@ -245,10 +283,12 @@ const UploadMultiple = ({
                       className="text-xs font-medium truncate"
                       title={img.file.name}
                     >
-                      {img.file.name}
+                      {img.isExisting
+                        ? img.preview.split('/').pop()?.split('?')[0] || 'Existing image'
+                        : img.file.name}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {formatFileSize(img.file.size)}
+                      {img.isExisting ? 'Existing' : formatFileSize(img.file.size)}
                     </p>
                   </div>
                 </CardContent>

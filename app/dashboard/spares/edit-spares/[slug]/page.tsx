@@ -34,7 +34,7 @@ import { ArrowLeft } from 'lucide-react'
             </div>
           </div>
         </div>
-        <div className="dash-card max-w-4xl">
+        <div className="dash-card w-full">
           <EditSpares />
         </div>
       </div>

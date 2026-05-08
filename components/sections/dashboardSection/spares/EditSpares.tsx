@@ -208,7 +208,7 @@ interface SparesItem {
 
   return (
     <div className="py-16">
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl p-6 px-12 py-12">
+      <div className="w-full mx-4 bg-white rounded-2xl p-6 px-12 py-12">
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Basic Info */}
           <div className="grid md:grid-cols-2 gap-4">

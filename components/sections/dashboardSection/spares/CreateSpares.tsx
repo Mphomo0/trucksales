@@ -132,7 +132,7 @@ type SparesFormData = z.infer<typeof spareSchema>
 
   return (
     <div className="py-16 bg-gray-50 min-h-screen">
-      <div className="max-w-4xl mx-auto p-6 bg-white shadow-xl rounded-lg">
+      <div className="w-full mx-4 p-6 bg-white shadow-xl rounded-lg">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid md:grid-cols-2 gap-4">
             <div className="mb-4 space-y-2">

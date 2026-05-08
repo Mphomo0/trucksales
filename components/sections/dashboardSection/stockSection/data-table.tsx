@@ -7,7 +7,6 @@
 import {
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -26,19 +25,14 @@ import { useState } from 'react'
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  globalFilter?: string
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  globalFilter,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<
     import('@tanstack/react-table').SortingState
-  >([])
-  const [columnFilters, setColumnFilters] = useState<
-    import('@tanstack/react-table').ColumnFiltersState
   >([])
   const [pagination, setPagination] = useState<{
     pageIndex: number
@@ -53,18 +47,13 @@ export function DataTable<TData, TValue>({
     columns,
     state: {
       sorting,
-      columnFilters,
-      globalFilter,
       pagination,
     },
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    globalFilterFn: 'includesString',
   })
 
   return (

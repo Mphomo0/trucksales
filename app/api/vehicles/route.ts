@@ -228,12 +228,12 @@ export const GET = async (req: NextRequest) => {
     // Handle search term (searches multiple fields)
     if (search) {
       filters.OR = [
-        { name: { contains: search } },
-        { make: { contains: search } },
-        { model: { contains: search } },
-        { registrationNo: { contains: search } },
-        { bodyType: { contains: search } },
-        { truckSize: { contains: search } },
+        { name: { contains: search, mode: 'insensitive' } },
+        { make: { contains: search, mode: 'insensitive' } },
+        { model: { contains: search, mode: 'insensitive' } },
+        { registrationNo: { contains: search, mode: 'insensitive' } },
+        { bodyType: { contains: search, mode: 'insensitive' } },
+        { truckSize: { contains: search, mode: 'insensitive' } },
       ]
       // Remove individual filters when searching for broad match
       delete filters.make
