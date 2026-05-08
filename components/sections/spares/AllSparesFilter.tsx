@@ -63,6 +63,7 @@ interface FilterOptions {
     makes: [],
     categories: [],
   })
+  const [showFilters, setShowFilters] = useState(false)
 
   useEffect(() => {
     const loadFilterOptions = async () => {
@@ -150,6 +151,11 @@ interface FilterOptions {
     setCurrentPage(1)
   }, [])
 
+  const activeFilterCount = [
+    makeFilter !== 'all',
+    categoryFilter !== 'all',
+  ].filter(Boolean).length
+
   const handlePageChange = useCallback(
     (page: number) => {
       const filters = buildFilters(page)
@@ -194,62 +200,79 @@ interface FilterOptions {
           </p>
         </div>
 
-        {/* Filters */}
-        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Filter className="h-5 w-5 text-gray-500" />
-            <h2 className="text-lg font-semibold">Filter Spare Parts</h2>
-          </div>
+        {/* Filters Toggle */}
+        <Button
+          variant="outline"
+          onClick={() => setShowFilters(!showFilters)}
+          className="mb-4 w-full sm:w-auto"
+        >
+          <Filter className="h-4 w-4 mr-2" />
+          {showFilters ? 'Hide Filters' : 'Filters'}
+          {activeFilterCount > 0 && (
+            <span className="ml-2 bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs">
+              {activeFilterCount}
+            </span>
+          )}
+        </Button>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search by name, make, or description..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+        {/* Filters */}
+        {showFilters && (
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Filter className="h-5 w-5 text-gray-500" />
+              <h2 className="text-lg font-semibold">Filter Spare Parts</h2>
             </div>
 
-            {/* Make Filter */}
-            <Select value={makeFilter} onValueChange={setMakeFilter}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="All Makes" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Makes</SelectItem>
-                {filterOptions.makes.map((make) => (
-                  <SelectItem key={make} value={make}>
-                    {make}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search by name, make, or description..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
 
-            {/* Category Filter */}
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {filterOptions.categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+              {/* Make Filter */}
+              <Select value={makeFilter} onValueChange={setMakeFilter}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="All Makes" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Makes</SelectItem>
+                  {filterOptions.makes.map((make) => (
+                    <SelectItem key={make} value={make}>
+                      {make}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-          <div className="mt-4">
-            <Button onClick={clearFilters} variant="outline" size="sm">
-              Clear All Filters
-            </Button>
+              {/* Category Filter */}
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {filterOptions.categories.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="mt-4">
+              <Button onClick={clearFilters} variant="outline" size="sm">
+                Clear All Filters
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Total Count */}
         <div className="mb-6 text-center sm:text-left">

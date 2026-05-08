@@ -75,6 +75,7 @@ interface FilterOptions {
     bodyTypes: [],
     truckSizes: [],
   })
+  const [showFilters, setShowFilters] = useState(false)
 
   const buildFilters = useCallback(
     (page = 1, itemsPerPage = limit) => {
@@ -242,6 +243,13 @@ interface FilterOptions {
     setLimit(25)
   }, [])
 
+  const activeFilterCount = [
+    makeFilter !== 'all',
+    modelFilter !== 'all',
+    bodyTypeFilter !== 'all',
+    truckSizeFilter !== 'all',
+  ].filter(Boolean).length
+
   const handlePageChange = useCallback(
     (page: number) => {
       const filters = buildFilters(page)
@@ -286,95 +294,112 @@ interface FilterOptions {
           </p>
         </div>
 
+        {/* Filters Toggle */}
+        <Button
+          variant="outline"
+          onClick={() => setShowFilters(!showFilters)}
+          className="mb-4 w-full md:w-auto"
+        >
+          <Filter className="h-4 w-4 mr-2" />
+          {showFilters ? 'Hide Filters' : 'Filters'}
+          {activeFilterCount > 0 && (
+            <span className="ml-2 bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs">
+              {activeFilterCount}
+            </span>
+          )}
+        </Button>
+
         {/* Filters */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border mb-2 md:mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Filter className="h-5 w-5 text-gray-500" />
-            <h2 className="text-lg font-semibold">Filter Results</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search make or model..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+        {showFilters && (
+          <div className="bg-white p-6 rounded-lg shadow-sm border mb-2 md:mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Filter className="h-5 w-5 text-gray-500" />
+              <h2 className="text-lg font-semibold">Filter Results</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search make or model..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+
+              {/* Truck Size */}
+              <Select value={truckSizeFilter} onValueChange={setTruckSizeFilter}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="All Truck Sizes" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Truck Size</SelectItem>
+                  {(filterOptions.truckSizes || []).map((size) => (
+                    <SelectItem key={size} value={size}>
+                      {size}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Make */}
+              <Select value={makeFilter} onValueChange={setMakeFilter}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="All Makes" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Makes</SelectItem>
+                  {(filterOptions.makes || []).map((make) => (
+                    <SelectItem key={make} value={make}>
+                      {make.toUpperCase()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Model */}
+              <Select
+                value={modelFilter}
+                onValueChange={setModelFilter}
+                disabled={makeFilter === 'all'}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="All Models" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Models</SelectItem>
+                  {getModelsForMake.map((model) => (
+                    <SelectItem key={model} value={model}>
+                      {model}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Body Type */}
+              <Select value={bodyTypeFilter} onValueChange={setBodyTypeFilter}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="All Body Types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Body Types</SelectItem>
+                  {(filterOptions.bodyTypes || []).map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            {/* Truck Size */}
-            <Select value={truckSizeFilter} onValueChange={setTruckSizeFilter}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="All Truck Sizes" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Truck Size</SelectItem>
-                {(filterOptions.truckSizes || []).map((size) => (
-                  <SelectItem key={size} value={size}>
-                    {size}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Make */}
-            <Select value={makeFilter} onValueChange={setMakeFilter}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="All Makes" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Makes</SelectItem>
-                {(filterOptions.makes || []).map((make) => (
-                  <SelectItem key={make} value={make}>
-                    {make.toUpperCase()}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Model */}
-            <Select
-              value={modelFilter}
-              onValueChange={setModelFilter}
-              disabled={makeFilter === 'all'}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="All Models" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Models</SelectItem>
-                {getModelsForMake.map((model) => (
-                  <SelectItem key={model} value={model}>
-                    {model}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Body Type */}
-            <Select value={bodyTypeFilter} onValueChange={setBodyTypeFilter}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="All Body Types" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Body Types</SelectItem>
-                {(filterOptions.bodyTypes || []).map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="mt-4">
+              <Button onClick={clearFilters} variant="outline" size="sm">
+                Clear All Filters
+              </Button>
+            </div>
           </div>
-
-          <div className="mt-4">
-            <Button onClick={clearFilters} variant="outline" size="sm">
-              Clear All Filters
-            </Button>
-          </div>
-        </div>
+        )}
 
         {/* Results */}
         <div className="mb-6">
