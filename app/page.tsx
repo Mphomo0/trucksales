@@ -8,6 +8,15 @@ import Featured from '@/components/sections/home/Featured'
 import Features from '@/components/sections/home/Features'
 import Hero from '@/components/sections/home/Hero'
 import JsonLd from '@/components/global/JsonLd'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'A-Z Truck Sales | Quality Used Trucks in Gauteng',
+  description: 'A-Z Truck Sales: commercial vehicle specialists in Alberton North, Gauteng. 25+ years experience selling quality used rigid trucks (1.5-16 ton).',
+  alternates: {
+    canonical: 'https://www.a-ztrucksales.com/',
+  },
+}
 
 const homeFaqs = [
   {

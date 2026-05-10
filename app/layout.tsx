@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     siteName: 'A-Z Truck Sales',
     title: 'A-Z Truck Sales | Quality Used Trucks',
     description:
-      'Used trucks in Gauteng. Sales, restoration and spares.',
+      'Used trucks in Gauteng. Sales, restoration and spares for rigid trucks.',
     images: [
       {
         url: '/og-image.jpg', // Make sure this exists or I'll need to generate/suggest it
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'A-Z Truck Sales | Quality Used Trucks',
     description:
-      'Used trucks in Gauteng. Sales, restoration and spares.',
+      'Used trucks in Gauteng. Sales, restoration and spares for rigid trucks.',
     images: ['/og-image.jpg'],
   },
   robots: {
