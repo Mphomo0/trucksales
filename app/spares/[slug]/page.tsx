@@ -82,6 +82,53 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   }
 
+  const spareFaqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Is this part in stock?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Contact us at 011 902 6071 to confirm stock before visiting.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Do you ship parts?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'We can arrange courier delivery across South Africa. Shipping costs depend on size and destination.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Is this part workshop-tested?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. All our spare parts are inspected and tested in our Alberton workshop before sale.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Do you offer warranty?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Warranty terms depend on the specific part. Contact us for details on coverage.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Can I return this part if it does not fit?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Please confirm compatibility before purchase. Contact us within 48 hours if the part is incorrect.',
+        },
+      },
+    ],
+  }
+
   return (
     <div>
       <div className="sr-only">
@@ -91,6 +138,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         {/* application/ld+json */}
       </div>
       <JsonLd data={productSchema} />
+      <JsonLd data={spareFaqSchema} />
       <SpareDetail spare={spare} />
     </div>
   )

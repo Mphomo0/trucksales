@@ -19,6 +19,9 @@ export const revalidate = 3600
 export const metadata: Metadata = {
   title: 'Truck Inventory | Quality Used Rigid Trucks',
   description: 'Browse our inventory of quality used rigid trucks for sale in Gauteng. 1.5 to 16 tons, all workshop-serviced.',
+  alternates: {
+    canonical: 'https://www.a-ztrucksales.com/inventory',
+  },
 }
 
 const inventoryFaqs = [

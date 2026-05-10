@@ -17,6 +17,9 @@ import {
 export const metadata: Metadata = {
   title: 'Truck Spares & Parts | Engines, Gearboxes & Diffs',
   description: 'Quality used truck spares in Gauteng. Engines, gearboxes, diffs and more.',
+  alternates: {
+    canonical: 'https://www.a-ztrucksales.com/spares',
+  },
 }
 
 const sparesFaqs = [

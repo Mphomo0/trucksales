@@ -20,6 +20,9 @@ import {
 export const metadata: Metadata = {
   title: 'Contact Us | A-Z Truck Sales Alberton',
   description: 'Contact A-Z Truck Sales. Two branches: Alberton and Boksburg. Call, email or use our online form.',
+  alternates: {
+    canonical: 'https://www.a-ztrucksales.com/contact',
+  },
 }
 
 const contactFaqs = [
