@@ -8,6 +8,8 @@ import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 import GeoHints from '@/components/global/GeoHints'
 
+export const revalidate = 3600
+
 export const metadata: Metadata = {
   title: 'Truck Inventory | Used Rigid Trucks for Sale',
   description: 'Browse our extensive inventory of quality used rigid trucks for sale in Gauteng. Ranging from 1.5 to 16 tons, all vehicles are restored and workshop serviced.',

@@ -31,7 +31,12 @@ export const GET = async (req: NextRequest) => {
       truckSizes: truckSizes.map((item) => item.truckSize).filter(Boolean),
     }
 
-    return NextResponse.json(filterOptions, { status: 200 })
+    return NextResponse.json(filterOptions, {
+      status: 200,
+      headers: {
+        'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=3600',
+      },
+    })
   } catch (error) {
     console.error('Filter options fetch error:', error)
     return NextResponse.json(

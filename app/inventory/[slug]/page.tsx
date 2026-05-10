@@ -11,6 +11,17 @@ import { prisma } from '@/lib/prisma'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 
+export const revalidate = 3600
+
+export async function generateStaticParams() {
+  const vehicles = await prisma.inventory.findMany({
+    select: { slug: true },
+    orderBy: { createdAt: 'desc' },
+    take: 100,
+  })
+  return vehicles.map((v) => ({ slug: v.slug }))
+}
+
 interface Props {
   params: Promise<{ slug: string }>
 }
