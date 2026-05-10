@@ -10,15 +10,44 @@ import ContactForm from '@/components/sections/contactSection/ContactForm'
 import FAQSection from '@/components/sections/home/FAQSection'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 
 export const metadata: Metadata = {
-  title: 'Contact Us | Visit A-Z Truck Sales in Alberton',
-  description: 'Contact A-Z Truck Sales in Alberton. Visit our workshop, call us, or send an enquiry online for your truck needs.',
+  title: 'Contact Us | A-Z Truck Sales Alberton',
+  description: 'Contact A-Z Truck Sales. Two branches: Alberton and Boksburg. Call, email or use our online form.',
 }
+
+const contactFaqs = [
+  {
+    question: 'Where is A-Z Truck Sales located?',
+    answer: 'We have two branches: Alberton at 9 Chrislou Crescent (011 902 6071) and Boksburg at Cnr Trichardts & Ravenswood (083 234 5377). Mon-Fri 8AM-5PM.',
+  },
+  {
+    question: 'What types of trucks do you sell?',
+    answer: 'We specialize in quality used rigid trucks from 1.5 to 16 tons, including Isuzu, Hino, Mercedes-Benz, and Ford.',
+  },
+  {
+    question: 'Do you offer truck restoration services?',
+    answer: 'Yes. Our in-house workshop restores 100+ trucks annually with a 95% first-time COF pass rate.',
+  },
+  {
+    question: 'Can I sell my truck to A-Z Truck Sales?',
+    answer: 'Yes, we buy used commercial vehicles. Fill in the Sell Your Truck form with your vehicle details and we will get back to you with an offer.',
+  },
+  {
+    question: 'What makes A-Z Truck Sales different from other dealers?',
+    answer: '25+ years of experience, in-house workshop restoration, 100+ trucks always in stock, and a 4.1-star rating from verified buyers.',
+  },
+]
 
 const localBusinessSchema = {
   '@context': 'https://schema.org',
-  '@type': 'AutoPartsStore',
+  '@type': 'MotorVehicleBusiness',
   name: 'A-Z Truck Sales',
   image: 'https://www.a-ztrucksales.com/og-image.jpg',
   address: {
@@ -106,9 +135,22 @@ const localBusinessSchema = {
     ],
   }
 
+  const contactFaqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: contactFaqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  }
+
   return (
     <div className="bg-gray-50 py-12">
-      <h1 className="sr-only">Contact Us | Visit A-Z Truck Sales in Alberton</h1>
+      <h1 className="sr-only">Contact Us | A-Z Truck Sales Alberton</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-04-27</span>
@@ -116,6 +158,7 @@ const localBusinessSchema = {
       </div>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={localBusinessSchema} />
+      <JsonLd data={contactFaqSchema} />
       
       <div className="container mx-auto px-4 text-center mb-12">
         <h2 className="text-4xl font-bold mb-4">Contact Us</h2>
@@ -126,7 +169,30 @@ const localBusinessSchema = {
 
       <AddressSection />
       <ContactForm />
-      <FAQSection />
+      
+      <section className="py-20 bg-neutral-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+              <p className="text-neutral-600">Everything you need to know about our vehicles and services.</p>
+            </div>
+            
+            <Accordion type="single" collapsible className="w-full">
+              {contactFaqs.map((faq, index) => (
+                <AccordionItem key={index} value={`item-${index}`} className="bg-white px-6 rounded-lg mb-4 border border-neutral-200">
+                  <AccordionTrigger className="text-left font-semibold py-4 hover:no-underline">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-neutral-600 pb-4">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

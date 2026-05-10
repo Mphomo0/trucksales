@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_BASE_URL || 'https://www.a-ztrucksales.com',
   ),
   title: {
-    default: 'A-Z Truck Sales | Quality Used Commercial Vehicles in Gauteng',
+    default: 'A-Z Truck Sales | Quality Used Trucks in Gauteng',
     template: '%s | A-Z Truck Sales',
   },
   description:
@@ -57,9 +57,9 @@ export const metadata: Metadata = {
     locale: 'en_ZA',
     url: 'https://www.a-ztrucksales.com',
     siteName: 'A-Z Truck Sales',
-    title: 'A-Z Truck Sales | Quality Used Commercial Vehicles',
+    title: 'A-Z Truck Sales | Quality Used Trucks',
     description:
-      'Specialists in used commercial vehicles, rigid trucks, and truck restoration in Gauteng.',
+      'Used trucks in Gauteng. Sales, restoration and spares.',
     images: [
       {
         url: '/og-image.jpg', // Make sure this exists or I'll need to generate/suggest it
@@ -71,9 +71,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'A-Z Truck Sales | Quality Used Commercial Vehicles',
+    title: 'A-Z Truck Sales | Quality Used Trucks',
     description:
-      'Specialists in used commercial vehicles, rigid trucks, and truck restoration in Gauteng.',
+      'Used trucks in Gauteng. Sales, restoration and spares.',
     images: ['/og-image.jpg'],
   },
   robots: {

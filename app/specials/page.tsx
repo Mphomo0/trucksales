@@ -10,7 +10,7 @@ import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
   title: 'Truck Specials & Discounts | Limited Time Offers',
-  description: 'View our latest truck specials and exclusive discounts on quality used commercial vehicles in Gauteng.',
+  description: 'View our latest truck specials and discounts on quality used trucks in Gauteng.',
 }
 
 async function getSpecialsData() {

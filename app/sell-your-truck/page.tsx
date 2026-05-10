@@ -10,9 +10,9 @@ import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 
 export const metadata: Metadata = {
-  title: 'Truck Trade-In & Selling | A-Z Truck Sales',
+  title: 'Sell or Trade-In Your Truck | A-Z Truck Sales',
   description:
-    'Looking to sell or trade-in your used truck? We offer competitive prices and a transparent process for buying commercial vehicles in Gauteng.',
+    'Sell or trade-in your used truck. Competitive prices for commercial vehicles in Gauteng.',
 }
 
 /* application/ld+json */ export default function SellYourTruck() {
