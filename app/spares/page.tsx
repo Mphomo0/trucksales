@@ -90,13 +90,7 @@ const sparesFaqs = [
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={sparesFaqSchema} />
       
-      <div className="bg-neutral-50 py-12 border-b">
-        <div className="container mx-auto px-4 text-center">
-          <div className="max-w-4xl mx-auto">
-            <SparesFeatures />
-          </div>
-        </div>
-      </div>
+      
 
       <AllSparesFilter />
 

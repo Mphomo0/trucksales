@@ -168,9 +168,7 @@ async function getSpecialsData() {
             deals, exclusive discounts, and unbeatable offers available now!
           </p>
 
-          <div className="max-w-4xl mx-auto">
-            <SpecialsFeatures />
-          </div>
+          
         </div>
 
         {!hasAnySpecial ? (

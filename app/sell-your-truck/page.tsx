@@ -83,15 +83,7 @@ const tradeInFaqs = [
       </div>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={tradeInFaqSchema} />
-      <section className="bg-gray-50 py-12 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <div className="max-w-4xl mx-auto">
-              <SellYourTruckFeatures />
-            </div>
-          </div>
-        </div>
-      </section>
+      
       <section>
         <TradeInForm />
         <Process />
