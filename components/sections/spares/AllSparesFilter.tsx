@@ -63,7 +63,7 @@ interface FilterOptions {
     makes: [],
     categories: [],
   })
-  const [showFilters, setShowFilters] = useState(false)
+  const [showFilters, setShowFilters] = useState(true)
 
   useEffect(() => {
     const loadFilterOptions = async () => {
@@ -199,21 +199,6 @@ interface FilterOptions {
             Browse our available vehicle spare parts
           </p>
         </div>
-
-        {/* Filters Toggle */}
-        <Button
-          variant="outline"
-          onClick={() => setShowFilters(!showFilters)}
-          className="mb-4 w-full sm:w-auto"
-        >
-          <Filter className="h-4 w-4 mr-2" />
-          {showFilters ? 'Hide Filters' : 'Filters'}
-          {activeFilterCount > 0 && (
-            <span className="ml-2 bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs">
-              {activeFilterCount}
-            </span>
-          )}
-        </Button>
 
         {/* Filters */}
         {showFilters && (
