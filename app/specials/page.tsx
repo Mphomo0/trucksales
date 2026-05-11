@@ -41,73 +41,81 @@ const specialsFaqs = [
 
 async function getSpecialsData() {
   const now = new Date()
+  console.log('[Specials] Current time:', now.toISOString())
   
-  const vehicles = await prisma.inventory.findMany({
-    where: {
-      specialPrice: { not: null },
-      AND: [
-        { specialPrice: { gt: 0 } },
-        {
-          OR: [
-            { specialValidTo: null },
-            { specialValidTo: { gte: now } },
-          ],
-        },
-      ],
-    },
-    select: {
-      id: true,
-      name: true,
-      make: true,
-      model: true,
-      year: true,
-      vatPrice: true,
-      pricenoVat: true,
-      images: true,
-      description: true,
-      slug: true,
-      specialPrice: true,
-      specialValidFrom: true,
-      specialValidTo: true,
-    },
-    orderBy: { createdAt: 'desc' },
-    take: 20,
-  })
+  try {
+    const vehicles = await prisma.inventory.findMany({
+      where: {
+        specialPrice: { not: null },
+        AND: [
+          { specialPrice: { gt: 0 } },
+          {
+            OR: [
+              { specialValidTo: null },
+              { specialValidTo: { gte: now } },
+            ],
+          },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        make: true,
+        model: true,
+        year: true,
+        vatPrice: true,
+        pricenoVat: true,
+        images: true,
+        description: true,
+        slug: true,
+        specialPrice: true,
+        specialValidFrom: true,
+        specialValidTo: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    })
+    console.log('[Specials] Vehicles found:', vehicles.length)
 
-  const spares = await prisma.spares.findMany({
-    where: {
-      specialPrice: { not: null },
-      AND: [
-        { specialPrice: { gt: 0 } },
-        {
-          OR: [
-            { specialValidTo: null },
-            { specialValidTo: { gte: now } },
-          ],
-        },
-      ],
-    },
-    select: {
-      id: true,
-      name: true,
-      make: true,
-      price: true,
-      noVatPrice: true,
-      images: true,
-      description: true,
-      slug: true,
-      category: true,
-      condition: true,
-      specialPrice: true,
-      specialPriceNoVat: true,
-      specialValidFrom: true,
-      specialValidTo: true,
-    },
-    orderBy: { createdAt: 'desc' },
-    take: 20,
-  })
+    const spares = await prisma.spares.findMany({
+      where: {
+        specialPrice: { not: null },
+        AND: [
+          { specialPrice: { gt: 0 } },
+          {
+            OR: [
+              { specialValidTo: null },
+              { specialValidTo: { gte: now } },
+            ],
+          },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        make: true,
+        price: true,
+        noVatPrice: true,
+        images: true,
+        description: true,
+        slug: true,
+        category: true,
+        condition: true,
+        specialPrice: true,
+        specialPriceNoVat: true,
+        specialValidFrom: true,
+        specialValidTo: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    })
+    console.log('[Specials] Spares found:', spares.length)
 
-  return { vehicles, spares }
+    return { vehicles, spares }
+  } catch (error) {
+    console.error('[Specials] Error fetching specials:', error)
+    return { vehicles: [], spares: [] }
+  }
 }
 
 /* application/ld+json */ export default async function Specials() {
