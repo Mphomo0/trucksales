@@ -9,20 +9,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { path, type } = await request.json()
+    const { path } = await request.json()
 
     if (!path) {
       return NextResponse.json({ error: 'Missing path parameter' }, { status: 400 })
     }
 
-    console.log(`[Revalidate] Revalidating path: ${path} (type: ${type || 'path'})`)
-
-    if (type === 'tag') {
-      const { NextResponse } = await import('next')
-      const res = NextResponse.json({ revalidated: true, now: Date.now() })
-      res.headers.set('x-revalidate-tag', path)
-      return res
-    }
+    console.log(`[Revalidate] Revalidating path: ${path}`)
 
     revalidatePath(path)
 
