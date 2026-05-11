@@ -94,11 +94,6 @@ export default function Inventory() {
       
       <div className="bg-neutral-50 py-12 border-b">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-4">Our Truck Inventory</h2>
-          <p className="text-lg text-neutral-600 max-w-2xl mx-auto mb-8">
-            Explore our collection of quality used rigid trucks. All vehicles are workshop-tested and ready for the job.
-          </p>
-          
           <div className="max-w-4xl mx-auto">
             <InventoryFeatures />
           </div>

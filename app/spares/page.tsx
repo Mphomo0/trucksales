@@ -92,11 +92,6 @@ const sparesFaqs = [
       
       <div className="bg-neutral-50 py-12 border-b">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-4">Quality Used Truck Spares</h2>
-          <p className="text-lg text-neutral-600 max-w-2xl mx-auto mb-8">
-            Find the right parts for your commercial vehicle. We stock engines, gearboxes, diffs, and more.
-          </p>
-
           <div className="max-w-4xl mx-auto">
             <SparesFeatures />
           </div>

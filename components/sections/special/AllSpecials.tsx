@@ -71,9 +71,6 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
     <div className="space-y-16">
       {hasVehicles && (
         <section>
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Vehicles on Special
-          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {vehicles.map((vehicle) => (
               <Link href={`/inventory/${vehicle.slug}`} key={vehicle.slug}>
@@ -129,9 +126,6 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
 
       {hasSpares && (
         <section>
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Spare Parts on Special
-          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {spares.map((spare) => (
               <Link href={`/spares/${spare.slug}`} key={spare.slug}>
