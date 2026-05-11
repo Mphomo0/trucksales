@@ -3,6 +3,32 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import slugify from 'slugify'
 
+async function triggerRevalidation(paths: string[]) {
+  const secret = process.env.REVALIDATE_SECRET
+  if (!secret) {
+    console.error('[Revalidate] REVALIDATE_SECRET not configured')
+    return
+  }
+  
+  try {
+    await Promise.all(
+      paths.map(async (path) => {
+        await fetch(new URL(path, process.env.NEXT_PUBLIC_APP_URL).toString(), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-revalidate-token': secret,
+          },
+          body: JSON.stringify({ path }),
+        })
+      })
+    )
+    console.log('[Revalidate] Triggered for paths:', paths)
+  } catch (error) {
+    console.error('[Revalidate] Error:', error)
+  }
+}
+
 interface Filters {
   make?: string
   engine?: string
@@ -141,6 +167,8 @@ export async function POST(req: Request) {
         specialValidTo: specialValidTo ? new Date(specialValidTo) : null,
       },
     })
+
+    await triggerRevalidation(['/spares', '/specials', `/spares/${newVehicle.slug}`])
 
     return NextResponse.json(newVehicle, { status: 201 })
   } catch (error) {

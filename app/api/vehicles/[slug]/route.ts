@@ -2,6 +2,32 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 
+async function triggerRevalidation(paths: string[]) {
+  const secret = process.env.REVALIDATE_SECRET
+  if (!secret) {
+    console.error('[Revalidate] REVALIDATE_SECRET not configured')
+    return
+  }
+  
+  try {
+    await Promise.all(
+      paths.map(async (path) => {
+        await fetch(new URL(path, process.env.NEXT_PUBLIC_APP_URL).toString(), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-revalidate-token': secret,
+          },
+          body: JSON.stringify({ path }),
+        })
+      })
+    )
+    console.log('[Revalidate] Triggered for paths:', paths)
+  } catch (error) {
+    console.error('[Revalidate] Error:', error)
+  }
+}
+
 interface UpdateVehicleBody {
   name: string
   make: string
@@ -60,6 +86,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ slug:
     await prisma.inventory.delete({
       where: { slug },
     })
+
+    await triggerRevalidation(['/inventory', '/specials', `/inventory/${slug}`])
 
     return NextResponse.json(
       { message: 'Vehicle deleted successfully' },
@@ -132,6 +160,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ slug: 
       where: { slug },
       data: updateData,
     })
+
+    await triggerRevalidation(['/inventory', '/specials', `/inventory/${updatedVehicle.slug}`])
 
     return NextResponse.json({ updatedVehicle }, { status: 200 })
   } catch (error) {
