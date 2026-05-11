@@ -2,6 +2,8 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
+export const revalidate = 3600
+
 import AllSparesFilter from '@/components/sections/spares/AllSparesFilter'
 import SparesFeatures from '@/components/sections/spares/SparesFeatures'
 import { Metadata } from 'next'

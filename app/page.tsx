@@ -2,6 +2,8 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
+export const revalidate = 3600
+
 import AboutSection from '@/components/sections/home/AboutSection'
 import CTA from '@/components/sections/home/CTA'
 import Featured from '@/components/sections/home/Featured'
