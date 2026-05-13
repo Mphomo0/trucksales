@@ -11,7 +11,7 @@ import { prisma } from '@/lib/prisma'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export async function generateStaticParams() {
   const vehicles = await prisma.inventory.findMany({

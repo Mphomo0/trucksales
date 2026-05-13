@@ -2,7 +2,7 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 import AllSpecials from '@/components/sections/special/AllSpecials'
 import SpecialsFeatures from '@/components/sections/specials/SpecialsFeatures'

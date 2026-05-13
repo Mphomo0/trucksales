@@ -73,7 +73,11 @@ export async function GET(request: NextRequest) {
 
     const analytics = processAnalyticsData(events, startDate, endDate)
 
-    return NextResponse.json(analytics)
+    return NextResponse.json(analytics, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      },
+    })
   } catch (error) {
     console.error('Analytics API error:', error)
     return NextResponse.json(

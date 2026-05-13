@@ -145,11 +145,6 @@ export default function RootLayout({
         <ClerkProvider>
           <PostHogProvider>
             <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
-            <Script
-              src="https://analytics.ahrefs.com/analytics.js"
-              data-key="azIimokFbaOWQUGS+ZhBzA"
-              strategy="afterInteractive"
-            />
             <h1 className="sr-only">
               A-Z Truck Sales | Premium Commercial Vehicles
             </h1>

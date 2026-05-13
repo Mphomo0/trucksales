@@ -2,7 +2,7 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 import AllSparesFilter from '@/components/sections/spares/AllSparesFilter'
 import SparesFeatures from '@/components/sections/spares/SparesFeatures'
