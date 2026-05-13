@@ -33,7 +33,7 @@ const branches: Branch[] = [
     address: 'Cnr Trichardts & Ravenswood St, Ravenswood',
     city: 'Gauteng, 1451',
     phone: '083 234 5377',
-    coords: { lat: '-26.1913', lng: '28.2488' },
+    coords: { lat: '-26.2064', lng: '28.2156' },
   },
 ]
 
@@ -216,7 +216,7 @@ export default function AddressSection() {
                   height="100%"
                   style={{ border: 0 }}
                   loading="lazy"
-                  src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3578.1659030161427!2d${selectedBranch.coords.lng}!3d${selectedBranch.coords.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e9510722a7fd44d%3A0xd8a035093db1dfcd!2s9%20Chrislou%20Cres%2C%20Alberton%2C%201449!5e0!3m2!1sen!2sza!4v1756405416361!5m2!1sen!2sza`}
+                  src={`https://www.google.com/maps/embed?pb=!4m18!1m12!1m3!1d3578.1659030161427!2d${selectedBranch.coords.lng}!3d${selectedBranch.coords.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMU3CsDEwJzA2LjYiTiAyOMKwMTAnMjYuNyJF!5e0!3m2!1sen!2sza!4v1756405416361!5m2!1sen!2sza`}
                   allowFullScreen
                   referrerPolicy="no-referrer-when-downgrade"
                 />
