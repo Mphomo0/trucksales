@@ -15,6 +15,7 @@ interface Branch {
   address: string
   city: string
   phone: string
+  embedUrl: string
   coords: { lat: string; lng: string }
 }
 
@@ -25,6 +26,7 @@ const branches: Branch[] = [
     address: '9 Chrislou Crescent, Alberton North',
     city: 'Gauteng, 1449',
     phone: '011 902 6071',
+    embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3578.1659030161427!2d28.13892337541691!3d-26.256278477044486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e9510722a7fd44d%3A0xd8a035093db1dfcd!2s9%20Chrislou%20Cres%2C%20Alberton%2C%201449!5e0!3m2!1sen!2sza!4v1778695134595!5m2!1sen!2sza',
     coords: { lat: '-26.2563', lng: '28.1389' },
   },
   {
@@ -33,6 +35,7 @@ const branches: Branch[] = [
     address: 'Cnr Trichardts & Ravenswood St, Ravenswood',
     city: 'Gauteng, 1451',
     phone: '083 234 5377',
+    embedUrl: 'https://www.google.com/maps/embed?pb=!1m19!1m8!1m3!1d13354.070119153903!2d28.11625544955964!3d-25.89481286514269!3m2!1i1024!2i768!4f13.1!4m8!3e0!4m0!4m5!1s0x1e9517a1cf6334c3%3A0x9fff6f42aafa7e45!2sA-Z%20Truck%20Sales%20Boksburg%2C%20Cnr%20Trichardts%20and%2C%20Ravenswood%20St%2C%20Ravenswood%2C%20Boksburg%2C%201459!3m2!1d-26.1912977!2d28.2539616!5e0!3m2!1sen!2sza!4v1778695338906!5m2!1sen!2sza',
     coords: { lat: '-26.2064', lng: '28.2156' },
   },
 ]
@@ -216,7 +219,7 @@ export default function AddressSection() {
                   height="100%"
                   style={{ border: 0 }}
                   loading="lazy"
-                  src={`https://www.google.com/maps/embed?pb=!4m18!1m12!1m3!1d3578.1659030161427!2d${selectedBranch.coords.lng}!3d${selectedBranch.coords.lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMU3CsDEwJzA2LjYiTiAyOMKwMTAnMjYuNyJF!5e0!3m2!1sen!2sza!4v1756405416361!5m2!1sen!2sza`}
+                  src={selectedBranch.embedUrl}
                   allowFullScreen
                   referrerPolicy="no-referrer-when-downgrade"
                 />
