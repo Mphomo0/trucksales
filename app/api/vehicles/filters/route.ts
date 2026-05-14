@@ -1,6 +1,9 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+export const runtime = 'nodejs'
+export const revalidate = 86400
+
 export const GET = async (req: NextRequest) => {
   try {
     const [makes, models, bodyTypes, truckSizes] = await Promise.all([

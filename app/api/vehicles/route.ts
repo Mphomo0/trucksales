@@ -3,6 +3,9 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import slugify from 'slugify'
 
+export const runtime = 'nodejs'
+export const revalidate = 60
+
 async function triggerRevalidation(paths: string[]) {
   const secret = process.env.REVALIDATE_SECRET
   if (!secret) {

@@ -114,7 +114,7 @@ interface Truck {
             play={true}
             direction="left"
           >
-            {trucks.map((truck) => (
+            {trucks.map((truck, index) => (
               <div
                 key={truck.id}
                 className="min-w-[300px] max-w-[300px] mx-4 flex-shrink-0"
@@ -130,7 +130,7 @@ interface Truck {
                           width={400}
                           height={300}
                           className="w-full h-48 object-cover"
-                          priority
+                          priority={index < 3}
                         />
                       ) : (
                         <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">

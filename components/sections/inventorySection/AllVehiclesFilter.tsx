@@ -4,7 +4,7 @@
 
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -76,6 +76,7 @@ interface FilterOptions {
     truckSizes: [],
   })
   const [showFilters, setShowFilters] = useState(true)
+  const initialLoad = useRef(true)
 
   const buildFilters = useCallback(
     (page = 1, itemsPerPage = limit) => {
@@ -100,7 +101,9 @@ interface FilterOptions {
 
       const params = new URLSearchParams(filters)
 
-      const res = await fetch(`/api/vehicles?${params.toString()}`)
+      const res = await fetch(`/api/vehicles?${params.toString()}`, {
+        cache: 'force-cache',
+      })
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}))
@@ -153,7 +156,7 @@ interface FilterOptions {
 
   const fetchFilterOptions = useCallback(async () => {
     try {
-      const res = await fetch('/api/vehicles/filters')
+      const res = await fetch('/api/vehicles/filters', { cache: 'force-cache' })
 
       if (!res.ok) {
         console.warn(
@@ -188,6 +191,11 @@ interface FilterOptions {
 
   // Filter change effect with debouncing - resets to page 1
   useEffect(() => {
+    if (initialLoad.current) {
+      initialLoad.current = false
+      return
+    }
+
     const timeoutId = setTimeout(() => {
       const filters = buildFilters(1)
       fetchTrucks(filters)
@@ -404,7 +412,7 @@ interface FilterOptions {
         {!loading && trucks.length > 0 && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {trucks.map((truck) => (
+              {trucks.map((truck, index) => (
                 <Link
                   key={truck.id}
                   href={`/inventory/${truck.slug || truck.id}`}
@@ -417,7 +425,7 @@ interface FilterOptions {
                         width={400}
                         height={300}
                         className="w-full h-48 object-cover"
-                        priority
+                        priority={index < 3}
                       />
                       {(() => {
                         const priceInfo = getCurrentPrice(
