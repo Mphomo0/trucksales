@@ -73,7 +73,7 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
         <section>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {vehicles.map((vehicle) => (
-              <Link href={`/inventory/${vehicle.slug}`} key={vehicle.slug}>
+              <Link href={`/inventory/${vehicle.slug}`} key={vehicle.slug} prefetch={false}>
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative">
                     <Image
@@ -128,7 +128,7 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
         <section>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {spares.map((spare) => (
-              <Link href={`/spares/${spare.slug}`} key={spare.slug}>
+              <Link href={`/spares/${spare.slug}`} key={spare.slug} prefetch={false}>
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative">
                     <Image

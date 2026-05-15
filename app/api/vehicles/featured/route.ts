@@ -27,11 +27,11 @@ export async function GET() {
     })
 
     return NextResponse.json(vehicles, {
-    status: 200,
-    headers: {
-      'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
-    },
-  })
+      status: 200,
+      headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      },
+    })
   } catch (error) {
     console.error('Featured vehicle fetch error:', error)
     return NextResponse.json(

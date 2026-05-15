@@ -2,6 +2,7 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
+export const dynamic = 'force-static'
 export const revalidate = 86400
 
 import AllSpecials from '@/components/sections/special/AllSpecials'

@@ -11,6 +11,7 @@ import { prisma } from '@/lib/prisma'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 
+export const dynamic = 'force-static'
 export const revalidate = 86400
 
 export async function generateStaticParams() {

@@ -119,7 +119,7 @@ interface Truck {
                 key={truck.id}
                 className="min-w-[300px] max-w-[300px] mx-4 flex-shrink-0"
               >
-                <Link href={`/inventory/${truck.slug}`}>
+                <Link href={`/inventory/${truck.slug}`} prefetch={false}>
                   <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300">
                     {/* Image Section */}
                     <div className="relative">

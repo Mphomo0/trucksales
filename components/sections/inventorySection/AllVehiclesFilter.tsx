@@ -416,6 +416,7 @@ interface FilterOptions {
                 <Link
                   key={truck.id}
                   href={`/inventory/${truck.slug || truck.id}`}
+                  prefetch={false}
                 >
                   <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                     <div className="relative">
