@@ -145,9 +145,9 @@ export default function RootLayout({
         <ClerkProvider>
           <PostHogProvider>
             <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
-            <h1 className="sr-only">
+            <p className="sr-only">
               A-Z Truck Sales | Premium Commercial Vehicles
-            </h1>
+            </p>
             <GeoHints />
             <JsonLd data={organizationSchema} />
             <JsonLd data={websiteSchema} />

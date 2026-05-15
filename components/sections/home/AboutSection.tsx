@@ -39,7 +39,7 @@ import Image from 'next/image'
               alt="Dealership Image"
               width={800}
               height={600}
-              className="w-full h-full rounded-lg shadow-lg"
+              className="w-full h-auto rounded-lg shadow-lg"
               priority
             />
           </div>

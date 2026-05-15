@@ -28,9 +28,9 @@ import { ArrowLeft } from 'lucide-react'
               </Button>
             </Link>
             <div>
-              <h1 className="dash-page-title">
+              <h2 className="dash-page-title">
                 Add <span>Spares</span>
-              </h1>
+              </h2>
             </div>
           </div>
         </div>

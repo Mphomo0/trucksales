@@ -18,7 +18,7 @@ export const dynamic = 'force-static'
 export const revalidate = 86400
 
 export const metadata: Metadata = {
-  title: 'Truck Inventory | Quality Used Rigid Trucks',
+  title: 'Truck Inventory',
   description: 'Browse our inventory of quality used rigid trucks for sale in Gauteng. 1.5 to 16 tons, all workshop-serviced.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/inventory',
@@ -83,7 +83,7 @@ export default function Inventory() {
 
   return (
     <div>
-      <h1 className="sr-only">Truck Inventory | Used Rigid Trucks for Sale | A-Z Truck Sales</h1>
+      <h1 className="sr-only">Truck Inventory | Used Rigid Trucks | A-Z Truck Sales</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-04-27</span>

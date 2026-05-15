@@ -20,9 +20,9 @@ import Link from 'next/link'
       <div className="dashboard-main">
         <div className="dash-page-header">
           <div>
-            <h1 className="dash-page-title">
+            <h2 className="dash-page-title">
               Vehicle <span>Spares</span>
-            </h1>
+            </h2>
             <p className="dash-page-subtitle">All spare parts currently listed</p>
           </div>
           <Link href="/dashboard/spares/add-spares" passHref>

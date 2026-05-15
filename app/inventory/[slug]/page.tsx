@@ -7,6 +7,8 @@
 
 import React from 'react'
 import TruckDetail from '@/components/sections/inventorySection/TruckDetail'
+import QualityAssurance from '@/components/sections/inventorySection/QualityAssurance'
+
 import { prisma } from '@/lib/prisma'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
@@ -39,8 +41,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
-  const title = `${vehicle.year} ${vehicle.make} ${vehicle.model} | A-Z Truck Sales`
-  const description = `${vehicle.condition} ${vehicle.year} ${vehicle.make} ${vehicle.model} for sale. ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km.` : ''} ${vehicle.description.substring(0, 100)}...`
+  let title = `${vehicle.year} ${vehicle.make} ${vehicle.model}`
+  if (title.length > 42) {
+    title = title.substring(0, 39) + '...'
+  }
+
+  const baseDescription = `${vehicle.condition} ${vehicle.year} ${vehicle.make} ${vehicle.model} for sale. ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km.` : ''}`
+  const description = `${baseDescription} ${vehicle.description.substring(0, 150 - baseDescription.length)}...`
+
   
   const images = Array.isArray(vehicle.images) 
     ? (vehicle.images as any[]).map(img => img.url)
@@ -153,6 +161,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       <JsonLd data={productSchema} />
       <JsonLd data={vehicleFaqSchema} />
       <TruckDetail vehicle={vehicle} />
+      <QualityAssurance />
     </div>
   )
 }

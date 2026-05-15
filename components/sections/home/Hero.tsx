@@ -14,7 +14,6 @@ import Link from 'next/link'
       style={{ backgroundImage: 'url(/images/truckBg.webp)' }}
       aria-label="Hero section with promotional message"
     >
-      <h1 className="sr-only">A-Z Truck Sales | Quality Used Commercial Vehicles in Alberton, Gauteng</h1>
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-yellow-600 opacity-60" />
 

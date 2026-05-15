@@ -27,8 +27,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
-  const title = `${spare.name} | ${spare.category} Spare Parts | A-Z Truck Sales`
-  const description = `${spare.condition} ${spare.name} for ${spare.make}. ${spare.description.substring(0, 150)}...`
+  let title = `${spare.name} | ${spare.category}`
+  if (title.length > 42) {
+    title = title.substring(0, 39) + '...'
+  }
+
+  const baseDescription = `${spare.condition} ${spare.name} for ${spare.make}.`
+  const description = `${baseDescription} ${spare.description.substring(0, 150 - baseDescription.length)}...`
+
   
   const images = Array.isArray(spare.images) 
     ? (spare.images as any[]).map(img => img.url)

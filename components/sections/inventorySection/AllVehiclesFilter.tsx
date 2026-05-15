@@ -294,9 +294,9 @@ interface FilterOptions {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-0 md:py-8">
         <div className="mb-8">
-          <h1 className="hidden md:block text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="hidden md:block text-3xl font-bold text-gray-900 mb-2">
             Our Inventory
-          </h1>
+          </h2>
           <p className="hidden md:block text-lg text-gray-600">
             Browse our selection of quality pre-owned trucks
           </p>

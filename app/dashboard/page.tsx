@@ -12,7 +12,6 @@ import GeoHints from '@/components/global/GeoHints'
 /* application/ld+json */ export default async function Dashboard() {
   return (
     <>
-      <h1 className="sr-only">Dashboard Overview</h1>
       <GeoHints />
       <DashboardHeader
         title="Dashboard Overview"

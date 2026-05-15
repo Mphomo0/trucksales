@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/accordion'
 
 export const metadata: Metadata = {
-  title: 'Truck Spares & Parts | Engines, Gearboxes & Diffs',
+  title: 'Truck Spares & Parts',
   description: 'Quality used truck spares in Gauteng. Engines, gearboxes, diffs and more.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/spares',
@@ -82,7 +82,7 @@ const sparesFaqs = [
 
   return (
     <div>
-      <h1 className="sr-only">Truck Spares & Parts | Engines, Gearboxes & Diffs | A-Z Truck Sales</h1>
+      <h1 className="sr-only">Truck Spares & Parts | A-Z Truck Sales</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-04-27</span>

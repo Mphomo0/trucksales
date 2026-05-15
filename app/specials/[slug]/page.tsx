@@ -6,6 +6,8 @@
 /* datePublished: 2026-04-27 */
 
 import SpecialDetails from '@/components/sections/special/SpecialDetails'
+import QualityAssurance from '@/components/sections/inventorySection/QualityAssurance'
+
 import React from 'react'
 import { prisma } from '@/lib/prisma'
 import { Metadata } from 'next'
@@ -32,7 +34,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Special Expired' }
   }
 
-  const title = `Special Offer: ${inventory.year} ${inventory.make} | A-Z Truck Sales`
+  let title = `Special Offer: ${inventory.year} ${inventory.make}`
+  if (title.length > 42) {
+    title = title.substring(0, 39) + '...'
+  }
+
   const description = `Don't miss this special offer on a ${inventory.year} ${inventory.make} ${inventory.model}. Limited time deal at A-Z Truck Sales.`
 
   return {
@@ -138,6 +144,7 @@ export default async function Special({ params }: Props) {
       <JsonLd data={productSchema} />
       <JsonLd data={specialFaqSchema} />
       <SpecialDetails />
+      <QualityAssurance />
     </div>
   )
 }

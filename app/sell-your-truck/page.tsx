@@ -10,7 +10,7 @@ import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 
 export const metadata: Metadata = {
-  title: 'Sell or Trade-In Your Truck | A-Z Truck Sales',
+  title: 'Sell or Trade-In Your Truck',
   description:
     'Sell or trade-in your used truck. Competitive prices for commercial vehicles in Gauteng.',
   alternates: {
@@ -76,7 +76,7 @@ const tradeInFaqs = [
 
   return (
     <>
-      <h1 className="sr-only">Sell Your Truck or Trade In | A-Z Truck Sales</h1>
+      <h1 className="sr-only">Sell or Trade-In Your Truck | A-Z Truck Sales</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-04-27</span>

@@ -12,7 +12,7 @@ import JsonLd from '@/components/global/JsonLd'
 import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
-  title: 'Truck Specials & Discounts | Limited Time Offers',
+  title: 'Truck Specials & Discounts',
   description: 'View our latest truck specials and discounts on quality used trucks in Gauteng.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/specials',
@@ -154,7 +154,7 @@ async function getSpecialsData() {
 
   return (
     <div className="bg-gray-100">
-      <h1 className="sr-only">Truck Specials & Discounts | Limited Time Offers | A-Z Truck Sales</h1>
+      <h1 className="sr-only">Truck Specials & Discounts | A-Z Truck Sales</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-04-27</span>

@@ -30,7 +30,7 @@ export default function SellYourTruckFeatures() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {features.map((feature) => (
           <div key={feature.title}>
-            <h2>{feature.title}</h2>
+            <p className="font-bold">{feature.title}</p>
             <p>{feature.description}</p>
           </div>
         ))}
