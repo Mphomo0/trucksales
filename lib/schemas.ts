@@ -64,7 +64,7 @@ export const contactFormSchema = z.object({
     .min(1, { message: 'Email is required' })
     .email({ message: 'Invalid email address' })
     .trim(),
-  branch: z.enum(['Cape Town', 'Johannesburg', 'Durban', 'Pretoria', 'Other'], {
+  branch: z.enum(['Alberton', 'Boksburg'], {
     message: 'Please select a valid branch',
   }),
   subject: z

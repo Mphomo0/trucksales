@@ -15,7 +15,7 @@ type ContactFormData = {
   name: string
   email: string
   phone: string
-  branch: string
+  branch: 'Alberton' | 'Boksburg'
   subject: string
   message: string
   captchaAnswer: string
