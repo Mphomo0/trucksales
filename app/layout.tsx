@@ -89,13 +89,8 @@ export const metadata: Metadata = {
   },
   verification: {
     google: 'NSttRQu748qaKY6XHYe8AVd8vlsBpvXA_q8EcB7BI_Q',
+    bing: '6F4E7F1FC1EFA944472DB933122CB39F',
   },
-  meta: [
-    {
-      name: 'msvalidate.01',
-      content: '6F4E7F1FC1EFA944472DB933122CB39F',
-    },
-  ],
 }
 
 const organizationSchema = {
