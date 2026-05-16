@@ -10,16 +10,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
 import { contactFormSchema } from '@/lib/schemas'
+import { z } from 'zod/v4'
 
-type ContactFormData = {
-  name: string
-  email: string
-  phone: string
-  branch: 'Alberton' | 'Boksburg'
-  subject: string
-  message: string
-  captchaAnswer: string
-}
+type ContactFormData = z.input<typeof contactFormSchema>
 
 function generateCaptcha() {
   const a = Math.floor(Math.random() * 10) + 1

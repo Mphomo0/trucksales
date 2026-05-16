@@ -25,19 +25,7 @@ import { tradeInFormSchema } from '@/lib/schemas'
 import { X, Upload, Image as ImageIcon } from 'lucide-react'
 import { z } from 'zod/v4'
 
-type TradeInFormData = {
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  preferredContact: string
-  year: string
-  make: string
-  model: string
-  mileage: string
-  comments?: string
-  captchaAnswer: string
-}
+type TradeInFormData = z.input<typeof tradeInFormSchema>
 
 interface ImagePreview {
   file: File
@@ -68,7 +56,6 @@ function generateCaptcha() {
   } = useForm<TradeInFormData>({
     resolver: zodResolver(tradeInFormSchema),
     defaultValues: {
-      preferredContact: '',
       comments: '',
       captchaAnswer: '',
     },

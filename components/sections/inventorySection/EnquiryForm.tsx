@@ -9,14 +9,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
 import { enquiryFormSchema } from '@/lib/schemas'
+import { z } from 'zod/v4'
 
-type EnquiryFormData = {
-  name: string
-  email: string
-  phone: string
-  message: string
-  captchaAnswer: string
-}
+type EnquiryFormData = z.input<typeof enquiryFormSchema>
 
 interface EnquiryFormProps {
   vehicleSlug: string

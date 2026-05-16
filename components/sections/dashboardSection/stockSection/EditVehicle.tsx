@@ -26,7 +26,7 @@ import { useRouter, useParams } from 'next/navigation'
 import UploadMultiple from './UploadMultiple'
 import { vehicleSchema } from '@/lib/schemas'
 
-type VehicleFormData = z.infer<typeof vehicleSchema>
+type VehicleFormData = z.input<typeof vehicleSchema>
 
 export default function EditVehicle() {
   const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null)

@@ -26,7 +26,7 @@ import { useRouter } from 'next/navigation'
 import UploadMultiple from '../stockSection/UploadMultiple'
 import { spareSchema } from '@/lib/schemas'
 
-type SparesFormData = z.infer<typeof spareSchema>
+type SparesFormData = z.input<typeof spareSchema>
 
 /* <h1>A-Z Truck Sales Components</h1> */ export default function CreateSpares() {
   const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null)
@@ -44,8 +44,6 @@ type SparesFormData = z.infer<typeof spareSchema>
     resolver: zodResolver(spareSchema),
     defaultValues: {
       images: [],
-      condition: '',
-      category: '',
     },
   })
 
