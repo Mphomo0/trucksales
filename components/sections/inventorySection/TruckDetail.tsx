@@ -164,8 +164,9 @@ interface Props {
                             <Image
                               src={img.url}
                               alt={`${vehicle.name} image ${index + 1}`}
-                              fill
-                              className="object-cover"
+                              width={1200}
+                              height={800}
+                              className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
                               priority
                             />
@@ -243,8 +244,9 @@ interface Props {
                             <Image
                               src={img.url}
                               alt={`Thumbnail ${index + 1}`}
-                              fill
-                              className="object-cover"
+                              width={300}
+                              height={200}
+                              className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 100px, (max-width: 1024px) 150px, 200px"
                               priority
                             />
@@ -259,7 +261,7 @@ interface Props {
               {/* Video Link */}
               {videoLinkUrl && (
                 <div className="mt-4">
-                  <h3 className="text-lg font-semibold mb-2">Vehicle Video</h3>
+                  <h2 className="text-lg font-semibold mb-2">Vehicle Video</h2>
                   <div className="aspect-w-16 aspect-h-9">
                     <iframe
                       src={convertYouTubeLink(videoLinkUrl)}
@@ -322,7 +324,7 @@ interface Props {
                 <Separator className="my-6" />
 
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Description</h3>
+                  <h2 className="text-lg font-semibold mb-4">Description</h2>
                   <p className="text-gray-600 leading-relaxed">
                     {vehicle.description}
                   </p>

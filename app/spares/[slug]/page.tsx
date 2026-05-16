@@ -32,8 +32,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title = title.substring(0, 39) + '...'
   }
 
-  const baseDescription = `${spare.condition} ${spare.name} for ${spare.make}.`
-  const description = `${baseDescription} ${spare.description.substring(0, 150 - baseDescription.length)}...`
+  const baseDescription = `${spare.condition} ${spare.name} for ${spare.make}.`.trim()
+  const charsLeft = 150 - baseDescription.length
+  let description = baseDescription
+  
+  if (charsLeft > 5 && spare.description) {
+    const cleanDesc = spare.description.replace(/\s+/g, ' ').trim()
+    description = `${baseDescription} ${cleanDesc.substring(0, charsLeft)}${cleanDesc.length > charsLeft ? '...' : ''}`
+  }
 
   
   const images = Array.isArray(spare.images) 

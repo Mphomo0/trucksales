@@ -10,7 +10,7 @@ import Link from 'next/link'
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Logo & About */}
         <div>
-          <h2 className="text-xl font-bold text-white mb-4">A-Z Truck Sales</h2>
+          <h3 className="text-xl font-bold text-white mb-4">A-Z Truck Sales</h3>
           <p className="text-sm">
             Trusted commercial vehicle specialists with over 25 years of
             experience. Proudly rated 4.1 for quality and service.

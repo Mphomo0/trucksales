@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     template: '%s | A-Z Truck Sales',
   },
   description:
-    'A-Z Truck Sales are commercial vehicle specialists in Alberton North, Gauteng. 25+ years’ experience selling and restoring quality used rigid trucks (1.5–16 ton).',
+    'A-Z Truck Sales: commercial vehicle specialists in Alberton, Gauteng. 25+ years experience selling and restoring used rigid trucks.',
   keywords: [
     'truck sales',
     'used trucks gauteng',

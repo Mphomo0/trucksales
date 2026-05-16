@@ -46,8 +46,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title = title.substring(0, 39) + '...'
   }
 
-  const baseDescription = `${vehicle.condition} ${vehicle.year} ${vehicle.make} ${vehicle.model} for sale. ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km.` : ''}`
-  const description = `${baseDescription} ${vehicle.description.substring(0, 150 - baseDescription.length)}...`
+  const baseDescription = `${vehicle.condition} ${vehicle.year} ${vehicle.make} ${vehicle.model} for sale. ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km.` : ''}`.trim()
+  const charsLeft = 150 - baseDescription.length
+  let description = baseDescription
+  
+  if (charsLeft > 5 && vehicle.description) {
+    const cleanDesc = vehicle.description.replace(/\s+/g, ' ').trim()
+    description = `${baseDescription} ${cleanDesc.substring(0, charsLeft)}${cleanDesc.length > charsLeft ? '...' : ''}`
+  }
 
   
   const images = Array.isArray(vehicle.images) 

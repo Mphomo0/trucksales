@@ -307,7 +307,7 @@ interface FilterOptions {
           <div className="bg-white p-6 rounded-lg shadow-sm border mb-2 md:mb-8">
             <div className="flex items-center gap-2 mb-4">
               <Filter className="h-5 w-5 text-gray-500" />
-              <h2 className="text-lg font-semibold">Filter Results</h2>
+              <h3 className="text-lg font-semibold">Filter Results</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               {/* Search */}

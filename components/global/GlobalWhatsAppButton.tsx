@@ -11,7 +11,7 @@ import { FloatingWhatsApp } from 'react-floating-whatsapp'
     <FloatingWhatsApp
       phoneNumber="27781277393"
       accountName="AZ Truck Sales"
-      avatar="/images/whatsapp.svg"
+      avatar="/images/logo.png"
       chatMessage="Hello! How can we help you?"
     />
   )

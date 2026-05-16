@@ -164,9 +164,9 @@ function generateCaptcha() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Contact Information */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">
+                    <h2 className="text-lg font-semibold">
                       Contact Information
-                    </h3>
+                    </h2>
 
                     <div className="space-y-2">
                       <Label htmlFor="firstName">First Name</Label>
@@ -259,9 +259,9 @@ function generateCaptcha() {
 
                   {/* Vehicle Information */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">
+                    <h2 className="text-lg font-semibold">
                       Vehicle Information
-                    </h3>
+                    </h2>
 
                     <div className="space-y-2">
                       <Label htmlFor="year">Year</Label>
@@ -381,6 +381,8 @@ function generateCaptcha() {
                             <Image
                               src={imagePreview.url}
                               alt={imagePreview.file.name}
+                              width={200}
+                              height={200}
                               className="w-full h-full object-cover"
                             />
                           </div>
