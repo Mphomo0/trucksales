@@ -1,13 +1,41 @@
 User-agent: *
-Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /_next/static/
+Disallow: /_next/data/
 
+Allow: /
 Sitemap: https://www.a-ztrucksales.com/sitemap.xml
 
 User-agent: GPTBot
+Disallow: /
 Allow: /llms.txt
 
 User-agent: Claude-Web
+Disallow: /
 Allow: /llms.txt
 
 User-agent: Google-Extended
+Disallow: /
 Allow: /llms.txt
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MegaIndex
+Disallow: /
+
+User-agent:rogerbot
+Disallow: /
+
+User-agent: Screaming Frog
+Disallow: /
