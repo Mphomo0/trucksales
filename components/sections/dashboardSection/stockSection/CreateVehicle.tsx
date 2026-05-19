@@ -358,44 +358,44 @@ type VehicleFormData = z.input<typeof vehicleSchema>
                       <SelectValue placeholder="Select Condition" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Bower Truck">Bower Truck</SelectItem>
-                      <SelectItem value="Cage">Cage</SelectItem>
-                      <SelectItem value="Cattle Body">Cattle Body</SelectItem>
-                      <SelectItem value="Chassis Cab">Chassis Cab</SelectItem>
-                      <SelectItem value="Cherry Picker Truck">
+                      <SelectItem value="bower truck">Bower Truck</SelectItem>
+                      <SelectItem value="cage">Cage</SelectItem>
+                      <SelectItem value="cattle body">Cattle Body</SelectItem>
+                      <SelectItem value="chassis cab">Chassis Cab</SelectItem>
+                      <SelectItem value="cherry picker truck">
                         Cherry Picker Truck
                       </SelectItem>
-                      <SelectItem value="Crane Truck">Crane Truck</SelectItem>
-                      <SelectItem value="Curtain Side Truck">
+                      <SelectItem value="crane truck">Crane Truck</SelectItem>
+                      <SelectItem value="curtain side truck">
                         Curtain Side Truck
                       </SelectItem>
-                      <SelectItem value="Dropside Truck">
+                      <SelectItem value="dropside truck">
                         Dropside Truck
                       </SelectItem>
-                      <SelectItem value="Fire Fighting Unit">
+                      <SelectItem value="fire fighting unit">
                         Fire Fighting Unit
                       </SelectItem>
-                      <SelectItem value="Flatbed">Flatbed</SelectItem>
-                      <SelectItem value="Honey Sucker">Honey Sucker</SelectItem>
-                      <SelectItem value="Hooklift">Hooklift</SelectItem>
-                      <SelectItem value="Insulated Body">
+                      <SelectItem value="flatbed">Flatbed</SelectItem>
+                      <SelectItem value="honey sucker">Honey Sucker</SelectItem>
+                      <SelectItem value="hooklift">Hooklift</SelectItem>
+                      <SelectItem value="insulated body">
                         Insulated Body
                       </SelectItem>
-                      <SelectItem value="Mass Side">Mass Side</SelectItem>
-                      <SelectItem value="Other Specialized">
+                      <SelectItem value="mass side">Mass Side</SelectItem>
+                      <SelectItem value="other specialized">
                         Other Specialized
                       </SelectItem>
-                      <SelectItem value="Refrigerated Body">
+                      <SelectItem value="refrigerated body">
                         Refrigerated Body
                       </SelectItem>
-                      <SelectItem value="Roll Back">Roll Back</SelectItem>
-                      <SelectItem value="Skip Loader">Skip Loader</SelectItem>
-                      <SelectItem value="Tanker">Tanker</SelectItem>
-                      <SelectItem value="Tipper Truck">Tipper Truck</SelectItem>
-                      <SelectItem value="Truck Tractor">
+                      <SelectItem value="roll back">Roll Back</SelectItem>
+                      <SelectItem value="skip loader">Skip Loader</SelectItem>
+                      <SelectItem value="tanker">Tanker</SelectItem>
+                      <SelectItem value="tipper truck">Tipper Truck</SelectItem>
+                      <SelectItem value="truck tractor">
                         Truck Tractor
                       </SelectItem>
-                      <SelectItem value="Volume Body">Volume Body</SelectItem>
+                      <SelectItem value="volume body">Volume Body</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -415,12 +415,12 @@ type VehicleFormData = z.input<typeof vehicleSchema>
                       <SelectValue placeholder="Select Transmission" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="1 to 2.5 Ton">1 to 2.5 Ton</SelectItem>
-                      <SelectItem value="3 to 5 Ton">3 to 5 Ton</SelectItem>
-                      <SelectItem value="6 to 7 Ton">6 to 7 Ton</SelectItem>
-                      <SelectItem value="8 to 9 Ton">8 to 9 Ton</SelectItem>
-                      <SelectItem value="10 to 18 Ton">10 to 18 Ton</SelectItem>
-                      <SelectItem value="18 to 35 Ton">18 to 35 Ton</SelectItem>
+                      <SelectItem value="1 to 2.5 ton">1 to 2.5 Ton</SelectItem>
+                      <SelectItem value="3 to 5 ton">3 to 5 Ton</SelectItem>
+                      <SelectItem value="6 to 7 ton">6 to 7 Ton</SelectItem>
+                      <SelectItem value="8 to 9 ton">8 to 9 Ton</SelectItem>
+                      <SelectItem value="10 to 18 ton">10 to 18 Ton</SelectItem>
+                      <SelectItem value="18 to 35 ton">18 to 35 Ton</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
