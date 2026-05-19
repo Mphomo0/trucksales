@@ -228,6 +228,7 @@ interface Special {
                               className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
                               priority
+                              unoptimized
                             />
                           </div>
                         </div>
@@ -308,6 +309,7 @@ interface Special {
                               className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 100px, (max-width: 1024px) 150px, 200px"
                               priority
+                              unoptimized
                             />
                           </div>
                         </div>

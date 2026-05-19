@@ -83,6 +83,7 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                       height={300}
                       className="w-full h-48 object-cover"
                       priority
+                      unoptimized
                     />
                     <Badge className="absolute top-2 right-2 bg-red-600">
                       SPECIAL
@@ -138,6 +139,7 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                       height={300}
                       className="w-full h-48 object-cover"
                       priority
+                      unoptimized
                     />
                     <Badge className="absolute top-2 right-2 bg-red-600">
                       SPECIAL

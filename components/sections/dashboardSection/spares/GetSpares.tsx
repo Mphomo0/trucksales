@@ -125,6 +125,7 @@ interface ImageFile {
           width={50}
           height={50}
           className="rounded-md object-cover h-12 w-12"
+          unoptimized
         />
       ),
       enableSorting: false,

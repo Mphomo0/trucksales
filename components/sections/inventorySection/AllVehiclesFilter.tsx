@@ -427,6 +427,7 @@ interface FilterOptions {
                         height={300}
                         className="w-full h-48 object-cover"
                         priority={index < 3}
+                        unoptimized
                       />
                       {(() => {
                         const priceInfo = getCurrentPrice(
