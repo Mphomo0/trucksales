@@ -118,13 +118,11 @@ export default function EditVehicle() {
 
   const onSubmit = async (data: VehicleFormData) => {
     try {
-      const stillSelected = allPreviews.filter((p) => p.isExisting)
-      const finalImages: { url: string; fileId: string }[] = stillSelected.map(
+      const stillExisting = allPreviews.filter((p) => p.isExisting)
+      const finalImages: { url: string; fileId: string }[] = stillExisting.map(
         (p) => ({ url: p.preview, fileId: p.id })
       )
-      const newFiles = (selectedFiles || []).filter(
-        (f) => !existingImages.some((img) => img.url === f.name)
-      )
+      const newFiles = allPreviews.filter((p) => !p.isExisting).map((p) => p.file)
 
       if (finalImages.length === 0 && newFiles.length === 0) {
         toast.error('Please select at least one image.')

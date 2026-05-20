@@ -56,7 +56,7 @@ const UploadMultiple = ({
     } else {
       setPreviews([])
     }
-  }, [existingImages.length])
+  }, [JSON.stringify(existingImages)])
 
   const handleFileChange = () => {
     const inputFiles = fileInputRef.current?.files
@@ -66,7 +66,10 @@ const UploadMultiple = ({
   }
 
   const processFiles = (filesArray: File[]) => {
-    const newPreviewData: PreviewFile[] = filesArray.map((file) => ({
+    const imageFiles = filesArray.filter((f) => f.type.startsWith('image/'))
+    if (imageFiles.length === 0) return
+
+    const newPreviewData: PreviewFile[] = imageFiles.map((file) => ({
       file,
       id: `${file.name}-${file.lastModified}`,
       preview: URL.createObjectURL(file),
@@ -149,17 +152,6 @@ const UploadMultiple = ({
       Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
     )
   }
-
-  // Cleanup
-  useEffect(() => {
-    return () => {
-      previews.forEach((p) => {
-        if (!p.isExisting) {
-          URL.revokeObjectURL(p.preview)
-        }
-      })
-    }
-  }, [])
 
   const canAddMore = previews.length < maxFiles
 

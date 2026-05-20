@@ -45,6 +45,7 @@ interface SparesItem {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [previewImages, setPreviewImages] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
+  const [existingImages, setExistingImages] = useState<SparesImage[]>([])
 
   const {
     register,
@@ -76,8 +77,10 @@ interface SparesItem {
         }
 
         const item = data.sparesItem
+        setExistingImages(item.images || [])
         reset({
           ...item,
+          images: item.images || [],
           specialPrice: item.specialPrice ?? '',
           specialPriceNoVat: item.specialPriceNoVat ?? '',
           specialValidFrom: item.specialValidFrom ? new Date(item.specialValidFrom).toISOString().split('T')[0] : '',
@@ -107,10 +110,10 @@ interface SparesItem {
     const files = e.target.files
     if (!files || files.length === 0) return
 
-    previewImages.forEach((url) => URL.revokeObjectURL(url))
     const newFiles = Array.from(files)
-    setSelectedFiles(newFiles)
-    setPreviewImages(newFiles.map((file) => URL.createObjectURL(file)))
+    const newPreviews = newFiles.map((file) => URL.createObjectURL(file))
+    setSelectedFiles((prev) => [...prev, ...newFiles])
+    setPreviewImages((prev) => [...prev, ...newPreviews])
   }
 
   const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,9 +122,10 @@ interface SparesItem {
   }
 
   const removeImage = (index: number) => {
-    const currentImages = [...watchedImages]
-    currentImages.splice(index, 1)
-    setValue('images', currentImages)
+    const newImages = [...existingImages]
+    newImages.splice(index, 1)
+    setExistingImages(newImages)
+    setValue('images', newImages)
   }
 
   const removePreviewImage = (index: number) => {
@@ -168,7 +172,7 @@ interface SparesItem {
         }
       }
 
-      const allImages = [...watchedImages, ...newUploadedImages]
+      const allImages = [...existingImages, ...newUploadedImages]
       const updatedFormData = {
         ...formData,
         images: allImages,
@@ -263,9 +267,9 @@ interface SparesItem {
           {/* Images Section */}
           <div className="space-y-4">
             <Label>Images</Label>
-            {watchedImages.length > 0 && (
+            {existingImages.length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {watchedImages.map((img, idx) => (
+                {existingImages.map((img, idx) => (
                   <div key={idx} className="relative group">
                     <Image
                       src={img.url}
