@@ -44,7 +44,7 @@ async function deleteFilesFromImageKit(fileIds: string[]) {
     throw new Error('IMAGEKIT_PRIVATE_KEY is not defined')
   }
 
-  console.log('Deleting from ImageKit:', { fileIds, keyPrefix: privateKey.slice(0, 8) })
+  
 
   const results = []
   
@@ -59,7 +59,7 @@ async function deleteFilesFromImageKit(fileIds: string[]) {
       })
 
       const responseText = await response.text()
-      console.log('ImageKit delete response:', fileId, response.status, responseText)
+      
 
       if (!response.ok && response.status !== 404) {
         console.error('ImageKit delete error:', response.status, responseText)

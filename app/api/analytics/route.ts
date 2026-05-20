@@ -59,8 +59,9 @@ export async function GET(request: NextRequest) {
       'Content-Type': 'application/json',
     }
 
+    const maxEvents = 10000
     const eventsResponse = await fetch(
-      `${POSTHOG_API_URL}/projects/${POSTHOG_PROJECT_ID}/events/?after=${startDate.toISOString()}&before=${endDate.toISOString()}`,
+      `${POSTHOG_API_URL}/projects/${POSTHOG_PROJECT_ID}/events/?after=${startDate.toISOString()}&before=${endDate.toISOString()}&limit=${maxEvents}`,
       { headers }
     )
 
@@ -76,6 +77,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(analytics, {
       headers: {
         'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        'X-Content-Type-Options': 'nosniff',
       },
     })
   } catch (error) {
@@ -218,20 +220,20 @@ function generateTimeSeriesData(
   endDate: Date
 ) {
   const data: Array<{ date: string; pageviews: number }> = []
-  const current = new Date(startDate)
+  const eventCounts: Record<string, number> = {}
 
+  for (const event of events) {
+    const dateStr = event.timestamp.split('T')[0]
+    eventCounts[dateStr] = (eventCounts[dateStr] || 0) + 1
+  }
+
+  const current = new Date(startDate)
   while (current <= endDate) {
     const dateStr = current.toISOString().split('T')[0]
-    const dayEvents = events.filter((event) => {
-      const eventDate = new Date(event.timestamp).toISOString().split('T')[0]
-      return eventDate === dateStr
-    })
-
     data.push({
       date: dateStr,
-      pageviews: dayEvents.length,
+      pageviews: eventCounts[dateStr] || 0,
     })
-
     current.setDate(current.getDate() + 1)
   }
 

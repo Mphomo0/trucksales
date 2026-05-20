@@ -8,8 +8,8 @@ function validateMessageQuality(message: string) {
     return { valid: false, message: 'Message is required' }
   }
   const wordCount = trimmed.split(/\s+/).filter(w => w.length > 0).length
-  if (wordCount < 3) {
-    return { valid: false, message: 'Message must contain at least 3 words' }
+  if (wordCount < 1) {
+    return { valid: false, message: 'Message must contain at least 1 word' }
   }
   if (/^[0-9\s]+$/.test(trimmed)) {
     return { valid: false, message: 'Message cannot be only numbers' }

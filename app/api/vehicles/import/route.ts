@@ -20,10 +20,6 @@ export async function POST(req: Request) {
     const imported: string[] = []
     const errors: string[] = []
 
-    // Get existing slugs once for duplicate checking
-    const existingVehicles = await prisma.inventory.findMany({ select: { slug: true } })
-    const existingSlugs = new Set(existingVehicles.map(v => v.slug))
-
     for (const record of records) {
       try {
 const {
@@ -53,7 +49,7 @@ const {
         const videoLinkKey = Object.keys(record).find(k => k.toLowerCase() === 'videolink')
         const video = videoLinkKey ? record[videoLinkKey] : undefined
 
-        console.log('[IMPORT] Raw images field:', images, 'type:', typeof images)
+        
 
         if (!name || !make) {
           errors.push(`Missing required fields for: ${name || 'unnamed'}`)
@@ -73,22 +69,24 @@ const {
         const finalTruckSize = String(truckSize || 'OTHER')
 
         let finalSlug = slug || slugify(`${make}-${model || 'vehicle'}-${year || '2020'}`, { lower: true })
-        
-        // Check for duplicate slug
-        if (existingSlugs.has(finalSlug)) {
-          let counter = 1
-          while (existingSlugs.has(`${finalSlug}-${counter}`)) {
-            counter++
-          }
+
+        const existing = await prisma.inventory.findFirst({
+          where: { slug: { startsWith: finalSlug } },
+          select: { slug: true },
+          orderBy: { slug: 'desc' },
+        })
+
+        if (existing) {
+          const match = existing.slug.match(/-(\d+)$/)
+          const counter = match ? parseInt(match[1]) + 1 : 1
           finalSlug = `${finalSlug}-${counter}`
         }
-        existingSlugs.add(finalSlug)
 
         let parsedImages: { url: string; fileId: string }[] = []
-        console.log('[IMPORT] images value:', JSON.stringify(images), 'type:', typeof images)
+        
         if (images && typeof images === 'string' && images.trim().length > 0) {
           const urls = String(images).split(/\|/).filter(url => url.trim())
-          console.log('[IMPORT] split URLs:', urls)
+          
           parsedImages = urls.map((url, index) => ({
             url: url.trim(),
             fileId: `import-${Date.now()}-${index}`,
@@ -97,7 +95,7 @@ const {
           parsedImages = images
         }
 
-        console.log('[IMPORT] Parsed images:', parsedImages)
+        
 
         await prisma.inventory.create({
           data: {

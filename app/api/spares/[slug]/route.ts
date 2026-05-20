@@ -22,7 +22,7 @@ async function triggerRevalidation(paths: string[]) {
         })
       })
     )
-    console.log('[Revalidate] Triggered for paths:', paths)
+    
   } catch (error) {
     console.error('[Revalidate] Error:', error)
   }
@@ -65,7 +65,12 @@ export const GET = async (
       )
     }
 
-    return NextResponse.json({ sparesItem: data }, { status: 200 })
+    return NextResponse.json({ sparesItem: data }, { 
+      status: 200,
+      headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      },
+    })
   } catch (error) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
@@ -85,7 +90,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ slug:
       where: { slug },
     })
 
-    console.log('Deleted item:', deletedItem)
+    
 
     await triggerRevalidation(['/spares', '/specials', `/spares/${slug}`])
 

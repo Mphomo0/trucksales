@@ -55,7 +55,6 @@ interface ImageFile {
       if (!response.ok) throw new Error('Failed to fetch spares')
 
       const data = await response.json()
-      console.log('Fetched Spares:', data)
       setSpareItem(data.spares)
       if (data.meta) {
         setMeta(data.meta)

@@ -51,6 +51,36 @@ const nextConfig: NextConfig = {
           { key: 'Cache-Control', 'value': 'public, s-maxage=3600, stale-while-revalidate=86400' },
         ],
       },
+      {
+        source: '/api/vehicles(.*)',
+        headers: [
+          { key: 'Cache-Control', 'value': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+        ],
+      },
+      {
+        source: '/api/spares(.*)',
+        headers: [
+          { key: 'Cache-Control', 'value': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+        ],
+      },
+      {
+        source: '/',
+        headers: [
+          { key: 'Cache-Control', 'value': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+        ],
+      },
+      {
+        source: '/about(.*)',
+        headers: [
+          { key: 'Cache-Control', 'value': 'public, s-maxage=86400, stale-while-revalidate=604800' },
+        ],
+      },
+      {
+        source: '/contact(.*)',
+        headers: [
+          { key: 'Cache-Control', 'value': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+        ],
+      },
     ]
   },
 }

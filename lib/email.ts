@@ -45,7 +45,7 @@ export async function sendMail({
       attachments,
     })
 
-    console.log('Email sent:', info.messageId)
+    
     return info
   } catch (error) {
     console.error('Error sending email:', error)

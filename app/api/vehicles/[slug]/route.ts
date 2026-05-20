@@ -22,7 +22,7 @@ async function triggerRevalidation(paths: string[]) {
         })
       })
     )
-    console.log('[Revalidate] Triggered for paths:', paths)
+    
   } catch (error) {
     console.error('[Revalidate] Error:', error)
   }
@@ -67,7 +67,12 @@ export const GET = async (
       return NextResponse.json({ error: 'Vehicle not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ vehicle }, { status: 200 })
+    return NextResponse.json({ vehicle }, { 
+      status: 200,
+      headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      },
+    })
   } catch (error) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }

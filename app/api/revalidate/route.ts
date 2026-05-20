@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing path parameter' }, { status: 400 })
     }
 
-    console.log(`[Revalidate] Revalidating path: ${path}`)
+    
 
     revalidatePath(path)
 

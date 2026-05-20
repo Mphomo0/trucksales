@@ -43,6 +43,12 @@ specialValidTo   DateTime?
   updatedAt       DateTime  @updatedAt
 
   @@index([createdAt(sort: Desc)])
+  @@index([make])
+  @@index([model])
+  @@index([bodyType])
+  @@index([truckSize])
+  @@index([vatPrice])
+  @@index([condition])
 }
 
 model spares {
@@ -63,4 +69,10 @@ model spares {
   specialValidTo   DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  @@index([make])
+  @@index([category])
+  @@index([price])
+  @@index([condition])
+  @@index([createdAt(sort: Desc)])
 }

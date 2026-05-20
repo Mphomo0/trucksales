@@ -159,9 +159,6 @@ interface FilterOptions {
       const res = await fetch('/api/vehicles/filters', { cache: 'force-cache' })
 
       if (!res.ok) {
-        console.warn(
-          `Failed to fetch filter options: ${res.status} ${res.statusText}`
-        )
         return
       }
 

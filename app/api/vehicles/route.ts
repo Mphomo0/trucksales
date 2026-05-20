@@ -26,7 +26,7 @@ async function triggerRevalidation(paths: string[]) {
         })
       })
     )
-    console.log('[Revalidate] Triggered for paths:', paths)
+    
   } catch (error) {
     console.error('[Revalidate] Error:', error)
   }

@@ -3,29 +3,14 @@ import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { v4 as uuidv4 } from 'uuid'
 
-//Create a token cache to prevent reuse
-const usedTokens = new Set()
-
 export async function GET() {
   const session = await auth()
   if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Generate a unique token that hasn't been used before
-  let token = uuidv4()
-  while (usedTokens.has(token)) {
-    token = uuidv4()
-  }
-
-  // Clean up the cache occasionally to prevent memory leaks
-  // Only keep the most recent 1000 tokens
-  if (usedTokens.size > 1000) {
-    const iterator = usedTokens.values()
-    usedTokens.delete(iterator.next().value)
-  }
-
-  const expireTimestamp = Math.floor(Date.now() / 1000) + 30 * 60 // 30 minutes from now
+  const token = uuidv4()
+  const expireTimestamp = Math.floor(Date.now() / 1000) + 30 * 60
 
   const { expire, signature } = getUploadAuthParams({
     privateKey: process.env.IMAGEKIT_PRIVATE_KEY!,
@@ -34,7 +19,7 @@ export async function GET() {
     expire: expireTimestamp,
   })
 
-  console.log(token)
+  
 
   return NextResponse.json({
     token,

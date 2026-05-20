@@ -70,7 +70,6 @@ interface SparesItem {
         const res = await fetch(`/api/spares/${slug}`)
         if (!res.ok) throw new Error('Failed to fetch spare item')
         const data = await res.json()
-        console.log(data.sparesItem)
 
         if (!data.sparesItem) {
           throw new Error('Spares item not found')

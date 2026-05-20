@@ -35,7 +35,12 @@ export const GET = async (req: NextRequest) => {
     })
 
     // Return vehicles with a 200 OK response
-    return NextResponse.json(vehicles, { status: 200 })
+    return NextResponse.json(vehicles, { 
+      status: 200,
+      headers: {
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      },
+    })
   } catch (error) {
     console.error('Error fetching vehicles:', error)
     // Handle the error and return a 500 Internal Server Error response

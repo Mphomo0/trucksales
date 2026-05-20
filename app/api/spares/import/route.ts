@@ -20,9 +20,6 @@ export async function POST(req: Request) {
     const imported: string[] = []
     const errors: string[] = []
 
-    const existingSpares = await prisma.spares.findMany({ select: { slug: true } })
-    const existingSlugs = new Set(existingSpares.map(s => s.slug))
-
     for (const record of records) {
       try {
         const {
@@ -54,15 +51,18 @@ export async function POST(req: Request) {
         const lowerMake = String(make).toLowerCase()
 
         let finalSlug = slug || slugify(`${make}-${price || '0'}-${category || 'other'}`, { lower: true })
-        
-        if (existingSlugs.has(finalSlug)) {
-          let counter = 1
-          while (existingSlugs.has(`${finalSlug}-${counter}`)) {
-            counter++
-          }
+
+        const existing = await prisma.spares.findFirst({
+          where: { slug: { startsWith: finalSlug } },
+          select: { slug: true },
+          orderBy: { slug: 'desc' },
+        })
+
+        if (existing) {
+          const match = existing.slug.match(/-(\d+)$/)
+          const counter = match ? parseInt(match[1]) + 1 : 1
           finalSlug = `${finalSlug}-${counter}`
         }
-        existingSlugs.add(finalSlug)
 
         let parsedImages: { url: string; fileId: string }[] = []
         if (images) {
