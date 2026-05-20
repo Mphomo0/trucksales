@@ -23,21 +23,20 @@ import {
 import { upload } from '@imagekit/next'
 import { v4 as uuidv4 } from 'uuid'
 import { useRouter, useParams } from 'next/navigation'
-import UploadMultiple from './UploadMultiple'
+import Image from 'next/image'
+import { Trash2, Upload } from 'lucide-react'
 import { vehicleSchema } from '@/lib/schemas'
 
 type VehicleFormData = z.input<typeof vehicleSchema>
 
 export default function EditVehicle() {
-  const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [loading, setLoading] = useState(true)
   const [existingImages, setExistingImages] = useState<
     { url: string; fileId: string }[]
   >([])
-  const [allPreviews, setAllPreviews] = useState<
-    { file: File; id: string; preview: string; isExisting?: boolean }[]
-  >([])
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+  const [previewImages, setPreviewImages] = useState<string[]>([])
 
   const router = useRouter()
   const params = useParams()
@@ -71,14 +70,6 @@ export default function EditVehicle() {
         const vehicle = data.vehicle
 
         setExistingImages(vehicle.images || [])
-        setAllPreviews(
-          (vehicle.images || []).map((img: { url: string; fileId: string }) => ({
-            file: new File([], img.url, { type: 'image/jpeg' }),
-            id: img.fileId,
-            preview: img.url,
-            isExisting: true,
-          }))
-        )
 
         reset({
           name: vehicle.name,
@@ -115,6 +106,36 @@ export default function EditVehicle() {
     fetchVehicle()
   }, [slug, reset])
 
+  useEffect(() => {
+    return () => {
+      previewImages.forEach((url) => URL.revokeObjectURL(url))
+    }
+  }, [previewImages])
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    const newFiles = Array.from(files)
+    const newPreviews = newFiles.map((file) => URL.createObjectURL(file))
+    setSelectedFiles((prev) => [...prev, ...newFiles])
+    setPreviewImages((prev) => [...prev, ...newPreviews])
+  }
+
+  const removeImage = (index: number) => {
+    const newImages = [...existingImages]
+    newImages.splice(index, 1)
+    setExistingImages(newImages)
+  }
+
+  const removePreviewImage = (index: number) => {
+    URL.revokeObjectURL(previewImages[index])
+    const newFiles = selectedFiles.filter((_, i) => i !== index)
+    const newPreviews = previewImages.filter((_, i) => i !== index)
+    setSelectedFiles(newFiles)
+    setPreviewImages(newPreviews)
+  }
+
   const getAuthParams = async () => {
     const res = await fetch('/api/images/upload-auth')
     if (!res.ok) throw new Error('Failed to fetch upload auth')
@@ -123,21 +144,17 @@ export default function EditVehicle() {
 
   const onSubmit = async (data: VehicleFormData) => {
     try {
-      const stillExisting = allPreviews.filter((p) => p.isExisting)
-      const finalImages: { url: string; fileId: string }[] = stillExisting.map(
-        (p) => ({ url: p.preview, fileId: p.id })
-      )
-      const newFiles = allPreviews.filter((p) => !p.isExisting).map((p) => p.file)
-
-      if (finalImages.length === 0 && newFiles.length === 0) {
+      if (existingImages.length === 0 && selectedFiles.length === 0) {
         toast.error('Please select at least one image.')
         return
       }
 
       setIsUploading(true)
 
-      for (let i = 0; i < newFiles.length; i++) {
-        const file = newFiles[i]
+      const newUploadedImages: { url: string; fileId: string }[] = []
+
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i]
         const { token, signature, publicKey, expire } = await getAuthParams()
         const uniqueFileName = `${uuidv4()}_${file.name}`
 
@@ -155,21 +172,23 @@ export default function EditVehicle() {
           if (!res || !res.url || !res.fileId)
             throw new Error(`Upload failed for ${file.name}`)
 
-          finalImages.push({ url: res.url, fileId: res.fileId })
+          newUploadedImages.push({ url: res.url, fileId: res.fileId })
         } catch (err) {
           console.error(err)
           toast.error(`Failed to upload ${file.name}`)
         }
       }
 
+      const allImages = [...existingImages, ...newUploadedImages]
+
       setIsUploading(false)
 
-      if (finalImages.length === 0) {
+      if (allImages.length === 0) {
         toast.error('No images available. Please try again.')
         return
       }
 
-      setValue('images', finalImages, { shouldValidate: true })
+      setValue('images', allImages, { shouldValidate: true })
       const payload = {
         name: data.name,
         make: data.make,
@@ -186,7 +205,7 @@ export default function EditVehicle() {
         truckSize: data.truckSize,
         description: data.description,
         videoLink: data.videoLink || null,
-        images: finalImages,
+        images: allImages,
         slug,
         specialPrice: data.specialPrice ? Number(data.specialPrice) : null,
         specialValidFrom: data.specialValidFrom || null,
@@ -540,14 +559,74 @@ export default function EditVehicle() {
           </div>
 
           <div className="mb-4 space-y-2">
-            <label className="space-y-4">Images</label>
-            <UploadMultiple
-              onFilesSelected={(files, previews) => {
-                setSelectedFiles(files)
-                setAllPreviews(previews)
-              }}
-              existingImages={existingImages}
-            />
+            <Label>Images</Label>
+            {existingImages.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                {existingImages.map((img, idx) => (
+                  <div key={idx} className="relative group">
+                    <Image
+                      src={img.url}
+                      alt={`image ${idx}`}
+                      width={200}
+                      height={200}
+                      className="object-cover rounded-lg border"
+                      priority
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100"
+                      onClick={() => removeImage(idx)}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="border-2 border-dashed rounded-lg p-6 text-center">
+              <Upload className="mx-auto h-12 w-12 text-muted-foreground/50" />
+              <Label htmlFor="imageUpload" className="cursor-pointer">
+                <span className="text-sm font-medium text-primary">
+                  Click to upload images
+                </span>
+                <Input
+                  id="imageUpload"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleImageUpload}
+                  disabled={isUploading}
+                />
+              </Label>
+            </div>
+            {previewImages.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+                {previewImages.map((preview, idx) => (
+                  <div key={idx} className="relative group">
+                    <Image
+                      src={preview}
+                      alt={`preview ${idx}`}
+                      width={200}
+                      height={200}
+                      className="object-cover rounded-lg border-2 border-dashed border-primary/50"
+                      priority
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100"
+                      onClick={() => removePreviewImage(idx)}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="mb-4 space-y-2">
