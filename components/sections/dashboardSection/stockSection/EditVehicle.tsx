@@ -54,6 +54,11 @@ export default function EditVehicle() {
     resolver: zodResolver(vehicleSchema),
     defaultValues: {
       images: [],
+      fuelType: '',
+      condition: '',
+      transmission: '',
+      bodyType: '',
+      truckSize: '',
     },
   })
 

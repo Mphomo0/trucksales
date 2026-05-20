@@ -25,10 +25,13 @@ export async function GET() {
     usedTokens.delete(iterator.next().value)
   }
 
+  const expireTimestamp = Math.floor(Date.now() / 1000) + 30 * 60 // 30 minutes from now
+
   const { expire, signature } = getUploadAuthParams({
     privateKey: process.env.IMAGEKIT_PRIVATE_KEY!,
     publicKey: process.env.IMAGEKIT_PUBLIC_KEY!,
     token,
+    expire: expireTimestamp,
   })
 
   console.log(token)

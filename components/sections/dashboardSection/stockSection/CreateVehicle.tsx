@@ -44,6 +44,11 @@ type VehicleFormData = z.input<typeof vehicleSchema>
     resolver: zodResolver(vehicleSchema),
     defaultValues: {
       images: [],
+      fuelType: '',
+      condition: '',
+      transmission: '',
+      bodyType: '',
+      truckSize: '',
     },
   })
 
