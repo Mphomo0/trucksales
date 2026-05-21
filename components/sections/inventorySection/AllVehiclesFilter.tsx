@@ -21,6 +21,7 @@ import ImageComponent from 'next/image'
 import Link from 'next/link'
 import { Pagination } from '@/components/global/Pagination'
 import { getCurrentPrice } from '@/lib/pricing'
+import { ikCard } from '@/lib/imagekit'
 
 interface Truck {
   id: string
@@ -418,13 +419,12 @@ interface FilterOptions {
                   <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                     <div className="relative">
                       <ImageComponent
-                        src={truck.images?.[0]?.url || '/placeholder-truck.jpg'}
+                        src={ikCard(truck.images?.[0]?.url || '/placeholder-truck.jpg')}
                         alt={`${truck.year} ${truck.make} ${truck.model}`}
                         width={400}
                         height={300}
                         className="w-full h-48 object-cover"
                         priority={index < 3}
-                        unoptimized
                       />
                       {(() => {
                         const priceInfo = getCurrentPrice(

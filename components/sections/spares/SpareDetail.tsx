@@ -23,6 +23,7 @@ import EnquiryForm from '@/components/sections/inventorySection/EnquiryForm'
 import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
 import { getCurrentPrice } from '@/lib/pricing'
+import { ikHero, ikThumb } from '@/lib/imagekit'
 
 interface SparePartImage {
   url: string
@@ -152,14 +153,13 @@ interface Props {
                         >
                           <div className="relative w-full h-60 md:h-96">
                             <Image
-                              src={img.url}
+                              src={ikHero(img.url)}
                               alt={`${spare.name} image ${index + 1}`}
                               width={1200}
                               height={800}
                               className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
-                              priority
-                              unoptimized
+                              priority={index === 0}
                             />
                           </div>
                         </div>
@@ -233,14 +233,12 @@ interface Props {
                         >
                           <div className="relative w-full h-full">
                             <Image
-                              src={img.url}
+                              src={ikThumb(img.url)}
                               alt={`Thumbnail ${index + 1}`}
                               width={300}
                               height={200}
                               className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 100px, (max-width: 1024px) 150px, 200px"
-                              priority
-                              unoptimized
                             />
                           </div>
                         </div>

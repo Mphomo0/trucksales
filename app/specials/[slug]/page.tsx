@@ -2,29 +2,32 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
-/* author: A-Z Truck Sales */
-/* datePublished: 2026-04-27 */
-
 import SpecialDetails from '@/components/sections/special/SpecialDetails'
 import QualityAssurance from '@/components/sections/inventorySection/QualityAssurance'
 
 import React from 'react'
 import { prisma } from '@/lib/prisma'
+import { cache } from 'react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 import GeoHints from '@/components/global/GeoHints'
+
+export const dynamic = 'force-static'
+export const revalidate = 86400
 
 interface Props {
   params: Promise<{ slug: string }>
 }
 
+/** Cached per-request so generateMetadata and the page share one DB query */
+const getSpecialInventory = cache(async (slug: string) =>
+  prisma.inventory.findUnique({ where: { slug } })
+)
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const now = new Date()
-  
-  const inventory = await prisma.inventory.findUnique({
-    where: { slug },
-  })
+  const inventory = await getSpecialInventory(slug)
 
   if (!inventory || !inventory.specialValidTo || !inventory.specialValidFrom) {
     return { title: 'Special Not Found' }
@@ -52,10 +55,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Special({ params }: Props) {
   const { slug } = await params
   const now = new Date()
-  
-  const inventory = await prisma.inventory.findUnique({
-    where: { slug },
-  })
+  const inventory = await getSpecialInventory(slug)
 
   if (!inventory || !inventory.specialValidTo || !inventory.specialValidFrom) {
     return <div>Special not found</div>

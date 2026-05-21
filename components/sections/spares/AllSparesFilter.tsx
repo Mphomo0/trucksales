@@ -21,6 +21,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Pagination } from '@/components/global/Pagination'
 import { getCurrentPrice } from '@/lib/pricing'
+import { ikCard } from '@/lib/imagekit'
 
 interface SparesItem {
   id: string
@@ -283,12 +284,11 @@ interface FilterOptions {
                   <Card className="overflow-hidden hover:shadow-md transition-shadow">
                     <div className="relative">
                       <Image
-                        src={spare.images?.[0]?.url || '/placeholder-truck.jpg'}
+                        src={ikCard(spare.images?.[0]?.url || '/placeholder-truck.jpg')}
                         alt={spare.name}
                         width={400}
                         height={250}
                         className="w-full h-44 sm:h-52 object-cover"
-                        unoptimized
                       />
                       <Badge className="absolute top-2 right-2 bg-green-600 capitalize">
                         {spare.condition}

@@ -33,6 +33,7 @@ import { WhatsAppButton } from '@/components/sections/inventorySection/WhatsAppB
 import EnquiryForm from '@/components/sections/inventorySection/EnquiryForm'
 import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
+import { ikHero, ikThumb } from '@/lib/imagekit'
 
 interface Image {
   fileId: string
@@ -219,7 +220,7 @@ interface Special {
                         >
                           <div className="relative w-full h-full">
                             <Image
-                              src={img.url}
+                              src={ikHero(img.url)}
                               alt={`${special.inventory.name} image ${
                                 index + 1
                               }`}
@@ -227,8 +228,7 @@ interface Special {
                               height={800}
                               className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
-                              priority
-                              unoptimized
+                              priority={index === 0}
                             />
                           </div>
                         </div>
@@ -302,14 +302,12 @@ interface Special {
                         >
                           <div className="relative w-full h-full">
                             <Image
-                              src={img.url}
+                              src={ikThumb(img.url)}
                               alt={`Thumbnail ${index + 1}`}
                               width={300}
                               height={200}
                               className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 100px, (max-width: 1024px) 150px, 200px"
-                              priority
-                              unoptimized
                             />
                           </div>
                         </div>

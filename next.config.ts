@@ -2,6 +2,10 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   images: {
+    // ImageKit handles all transformations server-side via its own CDN.
+    // Setting unoptimized=true means Next.js never proxies/transforms these
+    // images, saving Vercel Image Optimization Transformations & Cache credits.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -34,51 +38,56 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Inventory detail pages — static, revalidate once per day
         source: '/inventory(.*)',
         headers: [
-          { key: 'Cache-Control', 'value': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=604800' },
         ],
       },
       {
+        // Spares detail pages — static, revalidate once per day
         source: '/spares(.*)',
         headers: [
-          { key: 'Cache-Control', 'value': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=604800' },
         ],
       },
       {
+        // Specials pages change daily at most
         source: '/specials(.*)',
         headers: [
-          { key: 'Cache-Control', 'value': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=604800' },
         ],
       },
       {
+        // Vehicle API — cache 24 h, serve stale up to 7 days
         source: '/api/vehicles(.*)',
         headers: [
-          { key: 'Cache-Control', 'value': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=604800' },
         ],
       },
       {
+        // Spares API — cache 24 h, serve stale up to 7 days
         source: '/api/spares(.*)',
         headers: [
-          { key: 'Cache-Control', 'value': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=604800' },
         ],
       },
       {
         source: '/',
         headers: [
-          { key: 'Cache-Control', 'value': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=604800' },
         ],
       },
       {
         source: '/about(.*)',
         headers: [
-          { key: 'Cache-Control', 'value': 'public, s-maxage=86400, stale-while-revalidate=604800' },
+          { key: 'Cache-Control', value: 'public, s-maxage=604800, stale-while-revalidate=2592000' },
         ],
       },
       {
         source: '/contact(.*)',
         headers: [
-          { key: 'Cache-Control', 'value': 'public, s-maxage=3600, stale-while-revalidate=86400' },
+          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=604800' },
         ],
       },
     ]

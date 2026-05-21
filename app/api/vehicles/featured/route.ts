@@ -29,7 +29,8 @@ export async function GET() {
     return NextResponse.json(vehicles, {
       status: 200,
       headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        // Cache featured vehicles for 24 h; serve stale for up to 7 days
+        'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800',
       },
     })
   } catch (error) {

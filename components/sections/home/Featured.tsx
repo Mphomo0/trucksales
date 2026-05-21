@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { Gauge } from 'lucide-react'
 import Marquee from 'react-fast-marquee'
 import { getCurrentPrice } from '@/lib/pricing'
+import { ikCard } from '@/lib/imagekit'
 
 interface Image {
   fileId: string
@@ -41,7 +42,6 @@ interface Truck {
 /* <h1>A-Z Truck Sales Components</h1> */ export default function Featured() {
   const [trucks, setTrucks] = useState<Truck[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
 
   const fetchTrucks = async () => {
     try {
@@ -125,13 +125,12 @@ interface Truck {
                     <div className="relative">
                       {truck.images?.[0]?.url ? (
                         <Image
-                          src={truck.images[0].url}
+                          src={ikCard(truck.images[0].url)}
                           alt={`${truck.year} ${truck.make} ${truck.model}`}
                           width={400}
                           height={300}
                           className="w-full h-48 object-cover"
                           priority={index < 3}
-                          unoptimized
                         />
                       ) : (
                         <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">

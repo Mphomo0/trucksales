@@ -2,14 +2,20 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
-/* author: A-Z Truck Sales */
-/* datePublished: 2026-04-27 */
-
 import React from 'react'
 import SpareDetail from '@/components/sections/spares/SpareDetail'
 import { prisma } from '@/lib/prisma'
+import { cache } from 'react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
+
+export const dynamic = 'force-static'
+export const revalidate = 86400
+
+/** Cached per-request so generateMetadata and the page share one DB query */
+const getSpare = cache(async (slug: string) =>
+  prisma.spares.findUnique({ where: { slug } })
+)
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -17,9 +23,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const spare = await prisma.spares.findUnique({
-    where: { slug },
-  })
+  const spare = await getSpare(slug)
 
   if (!spare) {
     return {
@@ -62,9 +66,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 /* application/ld+json */ export default async function SparePartDetails({ params }: Props) {
   const { slug } = await params
-  const spare = await prisma.spares.findUnique({
-    where: { slug },
-  })
+  const spare = await getSpare(slug)
 
   if (!spare) {
     return <div>Spare part not found</div>

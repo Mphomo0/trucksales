@@ -1,20 +1,19 @@
-/* author: A-Z Truck Sales */
-/* datePublished: 2026-04-27 */
-/* application/ld+json */
-
-/* author: A-Z Truck Sales */
-/* datePublished: 2026-04-27 */
-
 import React from 'react'
 import TruckDetail from '@/components/sections/inventorySection/TruckDetail'
 import QualityAssurance from '@/components/sections/inventorySection/QualityAssurance'
 
 import { prisma } from '@/lib/prisma'
+import { cache } from 'react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 
 export const dynamic = 'force-static'
 export const revalidate = 86400
+
+/** Cached per-request so generateMetadata and the page share one DB query */
+const getVehicle = cache(async (slug: string) =>
+  prisma.inventory.findUnique({ where: { slug } })
+)
 
 export async function generateStaticParams() {
   const vehicles = await prisma.inventory.findMany({
@@ -31,9 +30,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const vehicle = await prisma.inventory.findUnique({
-    where: { slug },
-  })
+  const vehicle = await getVehicle(slug)
 
   if (!vehicle) {
     return {
@@ -76,9 +73,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 /* application/ld+json */ export default async function VehicleDetails({ params }: Props) {
   const { slug } = await params
-  const vehicle = await prisma.inventory.findUnique({
-    where: { slug },
-  })
+  const vehicle = await getVehicle(slug)
 
   if (!vehicle) {
     return <div>Vehicle not found</div>

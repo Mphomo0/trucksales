@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ikCard } from '@/lib/imagekit'
 
 interface Image {
   fileId: string
@@ -77,13 +78,11 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative">
                     <Image
-                      src={vehicle.images?.[0]?.url || '/placeholder-truck.jpg'}
+                      src={ikCard(vehicle.images?.[0]?.url || '/placeholder-truck.jpg')}
                       alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                       width={400}
                       height={300}
                       className="w-full h-48 object-cover"
-                      priority
-                      unoptimized
                     />
                     <Badge className="absolute top-2 right-2 bg-red-600">
                       SPECIAL
@@ -133,13 +132,11 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative">
                     <Image
-                      src={spare.images?.[0]?.url || '/placeholder-truck.jpg'}
+                      src={ikCard(spare.images?.[0]?.url || '/placeholder-truck.jpg')}
                       alt={spare.name}
                       width={400}
                       height={300}
                       className="w-full h-48 object-cover"
-                      priority
-                      unoptimized
                     />
                     <Badge className="absolute top-2 right-2 bg-red-600">
                       SPECIAL
