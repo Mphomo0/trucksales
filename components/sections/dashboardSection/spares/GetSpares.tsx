@@ -22,6 +22,7 @@ interface SparesItem {
   price: number
   condition: string
   category: string
+  thumbnail?: ImageFile | null
   images: ImageFile[]
   description: string
   slug: string
@@ -119,7 +120,7 @@ interface ImageFile {
       header: 'Thumbnail',
       cell: ({ row }) => (
         <Image
-          src={row.original.images?.[0]?.url || '/placeholder-truck.jpg'}
+          src={row.original.thumbnail?.url || row.original.images?.[0]?.url || '/placeholder-truck.svg'}
           alt={row.original.name}
           width={50}
           height={50}

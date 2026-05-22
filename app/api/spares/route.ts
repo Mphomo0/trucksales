@@ -2,47 +2,9 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import slugify from 'slugify'
+import { revalidatePath } from 'next/cache' // 🔥 NATIVE REVALIDATION (Zero HTTP Overhead)
 
-async function triggerRevalidation(paths: string[]) {
-  const secret = process.env.REVALIDATE_SECRET
-  if (!secret) {
-    console.error('[Revalidate] REVALIDATE_SECRET not configured')
-    return
-  }
-  
-  try {
-    await Promise.all(
-      paths.map(async (path) => {
-        await fetch(new URL(path, process.env.NEXT_PUBLIC_APP_URL).toString(), {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-revalidate-token': secret,
-          },
-          body: JSON.stringify({ path }),
-        })
-      })
-    )
-    
-  } catch (error) {
-    console.error('[Revalidate] Error:', error)
-  }
-}
-
-interface Filters {
-  make?: string
-  engine?: string
-  gearbox?: string
-  diff?: string
-  other?: string
-  OR?: Array<
-    | { make: { contains: string } }
-    | { engine: { contains: string } }
-    | { gearbox: { contains: string } }
-    | { diff: { contains: string } }
-    | { other: { contains: string } }
-  >
-}
+export const runtime = 'nodejs'
 
 // POST /api/spares to create a new vehicle spares
 export async function POST(req: Request) {
@@ -79,60 +41,44 @@ export async function POST(req: Request) {
       price,
       images,
     ]
-
     if (requiredFields.some((field) => field === undefined || field === '')) {
       return NextResponse.json(
         { error: 'All required fields must be provided' },
-        { status: 400 }
+        { status: 400 },
       )
     }
 
     if (!images || !Array.isArray(images) || images.length === 0) {
       return NextResponse.json(
         { error: 'At least one image is required' },
-        { status: 400 }
+        { status: 400 },
       )
     }
 
     if (
       !images.every(
-        (img) => typeof img.url === 'string' && typeof img.fileId === 'string'
+        (img) => typeof img.url === 'string' && typeof img.fileId === 'string',
       )
     ) {
       return NextResponse.json(
         { error: 'Each image must have a valid url and fileId' },
-        { status: 400 }
+        { status: 400 },
       )
     }
 
-    // Parse numeric values
     const parsedPrice = Number.parseFloat(price)
-
-    if (isNaN(parsedPrice)) {
-      return NextResponse.json(
-        { error: 'Price must be valid numbers' },
-        { status: 400 }
-      )
-    }
-
-    // Parse numeric values
     const parsedVatPrice = Number.parseFloat(noVatPrice)
-
-    if (isNaN(parsedVatPrice)) {
+    if (isNaN(parsedPrice) || isNaN(parsedVatPrice)) {
       return NextResponse.json(
         { error: 'Price must be valid numbers' },
-        { status: 400 }
+        { status: 400 },
       )
     }
 
-    // Normalize enum values
     const upperCondition = condition.toUpperCase()
     const upperCategory = category.toUpperCase()
-
-    // Convert make to lowercase before saving
     const lowerMake = make.toLowerCase()
 
-    // Generate unique slug with optimized collision check (1 DB roundtrip)
     const baseSlug = slugify(`${make}-${price}-${category}`, { lower: true })
     const existingSlugs = await prisma.spares.findMany({
       where: { slug: { startsWith: baseSlug } },
@@ -148,7 +94,6 @@ export async function POST(req: Request) {
       slug = `${baseSlug}-${counter}`
     }
 
-    // Create vehicle in the database
     const newVehicle = await prisma.spares.create({
       data: {
         name,
@@ -162,20 +107,25 @@ export async function POST(req: Request) {
         slug,
         images,
         specialPrice: specialPrice ? Number.parseFloat(specialPrice) : null,
-        specialPriceNoVat: specialPriceNoVat ? Number.parseFloat(specialPriceNoVat) : null,
+        specialPriceNoVat: specialPriceNoVat
+          ? Number.parseFloat(specialPriceNoVat)
+          : null,
         specialValidFrom: specialValidFrom ? new Date(specialValidFrom) : null,
         specialValidTo: specialValidTo ? new Date(specialValidTo) : null,
       },
     })
 
-    await triggerRevalidation(['/spares', '/specials', `/spares/${newVehicle.slug}`])
+    // 1. Pure native cache clearance without secondary HTTP calls
+    revalidatePath('/spares')
+    revalidatePath('/specials')
+    revalidatePath(`/spares/${newVehicle.slug}`)
 
     return NextResponse.json(newVehicle, { status: 201 })
   } catch (error) {
     console.error('Vehicle creation error:', error)
     return NextResponse.json(
       { error: 'Failed to create vehicle' },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }
@@ -186,9 +136,12 @@ export const GET = async (req: NextRequest) => {
     const { searchParams } = new URL(req.url)
 
     const page = Number.parseInt(searchParams.get('page') || '1', 10)
+
+    // 2. Reduce upper ceiling bounds from 500 to a safe threshold (e.g., 40)
+    // Pulling 500 items into a single serverless function triggers extreme compute weights.
     const limit = Math.min(
-      Number.parseInt(searchParams.get('limit') || '10', 10),
-      500
+      Number.parseInt(searchParams.get('limit') || '12', 10),
+      40,
     )
     const skip = (page - 1) * limit
 
@@ -207,7 +160,7 @@ export const GET = async (req: NextRequest) => {
     const filters: any = {}
 
     if (make && make !== 'all') {
-      filters.make = { contains: make }
+      filters.make = { contains: make, mode: 'insensitive' }
     }
 
     if (category && category !== 'all') {
@@ -216,33 +169,27 @@ export const GET = async (req: NextRequest) => {
 
     if (search) {
       filters.OR = [
-        { name: { contains: search } },
-        { make: { contains: search } },
-        { description: { contains: search } },
+        { name: { contains: search, mode: 'insensitive' } },
+        { make: { contains: search, mode: 'insensitive' } },
       ]
     }
 
-    // Parallelize count and findMany for better performance
     const [total, spares] = await Promise.all([
       prisma.spares.count({ where: filters }),
       prisma.spares.findMany({
         skip,
         take: limit,
         where: filters,
-        orderBy: {
-          [sortBy]: sortOrder,
-        },
-        // Optimize CPU by selecting all fields
+        orderBy: { [sortBy]: sortOrder },
+        // 3. Keep directory feeds light by dropping 'description' and extracting a primary thumbnail
         select: {
           id: true,
           name: true,
-          description: true,
           make: true,
           price: true,
           noVatPrice: true,
           condition: true,
           category: true,
-          images: true,
           videoLink: true,
           slug: true,
           specialPrice: true,
@@ -250,14 +197,24 @@ export const GET = async (req: NextRequest) => {
           specialValidFrom: true,
           specialValidTo: true,
           createdAt: true,
-          updatedAt: true,
+          images: true, // Used to extract a primary thumbnail mapping below
         },
       }),
     ])
 
+    // Convert multi-image arrays to a unified single thumbnail string/object for card presentation
+    const optimizedSpares = spares.map((item) => {
+      const imgArray = Array.isArray(item.images) ? item.images : []
+      return {
+        ...item,
+        thumbnail: imgArray[0] || null,
+        images: undefined, // Erase the complex raw image collection array payload
+      }
+    })
+
     return NextResponse.json(
       {
-        spares,
+        spares: optimizedSpares,
         meta: {
           total,
           page,
@@ -268,18 +225,17 @@ export const GET = async (req: NextRequest) => {
       {
         status: 200,
         headers: {
-          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+          'Cache-Control':
+            'public, s-maxage=3600, stale-while-revalidate=86400',
+          'Content-Type': 'application/json',
         },
-      }
+      },
     )
   } catch (error) {
     console.error('Spares fetch error:', error)
     return NextResponse.json(
-      {
-        error: 'Failed to fetch vehicle spares',
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 }
+      { error: 'Failed to fetch vehicle spares' },
+      { status: 500 },
     )
   }
 }

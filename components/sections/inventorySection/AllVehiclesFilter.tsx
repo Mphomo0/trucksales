@@ -419,7 +419,7 @@ interface FilterOptions {
                   <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                     <div className="relative">
                       <ImageComponent
-                        src={ikCard(truck.images?.[0]?.url || '/placeholder-truck.jpg')}
+                        src={ikCard(truck.images?.[0]?.url || '/placeholder-truck.svg')}
                         alt={`${truck.year} ${truck.make} ${truck.model}`}
                         width={400}
                         height={300}

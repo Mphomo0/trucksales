@@ -1,12 +1,23 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// Get all vehicles
+export const runtime = 'nodejs'
+
 export const GET = async (req: NextRequest) => {
   try {
-    // Fetching vehicles from the inventory table with performance optimizations
+    // 1. Enforce strict server-side pagination. Never deliver 1000 items at once.
+    const { searchParams } = new URL(req.url)
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1'))
+    const limit = Math.min(
+      50,
+      Math.max(1, parseInt(searchParams.get('limit') || '20')),
+    )
+    const skip = (page - 1) * limit
+
+    // 2. Fetch data without the heavy fields (description & full image array are stripped)
     const vehicles = await prisma.inventory.findMany({
-      take: 1000,
+      skip,
+      take: limit,
       select: {
         id: true,
         name: true,
@@ -20,36 +31,49 @@ export const GET = async (req: NextRequest) => {
         fuelType: true,
         condition: true,
         transmission: true,
-        images: true,
-        videoLink: true,
-        description: true,
         bodyType: true,
         truckSize: true,
         slug: true,
         createdAt: true,
-        updatedAt: true,
+        // We select images ONLY to extract a single thumbnail below
+        images: true,
       },
       orderBy: {
         createdAt: 'desc',
       },
     })
 
-    // Return vehicles with a 200 OK response
-    return NextResponse.json(vehicles, { 
-      status: 200,
-      headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
-      },
+    // 3. Flatten the heavy data arrays in-memory before serialization
+    const optimizedVehicles = vehicles.map((vehicle) => {
+      const imgArray = Array.isArray(vehicle.images) ? vehicle.images : []
+      return {
+        ...vehicle,
+        thumbnail: imgArray[0] || null, // Give the UI a card image
+        images: undefined, // Drop the rest of the array
+      }
     })
-  } catch (error) {
-    console.error('Error fetching vehicles:', error)
-    // Handle the error and return a 500 Internal Server Error response
+
     return NextResponse.json(
       {
-        error: 'Failed to fetch vehicles',
-        details: error instanceof Error ? error.message : String(error),
+        data: optimizedVehicles,
+        page,
+        limit,
       },
-      { status: 500 }
+      {
+        status: 200,
+        headers: {
+          // Cache individual pages for 1 hour at the CDN layer; allow stale-delivery for a day
+          'Cache-Control':
+            'public, s-maxage=3600, stale-while-revalidate=86400',
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+  } catch (error) {
+    console.error('Error fetching vehicles:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch vehicles' },
+      { status: 500 },
     )
   }
 }

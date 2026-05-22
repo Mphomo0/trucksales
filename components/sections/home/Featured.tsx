@@ -31,6 +31,7 @@ interface Truck {
   fuelType: string
   condition: string
   transmission: string
+  thumbnail?: Image | null
   images: Image[]
   description: string
   slug: string
@@ -123,9 +124,9 @@ interface Truck {
                   <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300">
                     {/* Image Section */}
                     <div className="relative">
-                      {truck.images?.[0]?.url ? (
+                      {(truck.thumbnail?.url || truck.images?.[0]?.url) ? (
                         <Image
-                          src={ikCard(truck.images[0].url)}
+                          src={ikCard(truck.thumbnail?.url || truck.images?.[0]?.url || '')}
                           alt={`${truck.year} ${truck.make} ${truck.model}`}
                           width={400}
                           height={300}

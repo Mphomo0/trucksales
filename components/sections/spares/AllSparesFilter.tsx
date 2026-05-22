@@ -30,6 +30,7 @@ interface SparesItem {
   price: number
   category: string
   condition: string
+  thumbnail?: { fileId: string; url: string } | null
   images: { fileId: string; url: string }[]
   description: string
   slug: string
@@ -284,7 +285,7 @@ interface FilterOptions {
                   <Card className="overflow-hidden hover:shadow-md transition-shadow">
                     <div className="relative">
                       <Image
-                        src={ikCard(spare.images?.[0]?.url || '/placeholder-truck.jpg')}
+                        src={ikCard(spare.thumbnail?.url || spare.images?.[0]?.url || '/placeholder-truck.svg')}
                         alt={spare.name}
                         width={400}
                         height={250}

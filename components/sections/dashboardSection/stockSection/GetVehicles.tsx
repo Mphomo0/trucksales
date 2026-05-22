@@ -165,7 +165,7 @@ interface Meta {
       header: 'Thumbnail',
       cell: ({ row }) => (
         <Image
-          src={row.original.images?.[0]?.url || '/placeholder-truck.jpg'}
+          src={row.original.images?.[0]?.url || '/placeholder-truck.svg'}
           alt={row.original.name}
           width={50}
           height={50}

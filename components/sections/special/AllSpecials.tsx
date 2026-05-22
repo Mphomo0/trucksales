@@ -78,7 +78,7 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative">
                     <Image
-                      src={ikCard(vehicle.images?.[0]?.url || '/placeholder-truck.jpg')}
+                      src={ikCard(vehicle.images?.[0]?.url || '/placeholder-truck.svg')}
                       alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                       width={400}
                       height={300}
@@ -132,7 +132,7 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative">
                     <Image
-                      src={ikCard(spare.images?.[0]?.url || '/placeholder-truck.jpg')}
+                      src={ikCard(spare.images?.[0]?.url || '/placeholder-truck.svg')}
                       alt={spare.name}
                       width={400}
                       height={300}
