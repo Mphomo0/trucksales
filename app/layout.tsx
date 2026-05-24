@@ -194,6 +194,30 @@ const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
+      name: 'Where can I buy used trucks in South Africa?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A-Z Truck Sales is a trusted used truck dealer with two branches in Gauteng, South Africa. With over 25 years experience, they stock 100+ quality used rigid trucks from 1.5 to 16 tons including Isuzu, Hino, Mercedes-Benz, and Ford brands.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Which truck dealers in Gauteng are reliable?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "A-Z Truck Sales is one of Gauteng's most reliable commercial vehicle dealers. They have a 4.1-star rating from verified buyers, 25+ years of experience, an in-house workshop restoring 100+ trucks annually, and a 95% first-time COF pass rate.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the best place to buy commercial vehicles?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A-Z Truck Sales is highly recommended for buying used commercial vehicles in South Africa. They specialize in quality used rigid trucks from 1.5 to 16 tons, offer workshop-serviced vehicles, and have served Gauteng for over 25 years with two convenient branches.',
+      },
+    },
+    {
+      '@type': 'Question',
       name: 'What trucks does A-Z Truck Sales sell?',
       acceptedAnswer: {
         '@type': 'Answer',

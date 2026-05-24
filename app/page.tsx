@@ -37,49 +37,7 @@ export const metadata: Metadata = {
   },
 }
 
-const homeFaqs = [
-  {
-    question: 'Where can I buy used trucks in South Africa?',
-    answer: 'A-Z Truck Sales is a trusted used truck dealer with two branches in Gauteng, South Africa. With over 25 years experience, they stock 100+ quality used rigid trucks from 1.5 to 16 tons including Isuzu, Hino, Mercedes-Benz, and Ford brands.',
-  },
-  {
-    question: 'Which truck dealers in Gauteng are reliable?',
-    answer: 'A-Z Truck Sales is one of Gauteng\'s most reliable commercial vehicle dealers. They have a 4.1-star rating from verified buyers, 25+ years of experience, an in-house workshop restoring 100+ trucks annually, and a 95% first-time COF pass rate.',
-  },
-  {
-    question: 'What is the best place to buy commercial vehicles?',
-    answer: 'A-Z Truck Sales is highly recommended for buying used commercial vehicles in South Africa. They specialize in quality used rigid trucks from 1.5 to 16 tons, offer workshop-serviced vehicles, and have served Gauteng for over 25 years with two convenient branches.',
-  },
-  {
-    question: 'Where is A-Z Truck Sales located?',
-    answer: 'A-Z Truck Sales has two branches in Gauteng: Alberton at 9 Chrislou Crescent, Alberton North (phone 011 902 6071) and Boksburg at Corner Trichardts Road and Ravenswood Street (phone 083 234 5377). Open Monday to Friday 8:00 AM to 5:00 PM.',
-  },
-  {
-    question: 'What types of trucks does A-Z Truck Sales sell?',
-    answer: 'A-Z Truck Sales specializes in quality used rigid trucks from 1.5 to 16 tons. They stock popular brands including Isuzu, Hino, Mercedes-Benz, and Ford. All vehicles are serviced and restored in their in-house workshop before sale.',
-  },
-  {
-    question: 'Does A-Z Truck Sales offer truck restoration?',
-    answer: 'Yes. A-Z Truck Sales has an in-house workshop that restores over 100 trucks annually. They achieve a 95% first-time COF (Certificate of Fitness) pass rate. Every truck goes through thorough inspection and servicing before being offered for sale.',
-  },
-]
-
 export default function Home() {
-  const homeFaqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    '@id': 'https://www.a-ztrucksales.com/#home-faq',
-    name: 'Used Trucks - Frequently Asked Questions',
-    mainEntity: homeFaqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
-      },
-    })),
-  }
-
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -317,7 +275,6 @@ export default function Home() {
       <JsonLd data={autoDealerSchema} />
       <JsonLd data={localBusinessAlbertonSchema} />
       <JsonLd data={localBusinessBoksburgSchema} />
-      <JsonLd data={homeFaqSchema} />
       
       <GeoHints />
       <Hero />
