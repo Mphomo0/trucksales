@@ -191,11 +191,11 @@ export const GET = async (req: NextRequest) => {
 
     const filters: any = {}
 
-    if (make && make !== 'all') filters.make = { equals: make }
-    if (model && model !== 'all') filters.model = { equals: model }
-    if (bodyType && bodyType !== 'all') filters.bodyType = { equals: bodyType }
+    if (make && make !== 'all') filters.make = { equals: make, mode: 'insensitive' }
+    if (model && model !== 'all') filters.model = { equals: model, mode: 'insensitive' }
+    if (bodyType && bodyType !== 'all') filters.bodyType = { equals: bodyType, mode: 'insensitive' }
     if (truckSize && truckSize !== 'all')
-      filters.truckSize = { equals: truckSize }
+      filters.truckSize = { equals: truckSize, mode: 'insensitive' }
 
     if (search) {
       filters.OR = [

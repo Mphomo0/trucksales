@@ -203,7 +203,7 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
       const params = new URLSearchParams(filters)
 
       const res = await fetch(`/api/vehicles?${params.toString()}`, {
-        cache: 'force-cache',
+        cache: 'no-store',
       })
 
       if (!res.ok) {
