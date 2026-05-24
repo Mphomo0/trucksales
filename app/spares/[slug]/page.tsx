@@ -99,6 +99,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const spareFaqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
+    '@id': `https://www.a-ztrucksales.com/spares/${spare.slug}/#faq`,
+    name: `${spare.name} - Frequently Asked Questions`,
     mainEntity: [
       {
         '@type': 'Question',

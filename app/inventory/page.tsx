@@ -71,6 +71,8 @@ export default function Inventory() {
   const inventoryFaqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
+    '@id': 'https://www.a-ztrucksales.com/inventory/#faq',
+    name: 'Inventory - Frequently Asked Questions',
     mainEntity: inventoryFaqs.map((faq) => ({
       '@type': 'Question',
       name: faq.question,

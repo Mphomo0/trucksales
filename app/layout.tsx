@@ -189,6 +189,8 @@ const localBusinessSchema = {
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
+  '@id': 'https://www.a-ztrucksales.com/#faq',
+  name: 'A-Z Truck Sales - Frequently Asked Questions',
   mainEntity: [
     {
       '@type': 'Question',

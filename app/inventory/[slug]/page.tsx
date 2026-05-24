@@ -107,6 +107,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const vehicleFaqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
+    '@id': `https://www.a-ztrucksales.com/inventory/${vehicle.slug}/#faq`,
+    name: `${vehicle.name} - Frequently Asked Questions`,
     mainEntity: [
       {
         '@type': 'Question',

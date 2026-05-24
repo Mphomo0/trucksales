@@ -68,6 +68,8 @@ export default function Home() {
   const homeFaqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
+    '@id': 'https://www.a-ztrucksales.com/#home-faq',
+    name: 'Used Trucks - Frequently Asked Questions',
     mainEntity: homeFaqs.map((faq) => ({
       '@type': 'Question',
       name: faq.question,

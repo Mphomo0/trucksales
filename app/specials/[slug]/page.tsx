@@ -100,6 +100,8 @@ export default async function Special({ params }: Props) {
   const specialFaqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
+    '@id': `https://www.a-ztrucksales.com/specials/${inventory.slug}/#faq`,
+    name: `${inventory.name} - Frequently Asked Questions`,
     mainEntity: [
       {
         '@type': 'Question',
