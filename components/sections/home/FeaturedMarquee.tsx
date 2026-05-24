@@ -52,7 +52,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                 truck.vatPrice,
                 truck.specialPrice ?? null,
                 truck.specialValidFrom ?? null,
-                truck.specialValidTo ?? null
+                truck.specialValidTo ?? null,
               )
               const validUntil = truck.specialValidTo
                 ? new Date(truck.specialValidTo).toLocaleDateString('en-GB', {
@@ -63,10 +63,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                 : null
 
               return (
-                <div
-                  key={truck.id}
-                  className="min-w-[300px] max-w-[300px] mx-4 flex-shrink-0"
-                >
+                <div key={truck.id} className="min-w-75 max-w-75 mx-4 shrink-0">
                   <Link href={`/inventory/${truck.slug}`} prefetch={false}>
                     <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300">
                       <div className="relative">
@@ -89,7 +86,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                         </Badge>
                       </div>
 
-                      <CardContent className="p-4 flex flex-col justify-between flex-grow">
+                      <CardContent className="p-4 flex flex-col justify-between grow">
                         <h3 className="text-xl font-bold mb-2 line-clamp-1">
                           {truck.year} {truck.make.toUpperCase()}{' '}
                           {truck.model.toUpperCase()}
@@ -129,9 +126,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                         </div>
                         <div className="flex flex-wrap gap-2 mb-4">
                           <Badge>{truck.condition}</Badge>
-                          {truck.fuelType && (
-                            <Badge>{truck.fuelType}</Badge>
-                          )}
+                          {truck.fuelType && <Badge>{truck.fuelType}</Badge>}
                           {truck.transmission && (
                             <Badge>{truck.transmission}</Badge>
                           )}

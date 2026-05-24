@@ -59,20 +59,6 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // Vehicle API — cache 24 h, serve stale up to 7 days
-        source: '/api/vehicles(.*)',
-        headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=604800' },
-        ],
-      },
-      {
-        // Spares API — cache 24 h, serve stale up to 7 days
-        source: '/api/spares(.*)',
-        headers: [
-          { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=604800' },
-        ],
-      },
-      {
         source: '/',
         headers: [
           { key: 'Cache-Control', value: 'public, s-maxage=86400, stale-while-revalidate=604800' },

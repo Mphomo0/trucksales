@@ -76,10 +76,13 @@ export async function DELETE(
       where: { slug },
     })
 
-    // 1. Instantly drop cache structures from memory with zero outbound calls
     revalidatePath('/spares')
     revalidatePath('/specials')
     revalidatePath(`/spares/${slug}`)
+    revalidatePath('/api/spares')
+    revalidatePath('/api/spares/unfiltered')
+    revalidatePath('/api/spares/filters')
+    revalidatePath(`/api/spares/${slug}`)
 
     return NextResponse.json(
       { message: 'Spares Item deleted successfully' },

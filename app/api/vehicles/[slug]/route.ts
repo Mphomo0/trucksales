@@ -84,6 +84,11 @@ export async function DELETE(
     revalidatePath('/inventory')
     revalidatePath('/specials')
     revalidatePath(`/inventory/${slug}`)
+    revalidatePath('/api/vehicles')
+    revalidatePath('/api/vehicles/unfiltered')
+    revalidatePath('/api/vehicles/featured')
+    revalidatePath('/api/vehicles/filters')
+    revalidatePath(`/api/vehicles/${slug}`)
 
     return NextResponse.json(
       { message: 'Vehicle deleted successfully' },
