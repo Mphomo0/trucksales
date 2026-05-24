@@ -21,6 +21,7 @@ interface UpdateSparesBody {
   specialPriceNoVat?: number | null
   specialValidFrom?: string | null
   specialValidTo?: string | null
+  deletedFileIds?: string[]
 }
 
 // GET /api/spares/[slug]
@@ -103,6 +104,11 @@ export async function PATCH(
 
   try {
     const body: UpdateSparesBody = await req.json()
+
+    if (body.deletedFileIds && body.deletedFileIds.length > 0) {
+      const { deleteImageKitFiles } = await import('@/lib/imagekit')
+      await deleteImageKitFiles(body.deletedFileIds)
+    }
 
     // 2. Light select for existential check to drop compute footprint
     const existingSpares = await prisma.spares.findUnique({

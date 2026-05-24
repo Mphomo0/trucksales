@@ -1,10 +1,6 @@
-/* author: A-Z Truck Sales */
-/* datePublished: 2026-04-27 */
-/* application/ld+json */
-
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef, memo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -45,7 +41,90 @@ interface FilterOptions {
   categories: string[]
 }
 
-/* <h1>A-Z Truck Sales Components</h1> */ export default function AllSparesFilter() {
+interface SpareCardProps {
+  spare: SparesItem
+}
+
+const SpareCard = memo(function SpareCard({ spare }: SpareCardProps) {
+  const priceInfo = getCurrentPrice(
+    spare.price,
+    spare.specialPrice ?? null,
+    spare.specialValidFrom ?? null,
+    spare.specialValidTo ?? null
+  )
+  const validUntil = spare.specialValidTo
+    ? new Date(spare.specialValidTo).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      })
+    : null
+
+  return (
+    <Card className="overflow-hidden hover:shadow-md transition-shadow">
+      <div className="relative">
+        <Image
+          src={ikCard(
+            spare.thumbnail?.url ||
+              spare.images?.[0]?.url ||
+              '/placeholder-truck.svg'
+          )}
+          alt={spare.name}
+          width={400}
+          height={250}
+          className="w-full h-44 sm:h-52 object-cover"
+        />
+        <Badge className="absolute top-2 right-2 bg-green-600 capitalize">
+          {spare.condition}
+        </Badge>
+        <Badge className="absolute top-2 left-2 bg-blue-600 capitalize">
+          {spare.category.toLowerCase()}
+        </Badge>
+        {priceInfo.isSpecial && (
+          <Badge className="absolute top-10 left-2 bg-red-600">SPECIAL</Badge>
+        )}
+      </div>
+      <CardContent className="p-4">
+        <h3 className="text-lg font-bold mb-1 truncate">{spare.name}</h3>
+        <p className="text-lg text-gray-600 capitalize truncate mb-1">
+          {spare.make}
+        </p>
+        <div className="mb-3">
+          {priceInfo.isSpecial ? (
+            <div className="flex flex-col gap-1">
+              <span className="text-lg font-bold text-red-500 line-through">
+                R{spare.price.toLocaleString()}
+              </span>
+              <span className="text-2xl font-bold text-yellow-600">
+                R{priceInfo.currentPrice.toLocaleString()}
+                <span className="text-xs font-normal text-gray-500 ml-1">
+                  incl. VAT
+                </span>
+              </span>
+              {validUntil && (
+                <span className="text-xs text-green-600 font-medium">
+                  Valid until {validUntil}
+                </span>
+              )}
+            </div>
+          ) : (
+            <p className="text-2xl font-bold text-yellow-600">
+              R{spare.price.toLocaleString()}
+              <span className="text-xs font-normal text-gray-500 ml-1">
+                incl. VAT
+              </span>
+            </p>
+          )}
+        </div>
+        <Button asChild className="w-full text-sm">
+          <span>View Details</span>
+        </Button>
+      </CardContent>
+    </Card>
+  )
+})
+
+export default function AllSparesFilter() {
   const [spares, setSpares] = useState<SparesItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -66,11 +145,12 @@ interface FilterOptions {
     categories: [],
   })
   const [showFilters, setShowFilters] = useState(true)
+  const initialLoad = useRef(true)
 
   useEffect(() => {
     const loadFilterOptions = async () => {
       try {
-        const res = await fetch('/api/spares/filters')
+        const res = await fetch('/api/spares/filters', { cache: 'force-cache' })
         if (res.ok) {
           const options = await res.json()
           setFilterOptions(options)
@@ -137,7 +217,12 @@ interface FilterOptions {
     fetchSpares(buildFilters(1))
   }, [])
 
+  // Guard prevents this effect from firing on initial mount — avoids double-fetch
   useEffect(() => {
+    if (initialLoad.current) {
+      initialLoad.current = false
+      return
+    }
     const timeoutId = setTimeout(() => {
       const filters = buildFilters(1)
       fetchSpares(filters)
@@ -152,11 +237,6 @@ interface FilterOptions {
     setCategoryFilter('all')
     setCurrentPage(1)
   }, [])
-
-  const activeFilterCount = [
-    makeFilter !== 'all',
-    categoryFilter !== 'all',
-  ].filter(Boolean).length
 
   const handlePageChange = useCallback(
     (page: number) => {
@@ -282,83 +362,7 @@ interface FilterOptions {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {spares.map((spare) => (
                 <Link key={spare.id} href={`/spares/${spare.slug || spare.id}`}>
-                  <Card className="overflow-hidden hover:shadow-md transition-shadow">
-                    <div className="relative">
-                      <Image
-                        src={ikCard(spare.thumbnail?.url || spare.images?.[0]?.url || '/placeholder-truck.svg')}
-                        alt={spare.name}
-                        width={400}
-                        height={250}
-                        className="w-full h-44 sm:h-52 object-cover"
-                      />
-                      <Badge className="absolute top-2 right-2 bg-green-600 capitalize">
-                        {spare.condition}
-                      </Badge>
-                      <Badge className="absolute top-2 left-2 bg-blue-600 capitalize">
-                        {spare.category.toLowerCase()}
-                      </Badge>
-                      {(() => {
-                        const priceInfo = getCurrentPrice(
-                          spare.price,
-                          spare.specialPrice ?? null,
-                          spare.specialValidFrom ?? null,
-                          spare.specialValidTo ?? null
-                        )
-                        return priceInfo.isSpecial ? (
-                          <Badge className="absolute top-10 left-2 bg-red-600">
-                            SPECIAL
-                          </Badge>
-                        ) : null
-                      })()}
-                    </div>
-                    <CardContent className="p-4">
-                      <h3 className="text-lg font-bold mb-1 truncate">
-                        {spare.name}
-                      </h3>
-                      <p className="text-lg text-gray-600 capitalize truncate mb-1">
-                        {spare.make}
-                      </p>
-                      {(() => {
-                        const priceInfo = getCurrentPrice(
-                          spare.price,
-                          spare.specialPrice ?? null,
-                          spare.specialValidFrom ?? null,
-                          spare.specialValidTo ?? null
-                        )
-                        const validUntil = spare.specialValidTo 
-                          ? new Date(spare.specialValidTo).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-                          : null
-                        return (
-                          <div className="mb-3">
-                            {priceInfo.isSpecial ? (
-                              <div className="flex flex-col gap-1">
-                                <span className="text-lg font-bold text-red-500 line-through">
-                                  R{spare.price.toLocaleString()}
-                                </span>
-                                <span className="text-2xl font-bold text-yellow-600">
-                                  R{priceInfo.currentPrice.toLocaleString()}
-                                  <span className="text-xs font-normal text-gray-500 ml-1">incl. VAT</span>
-                                </span>
-                                {validUntil && (
-                                  <span className="text-xs text-green-600 font-medium">
-                                    Valid until {validUntil}
-                                  </span>
-                                )}
-                              </div>
-                            ) : (
-                              <p className="text-2xl font-bold text-yellow-600">
-                                R{spare.price.toLocaleString()}
-                                <span className="text-xs font-normal text-gray-500 ml-1">incl. VAT</span>
-                              </p>
-                            )}
-                          </div>
-                        )
-                      })()}
-                      <Button asChild className="w-full text-sm">
-                        <span>View Details</span>
-                      </Button>
-                    </CardContent>
-                  </Card>
+                  <SpareCard spare={spare} />
                 </Link>
               ))}
             </div>

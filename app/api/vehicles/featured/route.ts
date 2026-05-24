@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// 1. Force the standard Serverless runtime (higher memory limits, avoids Prisma edge binary bloat)
 export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
 
 export async function GET() {
   try {

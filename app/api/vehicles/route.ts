@@ -148,7 +148,7 @@ export async function POST(req: Request) {
       },
     })
 
-    // Invalidate cached pages — no extra HTTP requests, runs server-side
+    revalidatePath('/')
     revalidatePath('/inventory')
     revalidatePath('/specials')
     revalidatePath(`/inventory/${newVehicle.slug}`)

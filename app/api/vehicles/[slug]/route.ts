@@ -26,6 +26,7 @@ interface UpdateVehicleBody {
   specialPrice?: number | null
   specialValidFrom?: string | null
   specialValidTo?: string | null
+  deletedFileIds?: string[]
 }
 
 // GET /api/vehicles/[slug]
@@ -79,7 +80,7 @@ export async function DELETE(
       where: { slug },
     })
 
-    // 2. Pure native cache clearance. This incurs 0 extra edge requests.
+    revalidatePath('/')
     revalidatePath('/inventory')
     revalidatePath('/specials')
     revalidatePath(`/inventory/${slug}`)
@@ -106,6 +107,11 @@ export async function PATCH(
 
   try {
     const body: UpdateVehicleBody = await req.json()
+
+    if (body.deletedFileIds && body.deletedFileIds.length > 0) {
+      const { deleteImageKitFiles } = await import('@/lib/imagekit')
+      await deleteImageKitFiles(body.deletedFileIds)
+    }
 
     // Ensure the vehicle exists first
     const existingVehicle = await prisma.inventory.findUnique({
@@ -160,7 +166,7 @@ export async function PATCH(
       },
     })
 
-    // 3. Drop cache for updated targets instantly inside the worker process
+    revalidatePath('/')
     revalidatePath('/inventory')
     revalidatePath('/specials')
     revalidatePath(`/inventory/${slug}`)

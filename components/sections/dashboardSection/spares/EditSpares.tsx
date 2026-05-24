@@ -4,9 +4,8 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { Button } from '@/components/ui/button'
@@ -15,7 +14,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { v4 as uuidv4 } from 'uuid'
 import { upload } from '@imagekit/next'
-import { Trash2, Upload } from 'lucide-react'
+import UploadMultiple from '../stockSection/UploadMultiple'
 
 interface SparesImage {
   url: string
@@ -40,20 +39,26 @@ interface SparesItem {
   specialValidTo?: Date | string | null
 }
 
+type PreviewFile = {
+  file: File
+  id: string
+  preview: string
+  isExisting?: boolean
+}
+
 /* <h1>A-Z Truck Sales Components</h1> */ export default function EditSpares() {
   const [loading, setLoading] = useState(true)
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
-  const [previewImages, setPreviewImages] = useState<string[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [existingImages, setExistingImages] = useState<SparesImage[]>([])
+  const [currentPreviews, setCurrentPreviews] = useState<PreviewFile[]>([])
+  const initialExistingRef = useRef<SparesImage[]>([])
 
   const {
     register,
     handleSubmit,
     reset,
-    watch,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<SparesItem>({
     defaultValues: { images: [] } as Partial<SparesItem>,
   })
@@ -61,8 +66,6 @@ interface SparesItem {
   const router = useRouter()
   const params = useParams()
   const slug = params.slug as string
-
-  const watchedImages = watch('images') || []
 
   useEffect(() => {
     const fetchSpares = async () => {
@@ -77,6 +80,7 @@ interface SparesItem {
 
         const item = data.sparesItem
         setExistingImages(item.images || [])
+        initialExistingRef.current = item.images || []
         reset({
           ...item,
           images: item.images || [],
@@ -99,42 +103,6 @@ interface SparesItem {
     fetchSpares()
   }, [slug, reset])
 
-  useEffect(() => {
-    return () => {
-      previewImages.forEach((url) => URL.revokeObjectURL(url))
-    }
-  }, [previewImages])
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files || files.length === 0) return
-
-    const newFiles = Array.from(files)
-    const newPreviews = newFiles.map((file) => URL.createObjectURL(file))
-    setSelectedFiles((prev) => [...prev, ...newFiles])
-    setPreviewImages((prev) => [...prev, ...newPreviews])
-  }
-
-  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-  }
-
-  const removeImage = (index: number) => {
-    const newImages = [...existingImages]
-    newImages.splice(index, 1)
-    setExistingImages(newImages)
-    setValue('images', newImages)
-  }
-
-  const removePreviewImage = (index: number) => {
-    URL.revokeObjectURL(previewImages[index])
-    const newFiles = selectedFiles.filter((_, i) => i !== index)
-    const newPreviews = previewImages.filter((_, i) => i !== index)
-    setSelectedFiles(newFiles)
-    setPreviewImages(newPreviews)
-  }
-
   const getAuthParams = async () => {
     const res = await fetch('/api/images/upload-auth')
     if (!res.ok) throw new Error('Failed to fetch upload authentication')
@@ -143,38 +111,71 @@ interface SparesItem {
 
   const onSubmit = async (formData: SparesItem) => {
     try {
+      const existingPreviews = currentPreviews.filter((p) => p.isExisting)
+      const newPreviews = currentPreviews.filter((p) => !p.isExisting)
+
+      if (existingPreviews.length === 0 && newPreviews.length === 0) {
+        toast.error('Please select at least one image.')
+        return
+      }
+
       setIsUploading(true)
 
       const newUploadedImages: SparesImage[] = []
-      if (selectedFiles.length > 0) {
-        for (const file of selectedFiles) {
-          try {
-            const { token, signature, publicKey, expire } =
-              await getAuthParams()
-            const uniqueFileName = `${uuidv4()}_${file.name}`
-            const res = await upload({
-              file,
-              fileName: uniqueFileName,
-              folder: 'spares',
-              expire,
-              token,
-              signature,
-              publicKey,
-            })
-            if (!res?.url || !res?.fileId)
-              throw new Error(`Upload failed for ${file.name}`)
-            newUploadedImages.push({ url: res.url, fileId: res.fileId })
-          } catch (err) {
-            console.error(err)
-            toast.error(`Failed to upload ${file.name}`)
-          }
+
+      for (const preview of newPreviews) {
+        const file = preview.file
+        try {
+          const { token, signature, publicKey, expire } =
+            await getAuthParams()
+          const uniqueFileName = `${uuidv4()}_${file.name}`
+          const res = await upload({
+            file,
+            fileName: uniqueFileName,
+            folder: 'spares',
+            expire,
+            token,
+            signature,
+            publicKey,
+          })
+          if (!res?.url || !res?.fileId)
+            throw new Error(`Upload failed for ${file.name}`)
+          newUploadedImages.push({ url: res.url, fileId: res.fileId })
+        } catch (err) {
+          console.error(err)
+          toast.error(`Failed to upload ${file.name}`)
         }
       }
 
-      const allImages = [...existingImages, ...newUploadedImages]
+      setIsUploading(false)
+
+      const allImages = currentPreviews.map((p) => {
+        if (p.isExisting) {
+          return { url: p.preview, fileId: p.id }
+        }
+        const uploaded = newUploadedImages.shift()
+        return uploaded || { url: p.preview, fileId: p.id }
+      })
+
+      if (allImages.length === 0) {
+        toast.error('No images available. Please try again.')
+        return
+      }
+
+      const deletedFileIds = initialExistingRef.current
+        .filter(
+          (init) =>
+            !currentPreviews.some(
+              (p) => p.isExisting && p.id === init.fileId
+            )
+        )
+        .map((img) => img.fileId)
+
       const updatedFormData = {
         ...formData,
         images: allImages,
+        deletedFileIds:
+          deletedFileIds.length > 0 ? deletedFileIds : undefined,
       }
 
       const res = await fetch(`/api/spares/${slug}`, {
@@ -186,8 +187,6 @@ interface SparesItem {
         const errorData = await res.json()
         throw new Error(errorData?.error || 'Failed to update spare item')
       }
-
-      previewImages.forEach((url) => URL.revokeObjectURL(url))
 
       toast.success('Spares Item updated successfully')
       router.push('/dashboard/spares')
@@ -266,73 +265,12 @@ interface SparesItem {
           {/* Images Section */}
           <div className="space-y-4">
             <Label>Images</Label>
-            {existingImages.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {existingImages.map((img, idx) => (
-                  <div key={idx} className="relative group">
-                    <Image
-                      src={img.url}
-                      alt={`image ${idx}`}
-                      width={200}
-                      height={200}
-                      className="object-cover rounded-lg border"
-                      priority
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="sm"
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100"
-                      onClick={() => removeImage(idx)}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="border-2 border-dashed rounded-lg p-6 text-center">
-              <Upload className="mx-auto h-12 w-12 text-muted-foreground/50" />
-              <Label htmlFor="imageUpload" className="cursor-pointer">
-                <span className="text-sm font-medium text-primary">
-                  Click to upload images
-                </span>
-                <Input
-                  id="imageUpload"
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={handleImageUpload}
-                  disabled={isUploading}
-                />
-              </Label>
-            </div>
-            {previewImages.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
-                {previewImages.map((preview, idx) => (
-                  <div key={idx} className="relative group">
-                    <Image
-                      src={preview}
-                      alt={`preview ${idx}`}
-                      width={200}
-                      height={200}
-                      className="object-cover rounded-lg border-2 border-dashed border-primary/50"
-                      priority
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="sm"
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100"
-                      onClick={() => removePreviewImage(idx)}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
+            <UploadMultiple
+              existingImages={existingImages}
+              onFilesSelected={(_files, previews) =>
+                setCurrentPreviews(previews)
+              }
+            />
           </div>
 
           {/* Video Section */}

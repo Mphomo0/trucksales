@@ -62,3 +62,25 @@ export const ikHero = (src: string) =>
 /** Thumbnail strip: 300×200, WebP, q-65 */
 export const ikThumb = (src: string) =>
   ikUrl(src, { w: 300, h: 200, f: 'webp', q: 65, c: 'maintain_ratio', fo: 'auto' })
+
+export async function deleteImageKitFiles(fileIds: string[]): Promise<void> {
+  const privateKey = process.env.IMAGEKIT_PRIVATE_KEY
+  if (!privateKey) throw new Error('IMAGEKIT_PRIVATE_KEY is not defined')
+
+  for (const fileId of fileIds) {
+    try {
+      const res = await fetch(`https://api.imagekit.io/v1/files/${fileId}`, {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Basic ${Buffer.from(`${privateKey}:`).toString('base64')}`,
+        },
+      })
+      if (!res.ok && res.status !== 404) {
+        console.error('ImageKit delete error:', fileId, res.status)
+      }
+    } catch (err) {
+      console.error('Error deleting from ImageKit:', fileId, err)
+    }
+  }
+}
