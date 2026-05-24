@@ -17,8 +17,8 @@ import {
 } from '@/components/ui/accordion'
 
 export const metadata: Metadata = {
-  title: 'Truck Spares & Parts',
-  description: 'Quality used truck spares in Gauteng. Engines, gearboxes, diffs and more.',
+  title: 'Truck Spares & Parts | A-Z Truck Sales Gauteng',
+  description: 'Quality used truck spares in Gauteng. Engines, gearboxes, diffs for Isuzu, Hino, Mercedes-Benz, Ford. Workshop-tested parts.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/spares',
   },

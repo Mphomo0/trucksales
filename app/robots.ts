@@ -8,20 +8,28 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: 'GPTBot',
-        disallow: ['/'],
+        allow: '/',
+        disallow: ['/dashboard/', '/api/', '/login/'],
       },
       {
         userAgent: 'ChatGPT-User',
-        disallow: ['/'],
+        allow: '/',
+        disallow: ['/dashboard/', '/api/', '/login/'],
       },
       {
         userAgent: 'OAI-SearchBot',
-        disallow: ['/'],
+        allow: '/',
+        disallow: ['/dashboard/', '/api/', '/login/'],
+      },
+      {
+        userAgent: 'Google-Extended',
+        allow: '/',
+        disallow: ['/dashboard/', '/api/', '/login/'],
       },
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/dashboard/', '/api/'],
+        disallow: ['/dashboard/', '/api/', '/login/'],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

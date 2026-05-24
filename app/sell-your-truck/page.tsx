@@ -10,9 +10,8 @@ import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 
 export const metadata: Metadata = {
-  title: 'Sell or Trade-In Your Truck',
-  description:
-    'Sell or trade-in your used truck. Competitive prices for commercial vehicles in Gauteng.',
+  title: 'Sell Your Truck | We Buy Used Trucks Gauteng',
+  description: 'Sell or trade-in your used truck with A-Z Truck Sales. Competitive offers, fast payment, serving Gauteng and all South Africa.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/sell-your-truck',
   },

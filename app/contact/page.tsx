@@ -18,8 +18,8 @@ import {
 } from '@/components/ui/accordion'
 
 export const metadata: Metadata = {
-  title: 'Contact Us | A-Z Truck Sales Alberton',
-  description: 'Contact A-Z Truck Sales. Two branches: Alberton and Boksburg. Call, email or use our online form.',
+  title: 'Contact Us | A-Z Truck Sales Gauteng',
+  description: 'Contact A-Z Truck Sales in Alberton & Boksburg, Gauteng. Call 011 902 6071 for quality used commercial vehicles and trucks.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/contact',
   },
