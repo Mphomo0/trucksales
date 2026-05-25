@@ -31,18 +31,18 @@ interface Truck {
   year: number
   vatPrice: number
   pricenoVat: number
-  mileage: number
-  fuelType: string
+  mileage: number | null
+  fuelType: string | null
   condition: string
-  transmission: string
+  transmission: string | null
   images: { fileId: string; url: string }[]
   description: string
-  bodyType: string
-  truckSize: string
+  bodyType: string | null
+  truckSize: string | null
   slug: string
   specialPrice: number | null
-  specialValidFrom: Date | null
-  specialValidTo: Date | null
+  specialValidFrom: Date | string | null
+  specialValidTo: Date | string | null
 }
 
 interface FilterOptions {
@@ -50,6 +50,21 @@ interface FilterOptions {
   models: string[]
   bodyTypes: string[]
   truckSizes: string[]
+}
+
+interface VehicleMeta {
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
+// Prisma returns images as JsonValue; this type bridges the server/client boundary
+type InitialTruck = Omit<Truck, 'images'> & { images: unknown }
+
+interface AllVehiclesFilterProps {
+  initialVehicles?: InitialTruck[]
+  initialMeta?: VehicleMeta
 }
 
 interface TruckCardProps {
@@ -152,9 +167,12 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
   )
 })
 
-/* <h1>A-Z Truck Sales Components</h1> */ export default function AllVehiclesFilter() {
-  const [trucks, setTrucks] = useState<Truck[]>([])
-  const [loading, setLoading] = useState(true)
+/* <h1>A-Z Truck Sales Components</h1> */ export default function AllVehiclesFilter({
+  initialVehicles = [],
+  initialMeta,
+}: AllVehiclesFilterProps) {
+  const [trucks, setTrucks] = useState<Truck[]>(initialVehicles as Truck[])
+  const [loading, setLoading] = useState(initialVehicles.length === 0)
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [makeFilter, setMakeFilter] = useState('all')
@@ -163,11 +181,11 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
   const [truckSizeFilter, setTruckSizeFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const [limit, setLimit] = useState(25)
-  const [meta, setMeta] = useState({
-    total: 0,
-    page: 1,
-    limit: 25,
-    totalPages: 0,
+  const [meta, setMeta] = useState<VehicleMeta>({
+    total: initialMeta?.total ?? 0,
+    page: initialMeta?.page ?? 1,
+    limit: initialMeta?.limit ?? 25,
+    totalPages: initialMeta?.totalPages ?? 0,
   })
 
   const [filterOptions, setFilterOptions] = useState<FilterOptions>({
@@ -202,9 +220,7 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
 
       const params = new URLSearchParams(filters)
 
-      const res = await fetch(`/api/vehicles?${params.toString()}`, {
-        cache: 'no-store',
-      })
+      const res = await fetch(`/api/vehicles?${params.toString()}`)
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}))
@@ -278,10 +294,12 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
     }
   }, [])
 
-  // Initial load
+  // Initial load — skip vehicle fetch if server pre-populated the first page
   useEffect(() => {
     const loadInitialData = async () => {
-      await Promise.all([fetchTrucks(buildFilters(1)), fetchFilterOptions()])
+      const tasks: Promise<void>[] = [fetchFilterOptions()]
+      if (initialVehicles.length === 0) tasks.push(fetchTrucks(buildFilters(1)))
+      await Promise.all(tasks)
     }
 
     loadInitialData()

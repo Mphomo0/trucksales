@@ -1,73 +1,59 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { clerkMiddleware } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const isProtectedRoute = createRouteMatcher(['/dashboard(.*)'])
-
-const BLOCKED_BOTS = [
-  'AhrefsBot',
-  'SemrushBot',
-  'MJ12bot',
-  'DotBot',
-  'MegaIndex',
-  'rogerbot',
-  'Screaming Frog',
-  'Baiduspider',
-  'YandexBot',
-  'SeznamBot',
-  'Exabot',
-  'GPTBot',
-  'ChatGPT-User',
-  'OAI-SearchBot',
+// Programmatic client / scraper UA fragments — checked case-insensitively.
+// Only GET requests to listing endpoints are blocked; POST (dashboard CRUD) is untouched.
+const SCRAPER_UA_FRAGMENTS = [
+  'python-requests',
+  'go-http-client',
+  'java/',
+  'scrapy',
+  'libwww-perl',
+  'wget/',
+  'curl/',
+  'axios/',
+  'okhttp',
+  'ruby/',
+  'php/',
+  'postman',
+  'insomnia',
+  'httpx',
+  'aiohttp',
+  'urllib',
+  'pycurl',
+  'requests/',
+  'httpclient',
+  'apache-httpclient',
 ]
 
-const CRAWLER_BOTS = [
-  'Googlebot',
-  'Bingbot',
-  'Google-Extended',
-  'Claude-Web',
-  'Applebot-Extended',
-  'facebookexternalhit',
-  'Twitterbot',
-  'Applebot',
-  'Slackbot',
-  'WhatsApp',
-  'LinkedInBot',
-]
-
-function getBotType(userAgent: string): 'blocked' | 'crawler' | 'human' {
-  const ua = userAgent.toLowerCase()
-  if (BLOCKED_BOTS.some((bot) => ua.includes(bot.toLowerCase())))
-    return 'blocked'
-  if (CRAWLER_BOTS.some((bot) => ua.includes(bot.toLowerCase())))
-    return 'crawler'
-  return 'human'
+function isKnownScraper(ua: string): boolean {
+  const lower = ua.toLowerCase()
+  return SCRAPER_UA_FRAGMENTS.some((fragment) => lower.includes(fragment))
 }
 
-export default clerkMiddleware(async (auth, req: NextRequest) => {
-  const userAgent = req.headers.get('user-agent') || ''
-  const botType = getBotType(userAgent)
+export const proxy = clerkMiddleware((_auth, request: NextRequest) => {
+  const { pathname } = request.nextUrl
+  const ua = request.headers.get('user-agent') ?? ''
 
-  if (botType === 'blocked') {
-    return new NextResponse(null, { status: 403 })
+  // Block known scrapers from the public listing API endpoints (GET only)
+  if (
+    request.method === 'GET' &&
+    isKnownScraper(ua) &&
+    (pathname === '/api/vehicles' || pathname === '/api/spares')
+  ) {
+    return NextResponse.json(
+      { error: 'Automated access not permitted' },
+      { status: 403 },
+    )
   }
-
-  if (isProtectedRoute(req)) {
-    await auth.protect()
-  }
-
-  if (botType === 'crawler') {
-    const response = NextResponse.next()
-    response.headers.set('X-Robots-Tag', 'index, follow')
-    return response
-  }
-
-  return NextResponse.next()
 })
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff2?|ttf)).*)',
-    '/(api|trpc)(.*)',
+    // Run on everything except Next.js internals and static assets.
+    // This gives Clerk the coverage it needs to provide auth() context
+    // on /login, /dashboard/**, and all API routes.
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

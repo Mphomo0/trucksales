@@ -13,8 +13,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { prisma } from '@/lib/prisma'
 
-export const dynamic = 'force-static'
 export const revalidate = 86400
 
 export const metadata: Metadata = {
@@ -48,7 +48,45 @@ const inventoryFaqs = [
   },
 ]
 
-export default function Inventory() {
+export default async function Inventory() {
+  const LIMIT = 25
+
+  const [vehicles, total] = await Promise.all([
+    prisma.inventory.findMany({
+      take: LIMIT,
+      skip: 0,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        make: true,
+        model: true,
+        year: true,
+        vatPrice: true,
+        pricenoVat: true,
+        mileage: true,
+        fuelType: true,
+        condition: true,
+        transmission: true,
+        images: true,
+        description: true,
+        bodyType: true,
+        truckSize: true,
+        slug: true,
+        specialPrice: true,
+        specialValidFrom: true,
+        specialValidTo: true,
+      },
+    }),
+    prisma.inventory.count(),
+  ])
+
+  const initialMeta = {
+    total,
+    page: 1,
+    limit: LIMIT,
+    totalPages: Math.ceil(total / LIMIT),
+  }
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -97,7 +135,7 @@ export default function Inventory() {
       
       
 
-      <AllVehiclesFilter />
+      <AllVehiclesFilter initialVehicles={vehicles} initialMeta={initialMeta} />
 
       <section className="py-20 bg-neutral-50">
         <div className="container mx-auto px-4">

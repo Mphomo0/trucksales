@@ -3,6 +3,8 @@
 /* application/ld+json */
 
 import { SignIn } from '@clerk/nextjs'
+import { auth } from '@clerk/nextjs/server'
+import { redirect } from 'next/navigation'
 import { Metadata } from 'next'
 import GeoHints from '@/components/global/GeoHints'
 
@@ -12,7 +14,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-export default function Login() {
+export default async function Login() {
+  const { userId } = await auth()
+  if (userId) redirect('/dashboard')
+
   return (
     <>
       <h1 className="sr-only">Login to A-Z Truck Sales</h1>

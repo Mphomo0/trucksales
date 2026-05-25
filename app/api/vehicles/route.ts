@@ -260,9 +260,9 @@ export const GET = async (req: NextRequest) => {
       {
         status: 200,
         headers: {
-          // Vercel CDN caches this for 1h, serves stale for up to 24h while revalidating
+          // s-maxage: CDN caches per unique URL for 1h; max-age: browser caches 5min
           'Cache-Control':
-            'public, s-maxage=3600, stale-while-revalidate=86400',
+            'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
         },
       },
     )

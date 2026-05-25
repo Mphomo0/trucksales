@@ -226,7 +226,7 @@ export const GET = async (req: NextRequest) => {
         status: 200,
         headers: {
           'Cache-Control':
-            'public, s-maxage=3600, stale-while-revalidate=86400',
+            'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
           'Content-Type': 'application/json',
         },
       },
