@@ -65,6 +65,7 @@ type InitialTruck = Omit<Truck, 'images'> & { images: unknown }
 interface AllVehiclesFilterProps {
   initialVehicles?: InitialTruck[]
   initialMeta?: VehicleMeta
+  initialFilterOptions?: FilterOptions
 }
 
 interface TruckCardProps {
@@ -170,6 +171,7 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
 /* <h1>A-Z Truck Sales Components</h1> */ export default function AllVehiclesFilter({
   initialVehicles = [],
   initialMeta,
+  initialFilterOptions,
 }: AllVehiclesFilterProps) {
   const [trucks, setTrucks] = useState<Truck[]>(initialVehicles as Truck[])
   const [loading, setLoading] = useState(initialVehicles.length === 0)
@@ -188,12 +190,9 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
     totalPages: initialMeta?.totalPages ?? 0,
   })
 
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
-    makes: [],
-    models: [],
-    bodyTypes: [],
-    truckSizes: [],
-  })
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>(
+    initialFilterOptions ?? { makes: [], models: [], bodyTypes: [], truckSizes: [] }
+  )
   const [showFilters, setShowFilters] = useState(true)
   const initialLoad = useRef(true)
 
@@ -294,12 +293,13 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
     }
   }, [])
 
-  // Initial load — skip vehicle fetch if server pre-populated the first page
+  // Initial load — skip both fetches when server pre-populated the data
   useEffect(() => {
     const loadInitialData = async () => {
-      const tasks: Promise<void>[] = [fetchFilterOptions()]
+      const tasks: Promise<void>[] = []
+      if (!initialFilterOptions) tasks.push(fetchFilterOptions())
       if (initialVehicles.length === 0) tasks.push(fetchTrucks(buildFilters(1)))
-      await Promise.all(tasks)
+      if (tasks.length > 0) await Promise.all(tasks)
     }
 
     loadInitialData()

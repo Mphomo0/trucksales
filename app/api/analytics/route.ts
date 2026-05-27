@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server'
+import { auth } from '@/auth'
 
 const POSTHOG_API_URL = 'https://us.i.posthog.com/api'
 const POSTHOG_API_KEY = process.env.POSTHOG_API_KEY
@@ -25,6 +26,11 @@ function getDistinctId(event: PostHogEvent): string | undefined {
 }
 
 export async function GET(request: NextRequest) {
+  const session = await auth()
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   if (!POSTHOG_API_KEY || !POSTHOG_PROJECT_ID) {
     return NextResponse.json(
       { error: 'PostHog API credentials not configured' },
@@ -59,10 +65,10 @@ export async function GET(request: NextRequest) {
       'Content-Type': 'application/json',
     }
 
-    const maxEvents = 10000
+    const maxEvents = 2000
     const eventsResponse = await fetch(
       `${POSTHOG_API_URL}/projects/${POSTHOG_PROJECT_ID}/events/?after=${startDate.toISOString()}&before=${endDate.toISOString()}&limit=${maxEvents}`,
-      { headers }
+      { headers, next: { revalidate: 1800 } }
     )
 
     if (!eventsResponse.ok) {
@@ -76,7 +82,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(analytics, {
       headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        // Dashboard-only: private so CDN won't cache, but browser caches 30 min
+        'Cache-Control': 'private, max-age=1800',
         'X-Content-Type-Options': 'nosniff',
       },
     })

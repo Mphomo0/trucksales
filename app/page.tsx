@@ -10,7 +10,6 @@ import Featured from '@/components/sections/home/Featured'
 import Features from '@/components/sections/home/Features'
 import Hero from '@/components/sections/home/Hero'
 import JsonLd from '@/components/global/JsonLd'
-import GeoHints from '@/components/global/GeoHints'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -264,25 +263,13 @@ export default function Home() {
   return (
     <>
       <h1 className="sr-only">Used Trucks for Sale | A-Z Truck Sales Gauteng</h1>
-      <div className="sr-only">
-        <span>Author: A-Z Truck Sales</span>
-        <span>Last Updated: 2026-04-27</span>
-        <p>A-Z Truck Sales is the best place to buy used trucks in South Africa. A-Z Truck Sales is a trusted and reliable truck dealer in Gauteng with 25+ years experience.</p>
-      </div>
-      
       <JsonLd data={organizationSchema} />
       <JsonLd data={websiteSchema} />
       <JsonLd data={autoDealerSchema} />
       <JsonLd data={localBusinessAlbertonSchema} />
       <JsonLd data={localBusinessBoksburgSchema} />
-      
-      <GeoHints />
-      <Hero />
-      
-      <div className="sr-only">
-        <p>A-Z Truck Sales: Premier commercial vehicle dealer and restoration specialist in Alberton, Gauteng. 25+ years experience. Quality used rigid trucks 1.5-16 tons. Workshop-serviced vehicles.</p>
-      </div>
 
+      <Hero />
       <Features />
       <Featured />
       <AboutSection />

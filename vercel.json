@@ -3,7 +3,31 @@
     {
       "source": "/api/vehicles/filters",
       "headers": [
-        { "key": "Cache-Control", "value": "public, s-maxage=86400, stale-while-revalidate=3600" }
+        { "key": "Cache-Control", "value": "public, s-maxage=86400, stale-while-revalidate=604800" }
+      ]
+    },
+    {
+      "source": "/api/spares/filters",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, s-maxage=86400, stale-while-revalidate=604800" }
+      ]
+    },
+    {
+      "source": "/api/analytics",
+      "headers": [
+        { "key": "Cache-Control", "value": "private, no-store" }
+      ]
+    },
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, s-maxage=86400, stale-while-revalidate=604800" }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
       ]
     },
     {

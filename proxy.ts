@@ -36,11 +36,13 @@ export const proxy = clerkMiddleware((_auth, request: NextRequest) => {
   const { pathname } = request.nextUrl
   const ua = request.headers.get('user-agent') ?? ''
 
-  // Block known scrapers from the public listing API endpoints (GET only)
+  // Block known scrapers from the public listing and analytics endpoints (GET only)
   if (
     request.method === 'GET' &&
     isKnownScraper(ua) &&
-    (pathname === '/api/vehicles' || pathname === '/api/spares')
+    (pathname === '/api/vehicles' ||
+      pathname === '/api/spares' ||
+      pathname === '/api/analytics')
   ) {
     return NextResponse.json(
       { error: 'Automated access not permitted' },

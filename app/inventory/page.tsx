@@ -6,7 +6,6 @@ import AllVehiclesFilter from '@/components/sections/inventorySection/AllVehicle
 import InventoryFeatures from '@/components/sections/inventorySection/InventoryFeatures'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
-import GeoHints from '@/components/global/GeoHints'
 import {
   Accordion,
   AccordionContent,
@@ -51,7 +50,7 @@ const inventoryFaqs = [
 export default async function Inventory() {
   const LIMIT = 25
 
-  const [vehicles, total] = await Promise.all([
+  const [vehicles, total, makesResult, modelsResult, bodyTypesResult, truckSizesResult] = await Promise.all([
     prisma.inventory.findMany({
       take: LIMIT,
       skip: 0,
@@ -79,7 +78,18 @@ export default async function Inventory() {
       },
     }),
     prisma.inventory.count(),
+    prisma.inventory.findMany({ distinct: ['make'], select: { make: true }, orderBy: { make: 'asc' } }),
+    prisma.inventory.findMany({ distinct: ['model'], select: { model: true }, orderBy: { model: 'asc' } }),
+    prisma.inventory.findMany({ distinct: ['bodyType'], select: { bodyType: true }, where: { bodyType: { not: null } } }),
+    prisma.inventory.findMany({ distinct: ['truckSize'], select: { truckSize: true }, where: { truckSize: { not: null } } }),
   ])
+
+  const initialFilterOptions = {
+    makes: makesResult.map((r) => r.make).filter(Boolean) as string[],
+    models: modelsResult.map((r) => r.model).filter(Boolean) as string[],
+    bodyTypes: bodyTypesResult.map((r) => r.bodyType).filter(Boolean) as string[],
+    truckSizes: truckSizesResult.map((r) => r.truckSize).filter(Boolean) as string[],
+  }
 
   const initialMeta = {
     total,
@@ -129,13 +139,12 @@ export default async function Inventory() {
         <span>Last Updated: 2026-04-27</span>
         {/* application/ld+json */}
       </div>
-      <GeoHints />
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={inventoryFaqSchema} />
       
       
 
-      <AllVehiclesFilter initialVehicles={vehicles} initialMeta={initialMeta} />
+      <AllVehiclesFilter initialVehicles={vehicles} initialMeta={initialMeta} initialFilterOptions={initialFilterOptions} />
 
       <section className="py-20 bg-neutral-50">
         <div className="container mx-auto px-4">

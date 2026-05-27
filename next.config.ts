@@ -1,6 +1,8 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
+  compress: true,
   images: {
     // ImageKit handles all transformations server-side via its own CDN.
     // Setting unoptimized=true means Next.js never proxies/transforms these
