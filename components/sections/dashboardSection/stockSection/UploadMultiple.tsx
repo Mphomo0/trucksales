@@ -196,7 +196,7 @@ const UploadMultiple = ({
               : `You can upload up to ${maxFiles} files`}
           </p>
           {canAddMore && (
-            <Button variant="outline" size="sm">
+            <Button type="button" variant="outline" size="sm">
               <ImageIcon className="h-4 w-4 mr-2" />
               Choose Files
             </Button>
@@ -215,6 +215,7 @@ const UploadMultiple = ({
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-medium">Selected Images</h4>
             <Button
+              type="button"
               variant="outline"
               size="sm"
               onClick={() => {
@@ -257,6 +258,7 @@ const UploadMultiple = ({
 
                     {/* Remove button */}
                     <Button
+                      type="button"
                       size="icon"
                       variant="destructive"
                       className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"

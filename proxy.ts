@@ -51,9 +51,6 @@ export const proxy = clerkMiddleware((_auth, request: NextRequest) => {
 
 export const config = {
   matcher: [
-    // Run on everything except Next.js internals and static assets.
-    // This gives Clerk the coverage it needs to provide auth() context
-    // on /login, /dashboard/**, and all API routes.
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
