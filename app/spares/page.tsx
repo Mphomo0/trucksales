@@ -15,6 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
   title: 'Truck Spares & Parts | A-Z Truck Sales Gauteng',
@@ -47,7 +48,48 @@ const sparesFaqs = [
   },
 ]
 
-/* application/ld+json */ export default function Spares() {
+/* application/ld+json */ export default async function Spares() {
+  const LIMIT = 12
+
+  const [spares, total, makesResult, categoriesResult] = await Promise.all([
+    prisma.spares.findMany({
+      take: LIMIT,
+      skip: 0,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        make: true,
+        price: true,
+        noVatPrice: true,
+        condition: true,
+        category: true,
+        description: true,
+        images: true,
+        slug: true,
+        videoLink: true,
+        specialPrice: true,
+        specialPriceNoVat: true,
+        specialValidFrom: true,
+        specialValidTo: true,
+      },
+    }),
+    prisma.spares.count(),
+    prisma.spares.findMany({ distinct: ['make'], select: { make: true }, orderBy: { make: 'asc' } }),
+    prisma.spares.findMany({ distinct: ['category'], select: { category: true }, orderBy: { category: 'asc' } }),
+  ])
+
+  const initialSpares = spares.map((item) => {
+    const imgArray = Array.isArray(item.images) ? (item.images as any[]) : []
+    return { ...item, thumbnail: imgArray[0] || null }
+  })
+
+  const initialMeta = { total, page: 1, limit: LIMIT, totalPages: Math.ceil(total / LIMIT) }
+
+  const initialFilterOptions = {
+    makes: makesResult.map((r) => r.make).filter(Boolean) as string[],
+    categories: categoriesResult.map((r) => r.category).filter(Boolean) as string[],
+  }
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -96,7 +138,7 @@ const sparesFaqs = [
       
       
 
-      <AllSparesFilter />
+      <AllSparesFilter initialSpares={initialSpares} initialMeta={initialMeta} initialFilterOptions={initialFilterOptions} />
 
       <section className="py-20 bg-neutral-50">
         <div className="container mx-auto px-4">

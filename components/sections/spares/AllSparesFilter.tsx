@@ -41,6 +41,15 @@ interface FilterOptions {
   categories: string[]
 }
 
+interface SparesMeta {
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
+type InitialSpare = Omit<SparesItem, 'images'> & { images: unknown }
+
 interface SpareCardProps {
   spare: SparesItem
 }
@@ -124,30 +133,40 @@ const SpareCard = memo(function SpareCard({ spare }: SpareCardProps) {
   )
 })
 
-export default function AllSparesFilter() {
-  const [spares, setSpares] = useState<SparesItem[]>([])
-  const [loading, setLoading] = useState(true)
+interface AllSparesFilterProps {
+  initialSpares?: InitialSpare[]
+  initialMeta?: SparesMeta
+  initialFilterOptions?: FilterOptions
+}
+
+export default function AllSparesFilter({
+  initialSpares,
+  initialMeta,
+  initialFilterOptions,
+}: AllSparesFilterProps = {}) {
+  const [spares, setSpares] = useState<SparesItem[]>((initialSpares as SparesItem[]) ?? [])
+  const [loading, setLoading] = useState(!initialSpares || initialSpares.length === 0)
   const [error, setError] = useState<string | null>(null)
 
   const [searchTerm, setSearchTerm] = useState('')
   const [makeFilter, setMakeFilter] = useState('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
-  const [currentPage, setCurrentPage] = useState(1)
-  const [meta, setMeta] = useState({
-    total: 0,
-    page: 1,
-    limit: 10,
-    totalPages: 0,
+  const [currentPage, setCurrentPage] = useState(initialMeta?.page ?? 1)
+  const [meta, setMeta] = useState<SparesMeta>({
+    total: initialMeta?.total ?? 0,
+    page: initialMeta?.page ?? 1,
+    limit: initialMeta?.limit ?? 12,
+    totalPages: initialMeta?.totalPages ?? 0,
   })
 
-  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
-    makes: [],
-    categories: [],
-  })
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>(
+    initialFilterOptions ?? { makes: [], categories: [] }
+  )
   const [showFilters, setShowFilters] = useState(true)
   const initialLoad = useRef(true)
 
   useEffect(() => {
+    if (initialFilterOptions) return
     const loadFilterOptions = async () => {
       try {
         const res = await fetch('/api/spares/filters', { cache: 'force-cache' })
@@ -214,6 +233,7 @@ export default function AllSparesFilter() {
   }, [])
 
   useEffect(() => {
+    if (initialSpares && initialSpares.length > 0) return
     fetchSpares(buildFilters(1))
   }, [])
 

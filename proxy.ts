@@ -53,6 +53,6 @@ export const proxy = clerkMiddleware((_auth, request: NextRequest) => {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js|woff2|woff|ttf|ico|xml|txt)$).*)',
   ],
 }
