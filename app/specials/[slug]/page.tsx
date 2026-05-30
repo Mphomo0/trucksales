@@ -13,7 +13,7 @@ import JsonLd from '@/components/global/JsonLd'
 import GeoHints from '@/components/global/GeoHints'
 
 export const dynamic = 'force-static'
-export const revalidate = 86400
+export const revalidate = false
 
 interface Props {
   params: Promise<{ slug: string }>

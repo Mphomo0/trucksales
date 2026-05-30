@@ -10,12 +10,20 @@ import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 
 export const dynamic = 'force-static'
-export const revalidate = 86400
+export const revalidate = false
 
 /** Cached per-request so generateMetadata and the page share one DB query */
 const getSpare = cache(async (slug: string) =>
   prisma.spares.findUnique({ where: { slug } })
 )
+
+export async function generateStaticParams() {
+  const spares = await prisma.spares.findMany({
+    select: { slug: true },
+    orderBy: { createdAt: 'desc' },
+  })
+  return spares.map((s) => ({ slug: s.slug }))
+}
 
 interface Props {
   params: Promise<{ slug: string }>

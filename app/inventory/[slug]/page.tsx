@@ -8,7 +8,7 @@ import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 
 export const dynamic = 'force-static'
-export const revalidate = 86400
+export const revalidate = false
 
 /** Cached per-request so generateMetadata and the page share one DB query */
 const getVehicle = cache(async (slug: string) =>
@@ -19,7 +19,6 @@ export async function generateStaticParams() {
   const vehicles = await prisma.inventory.findMany({
     select: { slug: true },
     orderBy: { createdAt: 'desc' },
-    take: 100,
   })
   return vehicles.map((v) => ({ slug: v.slug }))
 }

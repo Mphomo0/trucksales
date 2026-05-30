@@ -328,18 +328,6 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
     fetchTrucks,
   ])
 
-  // Reset model when make changes
-  useEffect(() => {
-    if (makeFilter === 'all') {
-      setModelFilter('all')
-    } else {
-      const validModels = getModelsForMake
-      if (modelFilter !== 'all' && !validModels.includes(modelFilter)) {
-        setModelFilter('all')
-      }
-    }
-  }, [makeFilter])
-
   const getModelsForMake = useMemo(() => {
     if (makeFilter === 'all') return filterOptions.models || []
 
@@ -453,7 +441,7 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
               </Select>
 
               {/* Make */}
-              <Select value={makeFilter} onValueChange={setMakeFilter}>
+              <Select value={makeFilter} onValueChange={(value) => { setMakeFilter(value); setModelFilter('all') }}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="All Makes" />
                 </SelectTrigger>
