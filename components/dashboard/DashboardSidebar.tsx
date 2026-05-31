@@ -14,6 +14,7 @@ import {
   Zap,
   LogOut,
   X,
+  MessageSquare,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useDashboard } from './DashboardContext'
@@ -35,6 +36,11 @@ const navItems = [
     label: 'Spares',
     href: '/dashboard/spares',
     icon: Wrench,
+  },
+  {
+    label: 'Chatbot',
+    href: '/dashboard/chatbot',
+    icon: MessageSquare,
   },
 ]
 
