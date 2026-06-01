@@ -1,7 +1,18 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { MessageCircle, X, Send, Loader2, ChevronDown, Bot, User, Phone, Mail, UserIcon } from 'lucide-react'
+import {
+  MessageCircle,
+  X,
+  Send,
+  Loader2,
+  ChevronDown,
+  Bot,
+  User,
+  Phone,
+  Mail,
+  UserIcon,
+} from 'lucide-react'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -116,7 +127,8 @@ export function ChatWidget() {
     setIsCollectingLead(true)
     addMessage({
       role: 'assistant',
-      message: "I'd be happy to connect you with our sales team. What's your name?",
+      message:
+        "I'd be happy to connect you with our sales team. What's your name?",
     })
   }, [addMessage])
 
@@ -158,7 +170,7 @@ export function ChatWidget() {
           addMessage({
             role: 'assistant',
             message:
-              "Thank you! A member of our sales team will contact you shortly. Is there anything else I can help you with?",
+              'Thank you! A member of our sales team will contact you shortly. Is there anything else I can help you with?',
           })
         } catch {
           addMessage({
@@ -190,20 +202,16 @@ export function ChatWidget() {
     <>
       {/* Toggle Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#f5b800] text-black shadow-lg transition-all hover:scale-105 hover:shadow-xl active:scale-95"
+        onClick={() => setIsOpen((v) => !v)}
+        className={`fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#f5b800] text-black shadow-lg transition-all hover:scale-105 hover:shadow-xl active:scale-95 ${isOpen ? 'max-sm:hidden' : ''}`}
         aria-label={isOpen ? 'Close chat' : 'Open chat'}
       >
-        {isOpen ? (
-          <X size={24} />
-        ) : (
-          <MessageCircle size={24} />
-        )}
+        {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
       </button>
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 flex h-[600px] w-[380px] flex-col rounded-2xl border border-gray-200 bg-white shadow-2xl max-sm:bottom-0 max-sm:right-0 max-sm:h-dvh max-sm:w-dvh max-sm:rounded-none max-sm:border-0">
+        <div className="fixed bottom-24 right-6 z-50 flex h-150 w-95 flex-col rounded-2xl border border-gray-200 bg-white shadow-2xl max-sm:bottom-0 max-sm:right-0 max-sm:h-dvh max-sm:w-screen max-sm:rounded-none max-sm:border-0">
           {/* Header */}
           <div className="flex items-center gap-3 rounded-t-2xl bg-[#0f1117] px-5 py-4 text-white max-sm:rounded-none">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f5b800]">
@@ -232,10 +240,8 @@ export function ChatWidget() {
                   className={`flex max-w-[85%] gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
                 >
                   <div
-                    className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full ${
-                      msg.role === 'user'
-                        ? 'bg-[#0f1117]'
-                        : 'bg-[#f5b800]'
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
+                      msg.role === 'user' ? 'bg-[#0f1117]' : 'bg-[#f5b800]'
                     }`}
                   >
                     {msg.role === 'user' ? (
@@ -264,7 +270,7 @@ export function ChatWidget() {
             {isLoading && (
               <div className="mb-4 flex justify-start">
                 <div className="flex max-w-[85%] gap-2">
-                  <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[#f5b800]">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f5b800]">
                     <Bot size={14} className="text-black" />
                   </div>
                   <div className="rounded-2xl bg-gray-100 px-4 py-3">
@@ -297,7 +303,7 @@ export function ChatWidget() {
           )}
 
           {/* Input */}
-          <div className="border-t border-gray-200 px-4 py-3">
+          <div className="border-t border-gray-200 px-4 py-3 max-sm:pb-safe">
             <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 py-1.5 focus-within:border-[#f5b800] focus-within:ring-1 focus-within:ring-[#f5b800]">
               <input
                 ref={inputRef}
@@ -306,7 +312,9 @@ export function ChatWidget() {
                 onChange={(e) => {
                   if (!isCollectingLead) setInput(e.target.value)
                 }}
-                onKeyDown={isCollectingLead ? handleLeadInputKeyDown : handleKeyDown}
+                onKeyDown={
+                  isCollectingLead ? handleLeadInputKeyDown : handleKeyDown
+                }
                 placeholder={
                   isCollectingLead
                     ? leadStep === 1
@@ -336,7 +344,7 @@ export function ChatWidget() {
                   isLoading ||
                   (isCollectingLead ? !input.trim() : !input.trim())
                 }
-                className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-[#f5b800] text-black transition-colors hover:bg-[#e0a700] disabled:opacity-50"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#f5b800] text-black transition-colors hover:bg-[#e0a700] disabled:opacity-50"
               >
                 <Send size={15} />
               </button>

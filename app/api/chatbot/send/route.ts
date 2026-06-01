@@ -91,9 +91,10 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: limitError }, { status: 429 })
     }
 
-    await saveMessage(session.sessionId, 'user', message.trim())
-
-    const chunks = await searchContent(message)
+    const [, chunks] = await Promise.all([
+      saveMessage(session.sessionId, 'user', message.trim()),
+      searchContent(message),
+    ])
 
     const context =
       chunks.length > 0
@@ -105,8 +106,13 @@ export async function POST(req: NextRequest) {
       .replace('{{QUESTION}}', message)
 
     let aiResponse: string
+    let usedModel: string | null = null
     try {
-      aiResponse = await queryOpenRouter(systemPrompt, message)
+      const result = await queryOpenRouter(systemPrompt, message, {
+        sessionId: session.sessionId,
+      })
+      aiResponse = result.content
+      usedModel = result.model
     } catch (err) {
       console.error('OpenRouter error:', err)
       aiResponse =
@@ -137,6 +143,7 @@ export async function POST(req: NextRequest) {
       response: aiResponse,
       sessionId: session.sessionId,
       leadCaptured: lead !== null,
+      model: usedModel,
     })
   } catch {
     return Response.json(
@@ -172,31 +179,26 @@ async function searchContent(message: string) {
 
   const searchFields = ['make', 'model', 'bodyType', 'truckSize'] as const
 
-  let vehicleMatch: Record<string, string> = {}
+  const vehicles = await prisma.inventory.findMany({
+    where: {
+      OR: searchFields.flatMap((field) =>
+        words.map((word) => ({ [field]: { contains: word, mode: 'insensitive' as const } })),
+      ),
+    },
+    select: {
+      id: true, name: true, make: true, model: true, year: true, vatPrice: true,
+      mileage: true, condition: true, bodyType: true, truckSize: true,
+      transmission: true, fuelType: true, description: true, slug: true,
+    },
+    take: 10,
+  })
 
-  for (const field of searchFields) {
-    for (const word of words) {
-      const vehicles = await prisma.inventory.findMany({
-        where: { [field]: { contains: word, mode: 'insensitive' } },
-        select: { id: true, name: true, make: true, model: true, year: true, vatPrice: true, mileage: true, condition: true, bodyType: true, truckSize: true, transmission: true, fuelType: true, description: true, slug: true },
-        take: 10,
-      })
-
-      if (vehicles.length > 0) {
-        for (const v of vehicles) {
-          const key = v.id
-          if (!vehicleMatch[key]) {
-            vehicleMatch[key] = buildVehicleContent(v)
-          }
-        }
-      }
+  if (vehicles.length > 0) {
+    const seen = new Map<string, string>()
+    for (const v of vehicles) {
+      if (!seen.has(v.id)) seen.set(v.id, buildVehicleContent(v))
     }
-  }
-
-  const vehicleChunks = Object.values(vehicleMatch)
-
-  if (vehicleChunks.length > 0) {
-    return vehicleChunks.slice(0, 5).map((content) => ({
+    return [...seen.values()].slice(0, 5).map((content) => ({
       content,
       pageType: 'inventory',
       title: content.split('\n')[0]?.replace('Vehicle: ', '') || '',

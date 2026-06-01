@@ -189,3 +189,23 @@ model IndexingLog {
   @@index([status])
   @@index([startedAt])
 }
+
+model ChatbotErrorLog {
+  id          String   @id @default(cuid())
+
+  model       String
+
+  errorType   String
+
+  statusCode  Int?
+
+  message     String
+
+  sessionId   String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([model, createdAt])
+  @@index([errorType, createdAt])
+}
