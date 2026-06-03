@@ -32,9 +32,8 @@ export const metadata: Metadata = {
   ),
 
   title: {
-    default:
-      'A-Z Truck Sales | Used Rigid Trucks 1.5-18 Ton | Alberton, Gauteng',
-    template: '%s | A-Z Truck Sales | 25+ Years Trusted Truck Dealer',
+    default: 'A-Z Truck Sales | Used Rigid Trucks Gauteng',
+    template: '%s | A-Z Truck Sales',
   },
 
   description:
@@ -110,7 +109,12 @@ const localBusinessSchema = {
   description:
     "Gauteng's trusted commercial vehicle specialist selling pre-owned rigid trucks from 1.5 to 18 ton. 25+ years experience in truck sales, restoration and spares.",
   url: 'https://www.a-ztrucksales.com',
-  logo: 'https://www.a-ztrucksales.com/images/logo.png',
+  logo: {
+    '@type': 'ImageObject',
+    url: 'https://www.a-ztrucksales.com/images/logo.png',
+    width: 400,
+    height: 120,
+  },
   image: 'https://www.a-ztrucksales.com/og-image.webp',
 
   priceRange: 'ZAR 150,000 - ZAR 1,200,000',
@@ -131,12 +135,6 @@ const localBusinessSchema = {
       dayOfWeek: 'Saturday',
       opens: '08:00',
       closes: '13:00',
-    },
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: 'Sunday',
-      opens: '00:00',
-      closes: '00:00',
     },
   ],
 
@@ -173,9 +171,13 @@ const localBusinessSchema = {
     'https://www.google.com/maps/place/A-Z+Truck+Sales/@-26.2560922,28.1414523,17z',
   ],
 
-  foundingDate: '2000',
+  foundingDate: '2000-01-01',
 
-  employeeCount: '10-50',
+  numberOfEmployees: {
+    '@type': 'QuantitativeValue',
+    minValue: 10,
+    maxValue: 50,
+  },
 
   aggregateRating: {
     '@type': 'AggregateRating',
@@ -189,8 +191,6 @@ const localBusinessSchema = {
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  '@id': 'https://www.a-ztrucksales.com/#faq',
-  name: 'A-Z Truck Sales - Frequently Asked Questions',
   mainEntity: [
     {
       '@type': 'Question',
@@ -291,14 +291,14 @@ const breadcrumbSchema = {
     {
       '@type': 'ListItem',
       position: 2,
-      name: 'Inventory',
+      name: 'Truck Inventory',
       item: 'https://www.a-ztrucksales.com/inventory',
     },
     {
       '@type': 'ListItem',
       position: 3,
-      name: 'About Us',
-      item: 'https://www.a-ztrucksales.com/about',
+      name: 'Truck Spares',
+      item: 'https://www.a-ztrucksales.com/spares',
     },
     {
       '@type': 'ListItem',

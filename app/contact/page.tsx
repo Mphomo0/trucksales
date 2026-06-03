@@ -141,8 +141,6 @@ const localBusinessSchema = {
   const contactFaqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    '@id': 'https://www.a-ztrucksales.com/contact/#faq',
-    name: 'Contact - Frequently Asked Questions',
     mainEntity: contactFaqs.map((faq) => ({
       '@type': 'Question',
       name: faq.question,

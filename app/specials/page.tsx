@@ -144,8 +144,6 @@ async function getSpecialsData() {
   const specialsFaqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    '@id': 'https://www.a-ztrucksales.com/specials/#faq',
-    name: 'Specials - Frequently Asked Questions',
     mainEntity: specialsFaqs.map((faq) => ({
       '@type': 'Question',
       name: faq.question,

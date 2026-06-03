@@ -40,34 +40,47 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   let title = `${spare.name} | ${spare.category}`
-  if (title.length > 42) {
-    title = title.substring(0, 39) + '...'
+  if (title.length > 40) {
+    title = title.substring(0, 37) + '...'
   }
 
-  const baseDescription = `${spare.condition} ${spare.name} for ${spare.make}.`.trim()
-  const charsLeft = 150 - baseDescription.length
+  const baseDescription = `${spare.condition} ${spare.name} for ${spare.make} trucks. Available at A-Z Truck Sales, Gauteng.`.trim()
+  const charsLeft = 155 - baseDescription.length
   let description = baseDescription
-  
+
   if (charsLeft > 5 && spare.description) {
     const cleanDesc = spare.description.replace(/\s+/g, ' ').trim()
     description = `${baseDescription} ${cleanDesc.substring(0, charsLeft)}${cleanDesc.length > charsLeft ? '...' : ''}`
   }
 
-  
-  const images = Array.isArray(spare.images) 
-    ? (spare.images as any[]).map(img => img.url)
+  const canonicalUrl = `https://www.a-ztrucksales.com/spares/${spare.slug}`
+  const images = Array.isArray(spare.images)
+    ? (spare.images as any[]).map((img) => img.url)
     : []
+  const ogImage = images.length > 0
+    ? [{ url: images[0], width: 1200, height: 630, alt: title }]
+    : [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'A-Z Truck Sales' }]
 
   return {
     title,
     description,
     openGraph: {
+      type: 'website',
+      locale: 'en_ZA',
+      url: canonicalUrl,
+      siteName: 'A-Z Truck Sales',
       title,
       description,
-      images: images.length > 0 ? [images[0]] : [],
+      images: ogImage,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage[0].url],
     },
     alternates: {
-      canonical: `https://www.a-ztrucksales.com/spares/${spare.slug}`,
+      canonical: canonicalUrl,
     },
   }
 }
@@ -107,8 +120,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const spareFaqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    '@id': `https://www.a-ztrucksales.com/spares/${spare.slug}/#faq`,
-    name: `${spare.name} - Frequently Asked Questions`,
     mainEntity: [
       {
         '@type': 'Question',
@@ -155,12 +166,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return (
     <div>
-      <div className="sr-only">
-        <h1>{spare.name}</h1>
-        <span>Author: A-Z Truck Sales</span>
-        <span>Last Updated: 2026-04-27</span>
-        {/* application/ld+json */}
-      </div>
       <JsonLd data={productSchema} />
       <JsonLd data={spareFaqSchema} />
       <SpareDetail spare={spare} />

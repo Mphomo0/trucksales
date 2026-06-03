@@ -63,8 +63,6 @@ const tradeInFaqs = [
   const tradeInFaqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    '@id': 'https://www.a-ztrucksales.com/sell-your-truck/#faq',
-    name: 'Sell Your Truck - Frequently Asked Questions',
     mainEntity: tradeInFaqs.map((faq) => ({
       '@type': 'Question',
       name: faq.question,

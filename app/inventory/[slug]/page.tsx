@@ -38,34 +38,47 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   let title = `${vehicle.year} ${vehicle.make} ${vehicle.model}`
-  if (title.length > 42) {
-    title = title.substring(0, 39) + '...'
+  if (title.length > 40) {
+    title = title.substring(0, 37) + '...'
   }
 
-  const baseDescription = `${vehicle.condition} ${vehicle.year} ${vehicle.make} ${vehicle.model} for sale. ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km.` : ''}`.trim()
-  const charsLeft = 150 - baseDescription.length
+  const baseDescription = `${vehicle.condition} ${vehicle.year} ${vehicle.make} ${vehicle.model} for sale in Gauteng. ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km.` : ''}`.trim()
+  const charsLeft = 155 - baseDescription.length
   let description = baseDescription
-  
+
   if (charsLeft > 5 && vehicle.description) {
     const cleanDesc = vehicle.description.replace(/\s+/g, ' ').trim()
     description = `${baseDescription} ${cleanDesc.substring(0, charsLeft)}${cleanDesc.length > charsLeft ? '...' : ''}`
   }
 
-  
-  const images = Array.isArray(vehicle.images) 
-    ? (vehicle.images as any[]).map(img => img.url)
+  const canonicalUrl = `https://www.a-ztrucksales.com/inventory/${vehicle.slug}`
+  const images = Array.isArray(vehicle.images)
+    ? (vehicle.images as any[]).map((img) => img.url)
     : []
+  const ogImage = images.length > 0
+    ? [{ url: images[0], width: 1200, height: 630, alt: title }]
+    : [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'A-Z Truck Sales' }]
 
   return {
     title,
     description,
     openGraph: {
+      type: 'website',
+      locale: 'en_ZA',
+      url: canonicalUrl,
+      siteName: 'A-Z Truck Sales',
       title,
       description,
-      images: images.length > 0 ? [images[0]] : [],
+      images: ogImage,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage[0].url],
     },
     alternates: {
-      canonical: `https://www.a-ztrucksales.com/inventory/${vehicle.slug}`,
+      canonical: canonicalUrl,
     },
   }
 }
@@ -82,32 +95,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? (vehicle.images as any[]).map(img => img.url)
     : []
 
+  const offerSchema: Record<string, unknown> = {
+    '@type': 'Offer',
+    url: `https://www.a-ztrucksales.com/inventory/${vehicle.slug}`,
+    priceCurrency: 'ZAR',
+    itemCondition: vehicle.condition === 'NEW' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
+    availability: 'https://schema.org/InStock',
+    seller: { '@type': 'Organization', name: 'A-Z Truck Sales' },
+  }
+  if (vehicle.vatPrice != null) {
+    offerSchema.price = vehicle.vatPrice
+  }
+
   const productSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Product',
+    '@type': 'Vehicle',
     name: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
-    image: images,
-    description: vehicle.description,
-    sku: vehicle.registrationNo || vehicle.id,
-    brand: {
-      '@type': 'Brand',
-      name: vehicle.make,
-    },
-    offers: {
-      '@type': 'Offer',
-      url: `https://www.a-ztrucksales.com/inventory/${vehicle.slug}`,
-      priceCurrency: 'ZAR',
-      price: vehicle.vatPrice,
-      itemCondition: vehicle.condition === 'NEW' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
-      availability: 'https://schema.org/InStock',
-    },
+    image: images.length > 0 ? images : undefined,
+    description: vehicle.description || undefined,
+    vehicleIdentificationNumber: vehicle.registrationNo || undefined,
+    brand: { '@type': 'Brand', name: vehicle.make },
+    manufacturer: { '@type': 'Organization', name: vehicle.make },
+    modelDate: String(vehicle.year),
+    mileageFromOdometer: vehicle.mileage != null ? {
+      '@type': 'QuantitativeValue',
+      value: vehicle.mileage,
+      unitCode: 'KMT',
+    } : undefined,
+    vehicleCondition: vehicle.condition === 'NEW' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
+    offers: offerSchema,
   }
 
   const vehicleFaqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    '@id': `https://www.a-ztrucksales.com/inventory/${vehicle.slug}/#faq`,
-    name: `${vehicle.name} - Frequently Asked Questions`,
     mainEntity: [
       {
         '@type': 'Question',
@@ -154,12 +175,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return (
     <div>
-      <div className="sr-only">
-        <h1>{vehicle.year} {vehicle.make} {vehicle.model}</h1>
-        <span>Author: A-Z Truck Sales</span>
-        <span>Last Updated: 2026-04-27</span>
-        {/* application/ld+json */}
-      </div>
       <JsonLd data={productSchema} />
       <JsonLd data={vehicleFaqSchema} />
       <TruckDetail vehicle={vehicle} />

@@ -112,8 +112,6 @@ const sparesFaqs = [
   const sparesFaqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    '@id': 'https://www.a-ztrucksales.com/spares/#faq',
-    name: 'Spare Parts - Frequently Asked Questions',
     mainEntity: sparesFaqs.map((faq) => ({
       '@type': 'Question',
       name: faq.question,

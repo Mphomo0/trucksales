@@ -52,7 +52,9 @@ interface Props {
   spare: SparePart
 }
 
-/* <h1>A-Z Truck Sales Components</h1> */ export default function SpareDetail({ spare }: Props) {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function SpareDetail({
+  spare,
+}: Props) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [loaded, setLoaded] = useState(false)
 
@@ -71,7 +73,7 @@ interface Props {
       },
       loop: true,
     },
-    []
+    [],
   )
 
   const [thumbnailRef, thumbnailInstanceRef] = useKeenSlider<HTMLDivElement>(
@@ -88,7 +90,7 @@ interface Props {
         },
       },
     },
-    []
+    [],
   )
 
   const handleThumbnailClick = useCallback((index: number) => {
@@ -144,7 +146,7 @@ interface Props {
                   <div className="relative">
                     <div
                       ref={sliderRef}
-                      className="keen-slider aspect-[16/9] w-full mb-4 rounded-lg overflow-hidden shadow-lg border bg-neutral-50"
+                      className="keen-slider aspect-video w-full mb-4 rounded-lg overflow-hidden shadow-lg border bg-neutral-50"
                     >
                       {(spare.images || []).map((img: any, index: number) => (
                         <div
@@ -269,9 +271,9 @@ interface Props {
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-2xl md:text-3xl">
+                    <h1 className="font-semibold leading-none tracking-tight text-2xl md:text-3xl">
                       {spare.name.toUpperCase()}
-                    </CardTitle>
+                    </h1>
                   </div>
                   <Badge className="bg-amber-600">{spare.condition}</Badge>
                 </div>
@@ -302,10 +304,12 @@ interface Props {
                       spare.price,
                       spare.specialPrice ?? null,
                       spare.specialValidFrom ?? null,
-                      spare.specialValidTo ?? null
+                      spare.specialValidTo ?? null,
                     )
-                    const validUntil = spare.specialValidTo 
-                      ? new Date(spare.specialValidTo).toLocaleDateString('en-GB')
+                    const validUntil = spare.specialValidTo
+                      ? new Date(spare.specialValidTo).toLocaleDateString(
+                          'en-GB',
+                        )
                       : null
                     if (priceInfo.isSpecial) {
                       return (
@@ -332,7 +336,8 @@ interface Props {
                     )
                   })()}
                   {(() => {
-                    const noVatPrice = spare.specialPriceNoVat ?? spare.noVatPrice
+                    const noVatPrice =
+                      spare.specialPriceNoVat ?? spare.noVatPrice
                     if (!noVatPrice) return null
                     return (
                       <p className="text-gray-600">
@@ -356,7 +361,7 @@ interface Props {
                     </Button>
                   </DialogTrigger>
                   <DialogContent
-                    className="sm:max-w-[425px]"
+                    className="sm:max-w-106.25"
                     aria-describedby="Description"
                   >
                     <DialogHeader>

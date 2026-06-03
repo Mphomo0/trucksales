@@ -67,7 +67,9 @@ interface Props {
   vehicle: Vehicle
 }
 
-/* <h1>A-Z Truck Sales Components</h1> */ export default function TruckDetail({ vehicle }: Props) {
+/* <h1>A-Z Truck Sales Components</h1> */ export default function TruckDetail({
+  vehicle,
+}: Props) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [loaded, setLoaded] = useState(false)
 
@@ -86,7 +88,7 @@ interface Props {
       },
       loop: true,
     },
-    []
+    [],
   )
 
   const [thumbnailRef, thumbnailInstanceRef] = useKeenSlider<HTMLDivElement>(
@@ -103,7 +105,7 @@ interface Props {
         },
       },
     },
-    []
+    [],
   )
 
   const getVideoLinkUrl = (link: any): string | null => {
@@ -154,7 +156,7 @@ interface Props {
                   <div className="relative">
                     <div
                       ref={sliderRef}
-                      className="keen-slider aspect-[16/9] w-full mb-4 rounded-lg overflow-hidden shadow-lg border bg-neutral-50"
+                      className="keen-slider aspect-video w-full mb-4 rounded-lg overflow-hidden shadow-lg border bg-neutral-50"
                     >
                       {(vehicle.images || []).map((img: any, index: number) => (
                         <div
@@ -279,10 +281,10 @@ interface Props {
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-2xl md:text-3xl">
+                    <h1 className="font-semibold leading-none tracking-tight text-2xl md:text-3xl">
                       {vehicle.year} {vehicle.make.toUpperCase()}{' '}
                       {vehicle.model.toUpperCase()}
-                    </CardTitle>
+                    </h1>
                   </div>
                   <Badge className="bg-amber-600">{vehicle.condition}</Badge>
                 </div>
@@ -352,10 +354,12 @@ interface Props {
                       vehicle.vatPrice,
                       vehicle.specialPrice ?? null,
                       vehicle.specialValidFrom ?? null,
-                      vehicle.specialValidTo ?? null
+                      vehicle.specialValidTo ?? null,
                     )
-                    const validUntil = vehicle.specialValidTo 
-                      ? new Date(vehicle.specialValidTo).toLocaleDateString('en-GB')
+                    const validUntil = vehicle.specialValidTo
+                      ? new Date(vehicle.specialValidTo).toLocaleDateString(
+                          'en-GB',
+                        )
                       : null
                     if (priceInfo.isSpecial) {
                       return (
@@ -399,7 +403,7 @@ interface Props {
                     </Button>
                   </DialogTrigger>
                   <DialogContent
-                    className="sm:max-w-[425px]"
+                    className="sm:max-w-106.25"
                     aria-describedby="Description"
                   >
                     <DialogHeader>

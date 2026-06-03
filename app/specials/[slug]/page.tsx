@@ -38,17 +38,39 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   let title = `Special Offer: ${inventory.year} ${inventory.make}`
-  if (title.length > 42) {
-    title = title.substring(0, 39) + '...'
+  if (title.length > 40) {
+    title = title.substring(0, 37) + '...'
   }
 
   const description = `Don't miss this special offer on a ${inventory.year} ${inventory.make} ${inventory.model}. Limited time deal at A-Z Truck Sales.`
 
+  const canonicalUrl = `https://www.a-ztrucksales.com/specials/${slug}`
+  const images = Array.isArray(inventory.images)
+    ? (inventory.images as any[]).map((img) => img.url)
+    : []
+  const ogImage = images.length > 0
+    ? [{ url: images[0], width: 1200, height: 630, alt: title }]
+    : [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'A-Z Truck Sales' }]
+
   return {
     title,
     description,
-    openGraph: { title, description },
-    alternates: { canonical: `https://www.a-ztrucksales.com/specials/${slug}` },
+    openGraph: {
+      type: 'website',
+      locale: 'en_ZA',
+      url: canonicalUrl,
+      siteName: 'A-Z Truck Sales',
+      title,
+      description,
+      images: ogImage,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage[0].url],
+    },
+    alternates: { canonical: canonicalUrl },
   }
 }
 
@@ -79,29 +101,41 @@ export default async function Special({ params }: Props) {
     ? (inventory.images as any[]).map(img => img.url)
     : []
 
+  const specialOfferSchema: Record<string, unknown> = {
+    '@type': 'Offer',
+    url: `https://www.a-ztrucksales.com/specials/${slug}`,
+    priceCurrency: 'ZAR',
+    itemCondition: inventory.condition === 'NEW' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
+    availability: 'https://schema.org/InStock',
+    seller: { '@type': 'Organization', name: 'A-Z Truck Sales' },
+  }
+  const specialPrice = inventory.specialPrice ?? inventory.vatPrice
+  if (specialPrice != null) {
+    specialOfferSchema.price = specialPrice
+  }
+
   const productSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Product',
+    '@type': 'Vehicle',
     name: `${inventory.year} ${inventory.make} ${inventory.model}`,
-    image: images,
-    description: inventory.description,
-    sku: inventory.registrationNo || inventory.id,
+    image: images.length > 0 ? images : undefined,
+    description: inventory.description || undefined,
+    vehicleIdentificationNumber: inventory.registrationNo || undefined,
     brand: { '@type': 'Brand', name: inventory.make },
-    offers: {
-      '@type': 'Offer',
-      url: `https://www.a-ztrucksales.com/specials/${slug}`,
-      priceCurrency: 'ZAR',
-      price: inventory.specialPrice || inventory.vatPrice,
-      itemCondition: inventory.condition === 'NEW' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
-      availability: 'https://schema.org/InStock',
-    },
+    manufacturer: { '@type': 'Organization', name: inventory.make },
+    modelDate: String(inventory.year),
+    mileageFromOdometer: inventory.mileage != null ? {
+      '@type': 'QuantitativeValue',
+      value: inventory.mileage,
+      unitCode: 'KMT',
+    } : undefined,
+    vehicleCondition: inventory.condition === 'NEW' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
+    offers: specialOfferSchema,
   }
 
   const specialFaqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    '@id': `https://www.a-ztrucksales.com/specials/${inventory.slug}/#faq`,
-    name: `${inventory.name} - Frequently Asked Questions`,
     mainEntity: [
       {
         '@type': 'Question',
