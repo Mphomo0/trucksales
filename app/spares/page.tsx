@@ -18,10 +18,26 @@ import {
 import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
-  title: 'Truck Spares & Parts | A-Z Truck Sales Gauteng',
-  description: 'Quality used truck spares in Gauteng. Engines, gearboxes, diffs for Isuzu, Hino, Mercedes-Benz, Ford. Workshop-tested parts.',
+  title: 'Used Truck Spares & Parts in Gauteng | Alberton',
+  description: 'Quality used truck spares and parts in Gauteng. Engines, gearboxes, differentials for Isuzu, Hino, Mercedes-Benz, DAF, MAN & Ford. All workshop-tested. Visit Alberton or call 011 902 6071.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/spares',
+  },
+  openGraph: {
+    title: 'Used Truck Spares & Parts in Gauteng | A-Z Truck Sales',
+    description: 'Workshop-tested truck spares in Gauteng. Engines, gearboxes, diffs for all major brands. Visit our Alberton branch or call 011 902 6071.',
+    url: 'https://www.a-ztrucksales.com/spares',
+    siteName: 'A-Z Truck Sales',
+    images: [
+      {
+        url: 'https://www.a-ztrucksales.com/og-image.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Used Truck Spares & Parts in Gauteng – A-Z Truck Sales',
+      },
+    ],
+    locale: 'en_ZA',
+    type: 'website',
   },
 }
 

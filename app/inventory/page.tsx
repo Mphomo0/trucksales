@@ -17,10 +17,26 @@ import { prisma } from '@/lib/prisma'
 export const revalidate = 86400
 
 export const metadata: Metadata = {
-  title: 'Used Truck Inventory | A-Z Truck Sales South Africa',
-  description: 'Browse quality used trucks for sale at A-Z Truck Sales. 1.5-16 ton rigids, all workshop-serviced. Isuzu, Hino, Mercedes-Benz, Ford.',
+  title: 'Used Trucks for Sale in Gauteng | Alberton & Boksburg',
+  description: 'Browse 100+ quality used rigid trucks for sale in Gauteng. 1.5 to 16 ton, all workshop-serviced & COF-passed. Isuzu, Hino, Mercedes-Benz, DAF, MAN. Visit Alberton or Boksburg.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/inventory',
+  },
+  openGraph: {
+    title: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales',
+    description: 'Browse 100+ quality used rigid trucks for sale in Gauteng. Workshop-serviced, COF-passed. Visit our Alberton or Boksburg branches.',
+    url: 'https://www.a-ztrucksales.com/inventory',
+    siteName: 'A-Z Truck Sales',
+    images: [
+      {
+        url: 'https://www.a-ztrucksales.com/og-image.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Used Trucks for Sale in Gauteng – A-Z Truck Sales Inventory',
+      },
+    ],
+    locale: 'en_ZA',
+    type: 'website',
   },
 }
 

@@ -13,7 +13,7 @@ import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Used Trucks for Sale | A-Z Truck Sales Gauteng',
+  title: { absolute: 'Used Trucks for Sale | A-Z Truck Sales Gauteng' },
   description: 'A-Z Truck Sales sells quality used trucks in Gauteng. 25+ years experience, in-house workshop, 100+ trucks in stock. Visit Alberton or Boksburg.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/',
@@ -59,6 +59,7 @@ const organizationSchema = {
     latitude: '-26.2694',
     longitude: '28.1221',
   },
+  foundingDate: '1999-01-01',
   areaServed: [
     {
       '@type': 'State',
@@ -71,6 +72,10 @@ const organizationSchema = {
   ],
   sameAs: [
     'https://web.facebook.com/p/A-Z-TRUCK-SALES-100057330584780/',
+    'https://www.linkedin.com/company/a-z-truck-sales/?originalSubdomain=za',
+    'https://www.youtube.com/@A-ZTRUCKSALES',
+    'https://wa.me/27781277393',
+    'https://maps.google.com/?cid=4407112129060334219',
   ],
 }
 
@@ -86,7 +91,7 @@ const autoDealerSchema = {
   aggregateRating: {
     '@type': 'AggregateRating',
     ratingValue: '4.1',
-    reviewCount: '50',
+    reviewCount: '341',
     bestRating: '5',
     worstRating: '1',
   },
@@ -103,12 +108,19 @@ const autoDealerSchema = {
     latitude: '-26.2694',
     longitude: '28.1221',
   },
+  foundingDate: '1999-01-01',
   openingHoursSpecification: [
     {
       '@type': 'OpeningHoursSpecification',
       dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
       opens: '08:00',
       closes: '17:00',
+    },
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: 'Saturday',
+      opens: '08:00',
+      closes: '13:00',
     },
   ],
   areaServed: {
@@ -160,6 +172,9 @@ const autoDealerSchema = {
     'Hino',
     'Mercedes-Benz',
     'Ford',
+    'DAF',
+    'MAN',
+    'UD Trucks',
   ],
   employee: {
     '@type': 'Organization',
@@ -202,7 +217,9 @@ const localBusinessAlbertonSchema = {
   aggregateRating: {
     '@type': 'AggregateRating',
     ratingValue: '4.1',
-    reviewCount: '50',
+    reviewCount: '341',
+    bestRating: '5',
+    worstRating: '1',
   },
 }
 
@@ -254,7 +271,10 @@ const homeWebsiteSchema = {
   },
   potentialAction: {
     '@type': 'SearchAction',
-    target: 'https://www.a-ztrucksales.com/inventory?q={search_term_string}',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://www.a-ztrucksales.com/inventory?search={search_term_string}',
+    },
     'query-input': 'required name=search_term_string',
   },
 }

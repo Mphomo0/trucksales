@@ -18,10 +18,26 @@ import {
 } from '@/components/ui/accordion'
 
 export const metadata: Metadata = {
-  title: 'Contact Us | A-Z Truck Sales Gauteng',
-  description: 'Contact A-Z Truck Sales in Alberton & Boksburg, Gauteng. Call 011 902 6071 for quality used commercial vehicles and trucks.',
+  title: 'Contact Us | Alberton & Boksburg, Gauteng',
+  description: 'Contact A-Z Truck Sales in Alberton (011 902 6071) or Boksburg (083 234 5377). Mon–Fri 8AM–5PM, Sat 8AM–1PM. Ask about used trucks, spares, or selling your vehicle.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/contact',
+  },
+  openGraph: {
+    title: 'Contact A-Z Truck Sales | Alberton & Boksburg, Gauteng',
+    description: 'Two branches: Alberton (011 902 6071) and Boksburg (083 234 5377). Mon–Fri 8AM–5PM, Sat 8AM–1PM. Quality used trucks and spares.',
+    url: 'https://www.a-ztrucksales.com/contact',
+    siteName: 'A-Z Truck Sales',
+    images: [
+      {
+        url: 'https://www.a-ztrucksales.com/og-image.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Contact A-Z Truck Sales – Alberton & Boksburg, Gauteng',
+      },
+    ],
+    locale: 'en_ZA',
+    type: 'website',
   },
 }
 
@@ -52,7 +68,7 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'MotorVehicleBusiness',
   name: 'A-Z Truck Sales',
-  image: 'https://www.a-ztrucksales.com/og-image.jpg',
+  image: 'https://www.a-ztrucksales.com/og-image.webp',
   address: {
     '@type': 'PostalAddress',
     streetAddress: '9 Chrislou Cres',

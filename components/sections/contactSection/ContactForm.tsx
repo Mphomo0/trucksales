@@ -74,7 +74,7 @@ function generateCaptcha() {
     <div className="py-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-6 bg-transparent md:bg-white md:shadow-lg rmd:ounded-lg p-12">
         <h2 className="text-center text-3xl font-bold text-gray-900 mb-8">
-          Contact Form
+          Get a Free Quote
         </h2>
 
         <form className="px-4 md:px-8" onSubmit={handleSubmit(onSubmit)}>

@@ -11,9 +11,25 @@ import JsonLd from '@/components/global/JsonLd'
 
 export const metadata: Metadata = {
   title: 'Sell Your Truck | We Buy Used Trucks Gauteng',
-  description: 'Sell or trade-in your used truck with A-Z Truck Sales. Competitive offers, fast payment, serving Gauteng and all South Africa.',
+  description: 'Sell or trade in your used commercial truck with A-Z Truck Sales. We buy rigid trucks 1.5–16 ton. Fast competitive offers, same-day process. Serving Gauteng and all South Africa.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/sell-your-truck',
+  },
+  openGraph: {
+    title: 'Sell Your Truck | We Buy Used Trucks Gauteng | A-Z Truck Sales',
+    description: 'Sell or trade in your used commercial truck with A-Z Truck Sales. Fast, competitive offers on rigid trucks 1.5–16 ton. Alberton & Boksburg.',
+    url: 'https://www.a-ztrucksales.com/sell-your-truck',
+    siteName: 'A-Z Truck Sales',
+    images: [
+      {
+        url: 'https://www.a-ztrucksales.com/og-image.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Sell Your Truck – A-Z Truck Sales Gauteng',
+      },
+    ],
+    locale: 'en_ZA',
+    type: 'website',
   },
 }
 
@@ -82,8 +98,16 @@ const tradeInFaqs = [
       </div>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={tradeInFaqSchema} />
-      
+
       <section>
+        <div className="bg-amber-600 py-12 text-center text-white">
+          <h2 className="text-3xl md:text-4xl font-bold mb-2">
+            We Buy Used Trucks — Fast, Fair, No Hassle
+          </h2>
+          <p className="text-amber-50 text-lg max-w-2xl mx-auto">
+            Submit your truck details and get a competitive offer within 24 hours. Serving Gauteng and all South Africa.
+          </p>
+        </div>
         <TradeInForm />
         <Process />
       </section>
