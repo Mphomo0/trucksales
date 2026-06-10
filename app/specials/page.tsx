@@ -13,25 +13,9 @@ import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
   title: 'Truck Specials | Used Truck Deals Gauteng',
-  description: 'Save on quality used trucks and spares at A-Z Truck Sales Gauteng. Weekly specials on workshop-serviced rigid trucks. Limited-time offers – browse now or call 011 902 6071.',
+  description: 'Save on used trucks at A-Z Truck Sales. Weekly specials on quality rigid trucks in Gauteng. Limited time offers - browse now.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/specials',
-  },
-  openGraph: {
-    title: 'Truck Specials & Deals in Gauteng | A-Z Truck Sales',
-    description: 'Weekly specials on used rigid trucks and spares in Gauteng. Workshop-serviced, COF-passed. Limited time – call 011 902 6071 or browse online.',
-    url: 'https://www.a-ztrucksales.com/specials',
-    siteName: 'A-Z Truck Sales',
-    images: [
-      {
-        url: 'https://www.a-ztrucksales.com/og-image.webp',
-        width: 1200,
-        height: 630,
-        alt: 'Used Truck Specials in Gauteng – A-Z Truck Sales',
-      },
-    ],
-    locale: 'en_ZA',
-    type: 'website',
   },
 }
 

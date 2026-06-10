@@ -48,22 +48,12 @@ import Link from 'next/link'
             </li>
             <li>
               <Link href="/inventory" className="hover:underline">
-                Truck Inventory
-              </Link>
-            </li>
-            <li>
-              <Link href="/spares" className="hover:underline">
-                Truck Spares
+                Inventory
               </Link>
             </li>
             <li>
               <Link href="/specials" className="hover:underline">
                 Specials
-              </Link>
-            </li>
-            <li>
-              <Link href="/sell-your-truck" className="hover:underline">
-                Sell Your Truck
               </Link>
             </li>
             <li>
