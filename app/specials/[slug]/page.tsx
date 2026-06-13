@@ -116,7 +116,7 @@ export default async function Special({ params }: Props) {
 
   const productSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Vehicle',
+    '@type': 'Car',
     name: `${inventory.year} ${inventory.make} ${inventory.model}`,
     image: images.length > 0 ? images : undefined,
     description: inventory.description || undefined,

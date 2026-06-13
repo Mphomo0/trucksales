@@ -109,7 +109,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const productSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Vehicle',
+    '@type': 'Car',
     name: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
     image: images.length > 0 ? images : undefined,
     description: vehicle.description || undefined,
