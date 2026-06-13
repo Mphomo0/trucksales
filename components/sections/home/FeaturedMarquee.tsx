@@ -28,6 +28,12 @@ interface TruckItem {
   specialValidTo: Date | string | null
 }
 
+const noImage = (
+  <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+    No Image Available
+  </div>
+)
+
 export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
   return (
     <section className="py-16">
@@ -77,9 +83,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                             priority={index < 3}
                           />
                         ) : (
-                          <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
-                            No Image Available
-                          </div>
+                          noImage
                         )}
                         <Badge className="absolute top-2 right-2 bg-amber-600">
                           {truck.condition}
@@ -131,7 +135,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                             <Badge>{truck.transmission}</Badge>
                           )}
                         </div>
-                        <Button asChild className="w-full mt-auto">
+                        <Button className="w-full mt-auto">
                           View Details
                         </Button>
                       </CardContent>

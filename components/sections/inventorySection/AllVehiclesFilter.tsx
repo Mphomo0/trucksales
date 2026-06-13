@@ -1,7 +1,3 @@
-/* author: A-Z Truck Sales */
-/* datePublished: 2026-04-27 */
-/* application/ld+json */
-
 'use client'
 
 import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react'
@@ -160,7 +156,7 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
             <Badge variant="secondary">{truck.transmission}</Badge>
           )}
         </div>
-        <Button asChild className="w-full">
+        <Button className="w-full">
           View Details
         </Button>
       </CardContent>
@@ -168,7 +164,7 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
   )
 })
 
-/* <h1>A-Z Truck Sales Components</h1> */ export default function AllVehiclesFilter({
+export default function AllVehiclesFilter({
   initialVehicles = [],
   initialMeta,
   initialFilterOptions,
@@ -305,7 +301,7 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
     loadInitialData()
   }, [])
 
-  // Filter change effect with debouncing - resets to page 1
+  // Debounce only the search input — select filters fetch immediately via their handlers
   useEffect(() => {
     if (initialLoad.current) {
       initialLoad.current = false
@@ -313,35 +309,24 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
     }
 
     const timeoutId = setTimeout(() => {
-      const filters = buildFilters(1)
-      fetchTrucks(filters)
+      fetchTrucks(buildFilters(1))
     }, 500)
 
     return () => clearTimeout(timeoutId)
-  }, [
-    searchTerm,
-    makeFilter,
-    modelFilter,
-    bodyTypeFilter,
-    truckSizeFilter,
-    buildFilters,
-    fetchTrucks,
-  ])
+  }, [searchTerm, buildFilters, fetchTrucks])
 
   const getModelsForMake = useMemo(() => {
     if (makeFilter === 'all') return filterOptions.models || []
 
-    const availableModels = trucks
-      .filter((truck) => truck.make?.toLowerCase() === makeFilter.toLowerCase())
-      .map((truck) => truck.model)
-      .filter(Boolean)
-
-    const uniqueModels = [...new Set(availableModels)].sort()
+    const availableModelsLower = new Set(
+      trucks
+        .filter((truck) => truck.make?.toLowerCase() === makeFilter.toLowerCase())
+        .map((truck) => truck.model?.toLowerCase())
+        .filter(Boolean)
+    )
 
     return filterOptions.models.filter((model) =>
-      uniqueModels.some(
-        (availableModel) => availableModel.toLowerCase() === model.toLowerCase()
-      )
+      availableModelsLower.has(model.toLowerCase())
     )
   }, [makeFilter, filterOptions.models, trucks])
 
@@ -426,7 +411,12 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
               </div>
 
               {/* Truck Size */}
-              <Select value={truckSizeFilter} onValueChange={setTruckSizeFilter}>
+              <Select value={truckSizeFilter} onValueChange={(value) => {
+                setTruckSizeFilter(value)
+                const f = buildFilters(1)
+                if (value === 'all') delete f.truckSize; else f.truckSize = value
+                fetchTrucks(f)
+              }}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="All Truck Sizes" />
                 </SelectTrigger>
@@ -441,7 +431,14 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
               </Select>
 
               {/* Make */}
-              <Select value={makeFilter} onValueChange={(value) => { setMakeFilter(value); setModelFilter('all') }}>
+              <Select value={makeFilter} onValueChange={(value) => {
+                setMakeFilter(value)
+                setModelFilter('all')
+                const f = buildFilters(1)
+                delete f.model
+                if (value === 'all') delete f.make; else f.make = value
+                fetchTrucks(f)
+              }}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="All Makes" />
                 </SelectTrigger>
@@ -458,7 +455,12 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
               {/* Model */}
               <Select
                 value={modelFilter}
-                onValueChange={setModelFilter}
+                onValueChange={(value) => {
+                  setModelFilter(value)
+                  const f = buildFilters(1)
+                  if (value === 'all') delete f.model; else f.model = value
+                  fetchTrucks(f)
+                }}
                 disabled={makeFilter === 'all'}
               >
                 <SelectTrigger className="w-full">
@@ -475,7 +477,12 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
               </Select>
 
               {/* Body Type */}
-              <Select value={bodyTypeFilter} onValueChange={setBodyTypeFilter}>
+              <Select value={bodyTypeFilter} onValueChange={(value) => {
+                setBodyTypeFilter(value)
+                const f = buildFilters(1)
+                if (value === 'all') delete f.bodyType; else f.bodyType = value
+                fetchTrucks(f)
+              }}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="All Body Types" />
                 </SelectTrigger>
