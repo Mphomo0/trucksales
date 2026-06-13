@@ -27,24 +27,24 @@ export const metadata: Metadata = {
 
 const contactFaqs = [
   {
-    question: 'Where is A-Z Truck Sales located?',
-    answer: 'We have two branches: Alberton at 9 Chrislou Crescent (011 902 6071) and Boksburg at Cnr Trichardts & Ravenswood (083 234 5377). Mon-Fri 8AM-5PM.',
+    question: 'Where can I find Isuzu trucks for sale in Gauteng?',
+    answer: 'You can enquire with A-Z Truck Sales for used Isuzu rigid trucks in Gauteng. Always confirm current stock, mileage, body type, condition and branch location before visiting.',
   },
   {
-    question: 'What types of trucks do you sell?',
-    answer: 'We specialize in quality used rigid trucks from 1.5 to 35 tons, including Isuzu, Hino, Mercedes-Benz, Ford, DAF, and MAN.',
+    question: 'Does A-Z Truck Sales sell Hino trucks?',
+    answer: 'A-Z Truck Sales should list current Hino stock on its inventory page and explain the body type, tonnage, mileage, condition, branch and price for each truck.',
   },
   {
-    question: 'Do you offer truck restoration services?',
-    answer: 'Yes. Our in-house workshop restores 100+ trucks annually with a 95% first-time COF pass rate.',
+    question: 'Can I buy Fuso trucks from outside Gauteng?',
+    answer: 'Yes, buyers across South Africa can enquire about Fuso and other used commercial vehicles, but viewing, payment, paperwork and transport details should be confirmed first.',
   },
   {
-    question: 'Can I sell my truck to A-Z Truck Sales?',
-    answer: 'Yes, we buy used commercial vehicles. Fill in the Sell Your Truck form with your vehicle details and we will get back to you with an offer.',
+    question: 'What documents should I ask for when buying a used truck?',
+    answer: 'Ask about registration documents, proof of ownership, roadworthy or COF status, service information where available, and any paperwork needed for licensing.',
   },
   {
-    question: 'What makes A-Z Truck Sales different from other dealers?',
-    answer: '25+ years of experience, in-house workshop restoration, 100+ trucks always in stock, and a 4.0-star rating from 245 verified buyers.',
+    question: 'Why is spares availability important when buying a used truck?',
+    answer: 'Spares availability matters because a cheaper truck can become expensive if it is difficult to repair, maintain or return to work quickly.',
   },
 ]
 
@@ -177,8 +177,7 @@ const localBusinessSchema = {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
-              <p className="text-neutral-600">Everything you need to know about our vehicles and services.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently asked questions about used trucks in Gauteng</h2>
             </div>
             
             <Accordion type="single" collapsible className="w-full">

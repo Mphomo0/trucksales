@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 const tradeInFaqs = [
   {
     question: 'What trucks do you buy?',
-    answer: 'We buy used commercial vehicles including rigid trucks from 1.5 to 35 tons. Isuzu, Hino, Mercedes-Benz, Ford, DAF, MAN, and other major brands.',
+    answer: 'We buy used commercial vehicles including rigid trucks from 1.5 to 35 tons. Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso, Toyota, Nissan, Tata, Hyundai, Volkswagen, UD Trucks and other major brands.',
   },
   {
     question: 'How do you value my truck?',

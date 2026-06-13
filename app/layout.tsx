@@ -37,19 +37,20 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Gauteng's trusted commercial truck dealer since 2000. Pre-owned rigid trucks 1.5-35 ton, workshop-serviced & COF-ready. 100+ in stock. Call +27 11 902 6071.",
+    "Gauteng's trusted commercial truck dealer since 1999. Pre-owned rigid trucks 1.5-35 ton, workshop-serviced & COF-ready. 100+ in stock. Call +27 11 902 6071.",
 
   keywords: [
     'used trucks Gauteng',
     'rigid trucks for sale South Africa',
     'commercial vehicles Alberton',
     'truck restoration Gauteng',
-    '35 ton truck for sale',
-    '7.5 ton truck for sale',
-    '3.5 ton truck for sale',
-    '1.5 ton truck for sale',
+    'Isuzu trucks for sale Gauteng',
+    'Hino trucks for sale Gauteng',
+    'Mercedes-Benz trucks Gauteng',
+    'Fuso trucks for sale South Africa',
+    'MAN trucks for sale Gauteng',
     'truck spares South Africa',
-    'A-Z Truck Sales reviews',
+    'A-Z Truck Sales',
   ],
 
   authors: [{ name: 'A-Z Truck Sales' }],
@@ -171,7 +172,7 @@ const localBusinessSchema = {
     'https://www.google.com/maps/place/A-Z+Truck+Sales/@-26.2560922,28.1414523,17z',
   ],
 
-  foundingDate: '2000-01-01',
+  foundingDate: '1999-01-01',
 
   numberOfEmployees: {
     '@type': 'QuantitativeValue',
@@ -197,7 +198,7 @@ const faqSchema = {
       name: 'Where can I buy used trucks in South Africa?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A-Z Truck Sales is a trusted used truck dealer with two branches in Gauteng, South Africa. With over 25 years experience, they stock 100+ quality used rigid trucks from 1.5 to 35 tons including Isuzu, Hino, Mercedes-Benz, and Ford brands.',
+        text: 'A-Z Truck Sales is a trusted used truck dealer with two branches in Gauteng, South Africa. With over 25 years experience, they stock 100+ quality used rigid trucks from 1.5 to 35 tons including Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso, Toyota, Nissan and more.',
       },
     },
     {
@@ -221,7 +222,7 @@ const faqSchema = {
       name: 'What trucks does A-Z Truck Sales sell?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A-Z Truck Sales sells pre-owned rigid commercial trucks from 1.5 ton to 35 ton. We specialize in DAF, MAN, Hino, Isuzu, and UD trucks. We also offer truck restoration services and spare parts.',
+        text: 'A-Z Truck Sales sells pre-owned rigid commercial trucks from 1.5 ton to 35 ton. We stock Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso, Toyota, Nissan, Tata, Hyundai, Volkswagen and UD trucks. We also offer truck restoration services and spare parts.',
       },
     },
     {
@@ -237,7 +238,7 @@ const faqSchema = {
       name: 'How many years has A-Z Truck Sales been in business?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "A-Z Truck Sales has been serving the commercial vehicle industry for over 25 years since 2000. We are one of Gauteng's most trusted truck dealers.",
+        text: "A-Z Truck Sales has been serving the commercial vehicle industry since 1999. We are one of Gauteng's most trusted truck dealers with 25+ years of experience.",
       },
     },
     {

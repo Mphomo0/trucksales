@@ -6,6 +6,7 @@ export const revalidate = 86400
 
 import AboutSection from '@/components/sections/home/AboutSection'
 import CTA from '@/components/sections/home/CTA'
+import FAQSection from '@/components/sections/home/FAQSection'
 import Featured from '@/components/sections/home/Featured'
 import Features from '@/components/sections/home/Features'
 import Hero from '@/components/sections/home/Hero'
@@ -13,14 +14,14 @@ import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Used Trucks for Sale in Gauteng',
-  description: 'Buy quality pre-owned rigid trucks in Gauteng. 25+ years experience, in-house workshop, 100+ trucks in stock. Alberton & Boksburg branches. Call 011 902 6071.',
+  title: { absolute: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales — Boksburg' },
+  description: 'Browse used trucks for sale in Gauteng at A-Z Truck Sales. Isuzu, Hino, UD, Fuso & Toyota Dyna trucks and more in stock in Boksburg and Alberton.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/',
   },
   openGraph: {
-    title: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales',
-    description: 'Pre-owned rigid trucks 1.5-35 ton in Gauteng. 25+ years experience, in-house workshop, 100+ trucks in stock. Visit Alberton or Boksburg.',
+    title: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales — Boksburg',
+    description: 'Browse used trucks for sale in Gauteng at A-Z Truck Sales. Isuzu, Hino, UD, Fuso & Toyota Dyna trucks and more in stock in Boksburg and Alberton.',
     url: 'https://www.a-ztrucksales.com/',
     siteName: 'A-Z Truck Sales',
     images: [
@@ -43,7 +44,7 @@ const organizationSchema = {
   legalName: 'A-Z Truck Sales',
   url: 'https://www.a-ztrucksales.com',
   logo: 'https://www.a-ztrucksales.com/images/logo.png',
-  description: 'Trusted used commercial vehicle dealer with 25+ years experience in Gauteng, South Africa. Specializing in quality used rigid trucks from 1.5 to 35 tons.',
+  description: 'Trusted used commercial vehicle dealer since 1999 in Gauteng, South Africa. Specializing in quality used rigid trucks from 1.5 to 35 tons.',
   telephone: '+27-11-902-6071',
   email: 'mi118@mweb.co.za',
   address: {
@@ -162,12 +163,17 @@ const autoDealerSchema = {
     },
   ],
   makesOffered: [
-    'Isuzu',
-    'Hino',
-    'Mercedes-Benz',
+    'Fuso',
+    'Hyundai',
+    'Volkswagen',
     'Ford',
-    'DAF',
+    'Hino',
+    'Isuzu',
     'MAN',
+    'Mercedes-Benz',
+    'Nissan',
+    'Tata',
+    'Toyota',
     'UD Trucks',
   ],
   employee: {
@@ -291,6 +297,7 @@ export default function Home() {
       <Features />
       <Featured />
       <AboutSection />
+      <FAQSection />
       <CTA />
     </>
   )

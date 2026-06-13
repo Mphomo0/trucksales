@@ -1,8 +1,7 @@
-import { revalidatePath } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
 
-const SITE_URL = 'https://www.a-ztrucksales.com'
 const INDEXNOW_KEY = 'er3xkhfkmsvhepnk36zgjy2jgwynv75n'
+const SITE_URL = 'https://www.a-ztrucksales.com'
 
 const SEARCH_ENGINES = [
   'https://api.indexnow.org/indexnow',
@@ -17,7 +16,7 @@ async function submitToIndexNow(urls: string[]) {
     urlList: urls,
   }
 
-  await Promise.allSettled(
+  const results = await Promise.allSettled(
     SEARCH_ENGINES.map((endpoint) =>
       fetch(endpoint, {
         method: 'POST',
@@ -26,35 +25,40 @@ async function submitToIndexNow(urls: string[]) {
       })
     )
   )
+
+  return results.map((r, i) => ({
+    engine: SEARCH_ENGINES[i],
+    status: r.status === 'fulfilled' ? r.value.status : 'failed',
+  }))
 }
 
 export async function POST(request: NextRequest) {
   try {
     const secret = request.headers.get('x-revalidate-token')
-    
+
     if (secret !== process.env.REVALIDATE_SECRET) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { path } = await request.json()
+    const { urls } = await request.json()
 
-    if (!path) {
-      return NextResponse.json({ error: 'Missing path parameter' }, { status: 400 })
+    if (!urls || !Array.isArray(urls) || urls.length === 0) {
+      return NextResponse.json({ error: 'Missing or invalid urls array' }, { status: 400 })
     }
 
-    revalidatePath(path)
+    const fullUrls = urls.map((u: string) =>
+      u.startsWith('http') ? u : `${SITE_URL}${u.startsWith('/') ? u : `/${u}`}`
+    )
 
-    const fullUrl = path.startsWith('http') ? path : `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`
+    const results = await submitToIndexNow(fullUrls)
 
-    submitToIndexNow([fullUrl, `${SITE_URL}/sitemap.xml`]).catch(() => {})
-
-    return NextResponse.json({ 
-      revalidated: true, 
-      path,
-      now: Date.now() 
+    return NextResponse.json({
+      submitted: true,
+      urls: fullUrls,
+      results,
     })
   } catch (error) {
-    console.error('[Revalidate] Error:', error)
+    console.error('[IndexNow] Error:', error)
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   }
 }

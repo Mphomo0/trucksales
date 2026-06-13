@@ -11,15 +11,26 @@ import Image from 'next/image'
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              About A-Z Truck Sales
+              Used Trucks for Sale in Gauteng and South Africa
             </h2>
             <p className="text-lg text-gray-600 mb-6">
-              We are the commercial vehicle Specialists. We have over 25 years
-              experience in selling quality previously owned commercial
-              vehicles. We specialize in rigid trucks from 1.5 ton to 35 ton and
-              source only the best stock that we can lay our hands on. We have a
-              complete workshop where we service and restore our vehicles before
-              putting them up for sale.
+              A-Z Truck Sales is a Gauteng used truck dealer for businesses,
+              fleet owners, contractors, logistics operators and owner-drivers
+              looking for reliable commercial vehicles. From Alberton and
+              Boksburg, A-Z Truck Sales helps buyers compare rigid trucks, body
+              types, payload needs, mileage, condition, spares availability and
+              roadworthy preparation before choosing a vehicle.
+            </p>
+            <p className="text-lg text-gray-600 mb-6">
+              Whether you are searching for{' '}
+              <strong>Isuzu trucks for sale in Gauteng</strong>,{' '}
+              <strong>Hino trucks for sale in Gauteng</strong>,{' '}
+              <strong>Mercedes-Benz trucks in Gauteng</strong>,{' '}
+              <strong>Fuso trucks for sale in South Africa</strong>,{' '}
+              <strong>MAN trucks for sale in Gauteng</strong>, or{' '}
+              <strong>truck spares in South Africa</strong>, the best starting
+              point is a dealer that understands both the truck and the work it
+              needs to do.
             </p>
 
             <div className="grid grid-cols-2 gap-4">

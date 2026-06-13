@@ -10,11 +10,13 @@ import Link from 'next/link'
     <section className="py-28 bg-gradient-to-r from-amber-600 to-yellow-300 text-accent-foreground">
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-6">
-          Ready to Find Your Perfect Truck?
+          Looking for a used truck in Gauteng?
         </h2>
         <p className="text-xl mb-8 max-w-2xl mx-auto">
-          Let our expert team help you find the right commercial vehicle for
-          your business needs.
+          Contact A-Z Truck Sales to ask about current used rigid trucks,
+          Isuzu trucks, Hino trucks, Mercedes-Benz trucks, Fuso trucks, MAN
+          trucks, truck spares and commercial vehicles available from Alberton
+          or Boksburg.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild variant="secondary" size="lg">

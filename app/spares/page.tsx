@@ -19,7 +19,7 @@ import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
   title: 'Truck Spares & Parts | Alberton, Gauteng',
-  description: 'Quality used truck spares in Gauteng. Engines, gearboxes & diffs for Isuzu, Hino, Mercedes-Benz, Ford & more. Workshop-tested. Available at our Alberton branch.',
+  description: 'Quality used truck spares in Gauteng. Engines, gearboxes & diffs for Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso & more. Workshop-tested at our Alberton branch.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/spares',
   },
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 const sparesFaqs = [
   {
     question: 'What truck brands do you stock parts for?',
-    answer: 'We stock parts for Isuzu, Hino, Mercedes-Benz, Ford, and other major commercial vehicle brands.',
+    answer: 'We stock parts for Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso, Toyota, Nissan, Tata, Hyundai, Volkswagen, UD Trucks and other major commercial vehicle brands.',
   },
   {
     question: 'Do you offer warranty on spare parts?',

@@ -12,8 +12,11 @@ import Link from 'next/link'
         <div>
           <h3 className="text-xl font-bold text-white mb-4">A-Z Truck Sales</h3>
           <p className="text-sm">
-            Trusted commercial vehicle specialists with over 25 years of
-            experience. Proudly rated 4.0 by 245 verified buyers.
+            A-Z Truck Sales helps buyers find used rigid trucks in Gauteng,
+            including Isuzu, Hino, Mercedes-Benz, Fuso, MAN and other
+            commercial vehicles. The stronger reason to choose A-Z is not only
+            stock availability, but local branches, workshop preparation, spares
+            support and truck-buying guidance.
           </p>
 
           {/* Facebook Icon */}

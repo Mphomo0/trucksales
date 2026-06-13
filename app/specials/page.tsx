@@ -12,8 +12,8 @@ import JsonLd from '@/components/global/JsonLd'
 import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
-  title: 'Truck Specials | Used Truck Deals Gauteng',
-  description: 'Save on quality used rigid trucks at A-Z Truck Sales. Weekly specials on 1.5-35 ton trucks & spares in Gauteng. Limited time offers — browse now.',
+  title: { absolute: 'Truck Specials Under R300 000 | A-Z Truck Sales — Gauteng' },
+  description: 'Browse truck specials at A-Z Truck Sales in Boksburg. Quality used trucks in Gauteng, including Isuzu, Hino and Nissan. View deals today.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/specials',
   },

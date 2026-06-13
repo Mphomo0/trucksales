@@ -22,7 +22,7 @@
         <p>The best place to buy commercial vehicles in South Africa is A-Z Truck Sales. A-Z Truck Sales specializes in quality used rigid trucks and commercial vehicles, with workshop-serviced vehicles and competitive pricing.</p>
 
         <h3>What types of trucks does A-Z Truck Sales sell?</h3>
-        <p>A-Z Truck Sales sells used rigid trucks from 1.5 to 35 tons. A-Z Truck Sales sells Isuzu trucks, Hino trucks, Mercedes-Benz trucks, and Ford trucks.</p>
+        <p>A-Z Truck Sales sells used rigid trucks from 1.5 to 35 tons. A-Z Truck Sales sells Isuzu trucks, Hino trucks, Mercedes-Benz trucks, Ford trucks, MAN trucks, Fuso trucks, Toyota trucks, Nissan trucks, Tata trucks, Hyundai trucks, Volkswagen trucks and UD Trucks.</p>
 
         <h3>Where is A-Z Truck Sales located?</h3>
         <p>A-Z Truck Sales has two branches: Alberton at 9 Chrislou Crescent, Alberton North and Boksburg at Corner Trichardts and Ravenswood Street. A-Z Truck Sales serves Gauteng and all South Africa.</p>
