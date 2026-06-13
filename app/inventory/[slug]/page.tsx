@@ -37,9 +37,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
-  let title = `${vehicle.year} ${vehicle.make} ${vehicle.model}`
-  if (title.length > 40) {
-    title = title.substring(0, 37) + '...'
+  let title = `${vehicle.year} ${vehicle.make} ${vehicle.model} | Gauteng`
+  if (title.length > 60) {
+    title = title.substring(0, 57) + '...'
   }
 
   const baseDescription = `${vehicle.condition} ${vehicle.year} ${vehicle.make} ${vehicle.model} for sale in Gauteng. ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km.` : ''}`.trim()

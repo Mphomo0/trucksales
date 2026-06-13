@@ -16,7 +16,7 @@ import Image from 'next/image'
             <p className="text-lg text-gray-600 mb-6">
               We are the commercial vehicle Specialists. We have over 25 years
               experience in selling quality previously owned commercial
-              vehicles. We specialize in rigid trucks from 1.5 ton to 18 ton and
+              vehicles. We specialize in rigid trucks from 1.5 ton to 35 ton and
               source only the best stock that we can lay our hands on. We have a
               complete workshop where we service and restore our vehicles before
               putting them up for sale.

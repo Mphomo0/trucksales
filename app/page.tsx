@@ -13,14 +13,14 @@ import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Used Trucks for Sale | A-Z Truck Sales Gauteng',
-  description: 'A-Z Truck Sales sells quality used trucks in Gauteng. 25+ years experience, in-house workshop, 100+ trucks in stock. Visit Alberton or Boksburg.',
+  title: 'Used Trucks for Sale in Gauteng',
+  description: 'Buy quality pre-owned rigid trucks in Gauteng. 25+ years experience, in-house workshop, 100+ trucks in stock. Alberton & Boksburg branches. Call 011 902 6071.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/',
   },
   openGraph: {
-    title: 'Used Trucks for Sale | A-Z Truck Sales Gauteng',
-    description: 'A-Z Truck Sales sells quality used trucks in Gauteng. 25+ years experience, in-house workshop, 100+ trucks in stock.',
+    title: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales',
+    description: 'Pre-owned rigid trucks 1.5-35 ton in Gauteng. 25+ years experience, in-house workshop, 100+ trucks in stock. Visit Alberton or Boksburg.',
     url: 'https://www.a-ztrucksales.com/',
     siteName: 'A-Z Truck Sales',
     images: [
@@ -43,7 +43,7 @@ const organizationSchema = {
   legalName: 'A-Z Truck Sales',
   url: 'https://www.a-ztrucksales.com',
   logo: 'https://www.a-ztrucksales.com/images/logo.png',
-  description: 'Trusted used commercial vehicle dealer with 25+ years experience in Gauteng, South Africa. Specializing in quality used rigid trucks from 1.5 to 16 tons.',
+  description: 'Trusted used commercial vehicle dealer with 25+ years experience in Gauteng, South Africa. Specializing in quality used rigid trucks from 1.5 to 35 tons.',
   telephone: '+27-11-902-6071',
   email: 'mi118@mweb.co.za',
   address: {
@@ -85,8 +85,8 @@ const autoDealerSchema = {
   priceRange: '$$',
   aggregateRating: {
     '@type': 'AggregateRating',
-    ratingValue: '4.1',
-    reviewCount: '50',
+    ratingValue: '4.0',
+    reviewCount: '245',
     bestRating: '5',
     worstRating: '1',
   },
@@ -109,6 +109,12 @@ const autoDealerSchema = {
       dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
       opens: '08:00',
       closes: '17:00',
+    },
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: 'Saturday',
+      opens: '08:00',
+      closes: '13:00',
     },
   ],
   areaServed: {
@@ -160,6 +166,9 @@ const autoDealerSchema = {
     'Hino',
     'Mercedes-Benz',
     'Ford',
+    'DAF',
+    'MAN',
+    'UD Trucks',
   ],
   employee: {
     '@type': 'Organization',
@@ -197,12 +206,18 @@ const localBusinessAlbertonSchema = {
       opens: '08:00',
       closes: '17:00',
     },
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: 'Saturday',
+      opens: '08:00',
+      closes: '13:00',
+    },
   ],
   priceRange: '$$',
   aggregateRating: {
     '@type': 'AggregateRating',
-    ratingValue: '4.1',
-    reviewCount: '50',
+    ratingValue: '4.0',
+    reviewCount: '245',
   },
 }
 
@@ -254,7 +269,10 @@ const homeWebsiteSchema = {
   },
   potentialAction: {
     '@type': 'SearchAction',
-    target: 'https://www.a-ztrucksales.com/inventory?q={search_term_string}',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://www.a-ztrucksales.com/inventory?search={search_term_string}',
+    },
     'query-input': 'required name=search_term_string',
   },
 }

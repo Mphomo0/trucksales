@@ -13,7 +13,7 @@ import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
   title: 'Truck Specials | Used Truck Deals Gauteng',
-  description: 'Save on used trucks at A-Z Truck Sales. Weekly specials on quality rigid trucks in Gauteng. Limited time offers - browse now.',
+  description: 'Save on quality used rigid trucks at A-Z Truck Sales. Weekly specials on 1.5-35 ton trucks & spares in Gauteng. Limited time offers — browse now.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/specials',
   },

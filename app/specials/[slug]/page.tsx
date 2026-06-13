@@ -37,9 +37,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Special Expired' }
   }
 
-  let title = `Special Offer: ${inventory.year} ${inventory.make}`
-  if (title.length > 40) {
-    title = title.substring(0, 37) + '...'
+  let title = `Special: ${inventory.year} ${inventory.make} ${inventory.model}`
+  if (title.length > 60) {
+    title = title.substring(0, 57) + '...'
   }
 
   const description = `Don't miss this special offer on a ${inventory.year} ${inventory.make} ${inventory.model}. Limited time deal at A-Z Truck Sales.`

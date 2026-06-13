@@ -39,9 +39,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
-  let title = `${spare.name} | ${spare.category}`
-  if (title.length > 40) {
-    title = title.substring(0, 37) + '...'
+  let title = `${spare.name} | ${spare.category} | Gauteng`
+  if (title.length > 60) {
+    title = title.substring(0, 57) + '...'
   }
 
   const baseDescription = `${spare.condition} ${spare.name} for ${spare.make} trucks. Available at A-Z Truck Sales, Gauteng.`.trim()

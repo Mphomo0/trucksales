@@ -18,8 +18,8 @@ import {
 } from '@/components/ui/accordion'
 
 export const metadata: Metadata = {
-  title: 'Contact Us | A-Z Truck Sales Gauteng',
-  description: 'Contact A-Z Truck Sales in Alberton & Boksburg, Gauteng. Call 011 902 6071 for quality used commercial vehicles and trucks.',
+  title: 'Contact Us | Alberton & Boksburg Gauteng',
+  description: 'Contact A-Z Truck Sales in Alberton (011 902 6071) or Boksburg (083 234 5377), Gauteng. Mon-Fri 8AM-5PM, Sat 8AM-1PM. Browse 100+ used trucks online.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/contact',
   },
@@ -32,7 +32,7 @@ const contactFaqs = [
   },
   {
     question: 'What types of trucks do you sell?',
-    answer: 'We specialize in quality used rigid trucks from 1.5 to 16 tons, including Isuzu, Hino, Mercedes-Benz, and Ford.',
+    answer: 'We specialize in quality used rigid trucks from 1.5 to 35 tons, including Isuzu, Hino, Mercedes-Benz, Ford, DAF, and MAN.',
   },
   {
     question: 'Do you offer truck restoration services?',
@@ -44,7 +44,7 @@ const contactFaqs = [
   },
   {
     question: 'What makes A-Z Truck Sales different from other dealers?',
-    answer: '25+ years of experience, in-house workshop restoration, 100+ trucks always in stock, and a 4.1-star rating from verified buyers.',
+    answer: '25+ years of experience, in-house workshop restoration, 100+ trucks always in stock, and a 4.0-star rating from 245 verified buyers.',
   },
 ]
 
@@ -52,7 +52,7 @@ const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': 'MotorVehicleBusiness',
   name: 'A-Z Truck Sales',
-  image: 'https://www.a-ztrucksales.com/og-image.jpg',
+  image: 'https://www.a-ztrucksales.com/og-image.webp',
   address: {
     '@type': 'PostalAddress',
     streetAddress: '9 Chrislou Cres',

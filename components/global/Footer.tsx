@@ -13,7 +13,7 @@ import Link from 'next/link'
           <h3 className="text-xl font-bold text-white mb-4">A-Z Truck Sales</h3>
           <p className="text-sm">
             Trusted commercial vehicle specialists with over 25 years of
-            experience. Proudly rated 4.1 for quality and service.
+            experience. Proudly rated 4.0 by 245 verified buyers.
           </p>
 
           {/* Facebook Icon */}
@@ -48,12 +48,22 @@ import Link from 'next/link'
             </li>
             <li>
               <Link href="/inventory" className="hover:underline">
-                Inventory
+                Truck Inventory
+              </Link>
+            </li>
+            <li>
+              <Link href="/spares" className="hover:underline">
+                Truck Spares
               </Link>
             </li>
             <li>
               <Link href="/specials" className="hover:underline">
                 Specials
+              </Link>
+            </li>
+            <li>
+              <Link href="/sell-your-truck" className="hover:underline">
+                Sell Your Truck
               </Link>
             </li>
             <li>
@@ -67,29 +77,29 @@ import Link from 'next/link'
         {/* Branch 1 */}
         <div>
           <h3 className="text-white font-semibold mb-4">Branch 1 – Alberton</h3>
-          <p className="text-sm">
+          <address className="text-sm not-italic">
             9 Chrislou Cres
             <br />
             Alberton, 1449
             <br />
-            Phone: 011 902 6071
+            <a href="tel:+27119026071" className="hover:underline">Phone: 011 902 6071</a>
             <br />
-            Email: mi118@mweb.co.za
-          </p>
+            <a href="mailto:mi118@mweb.co.za" className="hover:underline">mi118@mweb.co.za</a>
+          </address>
         </div>
 
         {/* Branch 2 */}
         <div>
           <h3 className="text-white font-semibold mb-4">Branch 2 – Boksburg</h3>
-          <p className="text-sm">
+          <address className="text-sm not-italic">
             Cnr Trichardts and, Ravenswood St, Ravenswood
             <br />
             Boksburg, 1451
             <br />
-            Phone: 083 234 5377
+            <a href="tel:+27832345377" className="hover:underline">Phone: 083 234 5377</a>
             <br />
-            Email: aztruckboks@gmail.com
-          </p>
+            <a href="mailto:aztruckboks@gmail.com" className="hover:underline">aztruckboks@gmail.com</a>
+          </address>
         </div>
       </div>
 

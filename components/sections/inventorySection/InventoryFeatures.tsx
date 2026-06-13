@@ -19,8 +19,8 @@ const features = [
   {
     icon: Truck,
     title: 'Wide Selection',
-    description: 'Rigid trucks ranging from 1.5 to 16 tons for every need.',
-    highlight: '1.5-16 Tons',
+    description: 'Rigid trucks ranging from 1.5 to 35 tons for every need.',
+    highlight: '1.5-35 Tons',
   },
 ]
 

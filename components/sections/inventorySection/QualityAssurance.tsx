@@ -66,8 +66,8 @@ export default function QualityAssurance() {
                 <p className="text-gray-600 leading-relaxed">
                   A-Z Truck Sales has been a cornerstone of the Gauteng commercial vehicle market 
                   for over two decades. Our long-standing reputation is built on transparency, 
-                  fair pricing, and expert knowledge of rigid trucks ranging from 1.5 to 16 tons. 
-                  Our deep understanding of brands like Isuzu, Hino, and Mercedes-Benz allows 
+                  fair pricing, and expert knowledge of rigid trucks ranging from 1.5 to 35 tons.
+                  Our deep understanding of brands like Isuzu, Hino, Mercedes-Benz, DAF, and MAN allows 
                   us to source and prepare the best used trucks available in South Africa today.
                 </p>
               </div>

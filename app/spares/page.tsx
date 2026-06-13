@@ -18,8 +18,8 @@ import {
 import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
-  title: 'Truck Spares & Parts | A-Z Truck Sales Gauteng',
-  description: 'Quality used truck spares in Gauteng. Engines, gearboxes, diffs for Isuzu, Hino, Mercedes-Benz, Ford. Workshop-tested parts.',
+  title: 'Truck Spares & Parts | Alberton, Gauteng',
+  description: 'Quality used truck spares in Gauteng. Engines, gearboxes & diffs for Isuzu, Hino, Mercedes-Benz, Ford & more. Workshop-tested. Available at our Alberton branch.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/spares',
   },

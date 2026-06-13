@@ -17,8 +17,8 @@ import { prisma } from '@/lib/prisma'
 export const revalidate = 86400
 
 export const metadata: Metadata = {
-  title: 'Used Truck Inventory | A-Z Truck Sales South Africa',
-  description: 'Browse quality used trucks for sale at A-Z Truck Sales. 1.5-16 ton rigids, all workshop-serviced. Isuzu, Hino, Mercedes-Benz, Ford.',
+  title: 'Used Trucks for Sale | Alberton, Gauteng',
+  description: 'Browse 100+ used rigid trucks for sale in Gauteng. 1.5-35 ton, workshop-serviced & COF-ready. Isuzu, Hino, Mercedes-Benz, Ford, DAF, MAN. Call 011 902 6071.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/inventory',
   },
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 const inventoryFaqs = [
   {
     question: 'What brands of trucks do you stock?',
-    answer: 'We stock Isuzu, Hino, Mercedes-Benz, Ford, and other major brands of rigid trucks from 1.5 to 16 tons.',
+    answer: 'We stock Isuzu, Hino, Mercedes-Benz, Ford, DAF, MAN, UD Trucks, and other major brands of rigid trucks from 1.5 to 35 tons.',
   },
   {
     question: 'Are your trucks workshop-serviced?',

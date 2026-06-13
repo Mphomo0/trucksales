@@ -32,19 +32,19 @@ export const metadata: Metadata = {
   ),
 
   title: {
-    default: 'A-Z Truck Sales | Used Rigid Trucks Gauteng',
+    default: 'A-Z Truck Sales | Used Rigid Trucks 1.5-35 Ton Gauteng',
     template: '%s | A-Z Truck Sales',
   },
 
   description:
-    "A-Z Truck Sales: Gauteng's trusted commercial vehicle dealer since 1999. Buy quality pre-owned rigid trucks (1.5 to 18 ton) in Alberton. Expert restoration, workshop services & spares. 100+ trucks in stock. Call +27 11 902 6071.",
+    "Gauteng's trusted commercial truck dealer since 2000. Pre-owned rigid trucks 1.5-35 ton, workshop-serviced & COF-ready. 100+ in stock. Call +27 11 902 6071.",
 
   keywords: [
     'used trucks Gauteng',
     'rigid trucks for sale South Africa',
     'commercial vehicles Alberton',
     'truck restoration Gauteng',
-    '18 ton truck for sale',
+    '35 ton truck for sale',
     '7.5 ton truck for sale',
     '3.5 ton truck for sale',
     '1.5 ton truck for sale',
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     locale: 'en_ZA',
     url: 'https://www.a-ztrucksales.com',
     siteName: 'A-Z Truck Sales',
-    title: 'A-Z Truck Sales | Used Rigid Trucks 1.5-18 Ton | Alberton, Gauteng',
+    title: 'A-Z Truck Sales | Used Rigid Trucks 1.5-35 Ton Gauteng',
     description:
       "Gauteng's #1 pre-owned rigid truck dealer. 25+ years experience. 100+ trucks in stock. Restoration & spares. Visit us in Alberton or browse online.",
     images: [
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
 
   twitter: {
     card: 'summary_large_image',
-    title: 'A-Z Truck Sales | Used Rigid Trucks 1.5-18 Ton | Gauteng',
+    title: 'A-Z Truck Sales | Used Rigid Trucks 1.5-35 Ton | Gauteng',
     description:
       'Buy quality pre-owned rigid trucks in Alberton, Gauteng. 25+ years experience. 100+ trucks in stock. Restoration & spares available.',
     images: ['https://www.a-ztrucksales.com/og-image.webp'],
@@ -107,7 +107,7 @@ const localBusinessSchema = {
   '@type': 'AutoDealer',
   name: 'A-Z Truck Sales',
   description:
-    "Gauteng's trusted commercial vehicle specialist selling pre-owned rigid trucks from 1.5 to 18 ton. 25+ years experience in truck sales, restoration and spares.",
+    "Gauteng's trusted commercial vehicle specialist selling pre-owned rigid trucks from 1.5 to 35 ton. 25+ years experience in truck sales, restoration and spares.",
   url: 'https://www.a-ztrucksales.com',
   logo: {
     '@type': 'ImageObject',
@@ -149,7 +149,7 @@ const localBusinessSchema = {
 
   address: {
     '@type': 'PostalAddress',
-    streetAddress: '159 Second Avenue, Alberton North',
+    streetAddress: '9 Chrislou Crescent, Alberton North',
     addressLocality: 'Alberton',
     addressRegion: 'Gauteng',
     postalCode: '1449',
@@ -158,8 +158,8 @@ const localBusinessSchema = {
 
   geo: {
     '@type': 'GeoCoordinates',
-    latitude: -26.2560922,
-    longitude: 28.1414523,
+    latitude: -26.2694,
+    longitude: 28.1221,
   },
 
   sameAs: [
@@ -182,7 +182,7 @@ const localBusinessSchema = {
   aggregateRating: {
     '@type': 'AggregateRating',
     ratingValue: '4.0',
-    reviewCount: '341',
+    reviewCount: '245',
     bestRating: '5',
     worstRating: '1',
   },
@@ -197,7 +197,7 @@ const faqSchema = {
       name: 'Where can I buy used trucks in South Africa?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A-Z Truck Sales is a trusted used truck dealer with two branches in Gauteng, South Africa. With over 25 years experience, they stock 100+ quality used rigid trucks from 1.5 to 16 tons including Isuzu, Hino, Mercedes-Benz, and Ford brands.',
+        text: 'A-Z Truck Sales is a trusted used truck dealer with two branches in Gauteng, South Africa. With over 25 years experience, they stock 100+ quality used rigid trucks from 1.5 to 35 tons including Isuzu, Hino, Mercedes-Benz, and Ford brands.',
       },
     },
     {
@@ -205,7 +205,7 @@ const faqSchema = {
       name: 'Which truck dealers in Gauteng are reliable?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: "A-Z Truck Sales is one of Gauteng's most reliable commercial vehicle dealers. They have a 4.1-star rating from verified buyers, 25+ years of experience, an in-house workshop restoring 100+ trucks annually, and a 95% first-time COF pass rate.",
+        text: "A-Z Truck Sales is one of Gauteng's most reliable commercial vehicle dealers. They have a 4.0-star rating from 245 verified buyers, 25+ years of experience, an in-house workshop restoring 100+ trucks annually, and a 95% first-time COF pass rate.",
       },
     },
     {
@@ -213,7 +213,7 @@ const faqSchema = {
       name: 'What is the best place to buy commercial vehicles?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A-Z Truck Sales is highly recommended for buying used commercial vehicles in South Africa. They specialize in quality used rigid trucks from 1.5 to 16 tons, offer workshop-serviced vehicles, and have served Gauteng for over 25 years with two convenient branches.',
+        text: 'A-Z Truck Sales is highly recommended for buying used commercial vehicles in South Africa. They specialize in quality used rigid trucks from 1.5 to 35 tons, offer workshop-serviced vehicles, and have served Gauteng for over 25 years with two convenient branches.',
       },
     },
     {
@@ -221,7 +221,7 @@ const faqSchema = {
       name: 'What trucks does A-Z Truck Sales sell?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A-Z Truck Sales sells pre-owned rigid commercial trucks from 1.5 ton to 18 ton. We specialize in DAF, MAN, Hino, Isuzu, and UD trucks. We also offer truck restoration services and spare parts.',
+        text: 'A-Z Truck Sales sells pre-owned rigid commercial trucks from 1.5 ton to 35 ton. We specialize in DAF, MAN, Hino, Isuzu, and UD trucks. We also offer truck restoration services and spare parts.',
       },
     },
     {
@@ -265,7 +265,7 @@ const websiteSchema = {
   name: 'A-Z Truck Sales',
   url: 'https://www.a-ztrucksales.com',
   description:
-    "Gauteng's trusted dealer for pre-owned rigid trucks 1.5-18 ton. 25+ years experience.",
+    "Gauteng's trusted dealer for pre-owned rigid trucks 1.5-35 ton. 25+ years experience.",
   potentialAction: {
     '@type': 'SearchAction',
     target: {
@@ -325,15 +325,12 @@ export default function RootLayout({
 
             <p className="sr-only">
               A-Z Truck Sales - Gauteng&apos;s Trusted Dealer for Pre-Owned
-              Rigid Trucks 1.5 to 18 Ton | 25+ Years Experience | Alberton,
+              Rigid Trucks 1.5 to 35 Ton | 25+ Years Experience | Alberton,
               South Africa
             </p>
 
             <GeoHints />
             <JsonLd data={localBusinessSchema} />
-            <JsonLd data={faqSchema} />
-            <JsonLd data={websiteSchema} />
-            <JsonLd data={breadcrumbSchema} />
 
             <ClientLayout>{children}</ClientLayout>
             <ToastContainer />

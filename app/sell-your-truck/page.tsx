@@ -10,8 +10,8 @@ import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 
 export const metadata: Metadata = {
-  title: 'Sell Your Truck | We Buy Used Trucks Gauteng',
-  description: 'Sell or trade-in your used truck with A-Z Truck Sales. Competitive offers, fast payment, serving Gauteng and all South Africa.',
+  title: 'Sell Your Truck | We Buy Used Trucks',
+  description: 'Sell or trade-in your used truck with A-Z Truck Sales. Competitive offers, fast payment. We buy 1.5-35 ton trucks in Gauteng & across South Africa.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/sell-your-truck',
   },
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 const tradeInFaqs = [
   {
     question: 'What trucks do you buy?',
-    answer: 'We buy used commercial vehicles including rigid trucks from 1.5 to 16 tons. Isuzu, Hino, Mercedes-Benz, Ford, and other major brands.',
+    answer: 'We buy used commercial vehicles including rigid trucks from 1.5 to 35 tons. Isuzu, Hino, Mercedes-Benz, Ford, DAF, MAN, and other major brands.',
   },
   {
     question: 'How do you value my truck?',
@@ -84,6 +84,7 @@ const tradeInFaqs = [
       <JsonLd data={tradeInFaqSchema} />
       
       <section>
+        <SellYourTruckFeatures />
         <TradeInForm />
         <Process />
       </section>

@@ -14,11 +14,11 @@ import JsonLd from '@/components/global/JsonLd'
 const faqs = [
   {
     question: 'Where is A-Z Truck Sales located?',
-    answer: 'We are located at 159 Second Avenue, Alberton North, Gauteng, South Africa. We serve clients across South Africa.',
+    answer: 'We have two branches: Alberton at 9 Chrislou Crescent, Alberton North (011 902 6071) and Boksburg at Cnr Trichardts & Ravenswood Street (083 234 5377). We serve clients across South Africa.',
   },
   {
     question: 'What types of trucks do you sell?',
-    answer: 'We specialize in quality used rigid trucks ranging from 1.5 to 16 tons. Our inventory includes various makes and models suitable for different commercial needs.',
+    answer: 'We specialize in quality used rigid trucks ranging from 1.5 to 35 tons. Our inventory includes various makes and models including Isuzu, Hino, Mercedes-Benz, Ford, DAF, and MAN.',
   },
   {
     question: 'Do you offer truck restoration services?',

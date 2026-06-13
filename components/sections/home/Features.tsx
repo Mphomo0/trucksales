@@ -45,7 +45,7 @@ import { Shield, Wrench, Star } from 'lucide-react'
           <Card>
             <CardHeader className="text-center">
               <Star className="h-12 w-12 text-amber-300 mx-auto mb-4" />
-              <CardTitle>4.1-Star Reviews</CardTitle>
+              <CardTitle>4.0-Star Reviews</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-gray-600">
