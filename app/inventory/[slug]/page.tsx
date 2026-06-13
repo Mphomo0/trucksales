@@ -37,9 +37,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
-  let title = `${vehicle.year} ${vehicle.make} ${vehicle.model} | Gauteng`
-  if (title.length > 60) {
-    title = title.substring(0, 57) + '...'
+  // Layout appends "| A-Z Truck Sales" (17 chars); keep page portion ≤ 43 so full title ≤ 60
+  let title = `${vehicle.year} ${vehicle.make} ${vehicle.model}`
+  if (title.length > 43) {
+    title = title.substring(0, 40) + '...'
   }
 
   const baseDescription = `${vehicle.condition} ${vehicle.year} ${vehicle.make} ${vehicle.model} for sale in Gauteng. ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km.` : ''}`.trim()
