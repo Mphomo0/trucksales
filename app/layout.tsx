@@ -5,8 +5,6 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 import { ClerkProvider } from '@clerk/nextjs'
 import ClientLayout from '@/components/global/ClientLayout'
 import { PostHogProvider } from './providers'
@@ -24,7 +22,6 @@ const geistMono = Geist_Mono({
 })
 
 import JsonLd from '@/components/global/JsonLd'
-import GeoHints from '@/components/global/GeoHints'
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -131,12 +128,6 @@ const localBusinessSchema = {
       opens: '08:00',
       closes: '17:00',
     },
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: 'Saturday',
-      opens: '08:00',
-      closes: '13:00',
-    },
   ],
 
   telephone: '+27-11-902-6071',
@@ -230,7 +221,7 @@ const faqSchema = {
       name: 'Where is A-Z Truck Sales located?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A-Z Truck Sales is located at 9 Chrislou Cres, Alberton, Gauteng, 1449, South Africa. We are open Monday to Friday 8AM-5PM and Saturday 8AM-1PM.',
+        text: 'A-Z Truck Sales is located at 9 Chrislou Cres, Alberton, Gauteng, 1449, South Africa. We are open Monday to Friday 8AM-5PM.',
       },
     },
     {
@@ -324,17 +315,9 @@ export default function RootLayout({
           <PostHogProvider>
             <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
 
-            <p className="sr-only">
-              A-Z Truck Sales - Gauteng&apos;s Trusted Dealer for Pre-Owned
-              Rigid Trucks 1.5 to 35 Ton | 25+ Years Experience | Alberton,
-              South Africa
-            </p>
-
-            <GeoHints />
             <JsonLd data={localBusinessSchema} />
 
             <ClientLayout>{children}</ClientLayout>
-            <ToastContainer />
           </PostHogProvider>
         </ClerkProvider>
       </body>

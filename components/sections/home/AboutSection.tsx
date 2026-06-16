@@ -51,7 +51,7 @@ import Image from 'next/image'
               width={800}
               height={600}
               className="w-full h-auto rounded-lg shadow-lg"
-              priority
+
             />
           </div>
         </div>

@@ -2,18 +2,25 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
-'use client'
-
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
 /* <h1>A-Z Truck Sales Components</h1> */ export default function Hero() {
   return (
     <section
-      className="relative text-white bg-cover bg-center bg-no-repeat md:h-[700px] h-[500px]"
-      style={{ backgroundImage: 'url(/images/truckBg.webp)' }}
+      className="relative text-white overflow-hidden md:h-[700px] h-[500px]"
       aria-label="Hero section with promotional message"
     >
+      <Image
+        src="/images/truckBg.webp"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-center"
+        aria-hidden="true"
+      />
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-yellow-600 opacity-60" />
 

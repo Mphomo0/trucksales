@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+
 import { Cog, Settings, Wrench } from 'lucide-react'
 
 const features = [

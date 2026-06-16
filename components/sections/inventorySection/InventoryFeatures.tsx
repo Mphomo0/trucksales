@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+
 import { CheckCircle2, Wrench, Truck } from 'lucide-react'
 
 const features = [

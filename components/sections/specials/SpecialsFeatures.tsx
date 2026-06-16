@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+
 import { Clock, Percent, Zap } from 'lucide-react'
 
 const features = [

@@ -3,7 +3,12 @@
 import { usePathname } from 'next/navigation'
 import Navbar from '@/components/global/Navbar'
 import Footer from '@/components/global/Footer'
-import { ChatWidget } from '@/components/chatbot/ChatWidget'
+import ClientToast from '@/components/global/ClientToast'
+import dynamic from 'next/dynamic'
+const ChatWidget = dynamic(
+  () => import('@/components/chatbot/ChatWidget').then(m => ({ default: m.ChatWidget })),
+  { ssr: false }
+)
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -19,6 +24,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       {children}
       <Footer />
       <ChatWidget />
+      <ClientToast />
     </>
   )
 }

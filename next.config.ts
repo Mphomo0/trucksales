@@ -4,10 +4,9 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
   images: {
-    // ImageKit handles all transformations server-side via its own CDN.
-    // Setting unoptimized=true means Next.js never proxies/transforms these
-    // images, saving Vercel Image Optimization Transformations & Cache credits.
-    unoptimized: true,
+    // Local /public assets (logo, hero, dealer) are Vercel-optimized.
+    // ImageKit CDN images are permitted via remotePatterns; ImageKit handles
+    // their own compression so Vercel passes them through at the requested size.
     remotePatterns: [
       {
         protocol: 'https',

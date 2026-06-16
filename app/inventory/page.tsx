@@ -13,6 +13,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { prisma } from '@/lib/prisma'
+import { unstable_cache } from 'next/cache'
 
 export const revalidate = 86400
 
@@ -23,6 +24,8 @@ export const metadata: Metadata = {
     canonical: 'https://www.a-ztrucksales.com/inventory',
   },
 }
+
+const LIMIT = 25
 
 const inventoryFaqs = [
   {
@@ -47,48 +50,98 @@ const inventoryFaqs = [
   },
 ]
 
-export default async function Inventory() {
-  const LIMIT = 25
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://www.a-ztrucksales.com',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Inventory',
+      item: 'https://www.a-ztrucksales.com/inventory',
+    },
+  ],
+}
 
-  const [vehicles, total, makesResult, modelsResult, bodyTypesResult, truckSizesResult] = await Promise.all([
-    prisma.inventory.findMany({
-      take: LIMIT,
-      skip: 0,
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        name: true,
-        make: true,
-        model: true,
-        year: true,
-        vatPrice: true,
-        pricenoVat: true,
-        mileage: true,
-        fuelType: true,
-        condition: true,
-        transmission: true,
-        images: true,
-        description: true,
-        bodyType: true,
-        truckSize: true,
-        slug: true,
-        specialPrice: true,
-        specialValidFrom: true,
-        specialValidTo: true,
-      },
-    }),
-    prisma.inventory.count(),
-    prisma.inventory.findMany({ distinct: ['make'], select: { make: true }, orderBy: { make: 'asc' } }),
-    prisma.inventory.findMany({ distinct: ['model'], select: { model: true }, orderBy: { model: 'asc' } }),
-    prisma.inventory.findMany({ distinct: ['bodyType'], select: { bodyType: true }, where: { bodyType: { not: null } } }),
-    prisma.inventory.findMany({ distinct: ['truckSize'], select: { truckSize: true }, where: { truckSize: { not: null } } }),
-  ])
+const inventoryFaqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: inventoryFaqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+}
+
+const getInventoryPageData = unstable_cache(
+  async () => {
+    const [vehicles, total, makesResult, modelsResult, bodyTypesResult, truckSizesResult] = await Promise.all([
+      prisma.inventory.findMany({
+        take: LIMIT,
+        skip: 0,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          name: true,
+          make: true,
+          model: true,
+          year: true,
+          vatPrice: true,
+          pricenoVat: true,
+          mileage: true,
+          fuelType: true,
+          condition: true,
+          transmission: true,
+          images: true,
+          description: true,
+          bodyType: true,
+          truckSize: true,
+          slug: true,
+          specialPrice: true,
+          specialValidFrom: true,
+          specialValidTo: true,
+        },
+      }),
+      prisma.inventory.count(),
+      prisma.inventory.findMany({ distinct: ['make'], select: { make: true }, orderBy: { make: 'asc' } }),
+      prisma.inventory.findMany({ distinct: ['model'], select: { model: true }, orderBy: { model: 'asc' } }),
+      prisma.inventory.findMany({ distinct: ['bodyType'], select: { bodyType: true }, where: { bodyType: { not: null } } }),
+      prisma.inventory.findMany({ distinct: ['truckSize'], select: { truckSize: true }, where: { truckSize: { not: null } } }),
+    ])
+    return { vehicles, total, makesResult, modelsResult, bodyTypesResult, truckSizesResult }
+  },
+  ['inventory-page-initial'],
+  { revalidate: 86400, tags: ['inventory'] }
+)
+
+export default async function Inventory() {
+  const { vehicles, total, makesResult, modelsResult, bodyTypesResult, truckSizesResult } = await getInventoryPageData()
+
+  const dedupeCaseInsensitive = (items: (string | null)[]) => {
+    const seen = new Set<string>()
+    return items.filter((item): item is string => {
+      if (!item) return false
+      const lower = item.trim().toLowerCase()
+      if (seen.has(lower)) return false
+      seen.add(lower)
+      return true
+    })
+  }
 
   const initialFilterOptions = {
-    makes: makesResult.map((r) => r.make).filter(Boolean) as string[],
-    models: modelsResult.map((r) => r.model).filter(Boolean) as string[],
-    bodyTypes: bodyTypesResult.map((r) => r.bodyType).filter(Boolean) as string[],
-    truckSizes: truckSizesResult.map((r) => r.truckSize).filter(Boolean) as string[],
+    makes: dedupeCaseInsensitive(makesResult.map((r) => r.make)),
+    models: dedupeCaseInsensitive(modelsResult.map((r) => r.model)),
+    bodyTypes: dedupeCaseInsensitive(bodyTypesResult.map((r) => r.bodyType)),
+    truckSizes: dedupeCaseInsensitive(truckSizesResult.map((r) => r.truckSize)),
   }
 
   const initialMeta = {
@@ -96,37 +149,6 @@ export default async function Inventory() {
     page: 1,
     limit: LIMIT,
     totalPages: Math.ceil(total / LIMIT),
-  }
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: 'https://www.a-ztrucksales.com',
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Inventory',
-        item: 'https://www.a-ztrucksales.com/inventory',
-      },
-    ],
-  }
-
-  const inventoryFaqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: inventoryFaqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
-      },
-    })),
   }
 
   return (
@@ -139,8 +161,6 @@ export default async function Inventory() {
       </div>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={inventoryFaqSchema} />
-      
-      
 
       <AllVehiclesFilter initialVehicles={vehicles} initialMeta={initialMeta} initialFilterOptions={initialFilterOptions} />
 
@@ -151,7 +171,7 @@ export default async function Inventory() {
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
               <p className="text-neutral-600">Common questions about buying a truck from us.</p>
             </div>
-            
+
             <Accordion type="single" collapsible className="w-full">
               {inventoryFaqs.map((faq, index) => (
                 <AccordionItem key={index} value={`item-${index}`} className="bg-white px-6 rounded-lg mb-4 border border-neutral-200">

@@ -8,7 +8,6 @@ import AllSparesFilter from '@/components/sections/spares/AllSparesFilter'
 import SparesFeatures from '@/components/sections/spares/SparesFeatures'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
-import GeoHints from '@/components/global/GeoHints'
 import {
   Accordion,
   AccordionContent,
@@ -16,6 +15,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { prisma } from '@/lib/prisma'
+import { unstable_cache } from 'next/cache'
 
 export const metadata: Metadata = {
   title: 'Truck Spares & Parts | Alberton, Gauteng',
@@ -24,6 +24,8 @@ export const metadata: Metadata = {
     canonical: 'https://www.a-ztrucksales.com/spares',
   },
 }
+
+const LIMIT = 12
 
 const sparesFaqs = [
   {
@@ -48,36 +50,75 @@ const sparesFaqs = [
   },
 ]
 
-/* application/ld+json */ export default async function Spares() {
-  const LIMIT = 12
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://www.a-ztrucksales.com',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Spares',
+      item: 'https://www.a-ztrucksales.com/spares',
+    },
+  ],
+}
 
-  const [spares, total, makesResult, categoriesResult] = await Promise.all([
-    prisma.spares.findMany({
-      take: LIMIT,
-      skip: 0,
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        name: true,
-        make: true,
-        price: true,
-        noVatPrice: true,
-        condition: true,
-        category: true,
-        description: true,
-        images: true,
-        slug: true,
-        videoLink: true,
-        specialPrice: true,
-        specialPriceNoVat: true,
-        specialValidFrom: true,
-        specialValidTo: true,
-      },
-    }),
-    prisma.spares.count(),
-    prisma.spares.findMany({ distinct: ['make'], select: { make: true }, orderBy: { make: 'asc' } }),
-    prisma.spares.findMany({ distinct: ['category'], select: { category: true }, orderBy: { category: 'asc' } }),
-  ])
+const sparesFaqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: sparesFaqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+}
+
+const getSparePageData = unstable_cache(
+  async () => {
+    const [spares, total, makesResult, categoriesResult] = await Promise.all([
+      prisma.spares.findMany({
+        take: LIMIT,
+        skip: 0,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          name: true,
+          make: true,
+          price: true,
+          noVatPrice: true,
+          condition: true,
+          category: true,
+          description: true,
+          images: true,
+          slug: true,
+          videoLink: true,
+          specialPrice: true,
+          specialPriceNoVat: true,
+          specialValidFrom: true,
+          specialValidTo: true,
+        },
+      }),
+      prisma.spares.count(),
+      prisma.spares.findMany({ distinct: ['make'], select: { make: true }, orderBy: { make: 'asc' } }),
+      prisma.spares.findMany({ distinct: ['category'], select: { category: true }, orderBy: { category: 'asc' } }),
+    ])
+    return { spares, total, makesResult, categoriesResult }
+  },
+  ['spares-page-initial'],
+  { revalidate: 86400, tags: ['spares'] }
+)
+
+/* application/ld+json */ export default async function Spares() {
+  const { spares, total, makesResult, categoriesResult } = await getSparePageData()
 
   const initialSpares = spares.map((item) => {
     const imgArray = Array.isArray(item.images) ? (item.images as any[]) : []
@@ -90,37 +131,6 @@ const sparesFaqs = [
     makes: makesResult.map((r) => r.make).filter(Boolean) as string[],
     categories: categoriesResult.map((r) => r.category).filter(Boolean) as string[],
   }
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: 'https://www.a-ztrucksales.com',
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Spares',
-        item: 'https://www.a-ztrucksales.com/spares',
-      },
-    ],
-  }
-
-  const sparesFaqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: sparesFaqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
-      },
-    })),
-  }
 
   return (
     <div>
@@ -130,11 +140,8 @@ const sparesFaqs = [
         <span>Last Updated: 2026-04-27</span>
         {/* application/ld+json */}
       </div>
-      <GeoHints />
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={sparesFaqSchema} />
-      
-      
 
       <AllSparesFilter initialSpares={initialSpares} initialMeta={initialMeta} initialFilterOptions={initialFilterOptions} />
 
@@ -145,7 +152,7 @@ const sparesFaqs = [
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently Asked Questions</h2>
               <p className="text-neutral-600">Common questions about our truck spares and parts.</p>
             </div>
-            
+
             <Accordion type="single" collapsible className="w-full">
               {sparesFaqs.map((faq, index) => (
                 <AccordionItem key={index} value={`item-${index}`} className="bg-white px-6 rounded-lg mb-4 border border-neutral-200">

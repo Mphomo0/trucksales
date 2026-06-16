@@ -10,10 +10,8 @@ import { prisma } from '@/lib/prisma'
 import { cache } from 'react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
-import GeoHints from '@/components/global/GeoHints'
 
-export const dynamic = 'force-static'
-export const revalidate = false
+export const revalidate = 3600
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -176,7 +174,6 @@ export default async function Special({ params }: Props) {
   return (
     <div>
       <h1 className="sr-only">{inventory.year} {inventory.make} Special Offer</h1>
-      <GeoHints />
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={productSchema} />
       <JsonLd data={specialFaqSchema} />

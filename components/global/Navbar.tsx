@@ -23,8 +23,10 @@ const NavLinks = [
   const { isSignedIn, isLoaded } = useUser()
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-    document.body.style.overflow = !isMobileMenuOpen ? 'hidden' : 'unset'
+    setIsMobileMenuOpen(prev => {
+      document.body.style.overflow = prev ? 'unset' : 'hidden'
+      return !prev
+    })
   }
 
   // Cleanup overflow style when component unmounts
@@ -61,7 +63,7 @@ const NavLinks = [
                 width={300}
                 height={150}
                 priority
-                className="h-auto w-auto"
+                className="h-12 w-auto"
               />
             </Link>
           </div>

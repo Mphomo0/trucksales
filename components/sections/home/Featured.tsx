@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import FeaturedMarquee from './FeaturedMarquee'
 
@@ -6,67 +7,66 @@ type FeaturedTruck = {
   id: string; name: string; make: string; model: string; year: number;
   vatPrice: number; mileage: number | null; fuelType: string | null;
   condition: string; transmission: string | null; slug: string;
-  specialPrice: number | null; specialValidFrom: Date | null; specialValidTo: Date | null;
+  specialPrice: number | null; specialValidFrom: string | null; specialValidTo: string | null;
   thumbnail: { fileId?: string; url: string } | null;
 }
 
-let cachedTrucks: FeaturedTruck[] = []
-let cacheExpiry = 0
+const getFeaturedTrucks = unstable_cache(
+  async (): Promise<FeaturedTruck[]> => {
+    const vehicles = await prisma.inventory.findMany({
+      take: 20,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        make: true,
+        model: true,
+        year: true,
+        vatPrice: true,
+        mileage: true,
+        fuelType: true,
+        condition: true,
+        transmission: true,
+        slug: true,
+        specialPrice: true,
+        specialValidFrom: true,
+        specialValidTo: true,
+        images: true,
+      },
+    })
+
+    return vehicles.map((v) => {
+      const imgArray = Array.isArray(v.images) ? v.images : []
+      return {
+        id: v.id,
+        name: v.name,
+        make: v.make,
+        model: v.model,
+        year: v.year ?? 0,
+        vatPrice: v.vatPrice ?? 0,
+        mileage: v.mileage,
+        fuelType: v.fuelType,
+        condition: v.condition ?? '',
+        transmission: v.transmission,
+        slug: v.slug,
+        specialPrice: v.specialPrice,
+        specialValidFrom: v.specialValidFrom instanceof Date ? v.specialValidFrom.toISOString() : v.specialValidFrom ?? null,
+        specialValidTo: v.specialValidTo instanceof Date ? v.specialValidTo.toISOString() : v.specialValidTo ?? null,
+        thumbnail: (imgArray[0] as { fileId?: string; url: string } | undefined) ?? null,
+      }
+    })
+  },
+  ['featured-trucks'],
+  { revalidate: 300 }
+)
 
 export default async function Featured() {
-  const now = Date.now()
-  let trucks: FeaturedTruck[] = now < cacheExpiry ? cachedTrucks : []
+  let trucks: FeaturedTruck[] = []
 
-  if (trucks.length === 0) {
-    try {
-      const vehicles = await prisma.inventory.findMany({
-        take: 20,
-        orderBy: { createdAt: 'desc' },
-        select: {
-          id: true,
-          name: true,
-          make: true,
-          model: true,
-          year: true,
-          vatPrice: true,
-          mileage: true,
-          fuelType: true,
-          condition: true,
-          transmission: true,
-          slug: true,
-          specialPrice: true,
-          specialValidFrom: true,
-          specialValidTo: true,
-          images: true,
-        },
-      })
-
-      trucks = vehicles.map((v) => {
-        const imgArray = Array.isArray(v.images) ? v.images : []
-        return {
-          id: v.id,
-          name: v.name,
-          make: v.make,
-          model: v.model,
-          year: v.year ?? 0,
-          vatPrice: v.vatPrice ?? 0,
-          mileage: v.mileage,
-          fuelType: v.fuelType,
-          condition: v.condition ?? '',
-          transmission: v.transmission,
-          slug: v.slug,
-          specialPrice: v.specialPrice,
-          specialValidFrom: v.specialValidFrom,
-          specialValidTo: v.specialValidTo,
-          thumbnail: (imgArray[0] as { fileId?: string; url: string } | undefined) ?? null,
-        }
-      })
-
-      cachedTrucks = trucks
-      cacheExpiry = now + 300_000
-    } catch (error) {
-      console.error('Featured vehicles fetch error:', error)
-    }
+  try {
+    trucks = await getFeaturedTrucks()
+  } catch (error) {
+    console.error('Featured vehicles fetch error:', error)
   }
 
   if (trucks.length === 0) {

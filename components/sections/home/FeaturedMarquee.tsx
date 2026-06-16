@@ -80,7 +80,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                             width={400}
                             height={300}
                             className="w-full h-48 object-cover"
-                            priority={index < 3}
+
                           />
                         ) : (
                           noImage
