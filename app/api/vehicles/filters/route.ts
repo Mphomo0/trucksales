@@ -29,11 +29,22 @@ export const GET = async (req: NextRequest) => {
       }),
     ])
 
+    const dedupeCaseInsensitive = (items: (string | null)[]) => {
+      const seen = new Set<string>()
+      return items.filter((item): item is string => {
+        if (!item) return false
+        const lower = item.trim().toLowerCase()
+        if (seen.has(lower)) return false
+        seen.add(lower)
+        return true
+      })
+    }
+
     const filterOptions = {
-      makes: makesResult.map((item) => item.make).filter(Boolean),
-      models: modelsResult.map((item) => item.model).filter(Boolean),
-      bodyTypes: bodyTypesResult.map((item) => item.bodyType).filter(Boolean),
-      truckSizes: truckSizesResult.map((item) => item.truckSize).filter(Boolean),
+      makes: dedupeCaseInsensitive(makesResult.map((item) => item.make)),
+      models: dedupeCaseInsensitive(modelsResult.map((item) => item.model)),
+      bodyTypes: dedupeCaseInsensitive(bodyTypesResult.map((item) => item.bodyType)),
+      truckSizes: dedupeCaseInsensitive(truckSizesResult.map((item) => item.truckSize)),
     }
 
     return NextResponse.json(filterOptions, {

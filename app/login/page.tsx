@@ -6,7 +6,6 @@ import { SignIn } from '@clerk/nextjs'
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { Metadata } from 'next'
-import GeoHints from '@/components/global/GeoHints'
 
 export const metadata: Metadata = {
   title: 'Login | Dashboard Access | A-Z Truck Sales',
@@ -21,7 +20,6 @@ export default async function Login() {
   return (
     <>
       <h1 className="sr-only">Login to A-Z Truck Sales</h1>
-      <GeoHints />
       <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
         <SignIn
           appearance={{

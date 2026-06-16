@@ -70,6 +70,21 @@ import Link from 'next/link'
               </Link>
             </li>
             <li>
+              <Link href="/brands" className="hover:underline">
+                Brands
+              </Link>
+            </li>
+            <li>
+              <Link href="/guides" className="hover:underline">
+                Guides
+              </Link>
+            </li>
+            <li>
+              <Link href="/locations" className="hover:underline">
+                Branches
+              </Link>
+            </li>
+            <li>
               <Link href="/contact" className="hover:underline">
                 Contact Us
               </Link>
