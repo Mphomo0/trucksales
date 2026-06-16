@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   if (now > inventory.specialValidTo || now < inventory.specialValidFrom) {
-    return { title: 'Special Expired' }
+    return { title: 'Special Expired', robots: { index: false } }
   }
 
   // Layout appends "| A-Z Truck Sales" (17 chars); keep page portion ≤ 43 so full title ≤ 60
@@ -122,7 +122,7 @@ export default async function Special({ params }: Props) {
     vehicleIdentificationNumber: inventory.registrationNo || undefined,
     brand: { '@type': 'Brand', name: inventory.make },
     manufacturer: { '@type': 'Organization', name: inventory.make },
-    modelDate: String(inventory.year),
+    vehicleModelDate: inventory.year,
     mileageFromOdometer: inventory.mileage != null ? {
       '@type': 'QuantitativeValue',
       value: inventory.mileage,

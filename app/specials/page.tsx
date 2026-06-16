@@ -10,12 +10,22 @@ import SpecialsFeatures from '@/components/sections/specials/SpecialsFeatures'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 import { prisma } from '@/lib/prisma'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: { absolute: 'Truck Specials Under R300 000 | A-Z Truck Sales — Gauteng' },
-  description: 'Browse truck specials at A-Z Truck Sales in Boksburg. Quality used trucks in Gauteng, including Isuzu, Hino and Nissan. View deals today.',
+  description: 'Browse truck specials at A-Z Truck Sales in Alberton & Boksburg, Gauteng. Limited-time deals on quality used Isuzu, Hino, Nissan and more. View today.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/specials',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_ZA',
+    url: 'https://www.a-ztrucksales.com/specials',
+    siteName: 'A-Z Truck Sales',
+    title: 'Truck Specials Under R300 000 | A-Z Truck Sales — Gauteng',
+    description: 'Browse truck specials at A-Z Truck Sales in Alberton & Boksburg, Gauteng. Limited-time deals on quality used Isuzu, Hino, Nissan and more.',
+    images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'Truck Specials - A-Z Truck Sales' }],
   },
 }
 
@@ -186,10 +196,25 @@ async function getSpecialsData() {
             </p>
           </div>
         ) : (
-          <AllSpecials 
-            vehicles={vehicles as any[]} 
-            spares={spares as any[]} 
+          <AllSpecials
+            vehicles={vehicles as any[]}
+            spares={spares as any[]}
           />
+        )}
+
+        {vehicles.length > 0 && (
+          <section className="mt-12 pt-8 border-t border-gray-200">
+            <h2 className="text-base font-semibold text-neutral-700 mb-4">Special Offer Trucks</h2>
+            <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+              {vehicles.map((v) => (
+                <li key={v.slug}>
+                  <Link href={`/specials/${v.slug}`} className="text-sm text-blue-700 hover:underline">
+                    {v.year} {v.make} {v.model}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
       </div>
     </div>

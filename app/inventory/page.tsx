@@ -6,6 +6,7 @@ import AllVehiclesFilter from '@/components/sections/inventorySection/AllVehicle
 import InventoryFeatures from '@/components/sections/inventorySection/InventoryFeatures'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
+import Link from 'next/link'
 import {
   Accordion,
   AccordionContent,
@@ -19,9 +20,18 @@ export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: 'Browse Used Trucks for Sale in South Africa',
-  description: 'Browse used trucks in Boksburg, Gauteng. Isuzu, Hino, UD, Fuso and Toyota Dyna trucks from 2 to 16 tons. Serving customers across South Africa.',
+  description: 'Browse 100+ used trucks for sale in Gauteng. Isuzu, Hino, Mercedes-Benz, MAN, Fuso and UD Trucks from 1.5 to 35 tons. Workshop-serviced, COF-ready.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/inventory',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_ZA',
+    url: 'https://www.a-ztrucksales.com/inventory',
+    siteName: 'A-Z Truck Sales',
+    title: 'Browse Used Trucks for Sale in South Africa | A-Z Truck Sales',
+    description: 'Browse 100+ used trucks for sale in Gauteng. Isuzu, Hino, Mercedes-Benz, MAN, Fuso and UD Trucks from 1.5 to 35 tons. Workshop-serviced, COF-ready.',
+    images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'Used Trucks for Sale - A-Z Truck Sales' }],
   },
 }
 
@@ -82,6 +92,17 @@ const inventoryFaqSchema = {
   })),
 }
 
+const getAllInventorySlugs = unstable_cache(
+  async () => {
+    return prisma.inventory.findMany({
+      select: { slug: true, year: true, make: true, model: true },
+      orderBy: { createdAt: 'desc' },
+    })
+  },
+  ['all-inventory-slugs'],
+  { revalidate: 86400, tags: ['inventory'] }
+)
+
 const getInventoryPageData = unstable_cache(
   async () => {
     const [vehicles, total, makesResult, modelsResult, bodyTypesResult, truckSizesResult] = await Promise.all([
@@ -124,7 +145,10 @@ const getInventoryPageData = unstable_cache(
 )
 
 export default async function Inventory() {
-  const { vehicles, total, makesResult, modelsResult, bodyTypesResult, truckSizesResult } = await getInventoryPageData()
+  const [{ vehicles, total, makesResult, modelsResult, bodyTypesResult, truckSizesResult }, allVehicles] = await Promise.all([
+    getInventoryPageData(),
+    getAllInventorySlugs(),
+  ])
 
   const dedupeCaseInsensitive = (items: (string | null)[]) => {
     const seen = new Set<string>()
@@ -185,6 +209,21 @@ export default async function Inventory() {
               ))}
             </Accordion>
           </div>
+        </div>
+      </section>
+
+      <section className="py-10 border-t border-neutral-200 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-base font-semibold text-neutral-700 mb-4">All {allVehicles.length} Trucks in Stock</h2>
+          <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+            {allVehicles.map((v) => (
+              <li key={v.slug}>
+                <Link href={`/inventory/${v.slug}`} className="text-sm text-blue-700 hover:underline">
+                  {v.year} {v.make} {v.model}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
     </div>

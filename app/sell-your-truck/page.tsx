@@ -15,6 +15,15 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/sell-your-truck',
   },
+  openGraph: {
+    type: 'website',
+    locale: 'en_ZA',
+    url: 'https://www.a-ztrucksales.com/sell-your-truck',
+    siteName: 'A-Z Truck Sales',
+    title: 'Sell Your Truck | We Buy Used Trucks | A-Z Truck Sales',
+    description: 'Sell or trade-in your used truck with A-Z Truck Sales. Competitive offers, fast payment. We buy 1.5-35 ton trucks in Gauteng.',
+    images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'Sell Your Truck - A-Z Truck Sales' }],
+  },
 }
 
 const tradeInFaqs = [

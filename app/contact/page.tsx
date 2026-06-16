@@ -23,6 +23,15 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/contact',
   },
+  openGraph: {
+    type: 'website',
+    locale: 'en_ZA',
+    url: 'https://www.a-ztrucksales.com/contact',
+    siteName: 'A-Z Truck Sales',
+    title: 'Contact A-Z Truck Sales | Alberton & Boksburg, Gauteng',
+    description: 'Contact A-Z Truck Sales in Alberton (011 902 6071) or Boksburg (083 234 5377), Gauteng. Mon-Fri 8AM-5PM, Sat 8AM-1PM.',
+    images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'Contact A-Z Truck Sales' }],
+  },
 }
 
 const contactFaqs = [

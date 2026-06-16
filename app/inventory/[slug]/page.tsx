@@ -43,13 +43,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title = title.substring(0, 40) + '...'
   }
 
-  const baseDescription = `${vehicle.condition} ${vehicle.year} ${vehicle.make} ${vehicle.model} for sale in Gauteng. ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km.` : ''}`.trim()
+  const baseDescription = `${vehicle.condition === 'NEW' ? 'New' : 'Used'} ${vehicle.year} ${vehicle.make} ${vehicle.model} for sale in Gauteng. ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km. ` : ''}`.trim()
+  const fallback = 'Workshop-serviced & COF-ready. View at A-Z Truck Sales, Alberton or Boksburg. Call 011 902 6071.'
   const charsLeft = 155 - baseDescription.length
   let description = baseDescription
 
   if (charsLeft > 5 && vehicle.description) {
     const cleanDesc = vehicle.description.replace(/\s+/g, ' ').trim()
     description = `${baseDescription} ${cleanDesc.substring(0, charsLeft)}${cleanDesc.length > charsLeft ? '...' : ''}`
+  } else if (charsLeft > 10) {
+    description = `${baseDescription} ${fallback}`.substring(0, 155)
   }
 
   const canonicalUrl = `https://www.a-ztrucksales.com/inventory/${vehicle.slug}`
@@ -104,8 +107,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     availability: 'https://schema.org/InStock',
     seller: { '@type': 'Organization', name: 'A-Z Truck Sales' },
   }
-  if (vehicle.vatPrice != null) {
-    offerSchema.price = vehicle.vatPrice
+  const price = vehicle.vatPrice ?? vehicle.pricenoVat
+  if (price != null) {
+    offerSchema.price = price
   }
 
   const productSchema = {
@@ -117,7 +121,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     vehicleIdentificationNumber: vehicle.registrationNo || undefined,
     brand: { '@type': 'Brand', name: vehicle.make },
     manufacturer: { '@type': 'Organization', name: vehicle.make },
-    modelDate: String(vehicle.year),
+    vehicleModelDate: vehicle.year,
     mileageFromOdometer: vehicle.mileage != null ? {
       '@type': 'QuantitativeValue',
       value: vehicle.mileage,

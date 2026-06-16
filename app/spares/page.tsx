@@ -8,6 +8,7 @@ import AllSparesFilter from '@/components/sections/spares/AllSparesFilter'
 import SparesFeatures from '@/components/sections/spares/SparesFeatures'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
+import Link from 'next/link'
 import {
   Accordion,
   AccordionContent,
@@ -22,6 +23,15 @@ export const metadata: Metadata = {
   description: 'Quality used truck spares in Gauteng. Engines, gearboxes & diffs for Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso & more. Workshop-tested at our Alberton branch.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/spares',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_ZA',
+    url: 'https://www.a-ztrucksales.com/spares',
+    siteName: 'A-Z Truck Sales',
+    title: 'Truck Spares & Parts | Alberton, Gauteng | A-Z Truck Sales',
+    description: 'Quality used truck spares in Gauteng. Engines, gearboxes & diffs for Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso & more. Workshop-tested at our Alberton branch.',
+    images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'Truck Spares & Parts - A-Z Truck Sales' }],
   },
 }
 
@@ -82,6 +92,17 @@ const sparesFaqSchema = {
   })),
 }
 
+const getAllSparesSlugs = unstable_cache(
+  async () => {
+    return prisma.spares.findMany({
+      select: { slug: true, name: true },
+      orderBy: { createdAt: 'desc' },
+    })
+  },
+  ['all-spares-slugs'],
+  { revalidate: 86400, tags: ['spares'] }
+)
+
 const getSparePageData = unstable_cache(
   async () => {
     const [spares, total, makesResult, categoriesResult] = await Promise.all([
@@ -118,7 +139,10 @@ const getSparePageData = unstable_cache(
 )
 
 /* application/ld+json */ export default async function Spares() {
-  const { spares, total, makesResult, categoriesResult } = await getSparePageData()
+  const [{ spares, total, makesResult, categoriesResult }, allSpares] = await Promise.all([
+    getSparePageData(),
+    getAllSparesSlugs(),
+  ])
 
   const initialSpares = spares.map((item) => {
     const imgArray = Array.isArray(item.images) ? (item.images as any[]) : []
@@ -166,6 +190,21 @@ const getSparePageData = unstable_cache(
               ))}
             </Accordion>
           </div>
+        </div>
+      </section>
+
+      <section className="py-10 border-t border-neutral-200 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-base font-semibold text-neutral-700 mb-4">All {allSpares.length} Spare Parts in Stock</h2>
+          <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+            {allSpares.map((s) => (
+              <li key={s.slug}>
+                <Link href={`/spares/${s.slug}`} className="text-sm text-blue-700 hover:underline">
+                  {s.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
     </div>
