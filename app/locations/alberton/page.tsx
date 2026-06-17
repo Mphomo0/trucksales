@@ -41,20 +41,39 @@ export default async function AlbertonPage() {
     ],
   }
   const localBusinessSchema = {
-    '@context': 'https://schema.org', '@type': 'LocalBusiness',
-    '@id': 'https://www.a-ztrucksales.com/locations/alberton',
-    name: 'A-Z Truck Sales - Alberton',
+    '@context': 'https://schema.org',
+    '@type': 'AutoDealer',
+    '@id': 'https://www.a-ztrucksales.com/locations/alberton#branch',
+    name: 'A-Z Truck Sales — Alberton',
+    parentOrganization: { '@id': 'https://www.a-ztrucksales.com/#org' },
     image: 'https://www.a-ztrucksales.com/og-image.webp',
     url: 'https://www.a-ztrucksales.com/locations/alberton',
-    telephone: '+27-11-902-6071',
-    email: 'mi118@mweb.co.za',
-    address: { '@type': 'PostalAddress', streetAddress: '9 Chrislou Crescent, Alberton North', addressLocality: 'Alberton', addressRegion: 'Gauteng', postalCode: '1449', addressCountry: 'ZA' },
-    geo: { '@type': 'GeoCoordinates', latitude: '-26.2694', longitude: '28.1221' },
+    telephone: '+27119026071',
+    email: 'aztrucksales@mweb.co.za',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '9 Chrislou Crescent',
+      addressLocality: 'Alberton North',
+      addressRegion: 'Gauteng',
+      postalCode: '1449',
+      addressCountry: 'ZA',
+    },
+    geo: { '@type': 'GeoCoordinates', latitude: -26.2694, longitude: 28.1221 },
     openingHoursSpecification: [
-      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '08:00', closes: '17:00' },
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        opens: '08:00',
+        closes: '17:00',
+      },
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: 'Saturday',
+        opens: '08:00',
+        closes: '13:00',
+      },
     ],
-    priceRange: '$$',
-    aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.0', reviewCount: '245' },
+    areaServed: 'Gauteng, South Africa',
   }
   const faqSchema = {
     '@context': 'https://schema.org', '@type': 'FAQPage',
@@ -121,7 +140,7 @@ export default async function AlbertonPage() {
               <div className="text-gray-600 space-y-3">
                 <p><strong>Address:</strong> 9 Chrislou Crescent, Alberton North, Alberton, 1449</p>
                 <p><strong>Phone:</strong> <a href="tel:+27119026071" className="text-amber-600 hover:underline">011 902 6071</a></p>
-                <p><strong>Email:</strong> <a href="mailto:mi118@mweb.co.za" className="text-amber-600 hover:underline">mi118@mweb.co.za</a></p>
+                <p><strong>Email:</strong> <a href="mailto:aztrucksales@mweb.co.za" className="text-amber-600 hover:underline">aztrucksales@mweb.co.za</a></p>
                 <p><strong>Hours:</strong> Monday-Friday 8:00 AM - 5:00 PM, Saturday 8:00 AM - 1:00 PM</p>
                 <p><strong>Services:</strong> Used truck sales, truck spares, trade-ins</p>
               </div>
