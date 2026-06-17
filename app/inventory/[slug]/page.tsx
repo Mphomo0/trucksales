@@ -91,8 +91,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return <div>Vehicle not found</div>
   }
 
-  const images = Array.isArray(vehicle.images) 
-    ? (vehicle.images as any[]).map(img => img.url)
+  const images = Array.isArray(vehicle.images)
+    ? (vehicle.images as { url: string }[]).map(img => img.url)
     : []
 
   const offerSchema: Record<string, unknown> = {
