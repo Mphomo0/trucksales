@@ -179,19 +179,34 @@ async function searchContent(message: string) {
 
   const searchFields = ['make', 'model', 'bodyType', 'truckSize'] as const
 
-  const vehicles = await prisma.inventory.findMany({
-    where: {
-      OR: searchFields.flatMap((field) =>
-        words.map((word) => ({ [field]: { contains: word, mode: 'insensitive' as const } })),
-      ),
-    },
-    select: {
-      id: true, name: true, make: true, model: true, year: true, vatPrice: true,
-      mileage: true, condition: true, bodyType: true, truckSize: true,
-      transmission: true, fuelType: true, description: true, slug: true,
-    },
-    take: 10,
-  })
+  const [vehicles, spares] = await Promise.all([
+    prisma.inventory.findMany({
+      where: {
+        OR: searchFields.flatMap((field) =>
+          words.map((word) => ({ [field]: { contains: word, mode: 'insensitive' as const } })),
+        ),
+      },
+      select: {
+        id: true, name: true, make: true, model: true, year: true, vatPrice: true,
+        mileage: true, condition: true, bodyType: true, truckSize: true,
+        transmission: true, fuelType: true, description: true, slug: true,
+      },
+      take: 10,
+    }),
+    prisma.spares.findMany({
+      where: {
+        OR: words.map((word) => ({
+          OR: [
+            { name: { contains: word, mode: 'insensitive' as const } },
+            { make: { contains: word, mode: 'insensitive' as const } },
+            { category: { contains: word, mode: 'insensitive' as const } },
+          ],
+        })),
+      },
+      select: { id: true, name: true, make: true, category: true, price: true, condition: true, description: true, slug: true },
+      take: 5,
+    }),
+  ])
 
   if (vehicles.length > 0) {
     const seen = new Map<string, string>()
@@ -202,6 +217,29 @@ async function searchContent(message: string) {
       content,
       pageType: 'inventory',
       title: content.split('\n')[0]?.replace('Vehicle: ', '') || '',
+    }))
+  }
+
+  if (spares.length > 0) {
+    const seen = new Map<string, string>()
+    for (const s of spares) {
+      if (!seen.has(s.id)) {
+        const price = s.price.toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR', maximumFractionDigits: 0 })
+        seen.set(s.id, [
+          `Spare Part: ${s.name}`,
+          `Make: ${s.make}`,
+          `Category: ${s.category}`,
+          `Price: ${price}`,
+          `Condition: ${s.condition}`,
+          `URL: https://www.a-ztrucksales.com/spares/${s.slug}`,
+          `Description: ${s.description}`,
+        ].join('\n'))
+      }
+    }
+    return [...seen.values()].map((content) => ({
+      content,
+      pageType: 'spares',
+      title: content.split('\n')[0]?.replace('Spare Part: ', '') || '',
     }))
   }
 

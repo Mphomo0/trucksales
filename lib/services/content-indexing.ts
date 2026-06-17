@@ -32,7 +32,6 @@ export async function indexWebsiteContent() {
   try {
     const pagesToIndex = [
       { url: `${SITE_URL}/`, pageType: 'homepage' },
-      { url: `${SITE_URL}/inventory`, pageType: 'inventory' },
       { url: `${SITE_URL}/contact`, pageType: 'contact' },
       { url: `${SITE_URL}/sell-your-truck`, pageType: 'sell-your-truck' },
     ]
@@ -185,29 +184,25 @@ export async function indexInventoryFromDatabase() {
 
       const existing = await prisma.websiteContentChunk.findFirst({
         where: { url },
+        select: { id: true, contentHash: true },
       })
 
-      if (existing) {
-        if (existing.contentHash === contentHash) {
-          chunksSkipped++
-          existingSlugs.delete(vehicle.slug)
-          continue
-        }
-
-        await prisma.websiteContentChunk.deleteMany({ where: { url } })
-        chunksDeleted++
+      if (existing?.contentHash === contentHash) {
+        // Content unchanged — but purge any accidental duplicates silently
+        await prisma.websiteContentChunk.deleteMany({
+          where: { url, NOT: { id: existing.id } },
+        })
+        chunksSkipped++
+        existingSlugs.delete(vehicle.slug)
+        continue
       }
 
+      // Delete all (handles both "changed" and "multiple duplicate" cases)
+      await prisma.websiteContentChunk.deleteMany({ where: { url } })
       await prisma.websiteContentChunk.create({
-        data: {
-          url,
-          title: vehicle.name,
-          content,
-          contentHash,
-          pageType: 'inventory',
-        },
+        data: { url, title: vehicle.name, content, contentHash, pageType: 'inventory' },
       })
-      chunksCreated++
+      existing ? chunksUpdated++ : chunksCreated++
       existingSlugs.delete(vehicle.slug)
     }
 
@@ -290,6 +285,93 @@ function buildVehicleContent(vehicle: {
     `URL: ${SITE_URL}/inventory/${vehicle.slug}`,
     `Description: ${vehicle.description}`,
   ].join('\n')
+}
+
+export async function indexSparesFromDatabase() {
+  const log = await prisma.indexingLog.create({ data: { status: 'running' } })
+
+  try {
+    const spares = await prisma.spares.findMany({
+      select: { id: true, name: true, make: true, category: true, price: true, condition: true, description: true, slug: true },
+    })
+
+    const existingSpareChunks = await prisma.websiteContentChunk.findMany({
+      where: { pageType: 'spares' },
+      select: { id: true, url: true, contentHash: true },
+    })
+    const existingSlugs = new Set(existingSpareChunks.map((c) => c.url.split('/').pop()))
+
+    let chunksCreated = 0
+    let chunksUpdated = 0
+    let chunksDeleted = 0
+    let chunksSkipped = 0
+
+    for (const spare of spares) {
+      const content = buildSpareContent(spare)
+      const contentHash = hashContent(content)
+      const url = `${SITE_URL}/spares/${spare.slug}`
+
+      const existing = existingSpareChunks.find((c) => c.url === url)
+
+      if (existing?.contentHash === contentHash) {
+        // Purge any duplicates silently
+        await prisma.websiteContentChunk.deleteMany({
+          where: { url, NOT: { id: existing.id } },
+        })
+        chunksSkipped++
+        existingSlugs.delete(spare.slug)
+        continue
+      }
+
+      await prisma.websiteContentChunk.deleteMany({ where: { url } })
+      await prisma.websiteContentChunk.create({
+        data: { url, title: spare.name, content, contentHash, pageType: 'spares' },
+      })
+      existing ? chunksUpdated++ : chunksCreated++
+      existingSlugs.delete(spare.slug)
+    }
+
+    for (const staleSlug of existingSlugs) {
+      await prisma.websiteContentChunk.deleteMany({ where: { url: `${SITE_URL}/spares/${staleSlug}` } })
+      chunksDeleted++
+    }
+
+    await prisma.indexingLog.update({
+      where: { id: log.id },
+      data: { status: 'completed', finishedAt: new Date(), pagesIndexed: spares.length, chunksCreated, chunksUpdated, chunksDeleted, chunksSkipped },
+    })
+
+    return { pagesIndexed: spares.length, chunksCreated, chunksUpdated, chunksDeleted, chunksSkipped }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    await prisma.indexingLog.update({ where: { id: log.id }, data: { status: 'failed', finishedAt: new Date(), error: errorMessage } })
+    throw error
+  }
+}
+
+function buildSpareContent(spare: {
+  name: string
+  make: string
+  category: string
+  price: number
+  condition: string
+  description: string
+  slug: string
+}) {
+  const price = spare.price.toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR', maximumFractionDigits: 0 })
+  return [
+    `Spare Part: ${spare.name}`,
+    `Make: ${spare.make}`,
+    `Category: ${spare.category}`,
+    `Price: ${price}`,
+    `Condition: ${spare.condition}`,
+    `URL: ${SITE_URL}/spares/${spare.slug}`,
+    `Description: ${spare.description}`,
+  ].join('\n')
+}
+
+export async function deleteChunk(url: string) {
+  await prisma.websiteContentChunk.deleteMany({ where: { url } })
 }
 
 export async function getIndexingStatus() {
