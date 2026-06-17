@@ -8,7 +8,7 @@ const features = [
     icon: CheckCircle2,
     title: 'Quality Assurance',
     description: 'Every truck undergoes a rigorous multi-point inspection before listing.',
-    highlight: 'Workshop Tested',
+    highlight: 'COF-Ready',
   },
   {
     icon: Wrench,

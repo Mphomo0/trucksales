@@ -9,7 +9,7 @@ export const metadata: Metadata = {
       'Truck Dealership Locations | Alberton & Boksburg | A-Z Truck Sales',
   },
   description:
-    'Visit A-Z Truck Sales in Alberton or Boksburg, Gauteng. View used trucks, speak to our sales team or visit our workshop. Branches open Monday-Friday.',
+    'Visit A-Z Truck Sales in Alberton or Boksburg, Gauteng. View used trucks and speak to our sales team. Branches open Monday-Friday.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/locations' },
   openGraph: {
     title: 'Truck Dealership Locations | Alberton & Boksburg',
@@ -54,7 +54,7 @@ export default function LocationsPage() {
               <p>9 Chrislou Crescent, Alberton North, 1449</p>
               <p>Phone: 011 902 6071</p>
               <p>Hours: Mon-Fri 8AM-5PM, Sat 8AM-1PM</p>
-              <p>Full workshop, 100+ trucks in stock, spares available</p>
+              <p>100+ trucks in stock, spares available</p>
             </div>
             <span className="text-amber-600 font-semibold mt-4 inline-block">
               View Alberton Branch →

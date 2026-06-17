@@ -20,7 +20,7 @@ export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: 'Browse Used Trucks for Sale in South Africa',
-  description: 'Browse 100+ used trucks for sale in Gauteng. Isuzu, Hino, Mercedes-Benz, MAN, Fuso and UD Trucks from 1.5 to 35 tons. Workshop-serviced, COF-ready.',
+  description: 'Browse 100+ used trucks for sale in Gauteng. Isuzu, Hino, Mercedes-Benz, MAN, Fuso and UD Trucks from 1.5 to 35 tons. COF-ready.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/inventory',
   },
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     url: 'https://www.a-ztrucksales.com/inventory',
     siteName: 'A-Z Truck Sales',
     title: 'Browse Used Trucks for Sale in South Africa | A-Z Truck Sales',
-    description: 'Browse 100+ used trucks for sale in Gauteng. Isuzu, Hino, Mercedes-Benz, MAN, Fuso and UD Trucks from 1.5 to 35 tons. Workshop-serviced, COF-ready.',
+    description: 'Browse 100+ used trucks for sale in Gauteng. Isuzu, Hino, Mercedes-Benz, MAN, Fuso and UD Trucks from 1.5 to 35 tons. COF-ready.',
     images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'Used Trucks for Sale - A-Z Truck Sales' }],
   },
 }
@@ -43,8 +43,8 @@ const inventoryFaqs = [
     answer: 'We stock Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso, Toyota, Nissan, Tata, Hyundai, Volkswagen and UD Trucks — rigid trucks from 1.5 to 35 tons.',
   },
   {
-    question: 'Are your trucks workshop-serviced?',
-    answer: 'Yes. Every truck goes through our in-house workshop and must pass a COF inspection before sale.',
+    question: 'Are your trucks COF-ready?',
+    answer: 'Yes. Every truck is prepared and must pass a COF inspection before sale.',
   },
   {
     question: 'Do you offer delivery or transport?',

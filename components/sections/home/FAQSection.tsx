@@ -30,12 +30,12 @@ const guideSections = [
     heading:
       'What makes A-Z Truck Sales different from a truck marketplace?',
     summary:
-      'A-Z combines used truck stock with local branch support, workshop preparation, spares knowledge and direct dealer guidance. Unlike marketplaces, A-Z helps buyers through condition, body type, paperwork and inspection questions.',
+      'A-Z combines used truck stock with local branch support, spares knowledge and direct dealer guidance. Unlike marketplaces, A-Z helps buyers through condition, body type, paperwork and inspection questions.',
     content: (
       <div className="space-y-4">
         <p>
-          A-Z combines used truck stock with local branch support, workshop
-          preparation, spares knowledge and direct dealer guidance.
+          A-Z combines used truck stock with local branch support, spares
+          knowledge and direct dealer guidance.
         </p>
         <p>
           Marketplaces are useful for browsing many listings, but they often
@@ -213,17 +213,16 @@ const guideSections = [
   },
   {
     heading:
-      'Why does workshop preparation matter when buying a used truck?',
+      'Why does vehicle preparation matter when buying a used truck?',
     summary:
-      'Workshop preparation reduces buyer risk by checking visible faults, roadworthy readiness, safety items and work-needed issues before collection. A dealer with workshop knowledge can explain what has been checked, refurbished, and what the buyer should inspect before paying.',
+      'Vehicle preparation reduces buyer risk by checking visible faults, roadworthy readiness and safety items before collection. A knowledgeable dealer can explain what has been checked and what the buyer should inspect before paying.',
     content: (
       <p>
-        Workshop preparation reduces buyer risk by checking visible faults,
+        Vehicle preparation reduces buyer risk by checking visible faults,
         roadworthy readiness, safety items and work-needed issues before
-        collection. A marketplace can list trucks, but a dealer with workshop
-        knowledge can explain what has been checked, what has been
-        refurbished, what still needs attention, and what the buyer should
-        inspect before paying.
+        collection. A knowledgeable dealer can explain what has been checked,
+        what still needs attention, and what the buyer should inspect before
+        paying.
       </p>
     ),
   },

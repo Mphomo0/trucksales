@@ -20,7 +20,7 @@ import { unstable_cache } from 'next/cache'
 
 export const metadata: Metadata = {
   title: 'Truck Spares & Parts | Alberton, Gauteng',
-  description: 'Quality used truck spares in Gauteng. Engines, gearboxes & diffs for Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso & more. Workshop-tested at our Alberton branch.',
+  description: 'Quality used truck spares in Gauteng. Engines, gearboxes & diffs for Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso & more. Inspected at our Alberton branch.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/spares',
   },
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     url: 'https://www.a-ztrucksales.com/spares',
     siteName: 'A-Z Truck Sales',
     title: 'Truck Spares & Parts | Alberton, Gauteng | A-Z Truck Sales',
-    description: 'Quality used truck spares in Gauteng. Engines, gearboxes & diffs for Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso & more. Workshop-tested at our Alberton branch.',
+    description: 'Quality used truck spares in Gauteng. Engines, gearboxes & diffs for Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso & more. Inspected at our Alberton branch.',
     images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'Truck Spares & Parts - A-Z Truck Sales' }],
   },
 }
@@ -44,7 +44,7 @@ const sparesFaqs = [
   },
   {
     question: 'Do you offer warranty on spare parts?',
-    answer: 'All our parts are workshop-tested before sale. Warranty terms depend on the specific part - contact us for details.',
+    answer: 'All our parts are inspected before sale. Warranty terms depend on the specific part - contact us for details.',
   },
   {
     question: 'Can I order a specific part?',
@@ -56,7 +56,7 @@ const sparesFaqs = [
   },
   {
     question: 'Can I view parts before purchase?',
-    answer: 'Yes, parts can be viewed at our Alberton workshop by appointment. Call 011 902 6071.',
+    answer: 'Yes, parts can be viewed at our Alberton branch by appointment. Call 011 902 6071.',
   },
 ]
 

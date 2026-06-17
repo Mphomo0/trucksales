@@ -18,7 +18,7 @@ const features = [
   },
   {
     icon: Wrench,
-    title: 'Workshop Serviced',
+    title: 'Quality Inspected',
     description: 'All spares are inspected by our expert technical team.',
     highlight: 'Inspected',
   },

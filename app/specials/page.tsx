@@ -48,7 +48,7 @@ const specialsFaqs = [
   },
   {
     question: 'Are specials available for viewing in person?',
-    answer: 'Yes. Special-priced trucks can be viewed at our Alberton workshop by appointment. Call 011 902 6071.',
+    answer: 'Yes. Special-priced trucks can be viewed at our Alberton branch by appointment. Call 011 902 6071.',
   },
 ]
 

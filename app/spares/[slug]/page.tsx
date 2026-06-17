@@ -140,10 +140,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
       {
         '@type': 'Question',
-        name: 'Is this part workshop-tested?',
+        name: 'Is this part inspected before sale?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Yes. All our spare parts are inspected and tested in our Alberton workshop before sale.',
+          text: 'Yes. All our spare parts are inspected before sale.',
         },
       },
       {

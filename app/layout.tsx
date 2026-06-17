@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Gauteng's trusted commercial truck dealer since 1999. Pre-owned rigid trucks 1.5-35 ton, workshop-serviced & COF-ready. 100+ in stock. Call +27 11 902 6071.",
+    "Gauteng's trusted commercial truck dealer since 1999. Pre-owned rigid trucks 1.5-35 ton, COF-ready. 100+ in stock. Call +27 11 902 6071.",
 
   authors: [{ name: 'A-Z Truck Sales' }],
   creator: 'A-Z Truck Sales',

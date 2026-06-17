@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const transPart = vehicle.transmission ? ` ${vehicle.transmission},` : ''
   const bodyDescPart = vehicle.bodyType ? ` ${vehicle.bodyType}` : ''
   let description =
-    `${condition} ${vehicle.year} ${vehicle.make} ${vehicle.model}${bodyDescPart} for sale in Gauteng.${mileagePart}${fuelPart}${transPart} COF-ready. Workshop-serviced at A-Z Truck Sales, Alberton or Boksburg.`
+    `${condition} ${vehicle.year} ${vehicle.make} ${vehicle.model}${bodyDescPart} for sale in Gauteng.${mileagePart}${fuelPart}${transPart} COF-ready. Available at A-Z Truck Sales, Alberton or Boksburg.`
   description = description.replace(/,\s+COF/, ', COF').substring(0, 155)
 
   const canonicalUrl = `https://www.a-ztrucksales.com/inventory/${vehicle.slug}`
@@ -149,7 +149,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         name: 'Can I view and test drive this truck?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Yes. Viewings by appointment at our Alberton workshop. Call 011 902 6071 to arrange.',
+          text: 'Yes. Viewings by appointment at our Alberton branch. Call 011 902 6071 to arrange.',
         },
       },
       {
@@ -157,7 +157,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         name: 'Do you offer warranty on this truck?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Every truck is workshop-serviced and COF-certified before sale. Ask about our service packages.',
+          text: 'Every truck is COF-certified before sale. Contact us for full vehicle details.',
         },
       },
       {

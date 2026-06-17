@@ -41,7 +41,7 @@ const faqs = [
   {
     question: 'What makes A-Z Truck Sales different from a truck marketplace?',
     answer:
-      'A-Z combines used truck stock with local branch support, workshop preparation, spares knowledge and direct dealer guidance. Marketplaces list many trucks but leave you to compare condition and inspection questions alone.',
+      'A-Z combines used truck stock with local branch support, spares knowledge and direct dealer guidance. Marketplaces list many trucks but leave you to compare condition and inspection questions alone.',
   },
   {
     question: 'Which truck brands does A-Z Truck Sales focus on?',
@@ -59,9 +59,9 @@ const faqs = [
       'Check the body type and payload fit, mileage against age, service history, tyres, brakes, lights, suspension, body condition, roadworthy status and spares availability for the brand and model.',
   },
   {
-    question: 'Does workshop preparation matter when buying a used truck?',
+    question: 'Does vehicle preparation matter when buying a used truck?',
     answer:
-      'Yes. Workshop preparation reduces buyer risk by checking visible faults, roadworthy readiness and safety items before collection. A dealer with a workshop can explain what has been checked and refurbished.',
+      'Yes. Vehicle preparation reduces buyer risk by checking visible faults, roadworthy readiness and safety items before collection. Ask the dealer what has been checked before you commit.',
   },
   {
     question: 'How should I enquire about a truck?',
@@ -150,8 +150,7 @@ export default function BuyingGuidePage() {
             <div className="text-gray-600 leading-relaxed space-y-4">
               <p>
                 A-Z combines used truck stock with local branch support,
-                workshop preparation, spares knowledge and direct dealer
-                guidance.
+                spares knowledge and direct dealer guidance.
               </p>
               <p>
                 Marketplaces are useful for browsing many listings, but they
@@ -406,16 +405,16 @@ export default function BuyingGuidePage() {
 
           <div className="bg-white rounded-lg border border-neutral-200 p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Why does workshop preparation matter when buying a used truck?
+              Why does vehicle preparation matter when buying a used truck?
             </h2>
             <div className="text-gray-600 leading-relaxed">
               <p>
-                Workshop preparation reduces buyer risk by checking visible
+                Vehicle preparation reduces buyer risk by checking visible
                 faults, roadworthy readiness, safety items and work-needed
                 issues before collection. A marketplace can list trucks, but a
-                dealer with workshop knowledge can explain what has been
-                checked, what has been refurbished, what still needs attention,
-                and what the buyer should inspect before paying.
+                knowledgeable dealer can explain what has been checked, what
+                still needs attention, and what the buyer should inspect before
+                paying.
               </p>
             </div>
           </div>

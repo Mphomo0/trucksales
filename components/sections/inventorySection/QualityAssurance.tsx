@@ -25,14 +25,12 @@ export default function QualityAssurance() {
                 <Settings2 className="h-6 w-6 text-amber-600" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold mb-2">Workshop-Tested Guarantee</h3>
+                <h3 className="text-xl font-semibold mb-2">Quality Inspection</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Every vehicle in our inventory undergoes a rigorous workshop inspection process 
-                  by our experienced technicians. Before any truck is listed for sale, it is 
-                  thoroughly serviced in our Alberton-based facility. We ensure that all major 
-                  components, including the engine, gearbox, and differential, are in optimal 
-                  working condition. Our team of specialists performs comprehensive checks 
-                  to guarantee that every vehicle meets our high standards of quality and performance.
+                  Every vehicle in our inventory is thoroughly inspected before listing.
+                  We ensure that all major components, including the engine, gearbox, and differential,
+                  are in working condition. Our team performs comprehensive checks
+                  to guarantee that every vehicle meets our standards of quality and performance.
                 </p>
               </div>
             </div>
@@ -80,13 +78,12 @@ export default function QualityAssurance() {
                 <CheckCircle2 className="h-6 w-6 text-purple-600" />
               </div>
               <div>
-                <h3 className="text-xl font-semibold mb-2">Restoration & Customization</h3>
+                <h3 className="text-xl font-semibold mb-2">Wide Selection</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  As specialists in truck restoration, we don't just sell trucks; we revitalize them. 
-                  Whether you need a specific body type or customized configurations for specialized 
-                  logistics, our in-house workshop can handle adjustments to suit your needs. 
-                  We offer a comprehensive approach to vehicle sales, ensuring that the truck 
-                  you purchase is perfectly suited for the specific demands of your industry and cargo.
+                  We stock 100+ rigid trucks at any time — from 1.5 to 35 tons across all major
+                  commercial vehicle brands. Whether you need a dropside, box body, tipper,
+                  refrigerated body or curtain side, we have options across a wide range of makes,
+                  tonnage and price points to match your business requirements.
                 </p>
               </div>
             </div>

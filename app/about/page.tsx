@@ -5,7 +5,7 @@ import JsonLd from '@/components/global/JsonLd'
 export const metadata: Metadata = {
   title: { absolute: 'About A-Z Truck Sales | Used Truck Dealer Gauteng Since 1999' },
   description:
-    'A-Z Truck Sales has sold and restored used rigid trucks in Gauteng for 25+ years from branches in Alberton and Boksburg. In-house workshop, COF-ready preparation.',
+    'A-Z Truck Sales has been selling quality used rigid trucks in Gauteng for 25+ years from branches in Alberton and Boksburg. COF-ready trucks and truck spares.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/about' },
   openGraph: {
     type: 'website',
@@ -14,13 +14,13 @@ export const metadata: Metadata = {
     siteName: 'A-Z Truck Sales',
     title: 'About A-Z Truck Sales | Used Truck Dealer Gauteng Since 1999',
     description:
-      'A-Z Truck Sales has sold and restored used rigid trucks in Gauteng for 25+ years from branches in Alberton and Boksburg. In-house workshop, COF-ready preparation.',
+      'A-Z Truck Sales has been selling quality used rigid trucks in Gauteng for 25+ years from branches in Alberton and Boksburg. COF-ready trucks and truck spares.',
     images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'About A-Z Truck Sales' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'About A-Z Truck Sales | Used Truck Dealer Gauteng Since 1999',
-    description: 'A-Z Truck Sales has sold and restored used rigid trucks in Gauteng for 25+ years. Two branches: Alberton and Boksburg.',
+    description: 'A-Z Truck Sales has been selling used rigid trucks in Gauteng for 25+ years. Two branches: Alberton and Boksburg.',
     images: ['https://www.a-ztrucksales.com/og-image.webp'],
   },
 }
@@ -34,7 +34,7 @@ const orgSchema = {
   logo: 'https://www.a-ztrucksales.com/images/logo.png',
   image: 'https://www.a-ztrucksales.com/og-image.webp',
   description:
-    'Used rigid truck dealer in Gauteng, South Africa, established in 1999. Two branches in Alberton and Boksburg. In-house workshop, COF preparation, truck spares.',
+    'Used rigid truck dealer in Gauteng, South Africa, established in 1999. Two branches in Alberton and Boksburg. COF-ready trucks and truck spares.',
   foundingDate: '1999-01-01',
   areaServed: 'Gauteng, South Africa',
   sameAs: [
@@ -64,7 +64,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">About A-Z Truck Sales</h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Gauteng&apos;s trusted used rigid truck dealer since 1999 — two branches, an in-house workshop, and 100+ trucks in stock.
+            Gauteng&apos;s trusted used rigid truck dealer since 1999 — two branches and 100+ trucks in stock.
           </p>
         </div>
       </section>
@@ -81,7 +81,7 @@ export default function AboutPage() {
               </p>
               <p>
                 We specialise in pre-owned rigid trucks from 1.5 to 35 tons across all major commercial vehicle brands — Isuzu, Hino, Mercedes-Benz,
-                Fuso, MAN, UD Trucks, Toyota, Nissan, Tata and Hyundai. Every truck we sell is prepared in our in-house workshop and certified COF-ready
+                Fuso, MAN, UD Trucks, Toyota, Nissan, Tata and Hyundai. Every truck we sell is COF-ready
                 (Certificate of Fitness) before it leaves our yard.
               </p>
               <p>
@@ -112,27 +112,23 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Workshop */}
+      {/* What We Offer */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">In-House Workshop &amp; COF Preparation</h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto text-center mb-12">
-            Unlike marketplaces that simply list trucks, every vehicle at A-Z Truck Sales passes through our workshop before sale.
-            Our qualified technicians service, restore and certify each truck — giving buyers a vehicle that is ready to work from day one.
-          </p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">What We Offer</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                title: 'Full Workshop Service',
-                body: 'Engines, transmissions, brakes, suspension and electrics are checked and restored by our in-house technicians before every sale.',
-              },
-              {
-                title: 'COF-Ready Certification',
-                body: 'We achieve a 95% first-time COF (Certificate of Fitness) pass rate. Every truck leaves prepared and documented for roadworthiness.',
+                title: 'COF-Ready Trucks',
+                body: 'Every truck we sell is prepared and must pass its Certificate of Fitness (COF) inspection before sale — ready to put to work immediately.',
               },
               {
                 title: 'Truck Spares',
                 body: 'We stock used truck parts for Isuzu, Hino, UD, Nissan, Mercedes-Benz and more — reducing downtime for our customers.',
+              },
+              {
+                title: 'Trade-Ins & Export',
+                body: 'We accept trade-ins and assist buyers with export documentation for cross-border purchases across Africa.',
               },
             ].map((item) => (
               <div key={item.title} className="p-6 bg-white rounded-lg border border-gray-200">

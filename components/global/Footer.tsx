@@ -15,7 +15,7 @@ import Link from 'next/link'
             A-Z Truck Sales helps buyers find used rigid trucks in Gauteng,
             including Isuzu, Hino, Mercedes-Benz, Fuso, MAN and other
             commercial vehicles. The stronger reason to choose A-Z is not only
-            stock availability, but local branches, workshop preparation, spares
+            stock availability, but local branches, spares
             support and truck-buying guidance.
           </p>
 
