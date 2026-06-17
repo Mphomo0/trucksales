@@ -8,6 +8,8 @@ import JsonLd from '@/components/global/JsonLd'
 const guideSections = [
   {
     heading: 'Where can I buy used trucks in Gauteng?',
+    summary:
+      'You can buy used rigid trucks in Gauteng from A-Z Truck Sales, with branches in Alberton and Boksburg. A-Z Truck Sales serves local buyers across Gauteng and assists buyers across South Africa.',
     content: (
       <div className="space-y-4">
         <p>
@@ -27,6 +29,8 @@ const guideSections = [
   {
     heading:
       'What makes A-Z Truck Sales different from a truck marketplace?',
+    summary:
+      'A-Z combines used truck stock with local branch support, workshop preparation, spares knowledge and direct dealer guidance. Unlike marketplaces, A-Z helps buyers through condition, body type, paperwork and inspection questions.',
     content: (
       <div className="space-y-4">
         <p>
@@ -45,6 +49,8 @@ const guideSections = [
   },
   {
     heading: 'Which truck brands does A-Z Truck Sales focus on?',
+    summary:
+      'A-Z stock commonly includes used Isuzu, Hino, Mercedes-Benz, Fuso, MAN, UD, Toyota and other commercial vehicle brands. Buyers often search by make, and each brand suits different payload, duty and route requirements.',
     content: (
       <div className="space-y-4">
         <p>
@@ -62,6 +68,8 @@ const guideSections = [
   },
   {
     heading: 'How do I choose the right used rigid truck?',
+    summary:
+      'Choose a used rigid truck by payload, route, body type, licensing needs, mileage, condition, spares and after-sale support. Start with the job — different businesses need different trucks, and A-Z guides buyers through all key requirements.',
     content: (
       <div className="space-y-4">
         <p>
@@ -81,6 +89,8 @@ const guideSections = [
   },
   {
     heading: 'Which body type should I choose for my business?',
+    summary:
+      'The right body type depends on what you carry, how it is loaded, and whether it needs protection or refrigeration. Common options include dropside, box body, refrigerated, curtain side and chassis cab, each suited to different cargo and loading needs.',
     content: (
       <div className="space-y-4">
         <p>
@@ -161,6 +171,8 @@ const guideSections = [
   {
     heading:
       'Are Isuzu trucks a good option for Gauteng buyers?',
+    summary:
+      'Used Isuzu trucks are popular for delivery, medium-duty work and fleet use when condition and support are properly checked. Buyers should consider payload, N-Series versus F-Series options, roadworthy preparation, spares support and body condition.',
     content: (
       <p>
         Used Isuzu trucks are popular for delivery, medium-duty work and
@@ -173,6 +185,8 @@ const guideSections = [
   {
     heading:
       'Are Hino trucks suitable for delivery and fleet work?',
+    summary:
+      'Used Hino trucks can suit delivery, refrigerated, box-body and dropside work when the body and mechanical condition match the route. Buyers should consider daily load, route, driver requirements and maintenance expectations.',
     content: (
       <p>
         Used Hino trucks can suit delivery, refrigerated, box-body and
@@ -185,6 +199,8 @@ const guideSections = [
   {
     heading:
       'When should I consider Mercedes-Benz, MAN or heavier commercial vehicles?',
+    summary:
+      'Consider heavier commercial vehicles when your load, route distance, body size or towing needs exceed light-duty truck capacity. Buyers should ask about engine condition, drivetrain, mileage, service records, licensing and suitability for their specific route and load.',
     content: (
       <p>
         Consider heavier commercial vehicles when your load, route distance,
@@ -198,6 +214,8 @@ const guideSections = [
   {
     heading:
       'Why does workshop preparation matter when buying a used truck?',
+    summary:
+      'Workshop preparation reduces buyer risk by checking visible faults, roadworthy readiness, safety items and work-needed issues before collection. A dealer with workshop knowledge can explain what has been checked, refurbished, and what the buyer should inspect before paying.',
     content: (
       <p>
         Workshop preparation reduces buyer risk by checking visible faults,
@@ -211,6 +229,8 @@ const guideSections = [
   },
   {
     heading: 'What should I check before buying a used truck?',
+    summary:
+      "Check the truck's body, tyres, brakes, engine, gearbox, mileage, paperwork, roadworthy status, spares availability and fit for your workload. Confirm the body type and payload match your work, and ask about what has been serviced, repaired or refurbished.",
     content: (
       <div className="space-y-4">
         <p>
@@ -247,6 +267,8 @@ const guideSections = [
   {
     heading:
       'Does A-Z Truck Sales also help with truck spares?',
+    summary:
+      'A-Z Truck Sales positions spares support as part of reducing downtime after buying a used commercial vehicle. Spares availability is especially important for Isuzu, Hino, Mercedes-Benz, Fuso, MAN and other commercial vehicle buyers.',
     content: (
       <p>
         A-Z Truck Sales positions spares support as part of reducing
@@ -260,6 +282,8 @@ const guideSections = [
   },
   {
     heading: 'Where is A-Z Truck Sales located?',
+    summary:
+      'A-Z Truck Sales has Gauteng branches in Alberton and Boksburg, serving local and South Africa-wide truck buyers in Alberton, Boksburg, Gauteng, East Rand, Johannesburg, Ekurhuleni and across South Africa.',
     content: (
       <p>
         A-Z Truck Sales has Gauteng branches in Alberton and Boksburg,
@@ -271,6 +295,8 @@ const guideSections = [
   },
   {
     heading: 'How should I enquire about a truck?',
+    summary:
+      'Send the truck model, budget, payload need, body type, location and trade-in details so the dealer can respond faster. Include the work you need the truck for to help sales staff recommend a better-fit vehicle.',
     content: (
       <p>
         Send the truck model, budget, payload need, body type, location and
@@ -283,8 +309,22 @@ const guideSections = [
 ]
 
 /* <h1>A-Z Truck Sales Components</h1> */ export default function FAQSection() {
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: guideSections.map((s) => ({
+      '@type': 'Question',
+      name: s.heading,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: s.summary,
+      },
+    })),
+  }
+
   return (
     <section className="py-20 bg-neutral-50">
+      <JsonLd data={faqSchema} />
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">

@@ -46,7 +46,7 @@ const organizationSchema = {
   logo: 'https://www.a-ztrucksales.com/images/logo.png',
   description: 'Trusted used commercial vehicle dealer since 1999 in Gauteng, South Africa. Specializing in quality used rigid trucks from 1.5 to 35 tons.',
   telephone: '+27-11-902-6071',
-  email: 'mi118@mweb.co.za',
+  email: 'aztrucksales@mweb.co.za',
   address: {
     '@type': 'PostalAddress',
     streetAddress: '9 Chrislou Crescent, Alberton North',
@@ -78,11 +78,12 @@ const organizationSchema = {
 const autoDealerSchema = {
   '@context': 'https://schema.org',
   '@type': 'AutoDealer',
+  '@id': 'https://www.a-ztrucksales.com/#org',
   name: 'A-Z Truck Sales',
   image: 'https://www.a-ztrucksales.com/og-image.webp',
   url: 'https://www.a-ztrucksales.com',
   telephone: '+27-11-902-6071',
-  email: 'mi118@mweb.co.za',
+  email: 'aztrucksales@mweb.co.za',
   priceRange: '$$',
   aggregateRating: {
     '@type': 'AggregateRating',
@@ -111,6 +112,12 @@ const autoDealerSchema = {
       opens: '08:00',
       closes: '17:00',
     },
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: 'Saturday',
+      opens: '08:00',
+      closes: '13:00',
+    },
   ],
   areaServed: {
     '@type': 'Country',
@@ -134,7 +141,7 @@ const autoDealerSchema = {
         longitude: '28.1221',
       },
       telephone: '+27-11-902-6071',
-      email: 'mi118@mweb.co.za',
+      email: 'aztrucksales@mweb.co.za',
     },
     {
       '@type': 'AutoDealer',
@@ -181,7 +188,7 @@ const localBusinessAlbertonSchema = {
   image: 'https://www.a-ztrucksales.com/og-image.webp',
   url: 'https://www.a-ztrucksales.com',
   telephone: '+27-11-902-6071',
-  email: 'mi118@mweb.co.za',
+  email: 'aztrucksales@mweb.co.za',
   address: {
     '@type': 'PostalAddress',
     streetAddress: '9 Chrislou Crescent, Alberton North',
