@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 
-const FeaturedMarquee = dynamic(() => import('./FeaturedMarquee'), { ssr: false })
+const FeaturedMarquee = dynamic(() => import('./FeaturedMarquee'))
 
 type FeaturedTruck = {
   id: string; name: string; make: string; model: string; year: number;
