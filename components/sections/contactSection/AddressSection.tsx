@@ -26,7 +26,8 @@ const branches: Branch[] = [
     address: '9 Chrislou Crescent, Alberton North',
     city: 'Gauteng, 1449',
     phone: '011 902 6071',
-    embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3578.1659030161427!2d28.13892337541691!3d-26.256278477044486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e9510722a7fd44d%3A0xd8a035093db1dfcd!2s9%20Chrislou%20Cres%2C%20Alberton%2C%201449!5e0!3m2!1sen!2sza!4v1778695134595!5m2!1sen!2sza',
+    embedUrl:
+      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3578.1659030161427!2d28.13892337541691!3d-26.256278477044486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e9510722a7fd44d%3A0xd8a035093db1dfcd!2s9%20Chrislou%20Cres%2C%20Alberton%2C%201449!5e0!3m2!1sen!2sza!4v1778695134595!5m2!1sen!2sza',
     coords: { lat: '-26.2563', lng: '28.1389' },
   },
   {
@@ -35,7 +36,8 @@ const branches: Branch[] = [
     address: 'Cnr Trichardts & Ravenswood St, Ravenswood',
     city: 'Gauteng, 1451',
     phone: '083 234 5377',
-    embedUrl: 'https://www.google.com/maps/embed?pb=!1m19!1m8!1m3!1d13354.070119153903!2d28.11625544955964!3d-25.89481286514269!3m2!1i1024!2i768!4f13.1!4m8!3e0!4m0!4m5!1s0x1e9517a1cf6334c3%3A0x9fff6f42aafa7e45!2sA-Z%20Truck%20Sales%20Boksburg%2C%20Cnr%20Trichardts%20and%2C%20Ravenswood%20St%2C%20Ravenswood%2C%20Boksburg%2C%201459!3m2!1d-26.1912977!2d28.2539616!5e0!3m2!1sen!2sza!4v1778695338906!5m2!1sen!2sza',
+    embedUrl:
+      'https://www.google.com/maps/embed?pb=!1m19!1m8!1m3!1d13354.070119153903!2d28.11625544955964!3d-25.89481286514269!3m2!1i1024!2i768!4f13.1!4m8!3e0!4m0!4m5!1s0x1e9517a1cf6334c3%3A0x9fff6f42aafa7e45!2sA-Z%20Truck%20Sales%20Boksburg%2C%20Cnr%20Trichardts%20and%2C%20Ravenswood%20St%2C%20Ravenswood%2C%20Boksburg%2C%201459!3m2!1d-26.1912977!2d28.2539616!5e0!3m2!1sen!2sza!4v1778695338906!5m2!1sen!2sza',
     coords: { lat: '-26.2064', lng: '28.2156' },
   },
 ]
@@ -87,7 +89,9 @@ export default function AddressSection() {
             <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
               <Phone className="w-5 h-5 text-amber-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 text-center mb-3">Phone</h3>
+            <h3 className="font-semibold text-gray-900 text-center mb-3">
+              Phone
+            </h3>
             <div className="space-y-1 text-center">
               <p className="text-gray-600">011 902 6071</p>
               <p className="text-gray-600 text-sm">Alberton: 078 127 7393</p>
@@ -103,7 +107,9 @@ export default function AddressSection() {
             <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
               <Mail className="w-5 h-5 text-amber-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 text-center mb-3">Email</h3>
+            <h3 className="font-semibold text-gray-900 text-center mb-3">
+              Email
+            </h3>
             <div className="space-y-1 text-center">
               <a
                 href="mailto:aztrucksales@mweb.co.za"
@@ -111,7 +117,9 @@ export default function AddressSection() {
               >
                 aztrucksales@mweb.co.za
               </a>
-              <p className="text-xs text-gray-400">We respond within 24 hours</p>
+              <p className="text-xs text-gray-400">
+                We respond within 24 hours
+              </p>
             </div>
           </motion.div>
 
@@ -123,7 +131,9 @@ export default function AddressSection() {
             <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
               <MapPin className="w-5 h-5 text-amber-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 text-center mb-3">Alberton</h3>
+            <h3 className="font-semibold text-gray-900 text-center mb-3">
+              Alberton
+            </h3>
             <div className="space-y-1 text-center mb-4">
               <p className="text-gray-600 text-sm">9 Chrislou Crescent</p>
               <p className="text-gray-400 text-sm">Alberton, Gauteng</p>
@@ -145,9 +155,13 @@ export default function AddressSection() {
             <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
               <MapPin className="w-5 h-5 text-amber-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 text-center mb-3">Boksburg</h3>
+            <h3 className="font-semibold text-gray-900 text-center mb-3">
+              Boksburg
+            </h3>
             <div className="space-y-1 text-center mb-4">
-              <p className="text-gray-600 text-sm">Cnr Trichardts & Ravenswood</p>
+              <p className="text-gray-600 text-sm">
+                Cnr Trichardts & Ravenswood
+              </p>
               <p className="text-gray-400 text-sm">Boksburg, Gauteng</p>
             </div>
             <Button
@@ -171,8 +185,12 @@ export default function AddressSection() {
             <Clock className="w-5 h-5 text-amber-600" />
             <div className="text-center">
               <p className="font-medium text-gray-900">Business Hours</p>
-              <p className="text-gray-600 text-sm">Mon – Fri: 8:00 AM – 5:00 PM</p>
-              <p className="text-gray-600 text-sm">Sat: 8:00 AM – 1:00 PM (Alberton)</p>
+              <p className="text-gray-600 text-sm">
+                Mon – Fri: 8:00 AM – 5:00 PM
+              </p>
+              <p className="text-gray-600 text-sm">
+                Sat: 8:00 AM – 1:00 PM (Alberton)
+              </p>
             </div>
           </div>
         </motion.div>
@@ -214,7 +232,7 @@ export default function AddressSection() {
                 </p>
               </div>
 
-              <div className="h-[400px] w-full">
+              <div className="h-100 w-full">
                 <iframe
                   width="100%"
                   height="100%"
@@ -228,7 +246,9 @@ export default function AddressSection() {
 
               <div className="p-4 border-t border-gray-100 flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-gray-900">{selectedBranch.phone}</p>
+                  <p className="font-medium text-gray-900">
+                    {selectedBranch.phone}
+                  </p>
                 </div>
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${selectedBranch.coords.lat},${selectedBranch.coords.lng}`}
