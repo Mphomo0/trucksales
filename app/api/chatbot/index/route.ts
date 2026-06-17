@@ -3,6 +3,7 @@ import { auth } from '@/auth'
 import {
   indexWebsiteContent,
   indexInventoryFromDatabase,
+  indexSparesFromDatabase,
 } from '@/lib/services/content-indexing'
 
 export async function POST(req: NextRequest) {
@@ -23,6 +24,10 @@ export async function POST(req: NextRequest) {
 
     if (type === 'inventory' || type === 'all') {
       results.inventory = await indexInventoryFromDatabase()
+    }
+
+    if (type === 'spares' || type === 'all') {
+      results.spares = await indexSparesFromDatabase()
     }
 
     return Response.json({ success: true, results })

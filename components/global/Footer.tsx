@@ -80,6 +80,11 @@ import Link from 'next/link'
               </Link>
             </li>
             <li>
+              <Link href="/about" className="hover:underline">
+                About Us
+              </Link>
+            </li>
+            <li>
               <Link href="/locations" className="hover:underline">
                 Branches
               </Link>
@@ -98,11 +103,11 @@ import Link from 'next/link'
           <address className="text-sm not-italic">
             9 Chrislou Cres
             <br />
-            Alberton, 1449
+            Alberton North, 1449
             <br />
             <a href="tel:+27119026071" className="hover:underline">Phone: 011 902 6071</a>
             <br />
-            <a href="mailto:mi118@mweb.co.za" className="hover:underline">mi118@mweb.co.za</a>
+            <a href="mailto:aztrucksales@mweb.co.za" className="hover:underline">aztrucksales@mweb.co.za</a>
           </address>
         </div>
 

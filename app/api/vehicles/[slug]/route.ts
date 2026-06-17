@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
-import { revalidatePath } from 'next/cache' // 🔥 NATIVE REVALIDATION (Zero HTTP Overhead)
+import { revalidatePath } from 'next/cache'
+import { deleteChunk } from '@/lib/services/content-indexing'
 
 export const runtime = 'nodejs'
 
@@ -79,6 +80,8 @@ export async function DELETE(
     await prisma.inventory.delete({
       where: { slug },
     })
+
+    await deleteChunk(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.a-ztrucksales.com'}/inventory/${slug}`)
 
     revalidatePath('/')
     revalidatePath('/inventory')

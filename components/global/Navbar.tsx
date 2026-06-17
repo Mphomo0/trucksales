@@ -15,6 +15,7 @@ const NavLinks = [
   { name: 'Specials', href: '/specials' },
   { name: 'Spares', href: '/spares' },
   { name: 'Sell-Your-Truck', href: '/sell-your-truck' },
+  { name: 'About', href: '/about' },
   { name: 'Contact Us', href: '/contact' },
 ]
 
