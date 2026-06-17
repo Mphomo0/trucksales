@@ -41,19 +41,33 @@ export default async function BoksburgPage() {
     ],
   }
   const localBusinessSchema = {
-    '@context': 'https://schema.org', '@type': 'LocalBusiness',
-    '@id': 'https://www.a-ztrucksales.com/locations/boksburg',
-    name: 'A-Z Truck Sales - Boksburg',
+    '@context': 'https://schema.org',
+    '@type': 'AutoDealer',
+    '@id': 'https://www.a-ztrucksales.com/locations/boksburg#branch',
+    name: 'A-Z Truck Sales — Boksburg',
+    parentOrganization: { '@id': 'https://www.a-ztrucksales.com/#org' },
     image: 'https://www.a-ztrucksales.com/og-image.webp',
     url: 'https://www.a-ztrucksales.com/locations/boksburg',
-    telephone: '+27-83-234-5377',
+    telephone: '+27832345377',
     email: 'aztruckboks@gmail.com',
-    address: { '@type': 'PostalAddress', streetAddress: 'Corner Trichardts Road & Ravenswood Street, Ravenswood', addressLocality: 'Boksburg', addressRegion: 'Gauteng', postalCode: '1451', addressCountry: 'ZA' },
-    geo: { '@type': 'GeoCoordinates', latitude: '-26.1711', longitude: '28.2414' },
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Corner Trichardts Road & Ravenswood Street',
+      addressLocality: 'Ravenswood',
+      addressRegion: 'Gauteng',
+      postalCode: '1451',
+      addressCountry: 'ZA',
+    },
+    geo: { '@type': 'GeoCoordinates', latitude: -26.1711, longitude: 28.2414 },
     openingHoursSpecification: [
-      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '08:00', closes: '17:00' },
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        opens: '08:00',
+        closes: '17:00',
+      },
     ],
-    priceRange: '$$',
+    areaServed: 'Gauteng, South Africa',
   }
   const faqSchema = {
     '@context': 'https://schema.org', '@type': 'FAQPage',
