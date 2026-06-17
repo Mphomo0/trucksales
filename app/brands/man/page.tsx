@@ -230,7 +230,7 @@ export default async function ManPage() {
                     </h3>
                     <p className="text-amber-600 font-bold text-lg">
                       {truck.vatPrice
-                        ? `R${(truck.vatPrice / 100).toLocaleString()}`
+                        ? `R${truck.vatPrice.toLocaleString()}`
                         : 'Call for price'}
                     </p>
                     <div className="flex gap-2 mt-2 text-sm text-gray-500">

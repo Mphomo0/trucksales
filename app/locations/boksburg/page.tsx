@@ -3,6 +3,8 @@ export const revalidate = 86400
 import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
+import { ikCard } from '@/lib/imagekit'
 import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
@@ -277,12 +279,13 @@ export default async function BoksburgPage() {
                   className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition"
                 >
                   <div className="aspect-video bg-gray-200 relative">
-                    {(truck.images as any[])?.[0]?.url && (
-                      <img
-                        src={(truck.images as any[])[0].url}
+                    {(truck.images as { url: string }[])?.[0]?.url && (
+                      <Image
+                        src={ikCard((truck.images as { url: string }[])[0].url)}
                         alt={`${truck.year} ${truck.name}`}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover"
                       />
                     )}
                   </div>
@@ -292,7 +295,7 @@ export default async function BoksburgPage() {
                     </h3>
                     <p className="text-amber-600 font-bold text-lg">
                       {truck.vatPrice
-                        ? `R${(truck.vatPrice / 100).toLocaleString()}`
+                        ? `R${truck.vatPrice.toLocaleString()}`
                         : 'Call for price'}
                     </p>
                     <div className="flex gap-2 mt-2 text-sm text-gray-500">

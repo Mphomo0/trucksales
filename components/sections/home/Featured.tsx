@@ -1,7 +1,9 @@
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
-import FeaturedMarquee from './FeaturedMarquee'
+
+const FeaturedMarquee = dynamic(() => import('./FeaturedMarquee'), { ssr: false })
 
 type FeaturedTruck = {
   id: string; name: string; make: string; model: string; year: number;

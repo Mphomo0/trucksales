@@ -87,7 +87,7 @@ const NavLinks = [
 
           {/* Desktop Auth Section */}
           <div className="hidden lg:flex items-center space-x-4">
-            {isLoaded && isSignedIn && (
+            {isLoaded && isSignedIn ? (
               <Link
                 href="/dashboard"
                 className="flex items-center gap-2 px-3 py-2 text-gray-800 hover:text-gray-600 rounded-md transition-colors"
@@ -95,7 +95,7 @@ const NavLinks = [
                 <User size={18} />
                 <span>Dashboard</span>
               </Link>
-            )}
+            ) : null}
           </div>
 
           {/* Mobile Menu Button */}
