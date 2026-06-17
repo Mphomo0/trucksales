@@ -172,6 +172,7 @@ export default function AddressSection() {
             <div className="text-center">
               <p className="font-medium text-gray-900">Business Hours</p>
               <p className="text-gray-600 text-sm">Mon – Fri: 8:00 AM – 5:00 PM</p>
+              <p className="text-gray-600 text-sm">Sat: 8:00 AM – 1:00 PM (Alberton)</p>
             </div>
           </div>
         </motion.div>
