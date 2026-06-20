@@ -4,6 +4,7 @@ import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
@@ -60,23 +61,30 @@ const faqs = [
   },
 ]
 
+const getMercedesVehicles = unstable_cache(
+  () =>
+    prisma.inventory.findMany({
+      where: { make: { contains: 'Mercedes', mode: 'insensitive' } },
+      take: 6,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        year: true,
+        vatPrice: true,
+        mileage: true,
+        fuelType: true,
+        transmission: true,
+        images: true,
+        slug: true,
+      },
+    }),
+  ['mercedes-brand-vehicles'],
+  { tags: ['inventory'], revalidate: 86400 }
+)
+
 export default async function MercedesBenzPage() {
-  const vehicles = await prisma.inventory.findMany({
-    where: { make: { contains: 'Mercedes', mode: 'insensitive' } },
-    take: 6,
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      name: true,
-      year: true,
-      vatPrice: true,
-      mileage: true,
-      fuelType: true,
-      transmission: true,
-      images: true,
-      slug: true,
-    },
-  })
+  const vehicles = await getMercedesVehicles()
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -148,7 +156,7 @@ export default async function MercedesBenzPage() {
               </h2>
               <div className="text-lg text-gray-600 space-y-4">
                 <p>
-                  Mercedes-Benz is one of the world's most recognised commercial
+                  Mercedes-Benz is one of the world&rsquo;s most recognised commercial
                   vehicle brands, known for engineering excellence, driver
                   comfort and advanced technology. In South Africa,
                   Mercedes-Benz trucks are a popular choice for premium
@@ -214,7 +222,7 @@ export default async function MercedesBenzPage() {
           </p>
           {vehicles.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {vehicles.map((truck) => (
+              {vehicles.map((truck, i) => (
                 <Link
                   key={truck.id}
                   href={`/inventory/${truck.slug}`}
@@ -228,7 +236,7 @@ export default async function MercedesBenzPage() {
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover"
-                        loading="lazy"
+                        priority={i === 0}
                       />
                     )}
                   </div>

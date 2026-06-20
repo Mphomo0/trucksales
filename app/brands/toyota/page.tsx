@@ -4,6 +4,7 @@ import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
@@ -53,23 +54,30 @@ const faqs = [
   },
 ]
 
+const getToyotaVehicles = unstable_cache(
+  () =>
+    prisma.inventory.findMany({
+      where: { make: { contains: 'Toyota', mode: 'insensitive' } },
+      take: 6,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        year: true,
+        vatPrice: true,
+        mileage: true,
+        fuelType: true,
+        transmission: true,
+        images: true,
+        slug: true,
+      },
+    }),
+  ['toyota-brand-vehicles'],
+  { tags: ['inventory'], revalidate: 86400 }
+)
+
 export default async function ToyotaPage() {
-  const vehicles = await prisma.inventory.findMany({
-    where: { make: { contains: 'Toyota', mode: 'insensitive' } },
-    take: 6,
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      name: true,
-      year: true,
-      vatPrice: true,
-      mileage: true,
-      fuelType: true,
-      transmission: true,
-      images: true,
-      slug: true,
-    },
-  })
+  const vehicles = await getToyotaVehicles()
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -139,7 +147,7 @@ export default async function ToyotaPage() {
               </h2>
               <div className="text-lg text-gray-600 space-y-4">
                 <p>
-                  Toyota is South Africa's most trusted automotive brand, and
+                  Toyota is South Africa&rsquo;s most trusted automotive brand, and
                   their commercial vehicles carry the same reputation for
                   reliability, durability and excellent parts availability.
                 </p>
@@ -188,7 +196,7 @@ export default async function ToyotaPage() {
           </p>
           {vehicles.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {vehicles.map((truck) => (
+              {vehicles.map((truck, i) => (
                 <Link
                   key={truck.id}
                   href={`/inventory/${truck.slug}`}
@@ -202,7 +210,7 @@ export default async function ToyotaPage() {
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover"
-                        loading="lazy"
+                        priority={i === 0}
                       />
                     )}
                   </div>

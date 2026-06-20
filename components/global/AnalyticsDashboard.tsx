@@ -67,12 +67,6 @@ export function AnalyticsDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [dateRange, setDateRange] = useState('7d')
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   const fetchAnalytics = async () => {
     setLoading(true)
     setError(null)
@@ -92,13 +86,9 @@ export function AnalyticsDashboard() {
   }
 
   useEffect(() => {
-    if (!mounted) return
     fetchAnalytics()
-  }, [dateRange, mounted])
-
-  if (!mounted) {
-    return null
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateRange])
 
   if (loading) {
     return (

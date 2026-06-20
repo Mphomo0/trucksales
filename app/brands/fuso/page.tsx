@@ -4,6 +4,7 @@ import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
@@ -57,23 +58,30 @@ const faqs = [
   },
 ]
 
+const getFusoVehicles = unstable_cache(
+  () =>
+    prisma.inventory.findMany({
+      where: { make: { contains: 'Fuso', mode: 'insensitive' } },
+      take: 6,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        year: true,
+        vatPrice: true,
+        mileage: true,
+        fuelType: true,
+        transmission: true,
+        images: true,
+        slug: true,
+      },
+    }),
+  ['fuso-brand-vehicles'],
+  { tags: ['inventory'], revalidate: 86400 }
+)
+
 export default async function FusoPage() {
-  const vehicles = await prisma.inventory.findMany({
-    where: { make: { contains: 'Fuso', mode: 'insensitive' } },
-    take: 6,
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      name: true,
-      year: true,
-      vatPrice: true,
-      mileage: true,
-      fuelType: true,
-      transmission: true,
-      images: true,
-      slug: true,
-    },
-  })
+  const vehicles = await getFusoVehicles()
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -207,7 +215,7 @@ export default async function FusoPage() {
           </p>
           {vehicles.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {vehicles.map((truck) => (
+              {vehicles.map((truck, i) => (
                 <Link
                   key={truck.id}
                   href={`/inventory/${truck.slug}`}
@@ -221,7 +229,7 @@ export default async function FusoPage() {
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover"
-                        loading="lazy"
+                        priority={i === 0}
                       />
                     )}
                   </div>

@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import slugify from 'slugify'
@@ -152,6 +152,7 @@ export async function POST(req: Request) {
     revalidatePath('/inventory')
     revalidatePath('/specials')
     revalidatePath(`/inventory/${newVehicle.slug}`)
+    revalidateTag('inventory', 'default')
 
     return NextResponse.json(newVehicle, { status: 201 })
   } catch (error) {

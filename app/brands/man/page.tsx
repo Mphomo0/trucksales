@@ -4,6 +4,7 @@ import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
@@ -58,23 +59,30 @@ const faqs = [
   },
 ]
 
+const getManVehicles = unstable_cache(
+  () =>
+    prisma.inventory.findMany({
+      where: { make: { contains: 'MAN', mode: 'insensitive' } },
+      take: 6,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        year: true,
+        vatPrice: true,
+        mileage: true,
+        fuelType: true,
+        transmission: true,
+        images: true,
+        slug: true,
+      },
+    }),
+  ['man-brand-vehicles'],
+  { tags: ['inventory'], revalidate: 86400 }
+)
+
 export default async function ManPage() {
-  const vehicles = await prisma.inventory.findMany({
-    where: { make: { contains: 'MAN', mode: 'insensitive' } },
-    take: 6,
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      name: true,
-      year: true,
-      vatPrice: true,
-      mileage: true,
-      fuelType: true,
-      transmission: true,
-      images: true,
-      slug: true,
-    },
-  })
+  const vehicles = await getManVehicles()
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -145,7 +153,7 @@ export default async function ManPage() {
               </h2>
               <div className="text-lg text-gray-600 space-y-4">
                 <p>
-                  MAN is one of Europe's leading commercial vehicle
+                  MAN is one of Europe&rsquo;s leading commercial vehicle
                   manufacturers with a strong presence in South Africa. Known
                   for build quality, driver comfort and fuel-efficient engines,
                   MAN trucks are a popular choice for medium- to heavy-duty
@@ -206,7 +214,7 @@ export default async function ManPage() {
           </p>
           {vehicles.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {vehicles.map((truck) => (
+              {vehicles.map((truck, i) => (
                 <Link
                   key={truck.id}
                   href={`/inventory/${truck.slug}`}
@@ -220,7 +228,7 @@ export default async function ManPage() {
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover"
-                        loading="lazy"
+                        priority={i === 0}
                       />
                     )}
                   </div>

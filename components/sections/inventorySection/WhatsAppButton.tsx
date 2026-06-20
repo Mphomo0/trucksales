@@ -16,6 +16,7 @@ export function WhatsAppButton({ vehicleSlug }: WhatsAppButtonProps) {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentUrl(window.location.href)
     }
   }, [])

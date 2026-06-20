@@ -11,6 +11,7 @@ const compat = new FlatCompat({
 })
 
 const eslintConfig = [
+  { ignores: ['lib/generated/prisma/**'] },
   ...eslintConfigNext,
 ]
 

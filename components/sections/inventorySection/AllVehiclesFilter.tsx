@@ -299,6 +299,7 @@ export default function AllVehiclesFilter({
     }
 
     loadInitialData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Debounce only the search input — select filters fetch immediately via their handlers

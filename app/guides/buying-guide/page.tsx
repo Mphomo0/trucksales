@@ -425,13 +425,13 @@ export default function BuyingGuidePage() {
             </h2>
             <div className="text-gray-600 leading-relaxed space-y-4">
               <p>
-                Check the truck's body, tyres, brakes, engine, gearbox, mileage,
-                paperwork, roadworthy status, spares availability and fit for
-                your workload.
+Check the truck&rsquo;s body, tyres, brakes, engine, gearbox, mileage,
+        paperwork, roadworthy status, spares availability and fit for
+        your workload.
               </p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>Confirm the body type and payload fit your work.</li>
-                <li>Check mileage against the truck's age and use.</li>
+                <li>Check mileage against the truck&rsquo;s age and use.</li>
                 <li>Ask what has been serviced, repaired or refurbished.</li>
                 <li>
                   Inspect tyres, brakes, lights, suspension and body condition.

@@ -3,7 +3,9 @@ import Link from 'next/link'
 import JsonLd from '@/components/global/JsonLd'
 
 export const metadata: Metadata = {
-  title: { absolute: 'About A-Z Truck Sales | Used Truck Dealer Gauteng Since 1999' },
+  title: {
+    absolute: 'About A-Z Truck Sales | Used Truck Dealer Gauteng Since 1999',
+  },
   description:
     'A-Z Truck Sales has been selling quality used rigid trucks in Gauteng for 25+ years from branches in Alberton and Boksburg. COF-ready trucks and truck spares.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/about' },
@@ -15,12 +17,20 @@ export const metadata: Metadata = {
     title: 'About A-Z Truck Sales | Used Truck Dealer Gauteng Since 1999',
     description:
       'A-Z Truck Sales has been selling quality used rigid trucks in Gauteng for 25+ years from branches in Alberton and Boksburg. COF-ready trucks and truck spares.',
-    images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'About A-Z Truck Sales' }],
+    images: [
+      {
+        url: 'https://www.a-ztrucksales.com/og-image.webp',
+        width: 1200,
+        height: 630,
+        alt: 'About A-Z Truck Sales',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'About A-Z Truck Sales | Used Truck Dealer Gauteng Since 1999',
-    description: 'A-Z Truck Sales has been selling used rigid trucks in Gauteng for 25+ years. Two branches: Alberton and Boksburg.',
+    description:
+      'A-Z Truck Sales has been selling used rigid trucks in Gauteng for 25+ years. Two branches: Alberton and Boksburg.',
     images: ['https://www.a-ztrucksales.com/og-image.webp'],
   },
 }
@@ -48,8 +58,18 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.a-ztrucksales.com/' },
-    { '@type': 'ListItem', position: 2, name: 'About Us', item: 'https://www.a-ztrucksales.com/about' },
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://www.a-ztrucksales.com/',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'About Us',
+      item: 'https://www.a-ztrucksales.com/about',
+    },
   ],
 }
 
@@ -60,11 +80,14 @@ export default function AboutPage() {
       <JsonLd data={breadcrumbSchema} />
 
       {/* Hero */}
-      <section className="bg-gradient-to-r from-gray-900 to-gray-700 text-white py-20">
+      <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">About A-Z Truck Sales</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            About A-Z Truck Sales
+          </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Gauteng&apos;s trusted used rigid truck dealer since 1999 — two branches and 100+ trucks in stock.
+            Gauteng&apos;s trusted used rigid truck dealer since 1999 — two
+            branches and 100+ trucks in stock.
           </p>
         </div>
       </section>
@@ -73,20 +96,28 @@ export default function AboutPage() {
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">25+ Years in the Commercial Vehicle Industry</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              25+ Years in the Commercial Vehicle Industry
+            </h2>
             <div className="text-lg text-gray-600 space-y-4">
               <p>
-                A-Z Truck Sales was established in 1999 and has grown into one of Gauteng&apos;s most trusted used commercial vehicle dealers.
-                From our roots in Alberton, we expanded to open a second branch in Boksburg to serve more of the East Rand and greater Gauteng.
+                A-Z Truck Sales was established in 1999 and has grown into one
+                of Gauteng&apos;s most trusted used commercial vehicle dealers.
+                From our roots in Alberton, we expanded to open a second branch
+                in Boksburg to serve more of the East Rand and greater Gauteng.
               </p>
               <p>
-                We specialise in pre-owned rigid trucks from 1.5 to 35 tons across all major commercial vehicle brands — Isuzu, Hino, Mercedes-Benz,
-                Fuso, MAN, UD Trucks, Toyota, Nissan, Tata and Hyundai. Every truck we sell is COF-ready
-                (Certificate of Fitness) before it leaves our yard.
+                We specialise in pre-owned rigid trucks from 1.5 to 35 tons
+                across all major commercial vehicle brands — Isuzu, Hino,
+                Mercedes-Benz, Fuso, MAN, UD Trucks, Toyota, Nissan, Tata and
+                Hyundai. Every truck we sell is COF-ready (Certificate of
+                Fitness) before it leaves our yard.
               </p>
               <p>
-                Beyond sales, we stock truck spares for all major brands, accept trade-ins, and assist buyers with export documentation for
-                cross-border purchases. Our team provides honest advice, transparent pricing, and practical after-sale support.
+                Beyond sales, we stock truck spares for all major brands, accept
+                trade-ins, and assist buyers with export documentation for
+                cross-border purchases. Our team provides honest advice,
+                transparent pricing, and practical after-sale support.
               </p>
             </div>
           </div>
@@ -103,8 +134,13 @@ export default function AboutPage() {
               { value: '100+', label: 'Trucks in Stock' },
               { value: '2', label: 'Gauteng Branches' },
             ].map((stat) => (
-              <div key={stat.label} className="p-6 bg-white rounded-lg border border-gray-200">
-                <div className="text-3xl font-bold text-amber-500">{stat.value}</div>
+              <div
+                key={stat.label}
+                className="p-6 bg-white rounded-lg border border-gray-200"
+              >
+                <div className="text-3xl font-bold text-amber-500">
+                  {stat.value}
+                </div>
                 <div className="text-gray-600 mt-1">{stat.label}</div>
               </div>
             ))}
@@ -115,7 +151,9 @@ export default function AboutPage() {
       {/* What We Offer */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">What We Offer</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+            What We Offer
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
@@ -131,8 +169,13 @@ export default function AboutPage() {
                 body: 'We accept trade-ins and assist buyers with export documentation for cross-border purchases across Africa.',
               },
             ].map((item) => (
-              <div key={item.title} className="p-6 bg-white rounded-lg border border-gray-200">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
+              <div
+                key={item.title}
+                className="p-6 bg-white rounded-lg border border-gray-200"
+              >
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  {item.title}
+                </h3>
                 <p className="text-gray-600">{item.body}</p>
               </div>
             ))}
@@ -143,29 +186,72 @@ export default function AboutPage() {
       {/* Branches */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Our Two Gauteng Branches</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">
+            Our Two Gauteng Branches
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white p-8 rounded-lg border border-gray-200">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Alberton Branch (Main)</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Alberton Branch (Main)
+              </h3>
               <address className="not-italic text-gray-600 space-y-2">
                 <p>9 Chrislou Crescent, Alberton North, Gauteng, 1449</p>
-                <p><a href="tel:+27119026071" className="text-amber-600 hover:underline">011 902 6071</a></p>
-                <p><a href="mailto:aztrucksales@mweb.co.za" className="text-amber-600 hover:underline">aztrucksales@mweb.co.za</a></p>
+                <p>
+                  <a
+                    href="tel:+27119026071"
+                    className="text-amber-600 hover:underline"
+                  >
+                    011 902 6071
+                  </a>
+                </p>
+                <p>
+                  <a
+                    href="mailto:aztrucksales@mweb.co.za"
+                    className="text-amber-600 hover:underline"
+                  >
+                    aztrucksales@mweb.co.za
+                  </a>
+                </p>
                 <p>Mon–Fri: 08:00–17:00 | Sat: 08:00–13:00</p>
               </address>
-              <Link href="/locations/alberton" className="mt-4 inline-block text-amber-600 font-medium hover:underline">
+              <Link
+                href="/locations/alberton"
+                className="mt-4 inline-block text-amber-600 font-medium hover:underline"
+              >
                 View Alberton branch →
               </Link>
             </div>
             <div className="bg-white p-8 rounded-lg border border-gray-200">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Boksburg Branch</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Boksburg Branch
+              </h3>
               <address className="not-italic text-gray-600 space-y-2">
-                <p>Corner Trichardts Road &amp; Ravenswood Street, Ravenswood, Boksburg, Gauteng, 1451</p>
-                <p><a href="tel:+27832345377" className="text-amber-600 hover:underline">083 234 5377</a></p>
-                <p><a href="mailto:aztruckboks@gmail.com" className="text-amber-600 hover:underline">aztruckboks@gmail.com</a></p>
+                <p>
+                  Corner Trichardts Road &amp; Ravenswood Street, Ravenswood,
+                  Boksburg, Gauteng, 1451
+                </p>
+                <p>
+                  <a
+                    href="tel:+27832345377"
+                    className="text-amber-600 hover:underline"
+                  >
+                    083 234 5377
+                  </a>
+                </p>
+                <p>
+                  <a
+                    href="mailto:aztruckboks@gmail.com"
+                    className="text-amber-600 hover:underline"
+                  >
+                    aztruckboks@gmail.com
+                  </a>
+                </p>
                 <p>Mon–Fri: 08:00–17:00</p>
               </address>
-              <Link href="/locations/boksburg" className="mt-4 inline-block text-amber-600 font-medium hover:underline">
+              <Link
+                href="/locations/boksburg"
+                className="mt-4 inline-block text-amber-600 font-medium hover:underline"
+              >
                 View Boksburg branch →
               </Link>
             </div>
@@ -174,15 +260,25 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-r from-amber-600 to-yellow-300 text-white text-center">
+      <section className="py-20 bg-linear-to-r from-amber-600 to-yellow-300 text-white text-center">
         <div className="max-w-2xl mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Find Your Next Truck?</h2>
-          <p className="text-xl mb-8">Browse 100+ trucks in stock or contact our team today.</p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Ready to Find Your Next Truck?
+          </h2>
+          <p className="text-xl mb-8">
+            Browse 100+ trucks in stock or contact our team today.
+          </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/inventory" className="inline-flex items-center justify-center px-8 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition">
+            <Link
+              href="/inventory"
+              className="inline-flex items-center justify-center px-8 py-3 bg-white text-gray-900 font-semibold rounded-lg hover:bg-gray-100 transition"
+            >
               Browse Inventory
             </Link>
-            <Link href="/contact" className="inline-flex items-center justify-center px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-gray-900 transition">
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-gray-900 transition"
+            >
               Contact Us
             </Link>
           </div>

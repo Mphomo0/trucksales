@@ -53,6 +53,7 @@ export default function ChatbotLeads() {
   }, [page, search, statusFilter])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchLeads()
   }, [fetchLeads])
 

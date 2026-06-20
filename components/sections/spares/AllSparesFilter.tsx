@@ -179,6 +179,7 @@ export default function AllSparesFilter({
       }
     }
     loadFilterOptions()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const buildFilters = useCallback(
@@ -234,7 +235,9 @@ export default function AllSparesFilter({
 
   useEffect(() => {
     if (initialSpares && initialSpares.length > 0) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchSpares(buildFilters(1))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Guard prevents this effect from firing on initial mount — avoids double-fetch

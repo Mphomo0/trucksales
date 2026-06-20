@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { deleteChunk } from '@/lib/services/content-indexing'
 
 export const runtime = 'nodejs'
@@ -92,6 +92,7 @@ export async function DELETE(
     revalidatePath('/api/vehicles/featured')
     revalidatePath('/api/vehicles/filters')
     revalidatePath(`/api/vehicles/${slug}`)
+    revalidateTag('inventory', 'default')
 
     return NextResponse.json(
       { message: 'Vehicle deleted successfully' },
@@ -181,6 +182,7 @@ export async function PATCH(
     if (slug !== updatedVehicle.slug) {
       revalidatePath(`/inventory/${updatedVehicle.slug}`)
     }
+    revalidateTag('inventory', 'default')
 
     return NextResponse.json({ updatedVehicle }, { status: 200 })
   } catch (error) {

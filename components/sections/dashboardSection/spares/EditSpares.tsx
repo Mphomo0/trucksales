@@ -211,7 +211,7 @@ type PreviewFile = {
   return (
     <div className="py-16">
       <div className="w-full mx-4 bg-white rounded-2xl p-6 px-12 py-12">
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={(e) => { handleSubmit(onSubmit)(e) }}>
           {/* Basic Info */}
           <div className="grid md:grid-cols-2 gap-4">
             <div className="mb-4 space-y-2">

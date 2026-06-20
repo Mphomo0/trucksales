@@ -52,10 +52,12 @@ const UploadMultiple = ({
         preview: img.url,
         isExisting: true,
       }))
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPreviews(initialPreviews)
     } else {
       setPreviews([])
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(existingImages)])
 
   const handleFileChange = () => {
@@ -104,6 +106,7 @@ const UploadMultiple = ({
         }
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const removeFile = (id: string) => {

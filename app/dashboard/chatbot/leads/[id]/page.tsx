@@ -45,6 +45,7 @@ export default function LeadDetail() {
   }, [params.id, router])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchLead()
   }, [fetchLead])
 

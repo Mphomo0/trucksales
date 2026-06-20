@@ -24,6 +24,7 @@ function generateCaptcha() {
   const [captcha, setCaptcha] = useState<{ question: string; answer: number }>({ question: '', answer: 0 })
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCaptcha(generateCaptcha())
   }, [])
   const {

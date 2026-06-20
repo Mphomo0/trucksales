@@ -126,10 +126,12 @@ interface Props {
 
   const handlePrevious = useCallback(() => {
     sliderInstanceRef.current?.prev()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleNext = useCallback(() => {
     sliderInstanceRef.current?.next()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

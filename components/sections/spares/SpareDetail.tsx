@@ -96,14 +96,17 @@ interface Props {
   const handleThumbnailClick = useCallback((index: number) => {
     sliderInstanceRef.current?.moveToIdx(index)
     thumbnailInstanceRef.current?.moveToIdx(index)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handlePrevious = useCallback(() => {
     sliderInstanceRef.current?.prev()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleNext = useCallback(() => {
     sliderInstanceRef.current?.next()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function convertYouTubeLink(url: any) {

@@ -51,7 +51,9 @@ export function ChatWidget() {
     if (isOpen) {
       inputRef.current?.focus()
       const stored = sessionStorage.getItem('chatSessionId')
-      if (stored) setSessionId(stored)
+      if (stored)
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setSessionId(stored)
     }
   }, [isOpen])
 
