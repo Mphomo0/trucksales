@@ -5,6 +5,7 @@ import QualityAssurance from '@/components/sections/inventorySection/QualityAssu
 import { prisma } from '@/lib/prisma'
 import { cache } from 'react'
 import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import JsonLd from '@/components/global/JsonLd'
 
 export const dynamic = 'force-static'
@@ -32,26 +33,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const vehicle = await getVehicle(slug)
 
   if (!vehicle) {
-    return { title: 'Vehicle Not Found' }
+    notFound()
   }
 
-  // Layout appends " | A-Z Truck Sales" (18 chars); page portion budget = 42 chars
-  const makeModel = `${vehicle.year} ${vehicle.make} ${vehicle.model}`
-  const bodyPart = vehicle.bodyType ? ` ${vehicle.bodyType}` : ''
-  let titlePage = `${makeModel}${bodyPart}`
-  if (titlePage.length > 42) {
-    titlePage = makeModel.length > 42 ? makeModel.substring(0, 39) + '…' : makeModel
-  }
+  const titlePage = `${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} for Sale`
 
-  // Structured description — no raw description dump, clean cut ≤155
-  const condition = vehicle.condition === 'NEW' ? 'New' : 'Used'
-  const mileagePart = vehicle.mileage ? ` ${vehicle.mileage.toLocaleString()} km,` : ''
-  const fuelPart = vehicle.fuelType ? ` ${vehicle.fuelType},` : ''
-  const transPart = vehicle.transmission ? ` ${vehicle.transmission},` : ''
-  const bodyDescPart = vehicle.bodyType ? ` ${vehicle.bodyType}` : ''
-  let description =
-    `${condition} ${vehicle.year} ${vehicle.make} ${vehicle.model}${bodyDescPart} for sale in Gauteng.${mileagePart}${fuelPart}${transPart} COF-ready. Available at A-Z Truck Sales, Alberton or Boksburg.`
-  description = description.replace(/,\s+COF/, ', COF').substring(0, 155)
+  const mileageDesc = vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : ''
+  const transmissionDesc = vehicle.transmission?.toLowerCase() ?? 'manual'
+  const fuelDesc = vehicle.fuelType?.toLowerCase() ?? 'diesel'
+  const description = `View this ${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} for sale in Gauteng.${mileageDesc ? ` ${mileageDesc},` : ''} ${transmissionDesc}, ${fuelDesc}. Contact A-Z Truck Sales for price, viewing and availability.`
 
   const canonicalUrl = `https://www.a-ztrucksales.com/inventory/${vehicle.slug}`
   const images = Array.isArray(vehicle.images)
@@ -88,12 +78,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const vehicle = await getVehicle(slug)
 
   if (!vehicle) {
-    return <div>Vehicle not found</div>
+    notFound()
   }
 
   const images = Array.isArray(vehicle.images)
     ? (vehicle.images as { url: string }[]).map(img => img.url)
     : []
+
+  const description = `This ${vehicle.year} ${vehicle.make} ${vehicle.model} is a used ${vehicle.truckSize ?? ''} ${vehicle.bodyType ?? ''} truck available from A-Z Truck Sales in Gauteng. It has ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : ''}, a ${(vehicle.fuelType ?? 'diesel').toLowerCase()} engine and ${(vehicle.transmission ?? 'manual').toLowerCase()} transmission.`
 
   const offerSchema: Record<string, unknown> = {
     '@type': 'Offer',
@@ -103,7 +95,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? 'https://schema.org/NewCondition'
       : 'https://schema.org/UsedCondition',
     availability: 'https://schema.org/InStock',
-    seller: { '@id': 'https://www.a-ztrucksales.com/#org' },
+    seller: { '@id': 'https://www.a-ztrucksales.com/#business' },
   }
   const price = vehicle.vatPrice ?? vehicle.pricenoVat
   if (price != null) {
@@ -112,23 +104,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const productSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Car',
-    name: `${vehicle.year} ${vehicle.make} ${vehicle.model}`,
+    '@type': 'Product',
+    '@id': `https://www.a-ztrucksales.com/inventory/${vehicle.slug}#product`,
+    name: `${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''}`,
+    description,
     image: images.length > 0 ? images : undefined,
-    description: vehicle.description || undefined,
-    vehicleIdentificationNumber: vehicle.registrationNo || undefined,
     brand: { '@type': 'Brand', name: vehicle.make },
-    manufacturer: { '@type': 'Organization', name: vehicle.make },
-    vehicleModelDate: String(vehicle.year),
-    bodyType: vehicle.bodyType || undefined,
-    fuelType: vehicle.fuelType || undefined,
-    vehicleTransmission: vehicle.transmission || undefined,
-    mileageFromOdometer: vehicle.mileage != null
-      ? { '@type': 'QuantitativeValue', value: vehicle.mileage, unitCode: 'KMT' }
-      : undefined,
-    itemCondition: vehicle.condition === 'NEW'
-      ? 'https://schema.org/NewCondition'
-      : 'https://schema.org/UsedCondition',
+    sku: vehicle.registrationNo || vehicle.slug,
     offers: offerSchema,
   }
 

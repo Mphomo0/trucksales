@@ -3,34 +3,22 @@ import Link from 'next/link'
 import JsonLd from '@/components/global/JsonLd'
 
 export const metadata: Metadata = {
-  title: {
-    absolute: 'About A-Z Truck Sales | Used Truck Dealer Gauteng Since 1999',
-  },
-  description:
-    'A-Z Truck Sales has been selling quality used rigid trucks in Gauteng for 25+ years from branches in Alberton and Boksburg. COF-ready trucks and truck spares.',
+  title: { absolute: 'About A-Z Truck Sales | Used Truck Dealer in Gauteng Since 1999' },
+  description: 'A-Z Truck Sales is a used commercial vehicle dealer in Gauteng with branches in Alberton and Boksburg, 25+ years experience and 100+ trucks in stock.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/about' },
   openGraph: {
     type: 'website',
     locale: 'en_ZA',
     url: 'https://www.a-ztrucksales.com/about',
     siteName: 'A-Z Truck Sales',
-    title: 'About A-Z Truck Sales | Used Truck Dealer Gauteng Since 1999',
-    description:
-      'A-Z Truck Sales has been selling quality used rigid trucks in Gauteng for 25+ years from branches in Alberton and Boksburg. COF-ready trucks and truck spares.',
-    images: [
-      {
-        url: 'https://www.a-ztrucksales.com/og-image.webp',
-        width: 1200,
-        height: 630,
-        alt: 'About A-Z Truck Sales',
-      },
-    ],
+    title: 'About A-Z Truck Sales | Used Truck Dealer in Gauteng Since 1999',
+    description: 'A-Z Truck Sales is a used commercial vehicle dealer in Gauteng with branches in Alberton and Boksburg, 25+ years experience and 100+ trucks in stock.',
+    images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'About A-Z Truck Sales' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About A-Z Truck Sales | Used Truck Dealer Gauteng Since 1999',
-    description:
-      'A-Z Truck Sales has been selling used rigid trucks in Gauteng for 25+ years. Two branches: Alberton and Boksburg.',
+    title: 'About A-Z Truck Sales | Used Truck Dealer in Gauteng Since 1999',
+    description: 'A-Z Truck Sales is a used commercial vehicle dealer in Gauteng with branches in Alberton and Boksburg, 25+ years experience and 100+ trucks in stock.',
     images: ['https://www.a-ztrucksales.com/og-image.webp'],
   },
 }
@@ -51,6 +39,32 @@ const orgSchema = {
     'https://web.facebook.com/p/A-Z-TRUCK-SALES-100057330584780/',
     'https://www.linkedin.com/company/a-z-truck-sales/?originalSubdomain=za',
     'https://www.youtube.com/@A-ZTRUCKSALES',
+  ],
+}
+
+const localBusinessSchemaJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'AutoDealer',
+  '@id': 'https://www.a-ztrucksales.com/#business',
+  name: 'A-Z Truck Sales',
+  url: 'https://www.a-ztrucksales.com/',
+  logo: 'https://www.a-ztrucksales.com/logo.png',
+  description: 'A-Z Truck Sales is a used commercial vehicle dealer in Gauteng with branches in Alberton and Boksburg, supplying used rigid trucks, commercial vehicles and truck spares.',
+  telephone: '+27 11 902 6071',
+  email: 'aztrucksales@mweb.co.za',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '9 Chrislou Crescent, Alberton North',
+    addressLocality: 'Alberton',
+    addressRegion: 'Gauteng',
+    postalCode: '1449',
+    addressCountry: 'ZA',
+  },
+  areaServed: ['Alberton', 'Boksburg', 'Johannesburg', 'East Rand', 'Gauteng', 'South Africa'],
+  openingHours: 'Mo-Fr 08:00-17:00',
+  sameAs: [
+    'https://web.facebook.com/p/A-Z-TRUCK-SALES-100057330584780/',
+    'https://www.linkedin.com/company/a-z-truck-sales/?originalSubdomain=za',
   ],
 }
 
@@ -78,6 +92,7 @@ export default function AboutPage() {
     <>
       <JsonLd data={orgSchema} />
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={localBusinessSchemaJsonLd} />
 
       {/* Hero */}
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
@@ -89,6 +104,23 @@ export default function AboutPage() {
             Gauteng&apos;s trusted used rigid truck dealer since 1999 — two
             branches and 100+ trucks in stock.
           </p>
+        </div>
+      </section>
+
+      {/* Why Buyers Choose */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">Why Buyers Choose A-Z Truck Sales</h2>
+            <div className="text-lg text-gray-600 space-y-4">
+              <p>
+                A-Z Truck Sales is built for businesses that need practical, work-ready commercial vehicles. We understand that a truck is not just transport — it is part of how a business earns money.
+              </p>
+              <p>
+                Our team helps buyers compare body type, payload, mileage, condition, spares availability and roadworthy requirements before choosing a vehicle. With branches in Alberton and Boksburg, we serve truck buyers across Gauteng and South Africa.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

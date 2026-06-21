@@ -39,6 +39,7 @@ type VehicleFormData = z.input<typeof vehicleSchema>
     handleSubmit,
     control,
     setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<VehicleFormData>({
     resolver: zodResolver(vehicleSchema),
@@ -134,6 +135,47 @@ type VehicleFormData = z.input<typeof vehicleSchema>
     } finally {
       setIsUploading(false)
     }
+  }
+
+  const bodyTypeSuitableFor: Record<string, string> = {
+    'refrigerated body': 'This truck is suitable for businesses that need temperature-controlled transport, including food distribution, frozen goods, meat supply, catering, logistics and retail delivery.',
+    'dropside truck': 'This truck is suitable for general freight, construction materials, landscaping supplies, and bulky goods that require easy side loading and unloading.',
+    flatbed: 'This truck is suitable for transporting construction materials, steel, piping, timber, machinery, and oversized loads.',
+    'tipper truck': 'This truck is suitable for construction, mining, earthmoving, waste removal, and bulk material transport.',
+    'crane truck': 'This truck is suitable for construction sites, equipment delivery, and loads requiring self-loading capability.',
+    'insulated body': 'This truck is suitable for temperature-sensitive deliveries, including food transport, pharmaceutical logistics, and perishable goods.',
+    'curtain side truck': 'This truck is suitable for general freight, palletised goods, and loads requiring side access for efficient loading and unloading.',
+    hooklift: 'This truck is suitable for skip bin transport, waste management, and interchangeable container systems.',
+    tanker: 'This truck is suitable for liquid transport, including fuel, water, chemicals, and bulk fluids.',
+    'volume body': 'This truck is suitable for high-volume, low-weight loads including parcel delivery, furniture moving, and courier services.',
+    'truck tractor': 'This truck is suitable for long-haul transport, trailer towing, and heavy freight operations.',
+    'chassis cab': 'This truck is suitable for businesses that require a versatile base for custom body fitment, including utility, service, and delivery applications.',
+    'skip loader': 'This truck is suitable for waste management, skip bin transport, and construction site cleanup.',
+    'roll back': 'This truck is suitable for vehicle recovery, towing, and transport of disabled vehicles.',
+    'bower truck': 'This truck is suitable for utility maintenance, electrical work, and elevated access applications.',
+    'cherry picker truck': 'This truck is suitable for elevated work, maintenance, and access applications.',
+    'cattle body': 'This truck is suitable for livestock transport, including cattle, sheep, and other farm animals.',
+    'mass side': 'This truck is suitable for heavy bulk transport, including mining, construction, and aggregate materials.',
+    'fire fighting unit': 'This truck is suitable for emergency response, firefighting, and rescue operations.',
+    'honey sucker': 'This truck is suitable for waste removal, septic tank cleaning, and industrial liquid waste management.',
+    cage: 'This truck is suitable for secure transport of goods, tools, and equipment requiring enclosed storage.',
+    'other specialized': 'This truck is purpose-built for specialized commercial applications.',
+  }
+
+  const defaultSuitableFor =
+    'This truck is suitable for businesses that require reliable commercial transport for their daily operations.'
+
+  const baseWorkshopText =
+    'The vehicle has been checked by our workshop, with lube service, quality check and testing completed. A-Z Truck Sales can also assist with paperwork for export buyers across Africa.'
+
+  const generateDescription = () => {
+    const values = watch()
+    const bodyType = values.bodyType?.toLowerCase().trim() ?? ''
+    const suitableFor = bodyTypeSuitableFor[bodyType] || defaultSuitableFor
+
+    const generated = `${suitableFor} Contact our team to confirm current availability, viewing location, COF status and final pricing.\n\n${baseWorkshopText}`
+    setValue('description', generated)
+    toast.success('Description generated')
   }
 
   return (
@@ -458,6 +500,15 @@ type VehicleFormData = z.input<typeof vehicleSchema>
 
           <div className="mb-4 space-y-2">
             <Label htmlFor="description">Description</Label>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={generateDescription}
+              className="mb-2"
+            >
+              Generate Description
+            </Button>
             <Textarea
               id="description"
               placeholder="Enter vehicle description"

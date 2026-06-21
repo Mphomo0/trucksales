@@ -4,9 +4,13 @@
 
 export const revalidate = 86400
 
-import AllSparesFilter from '@/components/sections/spares/AllSparesFilter'
+import dynamic from 'next/dynamic'
 import SparesFeatures from '@/components/sections/spares/SparesFeatures'
 import { Metadata } from 'next'
+
+const AllSparesFilter = dynamic(() => import('@/components/sections/spares/AllSparesFilter'), {
+  loading: () => <div className="py-20 text-center text-gray-500">Loading spares...</div>,
+})
 import JsonLd from '@/components/global/JsonLd'
 import Link from 'next/link'
 import {
@@ -19,8 +23,8 @@ import { prisma } from '@/lib/prisma'
 import { unstable_cache } from 'next/cache'
 
 export const metadata: Metadata = {
-  title: 'Truck Spares & Parts | Alberton, Gauteng',
-  description: 'Quality used truck spares in Gauteng. Engines, gearboxes & diffs for Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso & more. Inspected at our Alberton branch.',
+  title: { absolute: 'Truck Spares & Parts in Gauteng | Engines, Gearboxes & Diffs' },
+  description: 'Find used truck spares in Gauteng, including engines, gearboxes, diffs and commercial vehicle parts from A-Z Truck Sales in Alberton and Boksburg.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/spares',
   },
@@ -29,8 +33,8 @@ export const metadata: Metadata = {
     locale: 'en_ZA',
     url: 'https://www.a-ztrucksales.com/spares',
     siteName: 'A-Z Truck Sales',
-    title: 'Truck Spares & Parts | Alberton, Gauteng | A-Z Truck Sales',
-    description: 'Quality used truck spares in Gauteng. Engines, gearboxes & diffs for Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso & more. Inspected at our Alberton branch.',
+    title: 'Truck Spares & Parts in Gauteng | Engines, Gearboxes & Diffs',
+    description: 'Find used truck spares in Gauteng, including engines, gearboxes, diffs and commercial vehicle parts from A-Z Truck Sales in Alberton and Boksburg.',
     images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'Truck Spares & Parts - A-Z Truck Sales' }],
   },
 }
@@ -158,14 +162,27 @@ const getSparePageData = unstable_cache(
 
   return (
     <div>
-      <h1 className="sr-only">Truck Spares & Parts | A-Z Truck Sales</h1>
+      <h1 className="sr-only">Truck Spares & Parts in Gauteng | Engines, Gearboxes & Diffs</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
-        <span>Last Updated: 2026-04-27</span>
+        <span>Last Updated: 2026-06-21</span>
         {/* application/ld+json */}
       </div>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={sparesFaqSchema} />
+
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <p className="text-lg text-gray-600 leading-relaxed">
+              A-Z Truck Sales supplies used truck spares and commercial vehicle parts from our Gauteng branches. We stock selected engines, gearboxes, diffs and other parts for major truck brands including Isuzu, Hino, UD, Nissan, Mercedes-Benz, Fuso and more.
+            </p>
+            <p className="text-lg text-gray-600 leading-relaxed mt-4">
+              If you need a specific part, contact our team with the make, model, year and part required so we can check availability.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <AllSparesFilter initialSpares={initialSpares} initialMeta={initialMeta} initialFilterOptions={initialFilterOptions} />
 
@@ -205,6 +222,28 @@ const getSparePageData = unstable_cache(
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      <section className="py-20 bg-white border-t border-neutral-200">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Used Truck Parts We Can Help With</h2>
+            <p className="text-lg text-gray-600 mb-6">
+              We assist buyers looking for:
+            </p>
+            <ul className="list-disc list-inside text-lg text-gray-600 space-y-2 mb-6">
+              <li>Used truck engines</li>
+              <li>Used truck gearboxes</li>
+              <li>Differential units</li>
+              <li>Truck body parts</li>
+              <li>Commercial vehicle spares</li>
+              <li>Parts for Isuzu, Hino, UD, Nissan, Fuso and Mercedes-Benz trucks</li>
+            </ul>
+            <p className="text-lg text-gray-600">
+              Availability changes regularly. For faster assistance, send your vehicle details, part name and photos if available.
+            </p>
+          </div>
         </div>
       </section>
     </div>

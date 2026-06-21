@@ -9,19 +9,22 @@ import CTA from '@/components/sections/home/CTA'
 import FAQSection from '@/components/sections/home/FAQSection'
 import Featured from '@/components/sections/home/Featured'
 import Features from '@/components/sections/home/Features'
+import FindTruckSection from '@/components/sections/home/FindTruckSection'
 import Hero from '@/components/sections/home/Hero'
 import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: { absolute: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales — Boksburg' },
-  description: 'Browse used trucks for sale in Gauteng at A-Z Truck Sales. Isuzu, Hino, UD, Fuso & Toyota Dyna trucks and more in stock in Boksburg and Alberton.',
+  title: { absolute: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales' },
+  description:
+    'Browse quality used rigid trucks, commercial vehicles and truck spares from A-Z Truck Sales in Alberton and Boksburg. 25+ years’ experience serving Gauteng and South Africa.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/',
   },
   openGraph: {
-    title: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales — Boksburg',
-    description: 'Browse used trucks for sale in Gauteng at A-Z Truck Sales. Isuzu, Hino, UD, Fuso & Toyota Dyna trucks and more in stock in Boksburg and Alberton.',
+    title: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales',
+    description:
+      'Browse quality used rigid trucks, commercial vehicles and truck spares from A-Z Truck Sales in Alberton and Boksburg. 25+ years’ experience serving Gauteng and South Africa.',
     url: 'https://www.a-ztrucksales.com/',
     siteName: 'A-Z Truck Sales',
     images: [
@@ -44,7 +47,8 @@ const organizationSchema = {
   legalName: 'A-Z Truck Sales',
   url: 'https://www.a-ztrucksales.com',
   logo: 'https://www.a-ztrucksales.com/images/logo.png',
-  description: 'Trusted used commercial vehicle dealer since 1999 in Gauteng, South Africa. Specializing in quality used rigid trucks from 1.5 to 35 tons.',
+  description:
+    'Trusted used commercial vehicle dealer since 1999 in Gauteng, South Africa. Specializing in quality used rigid trucks from 1.5 to 35 tons.',
   telephone: '+27-11-902-6071',
   email: 'aztrucksales@mweb.co.za',
   address: {
@@ -70,9 +74,7 @@ const organizationSchema = {
       name: 'South Africa',
     },
   ],
-  sameAs: [
-    'https://web.facebook.com/p/A-Z-TRUCK-SALES-100057330584780/',
-  ],
+  sameAs: ['https://web.facebook.com/p/A-Z-TRUCK-SALES-100057330584780/'],
 }
 
 const autoDealerSchema = {
@@ -177,7 +179,8 @@ const autoDealerSchema = {
     { '@type': 'Brand', name: 'Toyota' },
     { '@type': 'Brand', name: 'UD Trucks' },
   ],
-  description: 'A-Z Truck Sales employs qualified technicians experienced in restoring 100+ trucks annually.',
+  description:
+    'A-Z Truck Sales employs qualified technicians experienced in restoring 100+ trucks annually.',
 }
 
 const localBusinessAlbertonSchema = {
@@ -251,6 +254,32 @@ const localBusinessBoksburgSchema = {
   priceRange: '$$',
 }
 
+const localBusinessSchemaJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'AutoDealer',
+  '@id': 'https://www.a-ztrucksales.com/#business',
+  name: 'A-Z Truck Sales',
+  url: 'https://www.a-ztrucksales.com/',
+  logo: 'https://www.a-ztrucksales.com/logo.png',
+  description: 'A-Z Truck Sales is a used commercial vehicle dealer in Gauteng with branches in Alberton and Boksburg, supplying used rigid trucks, commercial vehicles and truck spares.',
+  telephone: '+27 11 902 6071',
+  email: 'aztrucksales@mweb.co.za',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '9 Chrislou Crescent, Alberton North',
+    addressLocality: 'Alberton',
+    addressRegion: 'Gauteng',
+    postalCode: '1449',
+    addressCountry: 'ZA',
+  },
+  areaServed: ['Alberton', 'Boksburg', 'Johannesburg', 'East Rand', 'Gauteng', 'South Africa'],
+  openingHours: 'Mo-Fr 08:00-17:00',
+  sameAs: [
+    'https://web.facebook.com/p/A-Z-TRUCK-SALES-100057330584780/',
+    'https://www.linkedin.com/company/a-z-truck-sales/?originalSubdomain=za',
+  ],
+}
+
 const homeWebsiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -268,7 +297,8 @@ const homeWebsiteSchema = {
     '@type': 'SearchAction',
     target: {
       '@type': 'EntryPoint',
-      urlTemplate: 'https://www.a-ztrucksales.com/inventory?search={search_term_string}',
+      urlTemplate:
+        'https://www.a-ztrucksales.com/inventory?search={search_term_string}',
     },
     'query-input': 'required name=search_term_string',
   },
@@ -277,14 +307,16 @@ const homeWebsiteSchema = {
 export default function Home() {
   return (
     <>
-      <h1 className="sr-only">Used Trucks for Sale | A-Z Truck Sales Gauteng</h1>
+      <h1 className="sr-only">Used Trucks for Sale in Gauteng</h1>
       <JsonLd data={organizationSchema} />
       <JsonLd data={homeWebsiteSchema} />
       <JsonLd data={autoDealerSchema} />
       <JsonLd data={localBusinessAlbertonSchema} />
       <JsonLd data={localBusinessBoksburgSchema} />
+      <JsonLd data={localBusinessSchemaJsonLd} />
 
       <Hero />
+      <FindTruckSection />
       <Features />
       <Featured />
       <AboutSection />

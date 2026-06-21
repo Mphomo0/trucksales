@@ -329,16 +329,73 @@ interface Props {
 
                 <div>
                   <h2 className="text-lg font-semibold mb-4">Description</h2>
-                  <p className="text-gray-600 leading-relaxed">
-                    {vehicle.description}
+
+                  {/* Auto-generated intro */}
+                  <p className="text-gray-600 leading-relaxed mb-4">
+                    This {vehicle.year} {vehicle.make} {vehicle.model} is a used {vehicle.truckSize ? `${vehicle.truckSize} ` : ''}{vehicle.bodyType ? `${vehicle.bodyType} ` : ''}available from A-Z Truck Sales in Gauteng. It has {(vehicle.mileage ?? 0).toLocaleString()} km, a {vehicle.fuelType?.toLowerCase() ?? 'diesel'} engine and {vehicle.transmission?.toLowerCase() ?? 'manual'} transmission.
                   </p>
-                  <p className="text-gray-600 leading-relaxed">
-                    <span className="font-bold">- Truck Size: </span>
-                    {vehicle.truckSize || 'N/A'}
+
+                  {/* Auto-generated suitable-for + stored description */}
+                  <p className="text-gray-600 leading-relaxed mb-4">
+                    {(() => {
+                      const bodyType = (vehicle.bodyType ?? '').toLowerCase().trim()
+                      const useCases: Record<string, string> = {
+                        'dropside truck': 'builders, hardware suppliers, construction companies, local deliveries and businesses that need easy side loading.',
+                        'refrigerated body': 'food distribution, meat suppliers, frozen goods, catering, retail delivery and cold-chain logistics.',
+                        'insulated body': 'food distribution, meat suppliers, frozen goods, catering, retail delivery and cold-chain logistics.',
+                        'box truck': 'furniture transport, courier work, parcel delivery, retail stock and protected cargo.',
+                        'curtain side truck': 'palletised goods, warehouse deliveries and businesses that need faster side loading.',
+                        'chassis cab': 'businesses that want to fit a custom body for their specific operation.',
+                        flatbed: 'construction, building materials, steel transport and general heavy loads.',
+                        'tipper truck': 'construction, mining, earthmoving, waste removal and bulk material transport.',
+                        'crane truck': 'construction sites, equipment delivery and loads requiring self-loading capability.',
+                        hooklift: 'skip bin transport, waste management and interchangeable container systems.',
+                        tanker: 'liquid transport, including fuel, water, chemicals and bulk fluids.',
+                        'volume body': 'high-volume, low-weight loads including parcel delivery, furniture moving and courier services.',
+                        'truck tractor': 'long-haul transport, trailer towing and heavy freight operations.',
+                        'roll back': 'vehicle recovery, towing and transport of disabled vehicles.',
+                        'bower truck': 'utility maintenance, electrical work and elevated access applications.',
+                        'cherry picker truck': 'elevated work, maintenance and access applications.',
+                        'cattle body': 'livestock transport, including cattle, sheep and other farm animals.',
+                        'skip loader': 'waste management, skip bin transport and construction site cleanup.',
+                        'fire fighting unit': 'emergency response, firefighting and rescue operations.',
+                        'honey sucker': 'waste removal, septic tank cleaning and industrial liquid waste management.',
+                        cage: 'secure transport of goods, tools and equipment requiring enclosed storage.',
+                        'mass side': 'heavy bulk transport, including mining, construction and aggregate materials.',
+                        'other specialized': 'specialized commercial applications.',
+                      }
+                      const useCase = useCases[bodyType] || 'reliable commercial transport for their daily operations.'
+                      return `This truck may be suitable for businesses needing ${useCase} Contact our team to confirm current availability, viewing location, COF status and final pricing.`
+                    })()}
                   </p>
+
+                  {/* Stored description (workshop/unique text) */}
+                  {vehicle.description && (
+                    <div className="text-gray-600 leading-relaxed whitespace-pre-wrap mb-4">
+                      {vehicle.description}
+                    </div>
+                  )}
+
+                  {/* Key details */}
+                  <div className="mb-4">
+                    <h3 className="font-semibold text-gray-800 mb-2">Key details:</h3>
+                    <ul className="text-gray-600 space-y-1">
+                      <li><span className="font-medium">Make:</span> {vehicle.make}</li>
+                      <li><span className="font-medium">Model:</span> {vehicle.model}</li>
+                      <li><span className="font-medium">Year:</span> {vehicle.year}</li>
+                      <li><span className="font-medium">Mileage:</span> {(vehicle.mileage ?? 0).toLocaleString()} km</li>
+                      <li><span className="font-medium">Fuel type:</span> {vehicle.fuelType?.toLowerCase() ?? 'diesel'}</li>
+                      <li><span className="font-medium">Transmission:</span> {vehicle.transmission?.toLowerCase() ?? 'manual'}</li>
+                      <li><span className="font-medium">Body type:</span> {vehicle.bodyType}</li>
+                      <li><span className="font-medium">Truck size:</span> {vehicle.truckSize || 'N/A'}</li>
+                      <li><span className="font-medium">Price incl. VAT:</span> R{vehicle.vatPrice.toLocaleString()}</li>
+                      <li><span className="font-medium">Price excl. VAT:</span> R{vehicle.pricenoVat.toLocaleString()}</li>
+                    </ul>
+                  </div>
+
+                  {/* CTA */}
                   <p className="text-gray-600 leading-relaxed">
-                    <span className="font-bold">- Body Type: </span>
-                    {vehicle.bodyType}
+                    To enquire, call A-Z Truck Sales on 011 902 6071 or use the WhatsApp enquiry button.
                   </p>
                 </div>
               </CardContent>

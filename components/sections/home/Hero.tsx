@@ -9,7 +9,7 @@ import Link from 'next/link'
 /* <h1>A-Z Truck Sales Components</h1> */ export default function Hero() {
   return (
     <section
-      className="relative text-white overflow-hidden md:h-[700px] h-[500px]"
+      className="relative text-white overflow-hidden md:h-175 h-125"
       aria-label="Hero section with promotional message"
     >
       <Image
@@ -22,7 +22,7 @@ import Link from 'next/link'
         aria-hidden="true"
       />
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-yellow-600 opacity-60" />
+      <div className="absolute inset-0 bg-linear-to-r from-amber-600 to-yellow-600 opacity-60" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-center">
         <div className="text-center">
@@ -32,7 +32,10 @@ import Link from 'next/link'
 
           <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-2xl mx-auto">
             A-Z Truck Sales supplies quality used rigid trucks, commercial
-            vehicles and truck spares from branches in Alberton and Boksburg.
+            vehicles and truck spares from our Alberton and Boksburg branches.
+            We help businesses, fleet owners, contractors, logistics companies
+            and owner-drivers find reliable trucks for work across Gauteng and
+            South Africa.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto">

@@ -11,11 +11,11 @@ import { useUser } from '@clerk/nextjs'
 
 const NavLinks = [
   { name: 'Home', href: '/' },
-  { name: 'Inventory', href: '/inventory' },
-  { name: 'Specials', href: '/specials' },
-  { name: 'Spares', href: '/spares' },
-  { name: 'Sell-Your-Truck', href: '/sell-your-truck' },
   { name: 'About', href: '/about' },
+  { name: 'Inventory', href: '/inventory' },
+  { name: 'Spares', href: '/spares' },
+  { name: 'Specials', href: '/specials' },
+  { name: 'Sell-Your-Truck', href: '/sell-your-truck' },
   { name: 'Contact Us', href: '/contact' },
 ]
 
@@ -24,7 +24,7 @@ const NavLinks = [
   const { isSignedIn, isLoaded } = useUser()
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(prev => {
+    setIsMobileMenuOpen((prev) => {
       document.body.style.overflow = prev ? 'unset' : 'hidden'
       return !prev
     })

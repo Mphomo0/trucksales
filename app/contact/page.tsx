@@ -5,7 +5,7 @@
 /* author: A-Z Truck Sales */
 /* datePublished: 2026-04-27 */
 
-import AddressSection from '@/components/sections/contactSection/AddressSection'
+
 import ContactForm from '@/components/sections/contactSection/ContactForm'
 import FAQSection from '@/components/sections/home/FAQSection'
 import { Metadata } from 'next'
@@ -18,8 +18,8 @@ import {
 } from '@/components/ui/accordion'
 
 export const metadata: Metadata = {
-  title: 'Contact Us | Alberton & Boksburg Gauteng',
-  description: 'Contact A-Z Truck Sales in Alberton (011 902 6071) or Boksburg (083 234 5377), Gauteng. Mon-Fri 8AM-5PM, Sat 8AM-1PM. Browse 100+ used trucks online.',
+  title: { absolute: 'Contact A-Z Truck Sales | Alberton & Boksburg, Gauteng' },
+  description: 'Contact A-Z Truck Sales in Alberton or Boksburg for used trucks, truck spares, trade-ins and commercial vehicle enquiries.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/contact',
   },
@@ -29,13 +29,13 @@ export const metadata: Metadata = {
     url: 'https://www.a-ztrucksales.com/contact',
     siteName: 'A-Z Truck Sales',
     title: 'Contact A-Z Truck Sales | Alberton & Boksburg, Gauteng',
-    description: 'Contact A-Z Truck Sales in Alberton (011 902 6071) or Boksburg (083 234 5377), Gauteng. Mon-Fri 8AM-5PM, Sat 8AM-1PM.',
+    description: 'Contact A-Z Truck Sales in Alberton or Boksburg for used trucks, truck spares, trade-ins and commercial vehicle enquiries.',
     images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'Contact A-Z Truck Sales' }],
   },
   twitter: {
     card: 'summary_large_image' as const,
     title: 'Contact A-Z Truck Sales | Alberton & Boksburg, Gauteng',
-    description: 'Contact A-Z Truck Sales in Alberton (011 902 6071) or Boksburg (083 234 5377), Gauteng. Mon-Fri 8AM-5PM, Sat 8AM-1PM.',
+    description: 'Contact A-Z Truck Sales in Alberton or Boksburg for used trucks, truck spares, trade-ins and commercial vehicle enquiries.',
     images: ['https://www.a-ztrucksales.com/og-image.webp'],
   },
 }
@@ -62,6 +62,32 @@ const contactFaqs = [
     answer: 'Spares availability matters because a cheaper truck can become expensive if it is difficult to repair, maintain or return to work quickly.',
   },
 ]
+
+const localBusinessSchemaJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'AutoDealer',
+  '@id': 'https://www.a-ztrucksales.com/#business',
+  name: 'A-Z Truck Sales',
+  url: 'https://www.a-ztrucksales.com/',
+  logo: 'https://www.a-ztrucksales.com/logo.png',
+  description: 'A-Z Truck Sales is a used commercial vehicle dealer in Gauteng with branches in Alberton and Boksburg, supplying used rigid trucks, commercial vehicles and truck spares.',
+  telephone: '+27 11 902 6071',
+  email: 'aztrucksales@mweb.co.za',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '9 Chrislou Crescent, Alberton North',
+    addressLocality: 'Alberton',
+    addressRegion: 'Gauteng',
+    postalCode: '1449',
+    addressCountry: 'ZA',
+  },
+  areaServed: ['Alberton', 'Boksburg', 'Johannesburg', 'East Rand', 'Gauteng', 'South Africa'],
+  openingHours: 'Mo-Fr 08:00-17:00',
+  sameAs: [
+    'https://web.facebook.com/p/A-Z-TRUCK-SALES-100057330584780/',
+    'https://www.linkedin.com/company/a-z-truck-sales/?originalSubdomain=za',
+  ],
+}
 
 const localBusinessSchema = {
   '@context': 'https://schema.org',
@@ -162,24 +188,65 @@ const localBusinessSchema = {
 
   return (
     <div className="bg-gray-50 py-12">
-      <h1 className="sr-only">Contact Us | A-Z Truck Sales Alberton</h1>
+      <h1 className="sr-only">Contact A-Z Truck Sales | Alberton & Boksburg, Gauteng</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
-        <span>Last Updated: 2026-04-27</span>
+        <span>Last Updated: 2026-06-21</span>
         {/* application/ld+json */}
       </div>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={localBusinessSchema} />
+      <JsonLd data={localBusinessSchemaJsonLd} />
       <JsonLd data={contactFaqSchema} />
       
       <div className="container mx-auto px-4 text-center mb-12">
-        <h2 className="text-4xl font-bold mb-4">Contact Us</h2>
-        <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-          Have a question or need a quote? Reach out to our team of experts.
+        <h2 className="text-4xl font-bold mb-4">Contact A-Z Truck Sales</h2>
+        <p className="text-lg text-neutral-600 max-w-3xl mx-auto">
+          Contact A-Z Truck Sales for used truck sales, truck spares, trade-ins, stock availability and viewing arrangements. Our team assists buyers from Alberton, Boksburg, Johannesburg, the East Rand, Gauteng and across South Africa.
         </p>
       </div>
 
-      <AddressSection />
+      <section className="py-8 bg-white border-t border-b border-neutral-200 mb-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="p-6 bg-gray-50 rounded-lg">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Alberton Branch</h3>
+              <div className="text-gray-600 space-y-2">
+                <p>9 Chrislou Crescent, Alberton North, Gauteng, 1449</p>
+                <p>Phone: <a href="tel:0119026071" className="text-amber-600 hover:underline">011 902 6071</a></p>
+                <p>Email: <a href="mailto:aztrucksales@mweb.co.za" className="text-amber-600 hover:underline">aztrucksales@mweb.co.za</a></p>
+                <p>Hours: Monday to Friday, 08:00–17:00</p>
+                <a
+                  href="https://www.google.com/maps/place/9+Chrislou+Crescent,+Alberton+North,+Gauteng,+1449"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-3 px-4 py-2 bg-amber-600 text-white rounded hover:bg-amber-700 transition text-sm font-semibold"
+                >
+                  View Map →
+                </a>
+              </div>
+            </div>
+            <div className="p-6 bg-gray-50 rounded-lg">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Boksburg Branch</h3>
+              <div className="text-gray-600 space-y-2">
+                <p>Corner Trichardts Road &amp; Ravenswood Street, Ravenswood, Boksburg, Gauteng, 1451</p>
+                <p>Phone: <a href="tel:0832345377" className="text-amber-600 hover:underline">083 234 5377</a></p>
+                <p>Email: <a href="mailto:aztruckboks@gmail.com" className="text-amber-600 hover:underline">aztruckboks@gmail.com</a></p>
+                <p>Hours: Monday to Friday, 08:00–17:00</p>
+                <a
+                  href="https://www.google.com/maps/place/Corner+Trichardts+Road+%26+Ravenswood+Street,+Ravenswood,+Boksburg,+Gauteng,+1451"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-3 px-4 py-2 bg-amber-600 text-white rounded hover:bg-amber-700 transition text-sm font-semibold"
+                >
+                  View Map →
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <ContactForm />
       
       <section className="py-20 bg-neutral-50">

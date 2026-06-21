@@ -5,28 +5,15 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: {
-    absolute:
-      'Truck Brands We Sell | Isuzu, Hino, Fuso, MAN & More | A-Z Truck Sales',
-  },
-  description:
-    'Browse used trucks by brand at A-Z Truck Sales. Isuzu, Hino, Fuso, UD, MAN, Mercedes-Benz and more. Available in Alberton and Boksburg, Gauteng.',
+  title: { absolute: 'Used Truck Brands | Isuzu, Hino, Fuso, UD, MAN & Mercedes-Benz' },
+  description: 'Browse used truck brands sold by A-Z Truck Sales, including Isuzu, Hino, Fuso, UD, MAN, Mercedes-Benz, Toyota, Tata and Hyundai commercial vehicles.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/brands' },
   openGraph: {
-    title:
-      'Truck Brands We Sell | Isuzu, Hino, Fuso, MAN & More | A-Z Truck Sales',
-    description:
-      'Browse used trucks by brand. Isuzu, Hino, Fuso, UD, MAN, Mercedes-Benz and more in Gauteng.',
+    title: 'Used Truck Brands | Isuzu, Hino, Fuso, UD, MAN & Mercedes-Benz',
+    description: 'Browse used truck brands sold by A-Z Truck Sales, including Isuzu, Hino, Fuso, UD, MAN, Mercedes-Benz, Toyota, Tata and Hyundai commercial vehicles.',
     url: 'https://www.a-ztrucksales.com/brands',
     siteName: 'A-Z Truck Sales',
-    images: [
-      {
-        url: 'https://www.a-ztrucksales.com/og-image.webp',
-        width: 1200,
-        height: 630,
-        alt: 'Truck Brands - A-Z Truck Sales',
-      },
-    ],
+    images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'Truck Brands - A-Z Truck Sales' }],
     locale: 'en_ZA',
     type: 'website',
   },
@@ -104,11 +91,13 @@ export default function BrandsPage() {
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Truck Brands We Sell
+            Used Truck Brands We Sell
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Browse used trucks by brand. We stock 100+ quality used rigid trucks
-            from leading commercial vehicle manufacturers.
+            A-Z Truck Sales stocks used commercial vehicles from leading truck brands in South Africa. Our stock changes regularly, but common brands include Isuzu, Hino, Fuso, UD Trucks, MAN, Mercedes-Benz, Toyota, Tata, Hyundai and Nissan.
+          </p>
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto mt-4">
+            Buyers can browse by brand or contact our team with the truck size, body type and budget they need.
           </p>
         </div>
       </section>

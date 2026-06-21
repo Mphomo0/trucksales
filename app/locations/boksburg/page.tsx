@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ikCard } from '@/lib/imagekit'
 import { prisma } from '@/lib/prisma'
+import { unstable_cache } from 'next/cache'
 
 export const metadata: Metadata = {
   title: { absolute: 'Used Trucks for Sale in Boksburg | A-Z Truck Sales' },
@@ -59,8 +60,8 @@ const faqs = [
   },
 ]
 
-export default async function BoksburgPage() {
-  const vehicles = await prisma.inventory.findMany({
+const getBoksburgVehicles = unstable_cache(
+  async () => prisma.inventory.findMany({
     take: 6,
     orderBy: { createdAt: 'desc' },
     select: {
@@ -77,7 +78,13 @@ export default async function BoksburgPage() {
       slug: true,
       specialPrice: true,
     },
-  })
+  }),
+  ['boksburg-latest-vehicles'],
+  { revalidate: 86400, tags: ['inventory'] }
+)
+
+export default async function BoksburgPage() {
+  const vehicles = await getBoksburgVehicles()
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',

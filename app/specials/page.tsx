@@ -5,16 +5,21 @@
 export const dynamic = 'force-static'
 export const revalidate = 86400
 
-import AllSpecials from '@/components/sections/special/AllSpecials'
+import dynamicImport from 'next/dynamic'
 import SpecialsFeatures from '@/components/sections/specials/SpecialsFeatures'
 import { Metadata } from 'next'
+
+const AllSpecials = dynamicImport(() => import('@/components/sections/special/AllSpecials'), {
+  loading: () => <div className="py-20 text-center text-gray-500">Loading specials...</div>,
+})
 import JsonLd from '@/components/global/JsonLd'
 import { prisma } from '@/lib/prisma'
+import { unstable_cache } from 'next/cache'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: { absolute: 'Truck Specials Under R300 000 | A-Z Truck Sales — Gauteng' },
-  description: 'Browse truck specials at A-Z Truck Sales in Alberton & Boksburg, Gauteng. Limited-time deals on quality used Isuzu, Hino, Nissan and more. View today.',
+  title: { absolute: 'Truck Specials in Gauteng | Used Truck Deals | A-Z Truck Sales' },
+  description: 'View current truck specials, discounted used trucks and selected commercial vehicle deals from A-Z Truck Sales in Alberton and Boksburg, Gauteng.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/specials',
   },
@@ -23,8 +28,8 @@ export const metadata: Metadata = {
     locale: 'en_ZA',
     url: 'https://www.a-ztrucksales.com/specials',
     siteName: 'A-Z Truck Sales',
-    title: 'Truck Specials Under R300 000 | A-Z Truck Sales — Gauteng',
-    description: 'Browse truck specials at A-Z Truck Sales in Alberton & Boksburg, Gauteng. Limited-time deals on quality used Isuzu, Hino, Nissan and more.',
+    title: 'Truck Specials in Gauteng | Used Truck Deals | A-Z Truck Sales',
+    description: 'View current truck specials, discounted used trucks and selected commercial vehicle deals from A-Z Truck Sales in Alberton and Boksburg, Gauteng.',
     images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'Truck Specials - A-Z Truck Sales' }],
   },
 }
@@ -52,7 +57,8 @@ const specialsFaqs = [
   },
 ]
 
-async function getSpecialsData() {
+const getSpecialsData = unstable_cache(
+  async () => {
   const now = new Date()
 
   // Run both queries in parallel — cuts DB round-trip time in half
@@ -123,7 +129,10 @@ async function getSpecialsData() {
   ])
 
   return { vehicles, spares }
-}
+  },
+  ['specials-page-data'],
+  { revalidate: 86400, tags: ['inventory', 'spares'] }
+)
 
 /* application/ld+json */ export default async function Specials() {
   const { vehicles, spares } = await getSpecialsData()
@@ -176,14 +185,14 @@ async function getSpecialsData() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Our Specials
+            Truck Specials &amp; Deals
           </h2>
-          <p className="text-lg text-gray-600 mb-8">
-            Don&lsquo;t miss out on our latest truck specials — limited-time
-            deals, exclusive discounts, and unbeatable offers available now!
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Browse current truck specials and selected commercial vehicle deals from A-Z Truck Sales in Gauteng. Specials may include used trucks, truck spares, engines, gearboxes, diffs or selected discounted stock available for a limited time.
           </p>
-
-          
+          <p className="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">
+            Stock and prices can change quickly, so contact our Alberton or Boksburg team to confirm availability before visiting.
+          </p>
         </div>
 
         {!hasAnySpecial ? (
@@ -216,6 +225,43 @@ async function getSpecialsData() {
             </ul>
           </section>
         )}
+
+        <section className="mt-16 pt-12 border-t border-gray-200">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Looking for a Specific Truck Deal?</h2>
+            <p className="text-lg text-gray-600 mb-6">
+              If you are looking for a used Isuzu, Hino, Fuso, UD, Mercedes-Benz, MAN, Toyota or Nissan truck, contact A-Z Truck Sales with your budget, preferred tonnage and body type. Our team can help you check current stock and available deals.
+            </p>
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Popular searches:</h3>
+            <ul className="space-y-1">
+              <li>
+                <Link href="/inventory?search=specials" className="text-blue-700 hover:underline">
+                  Used truck specials in Gauteng
+                </Link>
+              </li>
+              <li>
+                <Link href="/inventory?search=under+300000" className="text-blue-700 hover:underline">
+                  Used trucks under R300,000
+                </Link>
+              </li>
+              <li>
+                <Link href="/inventory" className="text-blue-700 hover:underline">
+                  Commercial vehicle specials South Africa
+                </Link>
+              </li>
+              <li>
+                <Link href="/spares" className="text-blue-700 hover:underline">
+                  Truck spares specials Gauteng
+                </Link>
+              </li>
+              <li>
+                <Link href="/inventory" className="text-blue-700 hover:underline">
+                  Used rigid truck deals
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </section>
       </div>
     </div>
   )
