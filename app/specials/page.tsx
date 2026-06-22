@@ -254,48 +254,7 @@ const getSpecialsData = unstable_cache(
               Sales with your budget, preferred tonnage and body type. Our team
               can help you check current stock and available deals.
             </p>
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">
-              Popular searches:
-            </h3>
-            <ul className="space-y-1">
-              <li>
-                <Link
-                  href="/inventory?search=specials"
-                  className="text-blue-700 hover:underline"
-                >
-                  Used truck specials in Gauteng
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/inventory?search=under+300000"
-                  className="text-blue-700 hover:underline"
-                >
-                  Used trucks under R300,000
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/inventory"
-                  className="text-blue-700 hover:underline"
-                >
-                  Commercial vehicle specials South Africa
-                </Link>
-              </li>
-              <li>
-                <Link href="/spares" className="text-blue-700 hover:underline">
-                  Truck spares specials Gauteng
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/inventory"
-                  className="text-blue-700 hover:underline"
-                >
-                  Used rigid truck deals
-                </Link>
-              </li>
-            </ul>
+
           </div>
         </section>
       </div>
