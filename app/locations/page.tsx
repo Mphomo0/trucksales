@@ -6,7 +6,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: {
     absolute:
-      'Truck Dealership Locations | Alberton & Boksburg | A-Z Truck Sales',
+      'Truck Dealer Locations | Alberton & Boksburg',
   },
   description:
     'Visit A-Z Truck Sales in Alberton or Boksburg, Gauteng. View used trucks and speak to our sales team. Branches open Monday-Friday.',

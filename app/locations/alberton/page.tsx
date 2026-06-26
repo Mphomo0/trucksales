@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { ikCard } from '@/lib/imagekit'
 import { prisma } from '@/lib/prisma'
 import { unstable_cache } from 'next/cache'
+import DealerFaqBlock from '@/components/sections/shared/DealerFaqBlock'
 
 export const metadata: Metadata = {
   title: { absolute: 'Used Trucks for Sale in Alberton | A-Z Truck Sales' },
@@ -32,33 +33,6 @@ export const metadata: Metadata = {
   },
 }
 
-const faqs = [
-  {
-    question: 'Where is A-Z Truck Sales in Alberton?',
-    answer:
-      'A-Z Truck Sales is located at 9 Chrislou Crescent, Alberton North, Gauteng, 1449. We are open Monday to Friday 8AM-5PM and Saturday 8AM-1PM.',
-  },
-  {
-    question: 'What trucks do you sell in Alberton?',
-    answer:
-      'We sell used rigid trucks from 1.5 to 35 tons including Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso, Toyota, Nissan, Tata, Hyundai, Volkswagen and UD Trucks.',
-  },
-  {
-    question: 'Do you have truck spares in Alberton?',
-    answer:
-      'Yes, we stock truck spares for all major brands including Isuzu, Hino, UD, Nissan and Mercedes-Benz. Contact us for availability.',
-  },
-  {
-    question: 'Can I view trucks at your Alberton branch?',
-    answer:
-      'Yes, visits are by appointment. Call 011 902 6071 or WhatsApp us to arrange a viewing at our Alberton North location.',
-  },
-  {
-    question: 'Do you offer financing for trucks bought in Alberton?',
-    answer:
-      'Yes, we work with various vehicle finance providers. Contact our Alberton sales team to discuss options.',
-  },
-]
 
 const getAlbertonVehicles = unstable_cache(
   async () => prisma.inventory.findMany({
@@ -139,15 +113,6 @@ export default async function AlbertonPage() {
     ],
     areaServed: 'Gauteng, South Africa',
   }
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
-    })),
-  }
 
   return (
     <>
@@ -156,7 +121,6 @@ export default async function AlbertonPage() {
       </h1>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={localBusinessSchema} />
-      <JsonLd data={faqSchema} />
 
       {/* Hero */}
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
@@ -394,30 +358,10 @@ export default async function AlbertonPage() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="py-20 bg-neutral-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">
-              Frequently Asked Questions About Truck Sales in Alberton
-            </h2>
-            <p className="text-lg text-gray-600 mb-8 text-center">
-              Common questions from Alberton truck buyers.
-            </p>
-            {faqs.map((faq, i) => (
-              <details
-                key={i}
-                className="bg-white rounded-lg mb-4 border border-neutral-200 p-6"
-              >
-                <summary className="font-semibold text-gray-900 cursor-pointer">
-                  {faq.question}
-                </summary>
-                <p className="mt-4 text-gray-600">{faq.answer}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+      <DealerFaqBlock
+        heading="Frequently Asked Questions About Truck Sales in Alberton"
+        withSchema
+      />
 
       {/* CTA */}
       <section className="py-20 bg-linear-to-r from-amber-600 to-yellow-300 text-white text-center">

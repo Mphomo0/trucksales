@@ -11,20 +11,21 @@ import Featured from '@/components/sections/home/Featured'
 import Features from '@/components/sections/home/Features'
 import FindTruckSection from '@/components/sections/home/FindTruckSection'
 import Hero from '@/components/sections/home/Hero'
+import DealerFaqBlock from '@/components/sections/shared/DealerFaqBlock'
 import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: { absolute: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales' },
   description:
-    'Browse quality used rigid trucks, commercial vehicles and truck spares from A-Z Truck Sales in Alberton and Boksburg. 25+ years’ experience serving Gauteng and South Africa.',
+    'Browse quality used rigid trucks and truck spares from A-Z Truck Sales in Alberton and Boksburg. 25+ years serving Gauteng and South Africa.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/',
   },
   openGraph: {
     title: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales',
     description:
-      'Browse quality used rigid trucks, commercial vehicles and truck spares from A-Z Truck Sales in Alberton and Boksburg. 25+ years’ experience serving Gauteng and South Africa.',
+      'Browse quality used rigid trucks and truck spares from A-Z Truck Sales in Alberton and Boksburg. 25+ years serving Gauteng and South Africa.',
     url: 'https://www.a-ztrucksales.com/',
     siteName: 'A-Z Truck Sales',
     images: [
@@ -58,11 +59,6 @@ const organizationSchema = {
     addressRegion: 'Gauteng',
     postalCode: '1449',
     addressCountry: 'ZA',
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: '-26.2694',
-    longitude: '28.1221',
   },
   areaServed: [
     {
@@ -266,8 +262,8 @@ const localBusinessSchemaJsonLd = {
   email: 'aztrucksales@mweb.co.za',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: '9 Chrislou Crescent, Alberton North',
-    addressLocality: 'Alberton',
+    streetAddress: '9 Chrislou Crescent',
+    addressLocality: 'Alberton North',
     addressRegion: 'Gauteng',
     postalCode: '1449',
     addressCountry: 'ZA',
@@ -280,36 +276,12 @@ const localBusinessSchemaJsonLd = {
   ],
 }
 
-const homeWebsiteSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'A-Z Truck Sales',
-  url: 'https://www.a-ztrucksales.com',
-  publisher: {
-    '@type': 'Organization',
-    name: 'A-Z Truck Sales',
-    logo: {
-      '@type': 'ImageObject',
-      url: 'https://www.a-ztrucksales.com/images/logo.png',
-    },
-  },
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: {
-      '@type': 'EntryPoint',
-      urlTemplate:
-        'https://www.a-ztrucksales.com/inventory?search={search_term_string}',
-    },
-    'query-input': 'required name=search_term_string',
-  },
-}
 
 export default function Home() {
   return (
     <>
       <h1 className="sr-only">Used Trucks for Sale in Gauteng</h1>
       <JsonLd data={organizationSchema} />
-      <JsonLd data={homeWebsiteSchema} />
       <JsonLd data={autoDealerSchema} />
       <JsonLd data={localBusinessAlbertonSchema} />
       <JsonLd data={localBusinessBoksburgSchema} />
@@ -321,6 +293,7 @@ export default function Home() {
       <Featured />
       <AboutSection />
       <FAQSection />
+      <DealerFaqBlock withSchema />
       <CTA />
     </>
   )

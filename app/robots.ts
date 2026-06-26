@@ -27,6 +27,16 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/dashboard/', '/api/', '/login/'],
       },
       {
+        userAgent: 'ClaudeBot',
+        allow: '/',
+        disallow: ['/dashboard/', '/api/', '/login/'],
+      },
+      {
+        userAgent: 'PerplexityBot',
+        allow: '/',
+        disallow: ['/dashboard/', '/api/', '/login/'],
+      },
+      {
         userAgent: '*',
         allow: '/',
         disallow: [

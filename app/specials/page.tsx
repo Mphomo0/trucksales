@@ -24,7 +24,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Truck Specials in Gauteng | Used Truck Deals | A-Z Truck Sales',
+    absolute: 'Used Truck Specials Gauteng | A-Z Truck Sales',
   },
   description:
     'View current truck specials, discounted used trucks and selected commercial vehicle deals from A-Z Truck Sales in Alberton and Boksburg, Gauteng.',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     locale: 'en_ZA',
     url: 'https://www.a-ztrucksales.com/specials',
     siteName: 'A-Z Truck Sales',
-    title: 'Truck Specials in Gauteng | Used Truck Deals | A-Z Truck Sales',
+    title: 'Used Truck Specials Gauteng | A-Z Truck Sales',
     description:
       'View current truck specials, discounted used trucks and selected commercial vehicle deals from A-Z Truck Sales in Alberton and Boksburg, Gauteng.',
     images: [

@@ -5,11 +5,11 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: { absolute: 'Isuzu vs Hino vs Fuso: Which Used Truck Is Right for Your Business? | A-Z Truck Sales' },
-  description: 'Compare Isuzu, Hino and Fuso used trucks for reliability, parts availability, fuel economy and running costs. Find the right Japanese truck brand for your Gauteng business.',
+  title: { absolute: 'Isuzu vs Hino vs Fuso: Best Used Truck for Your Business' },
+  description: 'Compare Isuzu, Hino and Fuso for reliability, parts support, fuel economy and running costs. Find the right used truck brand in Gauteng.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/guides/isuzu-vs-hino-vs-fuso' },
   openGraph: {
-    title: 'Isuzu vs Hino vs Fuso: Which Used Truck Is Right for Your Business?',
+    title: 'Isuzu vs Hino vs Fuso: Best Used Truck for Your Business',
     description: 'Compare Isuzu, Hino and Fuso used trucks for reliability, parts availability, fuel economy and running costs.',
     url: 'https://www.a-ztrucksales.com/guides/isuzu-vs-hino-vs-fuso',
     siteName: 'A-Z Truck Sales',

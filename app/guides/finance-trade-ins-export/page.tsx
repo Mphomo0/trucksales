@@ -5,7 +5,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: { absolute: 'Used Truck Finance, Trade-Ins and Export Questions | A-Z Truck Sales' },
+  title: { absolute: 'Truck Finance, Trade-Ins & Export | A-Z Truck Sales' },
   description: 'Payment options, trade-in process, export documentation and cross-border buying for African buyers. Learn about used truck finance and trade-ins in Gauteng.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/guides/finance-trade-ins-export' },
   openGraph: {

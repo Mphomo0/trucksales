@@ -5,11 +5,11 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: { absolute: 'How to Choose a Truck for Construction, Delivery or Cold Storage | A-Z Truck Sales' },
-  description: 'Match truck body type and payload to your industry — dropside for building sites, refrigerated for cold chain, box body for deliveries. Choose the right used truck in Gauteng.',
+  title: { absolute: 'Choose a Truck: Construction, Delivery or Cold Chain' },
+  description: 'Match body type to your industry: dropside for building, refrigerated for cold chain, box body for deliveries. Browse used trucks in Gauteng.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/guides/choose-truck-for-construction-delivery-cold-storage' },
   openGraph: {
-    title: 'How to Choose a Truck for Construction, Delivery or Cold Storage',
+    title: 'Choose a Truck: Construction, Delivery or Cold Chain',
     description: 'Match truck body type and payload to your industry — dropside for building sites, refrigerated for cold chain, box body for deliveries.',
     url: 'https://www.a-ztrucksales.com/guides/choose-truck-for-construction-delivery-cold-storage',
     siteName: 'A-Z Truck Sales',

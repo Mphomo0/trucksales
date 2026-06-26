@@ -7,12 +7,7 @@ import InventoryFeatures from '@/components/sections/inventorySection/InventoryF
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
 import Link from 'next/link'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
+import DealerFaqBlock from '@/components/sections/shared/DealerFaqBlock'
 import { prisma } from '@/lib/prisma'
 import { unstable_cache } from 'next/cache'
 
@@ -30,7 +25,7 @@ export const revalidate = 86400
 export const metadata: Metadata = {
   title: 'Used Trucks for Sale in South Africa',
   description:
-    'Browse used rigid trucks, commercial vehicles, dropside trucks, refrigerated trucks and box trucks from A-Z Truck Sales in Gauteng. View prices, mileage and details online.',
+    'Browse used rigid trucks from A-Z Truck Sales in Gauteng — dropside, refrigerated, box body and more. View prices, mileage and details online.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/inventory',
   },
@@ -41,7 +36,7 @@ export const metadata: Metadata = {
     siteName: 'A-Z Truck Sales',
     title: 'Used Trucks for Sale in South Africa | A-Z Truck Sales',
     description:
-      'Browse used rigid trucks, commercial vehicles, dropside trucks, refrigerated trucks and box trucks from A-Z Truck Sales in Gauteng. View prices, mileage and details online.',
+      'Browse used rigid trucks from A-Z Truck Sales in Gauteng — dropside, refrigerated, box body and more. View prices, mileage and details online.',
     images: [
       {
         url: 'https://www.a-ztrucksales.com/og-image.webp',
@@ -55,33 +50,6 @@ export const metadata: Metadata = {
 
 const LIMIT = 25
 
-const inventoryFaqs = [
-  {
-    question: 'What brands of trucks do you stock?',
-    answer:
-      'We stock used Isuzu, Hino, Fuso, UD, Mercedes-Benz, MAN, Toyota, Nissan, Tata, Hyundai and other commercial vehicle brands. Our stock changes regularly, so buyers should check the inventory page or contact our Alberton or Boksburg team for current availability.',
-  },
-  {
-    question: 'Are your trucks COF-ready?',
-    answer:
-      'Many of our trucks are prepared and checked before sale, including inspection of important items such as engine, gearbox, body condition, tyres, brakes and roadworthy-related items. Ask our sales team about the current COF status of the specific truck you are interested in.',
-  },
-  {
-    question: 'Do you offer delivery or transport?',
-    answer:
-      'A-Z Truck Sales assists buyers from Gauteng and across South Africa. If you are outside Alberton or Boksburg, contact us with the truck you are interested in and your location so our team can advise on collection or transport options.',
-  },
-  {
-    question: 'Can I view a truck before buying?',
-    answer:
-      'Yes. Buyers can view trucks at our Alberton or Boksburg branches. We recommend contacting the branch first to confirm that the specific truck is still available and at the correct location.',
-  },
-  {
-    question: 'Do you offer financing?',
-    answer:
-      'Contact our sales team to discuss available payment options. For faster assistance, send the truck model, your budget, business details and preferred branch.',
-  },
-]
 
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
@@ -102,18 +70,6 @@ const breadcrumbSchema = {
   ],
 }
 
-const inventoryFaqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: inventoryFaqs.map((faq) => ({
-    '@type': 'Question',
-    name: faq.question,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: faq.answer,
-    },
-  })),
-}
 
 const getAllInventorySlugs = unstable_cache(
   async () => {
@@ -246,7 +202,6 @@ export default async function Inventory() {
         {/* application/ld+json */}
       </div>
       <JsonLd data={breadcrumbSchema} />
-      <JsonLd data={inventoryFaqSchema} />
 
       <AllVehiclesFilter
         initialVehicles={vehicles}
@@ -254,37 +209,10 @@ export default async function Inventory() {
         initialFilterOptions={initialFilterOptions}
       />
 
-      <section className="py-20 bg-neutral-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-neutral-600">
-                Common questions about buying a truck from us.
-              </p>
-            </div>
-
-            <Accordion type="single" collapsible className="w-full">
-              {inventoryFaqs.map((faq, index) => (
-                <AccordionItem
-                  key={index}
-                  value={`item-${index}`}
-                  className="bg-white px-6 rounded-lg mb-4 border border-neutral-200"
-                >
-                  <AccordionTrigger className="text-left font-semibold py-4 hover:no-underline">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-neutral-600 pb-4">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-        </div>
-      </section>
+      <DealerFaqBlock
+        heading="Frequently Asked Questions About Used Trucks"
+        withSchema
+      />
 
       <section className="py-10 border-t border-neutral-200 bg-white">
         <div className="container mx-auto px-4">

@@ -5,11 +5,11 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: { absolute: 'Truck Body Types Guide | Dropside, Box, Refrigerated & More | A-Z Truck Sales' },
+  title: { absolute: 'Truck Body Types: Dropside, Box & Refrigerated | A-Z' },
   description: 'Compare truck body types — dropside, box body, refrigerated, curtain side and chassis cab. Find out which body type is right for your business in Gauteng.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/guides/truck-body-types' },
   openGraph: {
-    title: 'Truck Body Types Guide | Dropside, Box, Refrigerated & More | A-Z Truck Sales',
+    title: 'Truck Body Types: Dropside, Box & Refrigerated | A-Z',
     description: 'Compare truck body types for your business. Dropside, box body, refrigerated, curtain side and chassis cab explained.',
     url: 'https://www.a-ztrucksales.com/guides/truck-body-types',
     siteName: 'A-Z Truck Sales',

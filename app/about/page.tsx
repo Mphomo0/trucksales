@@ -3,7 +3,7 @@ import Link from 'next/link'
 import JsonLd from '@/components/global/JsonLd'
 
 export const metadata: Metadata = {
-  title: { absolute: 'About A-Z Truck Sales | Used Truck Dealer in Gauteng Since 1999' },
+  title: { absolute: 'About A-Z Truck Sales | Truck Dealer Since 1999' },
   description: 'A-Z Truck Sales is a used commercial vehicle dealer in Gauteng with branches in Alberton and Boksburg, 25+ years experience and 100+ trucks in stock.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/about' },
   openGraph: {
@@ -11,13 +11,13 @@ export const metadata: Metadata = {
     locale: 'en_ZA',
     url: 'https://www.a-ztrucksales.com/about',
     siteName: 'A-Z Truck Sales',
-    title: 'About A-Z Truck Sales | Used Truck Dealer in Gauteng Since 1999',
+    title: 'About A-Z Truck Sales | Truck Dealer Since 1999',
     description: 'A-Z Truck Sales is a used commercial vehicle dealer in Gauteng with branches in Alberton and Boksburg, 25+ years experience and 100+ trucks in stock.',
     images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'About A-Z Truck Sales' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About A-Z Truck Sales | Used Truck Dealer in Gauteng Since 1999',
+    title: 'About A-Z Truck Sales | Truck Dealer Since 1999',
     description: 'A-Z Truck Sales is a used commercial vehicle dealer in Gauteng with branches in Alberton and Boksburg, 25+ years experience and 100+ trucks in stock.',
     images: ['https://www.a-ztrucksales.com/og-image.webp'],
   },

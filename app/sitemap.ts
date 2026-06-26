@@ -7,7 +7,7 @@ export const revalidate = 86400
 const getSitemapData = unstable_cache(
   async () => {
     const now = new Date()
-    const [vehicles, spareParts, activeSpecials] = await Promise.all([
+    const [vehicles, spareParts] = await Promise.all([
       prisma.inventory.findMany({ select: { slug: true, updatedAt: true } }),
       prisma.spares.findMany({ select: { slug: true, updatedAt: true } }),
       prisma.inventory.findMany({
@@ -18,67 +18,72 @@ const getSitemapData = unstable_cache(
         select: { slug: true, updatedAt: true },
       }),
     ])
-    return { vehicles, spareParts, activeSpecials }
+    return { vehicles, spareParts }
   },
   ['sitemap-data'],
   { revalidate: 86400, tags: ['inventory', 'spares'] }
 )
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+// Actual last-commit dates per static route — do not replace with new Date()
+const STATIC_PAGES: { route: string; lastModified: string }[] = [
+  { route: '',                                                            lastModified: '2026-06-21' },
+  { route: '/inventory',                                                  lastModified: '2026-06-22' },
+  { route: '/spares',                                                     lastModified: '2026-06-22' },
+  { route: '/specials',                                                   lastModified: '2026-06-22' },
+  { route: '/sell-your-truck',                                            lastModified: '2026-06-21' },
+  { route: '/contact',                                                    lastModified: '2026-06-21' },
+  { route: '/about',                                                      lastModified: '2026-06-21' },
+  { route: '/locations',                                                  lastModified: '2026-06-17' },
+  { route: '/locations/alberton',                                         lastModified: '2026-06-21' },
+  { route: '/locations/boksburg',                                         lastModified: '2026-06-21' },
+  { route: '/brands',                                                     lastModified: '2026-06-21' },
+  { route: '/brands/isuzu',                                               lastModified: '2026-06-20' },
+  { route: '/brands/hino',                                                lastModified: '2026-06-20' },
+  { route: '/brands/fuso',                                                lastModified: '2026-06-20' },
+  { route: '/brands/ud-trucks',                                           lastModified: '2026-06-20' },
+  { route: '/brands/man',                                                 lastModified: '2026-06-20' },
+  { route: '/brands/mercedes-benz',                                       lastModified: '2026-06-20' },
+  { route: '/brands/tata',                                                lastModified: '2026-06-20' },
+  { route: '/brands/toyota',                                              lastModified: '2026-06-20' },
+  { route: '/brands/hyundai',                                             lastModified: '2026-06-20' },
+  { route: '/guides',                                                     lastModified: '2026-06-21' },
+  { route: '/guides/buying-guide',                                        lastModified: '2026-06-20' },
+  { route: '/guides/truck-body-types',                                    lastModified: '2026-06-16' },
+  { route: '/guides/cof-ready-trucks',                                    lastModified: '2026-06-21' },
+  { route: '/guides/isuzu-vs-hino-vs-fuso',                              lastModified: '2026-06-21' },
+  { route: '/guides/choose-truck-for-construction-delivery-cold-storage', lastModified: '2026-06-21' },
+  { route: '/guides/what-to-check-before-buying',                         lastModified: '2026-06-21' },
+  { route: '/guides/finance-trade-ins-export',                            lastModified: '2026-06-21' },
+]
+
+export async function generateSitemaps() {
+  return [{ id: 'core' }, { id: 'inventory' }, { id: 'spares' }]
+}
+
+export default async function sitemap(
+  { id }: { id: string }
+): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.a-ztrucksales.com'
 
-  const { vehicles, spareParts, activeSpecials } = await getSitemapData()
+  if (id === 'core') {
+    return STATIC_PAGES.map(({ route, lastModified }) => ({
+      url: `${baseUrl}${route}`,
+      lastModified: new Date(lastModified),
+    }))
+  }
 
-  const staticPages = [
-    '',
-    '/inventory',
-    '/spares',
-    '/specials',
-    '/sell-your-truck',
-    '/contact',
-    '/locations',
-    '/locations/alberton',
-    '/locations/boksburg',
-    '/brands',
-    '/brands/isuzu',
-    '/brands/hino',
-    '/brands/fuso',
-    '/brands/ud-trucks',
-    '/brands/man',
-    '/brands/mercedes-benz',
-    '/brands/tata',
-    '/brands/toyota',
-    '/brands/hyundai',
-    '/guides',
-    '/guides/buying-guide',
-    '/guides/truck-body-types',
-  ].map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: new Date(),
-    changeFrequency: 'daily' as const,
-    priority: route === '' ? 1 : 0.8,
-  }))
+  const { vehicles, spareParts } = await getSitemapData()
 
-  const vehiclePages = vehicles.map((v) => ({
-    url: `${baseUrl}/inventory/${v.slug}`,
-    lastModified: v.updatedAt,
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }))
+  if (id === 'inventory') {
+    return vehicles.map((v) => ({
+      url: `${baseUrl}/inventory/${v.slug}`,
+      lastModified: v.updatedAt,
+    }))
+  }
 
-  const sparePages = spareParts.map((s) => ({
+  // id === 'spares'
+  return spareParts.map((s) => ({
     url: `${baseUrl}/spares/${s.slug}`,
     lastModified: s.updatedAt,
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
   }))
-
-  const specialPages = activeSpecials.map((spec) => ({
-    url: `${baseUrl}/specials/${spec.slug}`,
-    lastModified: spec.updatedAt,
-    changeFrequency: 'daily' as const,
-    priority: 0.9,
-  }))
-
-  return [...staticPages, ...vehiclePages, ...sparePages, ...specialPages]
 }

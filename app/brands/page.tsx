@@ -5,11 +5,11 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: { absolute: 'Used Truck Brands | Isuzu, Hino, Fuso, UD, MAN & Mercedes-Benz' },
+  title: { absolute: 'Used Truck Brands | Isuzu, Hino, Fuso, UD & MAN' },
   description: 'Browse used truck brands sold by A-Z Truck Sales, including Isuzu, Hino, Fuso, UD, MAN, Mercedes-Benz, Toyota, Tata and Hyundai commercial vehicles.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/brands' },
   openGraph: {
-    title: 'Used Truck Brands | Isuzu, Hino, Fuso, UD, MAN & Mercedes-Benz',
+    title: 'Used Truck Brands | Isuzu, Hino, Fuso, UD & MAN',
     description: 'Browse used truck brands sold by A-Z Truck Sales, including Isuzu, Hino, Fuso, UD, MAN, Mercedes-Benz, Toyota, Tata and Hyundai commercial vehicles.',
     url: 'https://www.a-ztrucksales.com/brands',
     siteName: 'A-Z Truck Sales',

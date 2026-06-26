@@ -75,8 +75,8 @@ const localBusinessSchemaJsonLd = {
   email: 'aztrucksales@mweb.co.za',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: '9 Chrislou Crescent, Alberton North',
-    addressLocality: 'Alberton',
+    streetAddress: '9 Chrislou Crescent',
+    addressLocality: 'Alberton North',
     addressRegion: 'Gauteng',
     postalCode: '1449',
     addressCountry: 'ZA',

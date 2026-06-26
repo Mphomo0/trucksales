@@ -305,6 +305,66 @@ const guideSections = [
       </p>
     ),
   },
+  {
+    heading: 'Are the trucks at A-Z Truck Sales COF-ready?',
+    summary:
+      'Many trucks at A-Z Truck Sales are COF-ready or can be prepared for roadworthy certification. Always confirm the current COF status of the specific vehicle, what has been checked or replaced, and what remains before the truck can go to work.',
+    content: (
+      <p>
+        Many trucks at A-Z Truck Sales are COF-ready or can be prepared for
+        roadworthy certification before collection. Always confirm the current
+        COF status of the specific vehicle, what has been inspected or
+        replaced, and what still needs attention before the truck is ready for
+        work. A work-ready truck reduces time off the road and prevents
+        unexpected repair costs after purchase.
+      </p>
+    ),
+  },
+  {
+    heading: 'Can I trade in my current truck at A-Z Truck Sales?',
+    summary:
+      'A-Z Truck Sales considers trade-ins as part of the buying process. Bring details of your current truck — make, model, mileage, condition and service history — so the trade-in value can be assessed and applied toward your next vehicle.',
+    content: (
+      <p>
+        A-Z Truck Sales considers trade-ins as part of the buying process.
+        Bring details of your current truck — make, model, mileage, condition,
+        body type and service history — so the trade-in value can be properly
+        assessed. A trade-in can reduce the cost of your next vehicle and
+        simplifies the process of moving from one truck to another. Contact the
+        branch directly to discuss your specific trade-in before visiting.
+      </p>
+    ),
+  },
+  {
+    heading: 'Does A-Z Truck Sales offer financing on used trucks?',
+    summary:
+      'Financing options are available for qualifying buyers purchasing used trucks at A-Z Truck Sales. Speak to the sales team about what finance products apply to your situation, deposit requirements, repayment terms and which banks or lenders are used.',
+    content: (
+      <p>
+        Financing options are available for qualifying buyers purchasing used
+        trucks at A-Z Truck Sales. Speak to the sales team about what finance
+        products apply to your business situation, deposit requirements,
+        repayment terms, and which banks or lenders are used. Having your ID,
+        proof of income or business financials, and bank statements ready
+        speeds up the approval process.
+      </p>
+    ),
+  },
+  {
+    heading: 'Can I buy a used truck from A-Z Truck Sales for use in SADC or export?',
+    summary:
+      'Buyers across South Africa and neighbouring SADC countries can enquire about used trucks at A-Z Truck Sales. Confirm export documentation, cross-border requirements, delivery or collection arrangements, and any additional preparation needed for the destination country before purchase.',
+    content: (
+      <p>
+        Buyers from South Africa and neighbouring SADC countries can enquire
+        about used commercial vehicles at A-Z Truck Sales. Before purchase,
+        confirm export documentation, cross-border permit requirements, delivery
+        or transport arrangements, and any additional mechanical preparation
+        needed for the destination country. Contact the branch directly to
+        discuss your specific export or delivery requirements.
+      </p>
+    ),
+  },
 ]
 
 const faqSchema = {

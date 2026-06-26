@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { ikCard } from '@/lib/imagekit'
 import { prisma } from '@/lib/prisma'
 import { unstable_cache } from 'next/cache'
+import DealerFaqBlock from '@/components/sections/shared/DealerFaqBlock'
 
 export const metadata: Metadata = {
   title: { absolute: 'Used Trucks for Sale in Boksburg | A-Z Truck Sales' },
@@ -32,33 +33,6 @@ export const metadata: Metadata = {
   },
 }
 
-const faqs = [
-  {
-    question: 'Where is A-Z Truck Sales in Boksburg?',
-    answer:
-      'A-Z Truck Sales Boksburg is located at Corner Trichardts Road and Ravenswood Street, Ravenswood, Boksburg, 1451. Call 083 234 5377 for appointments.',
-  },
-  {
-    question: 'What trucks do you sell at your Boksburg branch?',
-    answer:
-      'We sell used rigid trucks from 1.5 to 35 tons including Isuzu, Hino, Mercedes-Benz, MAN, Fuso, UD, Toyota, Nissan and more. Both branches share inventory.',
-  },
-  {
-    question: 'What services does the Boksburg branch offer?',
-    answer:
-      'The Boksburg branch offers used truck sales, truck spares, trade-in evaluations and vehicle viewing by appointment.',
-  },
-  {
-    question: 'Can I view trucks at the Boksburg branch?',
-    answer:
-      'Yes, visits are by appointment. Call 083 234 5377 or email aztruckboks@gmail.com to arrange a viewing.',
-  },
-  {
-    question: 'Do you stock truck spares in Boksburg?',
-    answer:
-      'Yes, we stock truck spares at our Boksburg branch for Isuzu, Hino, UD, Nissan and Mercedes-Benz. Contact us for availability.',
-  },
-]
 
 const getBoksburgVehicles = unstable_cache(
   async () => prisma.inventory.findMany({
@@ -133,16 +107,6 @@ export default async function BoksburgPage() {
     ],
     areaServed: 'Gauteng, South Africa',
   }
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
-    })),
-  }
-
   return (
     <>
       <h1 className="sr-only">
@@ -150,7 +114,6 @@ export default async function BoksburgPage() {
       </h1>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={localBusinessSchema} />
-      <JsonLd data={faqSchema} />
 
       {/* Hero */}
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
@@ -376,30 +339,10 @@ export default async function BoksburgPage() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="py-20 bg-neutral-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">
-              Frequently Asked Questions About Truck Sales in Boksburg
-            </h2>
-            <p className="text-lg text-gray-600 mb-8 text-center">
-              Common questions from Boksburg truck buyers.
-            </p>
-            {faqs.map((faq, i) => (
-              <details
-                key={i}
-                className="bg-white rounded-lg mb-4 border border-neutral-200 p-6"
-              >
-                <summary className="font-semibold text-gray-900 cursor-pointer">
-                  {faq.question}
-                </summary>
-                <p className="mt-4 text-gray-600">{faq.answer}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+      <DealerFaqBlock
+        heading="Frequently Asked Questions About Truck Sales in Boksburg"
+        withSchema
+      />
 
       {/* CTA */}
       <section className="py-20 bg-linear-to-r from-amber-600 to-yellow-300 text-white text-center">
