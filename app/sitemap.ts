@@ -37,41 +37,30 @@ const STATIC_PAGES: { route: string; lastModified: string }[] = [
   { route: '/guides/finance-trade-ins-export',                            lastModified: '2026-06-21' },
 ]
 
-export async function generateSitemaps() {
-  return [{ id: 'core' }, { id: 'inventory' }, { id: 'spares' }]
-}
-
-export default async function sitemap(props: {
-  id: Promise<string>
-}): Promise<MetadataRoute.Sitemap> {
-  const id = await props.id
-
-  if (id === 'core') {
-    return STATIC_PAGES.map(({ route, lastModified }) => ({
-      url: `${baseUrl}${route}`,
-      lastModified: new Date(lastModified),
-    }))
-  }
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const staticUrls = STATIC_PAGES.map(({ route, lastModified }) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(lastModified),
+  }))
 
   try {
-    if (id === 'inventory') {
-      const vehicles = await prisma.inventory.findMany({
-        select: { slug: true, updatedAt: true },
-      })
-      return vehicles.map((v) => ({
+    const [vehicles, spareParts] = await Promise.all([
+      prisma.inventory.findMany({ select: { slug: true, updatedAt: true } }),
+      prisma.spares.findMany({ select: { slug: true, updatedAt: true } }),
+    ])
+
+    return [
+      ...staticUrls,
+      ...vehicles.map((v) => ({
         url: `${baseUrl}/inventory/${v.slug}`,
         lastModified: v.updatedAt,
-      }))
-    }
-
-    const spareParts = await prisma.spares.findMany({
-      select: { slug: true, updatedAt: true },
-    })
-    return spareParts.map((s) => ({
-      url: `${baseUrl}/spares/${s.slug}`,
-      lastModified: s.updatedAt,
-    }))
+      })),
+      ...spareParts.map((s) => ({
+        url: `${baseUrl}/spares/${s.slug}`,
+        lastModified: s.updatedAt,
+      })),
+    ]
   } catch {
-    return []
+    return staticUrls
   }
 }

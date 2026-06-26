@@ -56,10 +56,6 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: [
-      `${baseUrl}/sitemap/core.xml`,
-      `${baseUrl}/sitemap/inventory.xml`,
-      `${baseUrl}/sitemap/spares.xml`,
-    ],
+    sitemap: `${baseUrl}/sitemap.xml`,
   }
 }
