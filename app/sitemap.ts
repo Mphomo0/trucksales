@@ -41,9 +41,11 @@ export async function generateSitemaps() {
   return [{ id: 'core' }, { id: 'inventory' }, { id: 'spares' }]
 }
 
-export default async function sitemap(
-  { id }: { id: string }
-): Promise<MetadataRoute.Sitemap> {
+export default async function sitemap(props: {
+  id: Promise<string>
+}): Promise<MetadataRoute.Sitemap> {
+  const id = await props.id
+
   if (id === 'core') {
     return STATIC_PAGES.map(({ route, lastModified }) => ({
       url: `${baseUrl}${route}`,
