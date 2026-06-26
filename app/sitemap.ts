@@ -1,30 +1,11 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
-import { unstable_cache } from 'next/cache'
 
 export const revalidate = 86400
 
-const getSitemapData = unstable_cache(
-  async () => {
-    const now = new Date()
-    const [vehicles, spareParts] = await Promise.all([
-      prisma.inventory.findMany({ select: { slug: true, updatedAt: true } }),
-      prisma.spares.findMany({ select: { slug: true, updatedAt: true } }),
-      prisma.inventory.findMany({
-        where: {
-          specialValidTo: { gt: now },
-          specialValidFrom: { lte: now },
-        },
-        select: { slug: true, updatedAt: true },
-      }),
-    ])
-    return { vehicles, spareParts }
-  },
-  ['sitemap-data'],
-  { revalidate: 86400, tags: ['inventory', 'spares'] }
-)
+const baseUrl =
+  process.env.NEXT_PUBLIC_BASE_URL || 'https://www.a-ztrucksales.com'
 
-// Actual last-commit dates per static route — do not replace with new Date()
 const STATIC_PAGES: { route: string; lastModified: string }[] = [
   { route: '',                                                            lastModified: '2026-06-21' },
   { route: '/inventory',                                                  lastModified: '2026-06-22' },
@@ -63,8 +44,6 @@ export async function generateSitemaps() {
 export default async function sitemap(
   { id }: { id: string }
 ): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.a-ztrucksales.com'
-
   if (id === 'core') {
     return STATIC_PAGES.map(({ route, lastModified }) => ({
       url: `${baseUrl}${route}`,
@@ -72,18 +51,25 @@ export default async function sitemap(
     }))
   }
 
-  const { vehicles, spareParts } = await getSitemapData()
+  try {
+    if (id === 'inventory') {
+      const vehicles = await prisma.inventory.findMany({
+        select: { slug: true, updatedAt: true },
+      })
+      return vehicles.map((v) => ({
+        url: `${baseUrl}/inventory/${v.slug}`,
+        lastModified: v.updatedAt,
+      }))
+    }
 
-  if (id === 'inventory') {
-    return vehicles.map((v) => ({
-      url: `${baseUrl}/inventory/${v.slug}`,
-      lastModified: v.updatedAt,
+    const spareParts = await prisma.spares.findMany({
+      select: { slug: true, updatedAt: true },
+    })
+    return spareParts.map((s) => ({
+      url: `${baseUrl}/spares/${s.slug}`,
+      lastModified: s.updatedAt,
     }))
+  } catch {
+    return []
   }
-
-  // id === 'spares'
-  return spareParts.map((s) => ({
-    url: `${baseUrl}/spares/${s.slug}`,
-    lastModified: s.updatedAt,
-  }))
 }
