@@ -28,6 +28,12 @@ export const metadata: Metadata = {
     locale: 'en_ZA',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Used UD Trucks for Sale | A-Z Truck Sales',
+    description: 'Shop used UD Trucks in Gauteng. Condor and Croner models.',
+    images: ['https://www.a-ztrucksales.com/og-image.webp'],
+  },
 }
 
 const faqs = [

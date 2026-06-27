@@ -196,7 +196,7 @@ interface Props {
                           <div className="relative w-full h-60 md:h-96">
                             <Image
                               src={ikHero(img.url)}
-                              alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} - photo ${index + 1}`}
+                              alt={`${vehicle.year} ${vehicle.make.replace(/\b\w/g, c => c.toUpperCase())} ${vehicle.model.replace(/\b\w/g, c => c.toUpperCase())}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} - image ${index + 1}`}
                               width={1200}
                               height={800}
                               className="object-cover w-full h-full"
@@ -276,7 +276,7 @@ interface Props {
                           <div className="relative w-full h-full">
                             <Image
                               src={ikThumb(img.url)}
-                              alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} - view ${index + 1}`}
+                              alt={`${vehicle.year} ${vehicle.make.replace(/\b\w/g, c => c.toUpperCase())} ${vehicle.model.replace(/\b\w/g, c => c.toUpperCase())}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} - image ${index + 1}`}
                               width={300}
                               height={200}
                               className="object-cover w-full h-full"
@@ -312,8 +312,8 @@ interface Props {
                 <div className="flex justify-between items-start">
                   <div>
                     <h1 className="font-semibold leading-none tracking-tight text-2xl md:text-3xl">
-                      {vehicle.year} {vehicle.make.toUpperCase()}{' '}
-                      {vehicle.model.toUpperCase()}
+                      {vehicle.year} {vehicle.make.replace(/\b\w/g, c => c.toUpperCase())}{' '}
+                      {vehicle.model.replace(/\b\w/g, c => c.toUpperCase())}
                     </h1>
                   </div>
                   <Badge className="bg-amber-600">{vehicle.condition}</Badge>
