@@ -39,6 +39,13 @@ export const metadata: Metadata = {
     locale: 'en_ZA',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image' as const,
+    title: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales',
+    description:
+      'Browse quality used rigid trucks and truck spares from A-Z Truck Sales in Alberton and Boksburg. 25+ years serving Gauteng and South Africa.',
+    images: ['https://www.a-ztrucksales.com/og-image.webp'],
+  },
 }
 
 const organizationSchema = {
