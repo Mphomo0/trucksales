@@ -35,6 +35,48 @@ import { getCurrentPrice } from '@/lib/pricing'
 import { ikHero, ikThumb } from '@/lib/imagekit'
 import 'keen-slider/keen-slider.min.css'
 
+const YOUTUBE_REGEXP =
+  /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/
+
+function getVideoLinkUrl(link: unknown): string | null {
+  if (!link) return null
+  if (typeof link === 'string') return link.trim() || null
+  if (typeof link === 'object' && link !== null && 'url' in link)
+    return (link as { url: string }).url?.trim() || null
+  return null
+}
+
+function convertYouTubeLink(url: string): string {
+  const match = url.match(YOUTUBE_REGEXP)
+  return match ? `https://www.youtube.com/embed/${match[1]}` : url
+}
+
+const USE_CASES: Record<string, string> = {
+  'dropside truck': 'builders, hardware suppliers, construction companies, local deliveries and businesses that need easy side loading.',
+  'refrigerated body': 'food distribution, meat suppliers, frozen goods, catering, retail delivery and cold-chain logistics.',
+  'insulated body': 'food distribution, meat suppliers, frozen goods, catering, retail delivery and cold-chain logistics.',
+  'box truck': 'furniture transport, courier work, parcel delivery, retail stock and protected cargo.',
+  'curtain side truck': 'palletised goods, warehouse deliveries and businesses that need faster side loading.',
+  'chassis cab': 'businesses that want to fit a custom body for their specific operation.',
+  flatbed: 'construction, building materials, steel transport and general heavy loads.',
+  'tipper truck': 'construction, mining, earthmoving, waste removal and bulk material transport.',
+  'crane truck': 'construction sites, equipment delivery and loads requiring self-loading capability.',
+  hooklift: 'skip bin transport, waste management and interchangeable container systems.',
+  tanker: 'liquid transport, including fuel, water, chemicals and bulk fluids.',
+  'volume body': 'high-volume, low-weight loads including parcel delivery, furniture moving and courier services.',
+  'truck tractor': 'long-haul transport, trailer towing and heavy freight operations.',
+  'roll back': 'vehicle recovery, towing and transport of disabled vehicles.',
+  'bower truck': 'utility maintenance, electrical work and elevated access applications.',
+  'cherry picker truck': 'elevated work, maintenance and access applications.',
+  'cattle body': 'livestock transport, including cattle, sheep and other farm animals.',
+  'skip loader': 'waste management, skip bin transport and construction site cleanup.',
+  'fire fighting unit': 'emergency response, firefighting and rescue operations.',
+  'honey sucker': 'waste removal, septic tank cleaning and industrial liquid waste management.',
+  cage: 'secure transport of goods, tools and equipment requiring enclosed storage.',
+  'mass side': 'heavy bulk transport, including mining, construction and aggregate materials.',
+  'other specialized': 'specialized commercial applications.',
+}
+
 interface VehicleImage {
   url: string
   fileId?: string
@@ -108,20 +150,6 @@ interface Props {
     [],
   )
 
-  const getVideoLinkUrl = (link: any): string | null => {
-    if (!link) return null
-    if (typeof link === 'string') return link.trim() || null
-    if (typeof link === 'object' && link.url) return link.url.trim() || null
-    return null
-  }
-
-  const convertYouTubeLink = (url: string) => {
-    const regExp =
-      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/
-    const match = url.match(regExp)
-    return match ? `https://www.youtube.com/embed/${match[1]}` : url
-  }
-
   const videoLinkUrl = getVideoLinkUrl(vehicle.videoLink)
 
   const handlePrevious = useCallback(() => {
@@ -168,7 +196,7 @@ interface Props {
                           <div className="relative w-full h-60 md:h-96">
                             <Image
                               src={ikHero(img.url)}
-                              alt={`${vehicle.name} image ${index + 1}`}
+                              alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} - photo ${index + 1}`}
                               width={1200}
                               height={800}
                               className="object-cover w-full h-full"
@@ -248,7 +276,7 @@ interface Props {
                           <div className="relative w-full h-full">
                             <Image
                               src={ikThumb(img.url)}
-                              alt={`Thumbnail ${index + 1}`}
+                              alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} - view ${index + 1}`}
                               width={300}
                               height={200}
                               className="object-cover w-full h-full"
@@ -339,32 +367,7 @@ interface Props {
                   <p className="text-gray-600 leading-relaxed mb-4">
                     {(() => {
                       const bodyType = (vehicle.bodyType ?? '').toLowerCase().trim()
-                      const useCases: Record<string, string> = {
-                        'dropside truck': 'builders, hardware suppliers, construction companies, local deliveries and businesses that need easy side loading.',
-                        'refrigerated body': 'food distribution, meat suppliers, frozen goods, catering, retail delivery and cold-chain logistics.',
-                        'insulated body': 'food distribution, meat suppliers, frozen goods, catering, retail delivery and cold-chain logistics.',
-                        'box truck': 'furniture transport, courier work, parcel delivery, retail stock and protected cargo.',
-                        'curtain side truck': 'palletised goods, warehouse deliveries and businesses that need faster side loading.',
-                        'chassis cab': 'businesses that want to fit a custom body for their specific operation.',
-                        flatbed: 'construction, building materials, steel transport and general heavy loads.',
-                        'tipper truck': 'construction, mining, earthmoving, waste removal and bulk material transport.',
-                        'crane truck': 'construction sites, equipment delivery and loads requiring self-loading capability.',
-                        hooklift: 'skip bin transport, waste management and interchangeable container systems.',
-                        tanker: 'liquid transport, including fuel, water, chemicals and bulk fluids.',
-                        'volume body': 'high-volume, low-weight loads including parcel delivery, furniture moving and courier services.',
-                        'truck tractor': 'long-haul transport, trailer towing and heavy freight operations.',
-                        'roll back': 'vehicle recovery, towing and transport of disabled vehicles.',
-                        'bower truck': 'utility maintenance, electrical work and elevated access applications.',
-                        'cherry picker truck': 'elevated work, maintenance and access applications.',
-                        'cattle body': 'livestock transport, including cattle, sheep and other farm animals.',
-                        'skip loader': 'waste management, skip bin transport and construction site cleanup.',
-                        'fire fighting unit': 'emergency response, firefighting and rescue operations.',
-                        'honey sucker': 'waste removal, septic tank cleaning and industrial liquid waste management.',
-                        cage: 'secure transport of goods, tools and equipment requiring enclosed storage.',
-                        'mass side': 'heavy bulk transport, including mining, construction and aggregate materials.',
-                        'other specialized': 'specialized commercial applications.',
-                      }
-                      const useCase = useCases[bodyType] || 'reliable commercial transport for their daily operations.'
+                      const useCase = USE_CASES[bodyType] || 'reliable commercial transport for their daily operations.'
                       return `This truck may be suitable for businesses needing ${useCase} Contact our team to confirm current availability, viewing location, COF status and final pricing.`
                     })()}
                   </p>

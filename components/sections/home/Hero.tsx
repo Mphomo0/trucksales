@@ -27,7 +27,7 @@ import Link from 'next/link'
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
-            Used Trucks for Sale in Gauteng
+            Browse Our Gauteng Truck Stock
           </h2>
 
           <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-2xl mx-auto">

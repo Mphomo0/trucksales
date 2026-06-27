@@ -36,7 +36,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     notFound()
   }
 
-  const titlePage = `${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} for Sale`
+  const toTitleCase = (s: string) =>
+    s.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+  const titlePage = `${vehicle.year} ${toTitleCase(vehicle.make)} ${toTitleCase(vehicle.model)}${vehicle.bodyType ? ` ${toTitleCase(vehicle.bodyType)}` : ''} for Sale`
 
   const mileageDesc = vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : ''
   const transmissionDesc = vehicle.transmission?.toLowerCase() ?? 'manual'
@@ -102,17 +104,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     offerSchema.price = price
   }
 
-  const productSchema = {
+  const toTitleCase = (s: string) =>
+    s.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+
+  const vehicleSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Product',
+    '@type': 'Vehicle',
     '@id': `https://www.a-ztrucksales.com/inventory/${vehicle.slug}#product`,
-    name: `${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''}`,
+    name: `${vehicle.year} ${toTitleCase(vehicle.make)} ${toTitleCase(vehicle.model)}${vehicle.bodyType ? ` ${toTitleCase(vehicle.bodyType)}` : ''}`,
     description,
     image: images.length > 0 ? images : undefined,
-    brand: { '@type': 'Brand', name: vehicle.make },
+    brand: { '@type': 'Brand', name: toTitleCase(vehicle.make) },
     sku: vehicle.registrationNo || vehicle.slug,
+    vehicleModelDate: String(vehicle.year),
+    ...(vehicle.mileage != null && {
+      mileageFromOdometer: {
+        '@type': 'QuantitativeValue',
+        value: vehicle.mileage,
+        unitCode: 'KMT',
+      },
+    }),
+    ...(vehicle.transmission && { vehicleTransmission: vehicle.transmission }),
+    ...(vehicle.fuelType && { fuelType: vehicle.fuelType }),
+    ...(vehicle.bodyType && { bodyType: vehicle.bodyType }),
+    vehicleCondition: vehicle.condition === 'NEW'
+      ? 'https://schema.org/NewCondition'
+      : 'https://schema.org/UsedCondition',
     offers: offerSchema,
   }
+
+  const productSchema = vehicleSchema
 
   const vehicleFaqSchema = {
     '@context': 'https://schema.org',
@@ -171,11 +192,42 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ],
   }
 
+  const extractYouTubeId = (url: string) => {
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/)
+    return match ? match[1] : null
+  }
+
+  const videoSchema = vehicle.videoLink
+    ? (() => {
+        const ytId = extractYouTubeId(vehicle.videoLink)
+        if (!ytId) return null
+        const vehicleName = `${vehicle.year} ${toTitleCase(vehicle.make)} ${toTitleCase(vehicle.model)}${vehicle.bodyType ? ` ${toTitleCase(vehicle.bodyType)}` : ''}`
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'VideoObject',
+          name: `${vehicleName} - Vehicle Walkthrough`,
+          description: `Watch this video walkthrough of the ${vehicleName} available at A-Z Truck Sales in Gauteng.`,
+          thumbnailUrl: `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`,
+          embedUrl: `https://www.youtube.com/embed/${ytId}`,
+          uploadDate: `${vehicle.year}-01-01`,
+          publisher: {
+            '@type': 'Organization',
+            name: 'A-Z Truck Sales',
+            logo: {
+              '@type': 'ImageObject',
+              url: 'https://www.a-ztrucksales.com/images/logo.png',
+            },
+          },
+        }
+      })()
+    : null
+
   return (
     <div>
       <JsonLd data={productSchema} />
       <JsonLd data={vehicleFaqSchema} />
       <JsonLd data={breadcrumbSchema} />
+      {videoSchema && <JsonLd data={videoSchema} />}
       <TruckDetail vehicle={vehicle} />
       <QualityAssurance />
     </div>

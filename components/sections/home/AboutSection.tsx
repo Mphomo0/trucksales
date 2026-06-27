@@ -3,6 +3,7 @@
 /* application/ld+json */
 
 import Image from 'next/image'
+import Link from 'next/link'
 
 /* <h1>A-Z Truck Sales Components</h1> */ export default function AboutSection() {
   return (
@@ -23,12 +24,12 @@ import Image from 'next/image'
             </p>
             <p className="text-lg text-gray-600 mb-6">
               Whether you are searching for{' '}
-              <strong>Isuzu trucks for sale in Gauteng</strong>,{' '}
-              <strong>Hino trucks for sale in Gauteng</strong>,{' '}
-              <strong>Mercedes-Benz trucks in Gauteng</strong>,{' '}
-              <strong>Fuso trucks for sale in South Africa</strong>,{' '}
-              <strong>MAN trucks for sale in Gauteng</strong>, or{' '}
-              <strong>truck spares in South Africa</strong>, the best starting
+              <Link href="/brands/isuzu" className="font-bold hover:underline"><strong>Isuzu trucks for sale in Gauteng</strong></Link>,{' '}
+              <Link href="/brands/hino" className="font-bold hover:underline"><strong>Hino trucks for sale in Gauteng</strong></Link>,{' '}
+              <Link href="/brands/mercedes-benz" className="font-bold hover:underline"><strong>Mercedes-Benz trucks in Gauteng</strong></Link>,{' '}
+              <Link href="/brands/fuso" className="font-bold hover:underline"><strong>Fuso trucks for sale in South Africa</strong></Link>,{' '}
+              <Link href="/brands/man" className="font-bold hover:underline"><strong>MAN trucks for sale in Gauteng</strong></Link>, or{' '}
+              <Link href="/spares" className="font-bold hover:underline"><strong>truck spares in South Africa</strong></Link>, the best starting
               point is a dealer that understands both the truck and the work it
               needs to do.
             </p>

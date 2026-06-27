@@ -23,7 +23,7 @@ const AllVehiclesFilter = dynamic(
 export const revalidate = 86400
 
 export const metadata: Metadata = {
-  title: 'Used Trucks for Sale in South Africa',
+  title: 'Used Trucks for Sale in Gauteng | South Africa | A-Z Truck Sales',
   description:
     'Browse used rigid trucks from A-Z Truck Sales in Gauteng — dropside, refrigerated, box body and more. View prices, mileage and details online.',
   alternates: {
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     locale: 'en_ZA',
     url: 'https://www.a-ztrucksales.com/inventory',
     siteName: 'A-Z Truck Sales',
-    title: 'Used Trucks for Sale in South Africa | A-Z Truck Sales',
+    title: 'Used Trucks for Sale in Gauteng | South Africa | A-Z Truck Sales',
     description:
       'Browse used rigid trucks from A-Z Truck Sales in Gauteng — dropside, refrigerated, box body and more. View prices, mileage and details online.',
     images: [
@@ -45,6 +45,13 @@ export const metadata: Metadata = {
         alt: 'Used Trucks for Sale - A-Z Truck Sales',
       },
     ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Used Trucks for Sale in Gauteng | South Africa | A-Z Truck Sales',
+    description:
+      'Browse used rigid trucks from A-Z Truck Sales in Gauteng — dropside, refrigerated, box body and more. View prices, mileage and details online.',
+    images: ['https://www.a-ztrucksales.com/og-image.webp'],
   },
 }
 
