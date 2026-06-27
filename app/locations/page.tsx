@@ -5,15 +5,15 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: {
-    absolute:
-      'Truck Dealer Locations | Alberton & Boksburg',
+    absolute: 'Truck Dealer Locations in Gauteng | Alberton & Boksburg | A-Z Truck Sales',
   },
   description:
-    'Visit A-Z Truck Sales in Alberton or Boksburg, Gauteng. View used trucks and speak to our sales team. Branches open Monday-Friday.',
+    'Find used rigid trucks at A-Z Truck Sales in Alberton and Boksburg, Gauteng. Two branches, 100+ trucks in stock, 25+ years experience. Visit us Monday–Friday.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/locations' },
   openGraph: {
-    title: 'Truck Dealership Locations | Alberton & Boksburg',
-    description: 'Visit A-Z Truck Sales in Alberton or Boksburg, Gauteng.',
+    title: 'Truck Dealer Locations in Gauteng | Alberton & Boksburg | A-Z Truck Sales',
+    description:
+      'Find used rigid trucks at A-Z Truck Sales in Alberton and Boksburg, Gauteng. Two branches, 100+ trucks in stock, 25+ years experience.',
     url: 'https://www.a-ztrucksales.com/locations',
     siteName: 'A-Z Truck Sales',
     images: [
@@ -26,6 +26,13 @@ export const metadata: Metadata = {
     ],
     locale: 'en_ZA',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Truck Dealer Locations in Gauteng | Alberton & Boksburg | A-Z Truck Sales',
+    description:
+      'Find used rigid trucks at A-Z Truck Sales in Alberton and Boksburg, Gauteng. Two branches, 100+ trucks in stock, 25+ years experience.',
+    images: ['https://www.a-ztrucksales.com/og-image.webp'],
   },
 }
 

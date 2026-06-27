@@ -31,6 +31,13 @@ export const metadata: Metadata = {
     locale: 'en_ZA',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Used Trucks for Sale in Boksburg | A-Z Truck Sales',
+    description:
+      'Boksburg truck dealer with 25+ years experience. Browse 100+ used rigid trucks from Isuzu, Hino, Fuso, UD and more at our Boksburg branch.',
+    images: ['https://www.a-ztrucksales.com/og-image.webp'],
+  },
 }
 
 

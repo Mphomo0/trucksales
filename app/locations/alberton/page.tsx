@@ -31,6 +31,13 @@ export const metadata: Metadata = {
     locale: 'en_ZA',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Used Trucks for Sale in Alberton | A-Z Truck Sales',
+    description:
+      'Alberton truck dealer with 25+ years experience. Browse 100+ used rigid trucks from Isuzu, Hino, Fuso, UD and more. Truck spares available.',
+    images: ['https://www.a-ztrucksales.com/og-image.webp'],
+  },
 }
 
 
@@ -112,13 +119,17 @@ export default async function AlbertonPage() {
       },
     ],
     areaServed: 'Gauteng, South Africa',
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.0',
+      reviewCount: '245',
+      bestRating: '5',
+      worstRating: '1',
+    },
   }
 
   return (
     <>
-      <h1 className="sr-only">
-        Used Trucks for Sale in Alberton | A-Z Truck Sales
-      </h1>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={localBusinessSchema} />
 
@@ -166,8 +177,14 @@ export default async function AlbertonPage() {
                   rigid commercial vehicles from 1.5 to 35 tons.
                 </p>
                 <p>
-                  We stock 100+ trucks at any time across brands including
-                  Isuzu, Hino, Fuso, UD, MAN, Mercedes-Benz, Toyota and more. We
+                  We stock 100+ trucks at any time across brands including{' '}
+                  <Link href="/brands/isuzu" className="text-amber-600 hover:underline">Isuzu</Link>,{' '}
+                  <Link href="/brands/hino" className="text-amber-600 hover:underline">Hino</Link>,{' '}
+                  <Link href="/brands/fuso" className="text-amber-600 hover:underline">Fuso</Link>,{' '}
+                  <Link href="/brands/ud-trucks" className="text-amber-600 hover:underline">UD</Link>,{' '}
+                  <Link href="/brands/man" className="text-amber-600 hover:underline">MAN</Link>,{' '}
+                  <Link href="/brands/mercedes-benz" className="text-amber-600 hover:underline">Mercedes-Benz</Link>,{' '}
+                  <Link href="/brands/toyota" className="text-amber-600 hover:underline">Toyota</Link> and more. We
                   also carry truck spares for all major brands at our Alberton
                   branch.
                 </p>
