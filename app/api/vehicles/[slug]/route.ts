@@ -92,7 +92,7 @@ export async function DELETE(
     revalidatePath('/api/vehicles/featured')
     revalidatePath('/api/vehicles/filters')
     revalidatePath(`/api/vehicles/${slug}`)
-    revalidateTag('inventory')
+    revalidateTag('inventory', 'default')
 
     return NextResponse.json(
       { message: 'Vehicle deleted successfully' },
@@ -182,7 +182,7 @@ export async function PATCH(
     if (slug !== updatedVehicle.slug) {
       revalidatePath(`/inventory/${updatedVehicle.slug}`)
     }
-    revalidateTag('inventory')
+    revalidateTag('inventory', 'default')
 
     return NextResponse.json({ updatedVehicle }, { status: 200 })
   } catch (error) {

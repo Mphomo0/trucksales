@@ -152,7 +152,7 @@ export async function POST(req: Request) {
     revalidatePath('/inventory')
     revalidatePath('/specials')
     revalidatePath(`/inventory/${newVehicle.slug}`)
-    revalidateTag('inventory')
+    revalidateTag('inventory', 'default')
 
     return NextResponse.json(newVehicle, { status: 201 })
   } catch (error) {
