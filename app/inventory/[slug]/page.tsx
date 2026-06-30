@@ -209,7 +209,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           description: `Watch this video walkthrough of the ${vehicleName} available at A-Z Truck Sales in Gauteng.`,
           thumbnailUrl: `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`,
           embedUrl: `https://www.youtube.com/embed/${ytId}`,
-          uploadDate: `${vehicle.year}-01-01`,
+          uploadDate: `${vehicle.year}-01-01T00:00:00+00:00`,
           publisher: {
             '@type': 'Organization',
             name: 'A-Z Truck Sales',

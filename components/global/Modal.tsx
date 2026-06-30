@@ -1,3 +1,5 @@
+'use client'
+
 /* author: A-Z Truck Sales */
 /* datePublished: 2026-04-27 */
 /* application/ld+json */

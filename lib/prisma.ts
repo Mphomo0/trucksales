@@ -11,7 +11,7 @@ const globalForPrisma = global as unknown as {
 function createPrismaClient() {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    max: 1,
+    max: 3,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
   })

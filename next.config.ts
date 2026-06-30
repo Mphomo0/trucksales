@@ -4,9 +4,10 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
   images: {
-    // Local /public assets (logo, hero, dealer) are Vercel-optimized.
-    // ImageKit CDN images are permitted via remotePatterns; ImageKit handles
-    // their own compression so Vercel passes them through at the requested size.
+    // ImageKit images bypass Vercel's optimization (ImageKit handles its own transforms).
+    // Local /public assets still go through Vercel optimization via the default loader.
+    loader: 'custom',
+    loaderFile: './lib/imagekit-loader.ts',
     remotePatterns: [
       {
         protocol: 'https',
