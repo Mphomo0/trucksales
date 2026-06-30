@@ -39,7 +39,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const toTitleCase = (s: string) =>
     s.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-  const titlePage = `${vehicle.year} ${toTitleCase(vehicle.make)} ${toTitleCase(vehicle.model)}${vehicle.bodyType ? ` ${toTitleCase(vehicle.bodyType)}` : ''} for Sale`
+
+  const buildTitle = () => {
+    const suffix = ' for Sale | A-Z Truck Sales'
+    const make = toTitleCase(vehicle.make)
+    const model = toTitleCase(vehicle.model)
+    const body = vehicle.bodyType ? ` ${toTitleCase(vehicle.bodyType)}` : ''
+    if (`${vehicle.year} ${make} ${model}${body}${suffix}`.length <= 60)
+      return `${vehicle.year} ${make} ${model}${body}${suffix}`
+    if (`${vehicle.year} ${make} ${model}${suffix}`.length <= 60)
+      return `${vehicle.year} ${make} ${model}${suffix}`
+    const available = 60 - suffix.length - String(vehicle.year).length - 1 - make.length - 1
+    return `${vehicle.year} ${make} ${model.slice(0, Math.max(available, 10))}${suffix}`
+  }
+  const titlePage = buildTitle()
 
   const mileageDesc = vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : ''
   const transmissionDesc = vehicle.transmission?.toLowerCase() ?? 'manual'
@@ -55,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'A-Z Truck Sales' }]
 
   return {
-    title: titlePage,
+    title: { absolute: titlePage },
     description,
     openGraph: {
       type: 'website',

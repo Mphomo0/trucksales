@@ -5,13 +5,13 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Truck Dealer Locations in Gauteng | Alberton & Boksburg | A-Z Truck Sales',
+    absolute: 'Truck Dealers in Alberton & Boksburg | A-Z Truck Sales',
   },
   description:
     'Find used rigid trucks at A-Z Truck Sales in Alberton and Boksburg, Gauteng. Two branches, 100+ trucks in stock, 25+ years experience. Visit us Monday–Friday.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/locations' },
   openGraph: {
-    title: 'Truck Dealer Locations in Gauteng | Alberton & Boksburg | A-Z Truck Sales',
+    title: 'Truck Dealers in Alberton & Boksburg | A-Z Truck Sales',
     description:
       'Find used rigid trucks at A-Z Truck Sales in Alberton and Boksburg, Gauteng. Two branches, 100+ trucks in stock, 25+ years experience.',
     url: 'https://www.a-ztrucksales.com/locations',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Truck Dealer Locations in Gauteng | Alberton & Boksburg | A-Z Truck Sales',
+    title: 'Truck Dealers in Alberton & Boksburg | A-Z Truck Sales',
     description:
       'Find used rigid trucks at A-Z Truck Sales in Alberton and Boksburg, Gauteng. Two branches, 100+ trucks in stock, 25+ years experience.',
     images: ['https://www.a-ztrucksales.com/og-image.webp'],
