@@ -16,14 +16,14 @@ import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: { absolute: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales' },
+  title: { absolute: 'Used Trucks in Alberton & Boksburg | A-Z Truck Sales' },
   description:
     'Browse quality used rigid trucks and truck spares from A-Z Truck Sales in Alberton and Boksburg. 25+ years serving Gauteng and South Africa.',
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/',
   },
   openGraph: {
-    title: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales',
+    title: 'Used Trucks in Alberton & Boksburg | A-Z Truck Sales',
     description:
       'Browse quality used rigid trucks and truck spares from A-Z Truck Sales in Alberton and Boksburg. 25+ years serving Gauteng and South Africa.',
     url: 'https://www.a-ztrucksales.com/',
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image' as const,
-    title: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales',
+    title: 'Used Trucks in Alberton & Boksburg | A-Z Truck Sales',
     description:
       'Browse quality used rigid trucks and truck spares from A-Z Truck Sales in Alberton and Boksburg. 25+ years serving Gauteng and South Africa.',
     images: ['https://www.a-ztrucksales.com/og-image.webp'],

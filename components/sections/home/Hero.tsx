@@ -14,12 +14,11 @@ import Link from 'next/link'
     >
       <Image
         src="/images/truckBg.webp"
-        alt=""
+        alt="Used trucks parked at A-Z Truck Sales dealership in Gauteng"
         fill
         priority
         sizes="100vw"
         className="object-cover object-center"
-        aria-hidden="true"
       />
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-linear-to-r from-amber-600 to-yellow-600 opacity-60" />

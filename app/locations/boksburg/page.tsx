@@ -116,9 +116,6 @@ export default async function BoksburgPage() {
   }
   return (
     <>
-      <h1 className="sr-only">
-        Used Trucks for Sale in Boksburg | A-Z Truck Sales
-      </h1>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={localBusinessSchema} />
 

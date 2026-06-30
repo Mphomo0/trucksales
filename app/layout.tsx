@@ -98,7 +98,7 @@ const localBusinessSchema = {
   image: 'https://www.a-ztrucksales.com/og-image.webp',
   priceRange: 'ZAR 150,000 - ZAR 1,200,000',
   currenciesAccepted: 'ZAR',
-  paymentAccepted: ['Cash', 'Bank Transfer', 'Finance'],
+  paymentAccepted: 'Cash, Bank Transfer, Finance',
   openingHoursSpecification: [
     {
       '@type': 'OpeningHoursSpecification',

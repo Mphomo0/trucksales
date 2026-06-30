@@ -1,6 +1,7 @@
 import React from 'react'
 import TruckDetail from '@/components/sections/inventorySection/TruckDetail'
 import QualityAssurance from '@/components/sections/inventorySection/QualityAssurance'
+import RelatedVehicles from '@/components/sections/inventorySection/RelatedVehicles'
 
 import { prisma } from '@/lib/prisma'
 import { cache } from 'react'
@@ -97,7 +98,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? 'https://schema.org/NewCondition'
       : 'https://schema.org/UsedCondition',
     availability: 'https://schema.org/InStock',
-    seller: { '@id': 'https://www.a-ztrucksales.com/#business' },
+    seller: { '@id': 'https://www.a-ztrucksales.com/#org' },
   }
   const price = vehicle.vatPrice ?? vehicle.pricenoVat
   if (price != null) {
@@ -116,7 +117,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     image: images.length > 0 ? images : undefined,
     brand: { '@type': 'Brand', name: toTitleCase(vehicle.make) },
     sku: vehicle.registrationNo || vehicle.slug,
-    vehicleModelDate: String(vehicle.year),
+    vehicleModelDate: `${vehicle.year}-01-01`,
     ...(vehicle.mileage != null && {
       mileageFromOdometer: {
         '@type': 'QuantitativeValue',
@@ -197,6 +198,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return match ? match[1] : null
   }
 
+  const relatedVehicles = await prisma.inventory.findMany({
+    where: { make: vehicle.make, slug: { not: vehicle.slug } },
+    select: { slug: true, year: true, make: true, model: true, bodyType: true, vatPrice: true, images: true },
+    orderBy: { createdAt: 'desc' },
+    take: 4,
+  })
+
   const videoSchema = vehicle.videoLink
     ? (() => {
         const ytId = extractYouTubeId(vehicle.videoLink)
@@ -229,6 +237,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       <JsonLd data={breadcrumbSchema} />
       {videoSchema && <JsonLd data={videoSchema} />}
       <TruckDetail vehicle={vehicle} />
+      <RelatedVehicles
+        vehicles={relatedVehicles.map(v => ({ ...v, images: (v.images as { url: string }[]) }))}
+        make={vehicle.make}
+      />
       <QualityAssurance />
     </div>
   )
