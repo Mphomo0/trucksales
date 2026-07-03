@@ -4,12 +4,13 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
 import { enquiryFormSchema } from '@/lib/schemas'
 import { z } from 'zod/v4'
+import TurnstileWidget from '@/components/shared/TurnstileWidget'
 
 type EnquiryFormData = z.input<typeof enquiryFormSchema>
 
@@ -18,22 +19,8 @@ interface EnquiryFormProps {
 }
 
 /* <h1>A-Z Truck Sales Components</h1> */ export default function EnquiryForm({ vehicleSlug }: EnquiryFormProps) {
-  const [currentUrl, setCurrentUrl] = useState<string>('')
-  const [captcha, setCaptcha] = useState<{ question: string; answer: number }>({ question: '', answer: 0 })
-
-  function generateCaptcha() {
-    const a = Math.floor(Math.random() * 10) + 1
-    const b = Math.floor(Math.random() * 10) + 1
-    return { question: `${a} + ${b} = ?`, answer: a + b }
-  }
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCurrentUrl(window.location.href)
-      setCaptcha(generateCaptcha())
-    }
-  }, [])
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileReset, setTurnstileReset] = useState(0)
 
   const {
     register,
@@ -54,10 +41,9 @@ interface EnquiryFormProps {
         body: JSON.stringify({
           type: 'Enquiry',
           vehicleSlug,
-          currentUrl,
+          currentUrl: window.location.href,
           ...data,
-          captchaAnswer: parseInt(data.captchaAnswer, 10),
-          captchaExpected: captcha.answer,
+          turnstileToken,
         }),
       })
 
@@ -66,7 +52,7 @@ interface EnquiryFormProps {
       if (response.ok) {
         toast.success('Message sent successfully!')
         reset()
-        setCaptcha(generateCaptcha())
+        setTurnstileReset((n) => n + 1)
       } else {
         toast.error(`Error: ${result.message || 'Something went wrong'}`)
       }
@@ -130,21 +116,10 @@ interface EnquiryFormProps {
           )}
         </div>
 
-        <div className="p-3 bg-gray-50 rounded border">
-          <label className="block text-sm font-medium">Security Check</label>
-          <p className="text-sm text-gray-600 mb-2">
-            Please solve: <span className="font-bold">{captcha.question}</span>
-          </p>
-          <input
-            type="number"
-            className="w-full border px-3 py-2 rounded"
-            placeholder="Your Answer"
-            {...register('captchaAnswer')}
-          />
-          {errors.captchaAnswer && (
-            <p className="text-red-500">{errors.captchaAnswer.message}</p>
-          )}
-        </div>
+        <TurnstileWidget
+          onToken={setTurnstileToken}
+          resetSignal={turnstileReset}
+        />
 
         <button
           type="submit"

@@ -1,6 +1,7 @@
 export const revalidate = 86400
 
 import JsonLd from '@/components/global/JsonLd'
+import { articleSchema } from '@/lib/articleSchema'
 import { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -59,6 +60,14 @@ export default function TruckBodyTypesPage() {
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd
+        data={articleSchema({
+          headline: 'Truck Body Types: Dropside, Box & Refrigerated',
+          description:
+            'Compare truck body types — dropside, box body, refrigerated, curtain side and more — and which suits your business.',
+          url: 'https://www.a-ztrucksales.com/guides/truck-body-types',
+        })}
+      />
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

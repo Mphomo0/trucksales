@@ -87,12 +87,13 @@ export default async function AlbertonPage() {
   }
   const localBusinessSchema = {
     '@context': 'https://schema.org',
-    '@type': 'AutoDealer',
+    '@type': 'LocalBusiness',
     '@id': 'https://www.a-ztrucksales.com/locations/alberton#branch',
     name: 'A-Z Truck Sales — Alberton',
     parentOrganization: { '@id': 'https://www.a-ztrucksales.com/#org' },
     image: 'https://www.a-ztrucksales.com/og-image.webp',
     url: 'https://www.a-ztrucksales.com/locations/alberton',
+    hasMap: 'https://maps.google.com/?cid=4407112129060334219',
     telephone: '+27119026071',
     email: 'aztrucksales@mweb.co.za',
     address: {
@@ -248,6 +249,16 @@ export default async function AlbertonPage() {
                 <p>
                   <strong>Services:</strong> Used truck sales, truck spares,
                   trade-ins
+                </p>
+                <p>
+                  <a
+                    href="https://maps.google.com/?cid=4407112129060334219"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-amber-600 hover:underline font-semibold"
+                  >
+                    View us on Google Maps →
+                  </a>
                 </p>
               </div>
               <div className="mt-6">

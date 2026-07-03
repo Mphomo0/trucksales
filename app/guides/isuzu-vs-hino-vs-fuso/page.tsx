@@ -1,6 +1,7 @@
 export const revalidate = 86400
 
 import JsonLd from '@/components/global/JsonLd'
+import { articleSchema } from '@/lib/articleSchema'
 import { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -31,6 +32,14 @@ export default function IsuzuVsHinoVsFusoPage() {
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd
+        data={articleSchema({
+          headline: 'Isuzu vs Hino vs Fuso: Best Used Truck for Your Business',
+          description:
+            'Compare Isuzu, Hino and Fuso for reliability, parts support, fuel economy and running costs. Find the right used truck brand in Gauteng.',
+          url: 'https://www.a-ztrucksales.com/guides/isuzu-vs-hino-vs-fuso',
+        })}
+      />
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

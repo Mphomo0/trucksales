@@ -1,5 +1,8 @@
 import { sendMail } from '@/lib/email'
 import { validateLanguage } from '@/lib/validateLanguage'
+import { escapeHtml } from '@/lib/escape-html'
+import { getClientIp, rateLimit, rateLimitResponse } from '@/lib/rate-limit'
+import { verifyTurnstile } from '@/lib/turnstile'
 import { NextRequest } from 'next/server'
 
 function validateMessageQuality(message: string) {
@@ -38,27 +41,22 @@ function validateEmailQuality(email: string) {
 // Handle POST requests (i.e., form submissions)
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req)
+    const limit = rateLimit(`contact-form:${ip}`, 5, 10 * 60 * 1000)
+    if (!limit.ok) {
+      return rateLimitResponse(limit.retryAfterSeconds)
+    }
+
     // Parse the incoming request body as JSON
     const body = await req.json()
 
     // Destructure the expected contact form fields
-    const { name, email, phone, subject, branch, message, captchaAnswer, captchaExpected } = body
+    const { name, email, phone, subject, branch, message, turnstileToken } = body
 
     // Validate required fields
     if (!name || !email || !phone || !subject || !message) {
       return new Response(
         JSON.stringify({ message: 'Missing required fields' }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
-    }
-
-    // Server-side CAPTCHA validation
-    if (captchaAnswer !== captchaExpected) {
-      return new Response(
-        JSON.stringify({ message: 'Incorrect CAPTCHA answer. Please try again.' }),
         {
           status: 400,
           headers: { 'Content-Type': 'application/json' },
@@ -115,6 +113,24 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // CAPTCHA last: tokens are single-use and this is a network round trip,
+    // so all free synchronous checks run first.
+    const turnstile = await verifyTurnstile(turnstileToken, ip)
+    if (!turnstile.valid) {
+      return new Response(
+        JSON.stringify({ message: turnstile.message }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Escape user input before interpolating into the email HTML
+    const safeName = escapeHtml(name)
+    const safeEmail = escapeHtml(email)
+    const safePhone = phone ? escapeHtml(phone) : ''
+    const safeSubject = escapeHtml(subject)
+    const safeBranch = branch ? escapeHtml(branch) : ''
+    const safeMessage = escapeHtml(message)
+
     // Create professional HTML email template
     const html = `
       <!DOCTYPE html>
@@ -141,12 +157,12 @@ export async function POST(req: NextRequest) {
             
             <div class="field">
               <div class="label">Name:</div>
-              <div class="value">${name}</div>
+              <div class="value">${safeName}</div>
             </div>
             
             <div class="field">
               <div class="label">Email:</div>
-              <div class="value"><a href="mailto:${email}">${email}</a></div>
+              <div class="value"><a href="mailto:${safeEmail}">${safeEmail}</a></div>
             </div>
             
             ${
@@ -154,7 +170,7 @@ export async function POST(req: NextRequest) {
                 ? `
             <div class="field">
               <div class="label">Phone:</div>
-              <div class="value">${phone}</div>
+              <div class="value">${safePhone}</div>
             </div>
             `
                 : ''
@@ -162,7 +178,7 @@ export async function POST(req: NextRequest) {
             
             <div class="field">
               <div class="label">Subject:</div>
-              <div class="value">${subject}</div>
+              <div class="value">${safeSubject}</div>
             </div>
             
             ${
@@ -170,7 +186,7 @@ export async function POST(req: NextRequest) {
                 ? `
             <div class="field">
               <div class="label">Selected Branch:</div>
-              <div class="value">${branch}</div>
+              <div class="value">${safeBranch}</div>
             </div>
             `
                 : ''
@@ -178,7 +194,7 @@ export async function POST(req: NextRequest) {
             
             <div class="field">
               <div class="label">Message:</div>
-              <div class="message-box">${message.replace(/\n/g, '<br>')}</div>
+              <div class="message-box">${safeMessage.replace(/\n/g, "<br>")}</div>
             </div>
             
             <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">

@@ -1,6 +1,7 @@
 export const revalidate = 86400
 
 import JsonLd from '@/components/global/JsonLd'
+import { articleSchema } from '@/lib/articleSchema'
 import { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -108,6 +109,14 @@ export default function BuyingGuidePage() {
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd
+        data={articleSchema({
+          headline: 'Guide to Buying Used Trucks in Gauteng',
+          description:
+            'Complete guide to buying used rigid trucks in Gauteng. Where to buy, what to check, how to choose the right body type and brand for your business.',
+          url: 'https://www.a-ztrucksales.com/guides/buying-guide',
+        })}
+      />
       <JsonLd data={faqSchema} />
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">

@@ -1,6 +1,7 @@
 export const revalidate = 86400
 
 import JsonLd from '@/components/global/JsonLd'
+import { articleSchema } from '@/lib/articleSchema'
 import { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -31,6 +32,14 @@ export default function FinanceTradeInsExportPage() {
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd
+        data={articleSchema({
+          headline: 'Truck Finance, Trade-Ins & Export',
+          description:
+            'Payment options, trade-in process, export documentation and cross-border buying for African buyers. Learn about used truck finance and trade-ins in Gauteng.',
+          url: 'https://www.a-ztrucksales.com/guides/finance-trade-ins-export',
+        })}
+      />
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

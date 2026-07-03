@@ -1,5 +1,8 @@
 import { sendMail } from '@/lib/email'
 import { validateLanguage } from '@/lib/validateLanguage'
+import { escapeHtml } from '@/lib/escape-html'
+import { getClientIp, rateLimit, rateLimitResponse } from '@/lib/rate-limit'
+import { verifyTurnstile } from '@/lib/turnstile'
 import { NextRequest } from 'next/server'
 
 function validateMessageQuality(message: string) {
@@ -38,27 +41,22 @@ function validateEmailQuality(email: string) {
 // Handle POST requests (i.e., form submissions)
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req)
+    const limit = rateLimit(`enquiry-form:${ip}`, 5, 10 * 60 * 1000)
+    if (!limit.ok) {
+      return rateLimitResponse(limit.retryAfterSeconds)
+    }
+
     // Parse the incoming request body as JSON
     const body = await req.json()
 
     // Destructure the expected contact form fields
-    const { name, email, phone, message, captchaAnswer, captchaExpected } = body
+    const { name, email, phone, message, turnstileToken } = body
 
     // Validate required fields
     if (!name || !email || !phone || !message) {
       return new Response(
         JSON.stringify({ message: 'Missing required fields' }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
-    }
-
-    // Server-side CAPTCHA validation
-    if (captchaAnswer !== captchaExpected) {
-      return new Response(
-        JSON.stringify({ message: 'Incorrect CAPTCHA answer. Please try again.' }),
         {
           status: 400,
           headers: { 'Content-Type': 'application/json' },
@@ -107,14 +105,24 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // CAPTCHA last: tokens are single-use and this is a network round trip,
+    // so all free synchronous checks run first.
+    const turnstile = await verifyTurnstile(turnstileToken, ip)
+    if (!turnstile.valid) {
+      return new Response(
+        JSON.stringify({ message: turnstile.message }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Create professional HTML email template
     const subject = 'New Vehicle Enquiry Form Submission'
     const html = `
           <h3>Enquiry Form</h3>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Contact Number:</strong> ${phone}</p>
-          <p><strong>Message:</strong> ${message}</p>
+          <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+          <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+          <p><strong>Contact Number:</strong> ${escapeHtml(phone)}</p>
+          <p><strong>Message:</strong> ${escapeHtml(message)}</p>
         `
 
     // Ensure sendMail accepts the correct parameters

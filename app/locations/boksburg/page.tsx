@@ -87,12 +87,13 @@ export default async function BoksburgPage() {
   }
   const localBusinessSchema = {
     '@context': 'https://schema.org',
-    '@type': 'AutoDealer',
+    '@type': 'LocalBusiness',
     '@id': 'https://www.a-ztrucksales.com/locations/boksburg#branch',
     name: 'A-Z Truck Sales — Boksburg',
     parentOrganization: { '@id': 'https://www.a-ztrucksales.com/#org' },
     image: 'https://www.a-ztrucksales.com/og-image.webp',
     url: 'https://www.a-ztrucksales.com/locations/boksburg',
+    hasMap: 'https://www.google.com/maps/search/?api=1&query=-26.1711,28.2414',
     telephone: '+27832345377',
     email: 'aztruckboks@gmail.com',
     address: {
@@ -228,6 +229,16 @@ export default async function BoksburgPage() {
                 <p>
                   <strong>Services:</strong> Used truck sales, truck spares,
                   trade-ins, vehicle viewing
+                </p>
+                <p>
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=-26.1711,28.2414"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-amber-600 hover:underline font-semibold"
+                  >
+                    View us on Google Maps →
+                  </a>
                 </p>
               </div>
             </div>

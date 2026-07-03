@@ -196,9 +196,7 @@ const getSparePageData = unstable_cache(
 
   return (
     <div>
-      <h1 className="sr-only">
-        Truck Spares & Parts in Gauteng | Engines, Gearboxes & Diffs
-      </h1>
+      <h1 className="sr-only">Truck Spares & Parts in Gauteng</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-06-21</span>
@@ -288,6 +286,105 @@ const getSparePageData = unstable_cache(
               Availability changes regularly. For faster assistance, send your
               vehicle details, part name and photos if available.
             </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-neutral-50 border-t border-neutral-200">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto space-y-12">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                Used Truck Engines in Gauteng
+              </h2>
+              <div className="text-lg text-gray-600 space-y-4">
+                <p>
+                  A replacement engine is often the difference between writing a
+                  truck off and getting several more years of work from it. We
+                  stock used and reconditioned diesel engines for popular rigid
+                  truck ranges, including Isuzu N- and F-Series, Hino 300/500,
+                  UD/Nissan, Fuso Canter and Mercedes-Benz commercial units.
+                </p>
+                <p>
+                  Every engine is inspected before sale, and where possible we
+                  supply it with its history — mileage, compression check and
+                  the donor vehicle it came from. Tell us your engine number and
+                  model designation (for example 4HG1, J05C or 4D34) and we will
+                  confirm fitment before you commit.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                Used Truck Gearboxes
+              </h2>
+              <div className="text-lg text-gray-600 space-y-4">
+                <p>
+                  We carry manual gearboxes for light, medium and heavy rigid
+                  trucks — 5-speed and 6-speed units for common Isuzu, Hino,
+                  Fuso, UD and Mercedes-Benz applications. Gearboxes are tested
+                  for gear engagement, synchro condition and input shaft play
+                  before they go on the shelf.
+                </p>
+                <p>
+                  When enquiring, have your truck's model, year and — where
+                  possible — the gearbox casing number ready. Many ranges
+                  changed gearbox specification mid-generation, and the casing
+                  number is the quickest way to guarantee a correct match.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                Differentials & Axle Parts
+              </h2>
+              <div className="text-lg text-gray-600 space-y-4">
+                <p>
+                  Diff failures put a working truck off the road immediately, so
+                  we keep complete differential units and crown wheel and pinion
+                  sets for common rigid truck axles. Ratios vary widely between
+                  applications — a freight carrier and a tipper on the same
+                  chassis often run different diff ratios.
+                </p>
+                <p>
+                  Check the ratio stamped on your existing diff housing or count
+                  the crown wheel and pinion teeth, and we will match a unit
+                  from stock or source one through our network. We also assist
+                  with related driveline parts such as propshafts and axle
+                  shafts.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                How Buying Spares From Us Works
+              </h2>
+              <div className="text-lg text-gray-600 space-y-4">
+                <p>
+                  Browse the stock list above or call the Alberton branch on{' '}
+                  <a href="tel:+27119026071" className="text-amber-600 hover:underline">
+                    011 902 6071
+                  </a>{' '}
+                  with your part details. Parts can be viewed and inspected at
+                  our Alberton branch by appointment before you buy, and we can
+                  arrange transport for buyers elsewhere in South Africa.
+                </p>
+                <p>
+                  Looking for a complete vehicle instead? Browse our{' '}
+                  <Link href="/inventory" className="text-amber-600 hover:underline">
+                    used truck inventory
+                  </Link>{' '}
+                  or read our{' '}
+                  <Link href="/guides/what-to-check-before-buying" className="text-amber-600 hover:underline">
+                    used truck inspection guide
+                  </Link>
+                  .
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

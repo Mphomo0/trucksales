@@ -5,7 +5,6 @@
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import './globals.css'
-import { ClerkProvider } from '@clerk/nextjs'
 import ClientLayout from '@/components/global/ClientLayout'
 import { PostHogProvider } from './providers'
 import { GoogleAnalytics } from '@next/third-parties/google'
@@ -172,16 +171,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} antialiased`}
       >
-        <ClerkProvider>
-          <PostHogProvider>
-            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
+        <PostHogProvider>
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
 
-            <JsonLd data={localBusinessSchema} />
-            <JsonLd data={websiteSchema} />
+          <JsonLd data={localBusinessSchema} />
+          <JsonLd data={websiteSchema} />
 
-            <ClientLayout>{children}</ClientLayout>
-          </PostHogProvider>
-        </ClerkProvider>
+          <ClientLayout>{children}</ClientLayout>
+        </PostHogProvider>
       </body>
     </html>
   )

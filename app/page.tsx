@@ -48,151 +48,15 @@ export const metadata: Metadata = {
   },
 }
 
-const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'A-Z Truck Sales',
-  legalName: 'A-Z Truck Sales',
-  url: 'https://www.a-ztrucksales.com',
-  logo: 'https://www.a-ztrucksales.com/images/logo.png',
-  description:
-    'Trusted used commercial vehicle dealer since 1999 in Gauteng, South Africa. Specializing in quality used rigid trucks from 1.5 to 35 tons.',
-  telephone: '+27-11-902-6071',
-  email: 'aztrucksales@mweb.co.za',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: '9 Chrislou Crescent, Alberton North',
-    addressLocality: 'Alberton',
-    addressRegion: 'Gauteng',
-    postalCode: '1449',
-    addressCountry: 'ZA',
-  },
-  areaServed: [
-    {
-      '@type': 'State',
-      name: 'Gauteng',
-    },
-    {
-      '@type': 'Country',
-      name: 'South Africa',
-    },
-  ],
-  sameAs: ['https://web.facebook.com/p/A-Z-TRUCK-SALES-100057330584780/'],
-}
-
-const autoDealerSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'AutoDealer',
-  '@id': 'https://www.a-ztrucksales.com/#org',
-  name: 'A-Z Truck Sales',
-  image: 'https://www.a-ztrucksales.com/og-image.webp',
-  url: 'https://www.a-ztrucksales.com',
-  telephone: '+27-11-902-6071',
-  email: 'aztrucksales@mweb.co.za',
-  priceRange: '$$',
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '4.0',
-    reviewCount: '245',
-    bestRating: '5',
-    worstRating: '1',
-  },
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: '9 Chrislou Crescent',
-    addressLocality: 'Alberton',
-    addressRegion: 'Gauteng',
-    postalCode: '1449',
-    addressCountry: 'ZA',
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: '-26.2694',
-    longitude: '28.1221',
-  },
-  openingHoursSpecification: [
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      opens: '08:00',
-      closes: '17:00',
-    },
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: 'Saturday',
-      opens: '08:00',
-      closes: '13:00',
-    },
-  ],
-  areaServed: {
-    '@type': 'Country',
-    name: 'South Africa',
-  },
-  department: [
-    {
-      '@type': 'AutoDealer',
-      name: 'A-Z Truck Sales - Alberton',
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: '9 Chrislou Crescent, Alberton North',
-        addressLocality: 'Alberton',
-        addressRegion: 'Gauteng',
-        postalCode: '1449',
-        addressCountry: 'ZA',
-      },
-      geo: {
-        '@type': 'GeoCoordinates',
-        latitude: '-26.2694',
-        longitude: '28.1221',
-      },
-      telephone: '+27-11-902-6071',
-      email: 'aztrucksales@mweb.co.za',
-    },
-    {
-      '@type': 'AutoDealer',
-      name: 'A-Z Truck Sales - Boksburg',
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: 'Corner Trichardts Road & Ravenswood Street, Ravenswood',
-        addressLocality: 'Boksburg',
-        addressRegion: 'Gauteng',
-        postalCode: '1451',
-        addressCountry: 'ZA',
-      },
-      geo: {
-        '@type': 'GeoCoordinates',
-        latitude: '-26.1711',
-        longitude: '28.2414',
-      },
-      telephone: '+27-83-234-5377',
-      email: 'aztruckboks@gmail.com',
-    },
-  ],
-  brand: [
-    { '@type': 'Brand', name: 'Fuso' },
-    { '@type': 'Brand', name: 'Hyundai' },
-    { '@type': 'Brand', name: 'Volkswagen' },
-    { '@type': 'Brand', name: 'Ford' },
-    { '@type': 'Brand', name: 'Hino' },
-    { '@type': 'Brand', name: 'Isuzu' },
-    { '@type': 'Brand', name: 'MAN' },
-    { '@type': 'Brand', name: 'Mercedes-Benz' },
-    { '@type': 'Brand', name: 'Nissan' },
-    { '@type': 'Brand', name: 'Tata' },
-    { '@type': 'Brand', name: 'Toyota' },
-    { '@type': 'Brand', name: 'UD Trucks' },
-  ],
-  description:
-    'A-Z Truck Sales employs qualified technicians experienced in restoring 100+ trucks annually.',
-}
-
 const localBusinessAlbertonSchema = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   '@id': 'https://www.a-ztrucksales.com/#alberton',
   name: 'A-Z Truck Sales - Alberton',
+  parentOrganization: { '@id': 'https://www.a-ztrucksales.com/#org' },
   image: 'https://www.a-ztrucksales.com/og-image.webp',
-  url: 'https://www.a-ztrucksales.com',
+  url: 'https://www.a-ztrucksales.com/locations/alberton',
+  hasMap: 'https://maps.google.com/?cid=4407112129060334219',
   telephone: '+27-11-902-6071',
   email: 'aztrucksales@mweb.co.za',
   address: {
@@ -229,8 +93,10 @@ const localBusinessBoksburgSchema = {
   '@type': 'LocalBusiness',
   '@id': 'https://www.a-ztrucksales.com/#boksburg',
   name: 'A-Z Truck Sales - Boksburg',
+  parentOrganization: { '@id': 'https://www.a-ztrucksales.com/#org' },
   image: 'https://www.a-ztrucksales.com/og-image.webp',
-  url: 'https://www.a-ztrucksales.com',
+  url: 'https://www.a-ztrucksales.com/locations/boksburg',
+  hasMap: 'https://www.google.com/maps/search/?api=1&query=-26.1711,28.2414',
   telephone: '+27-83-234-5377',
   email: 'aztruckboks@gmail.com',
   address: {
@@ -257,42 +123,12 @@ const localBusinessBoksburgSchema = {
   priceRange: '$$',
 }
 
-const localBusinessSchemaJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'AutoDealer',
-  '@id': 'https://www.a-ztrucksales.com/#business',
-  name: 'A-Z Truck Sales',
-  url: 'https://www.a-ztrucksales.com/',
-  logo: 'https://www.a-ztrucksales.com/logo.png',
-  description: 'A-Z Truck Sales is a used commercial vehicle dealer in Gauteng with branches in Alberton and Boksburg, supplying used rigid trucks, commercial vehicles and truck spares.',
-  telephone: '+27 11 902 6071',
-  email: 'aztrucksales@mweb.co.za',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: '9 Chrislou Crescent',
-    addressLocality: 'Alberton North',
-    addressRegion: 'Gauteng',
-    postalCode: '1449',
-    addressCountry: 'ZA',
-  },
-  areaServed: ['Alberton', 'Boksburg', 'Johannesburg', 'East Rand', 'Gauteng', 'South Africa'],
-  openingHours: 'Mo-Fr 08:00-17:00',
-  sameAs: [
-    'https://web.facebook.com/p/A-Z-TRUCK-SALES-100057330584780/',
-    'https://www.linkedin.com/company/a-z-truck-sales/?originalSubdomain=za',
-  ],
-}
-
-
 export default function Home() {
   return (
     <>
       <h1 className="sr-only">Used Trucks for Sale in Gauteng</h1>
-      <JsonLd data={organizationSchema} />
-      <JsonLd data={autoDealerSchema} />
       <JsonLd data={localBusinessAlbertonSchema} />
       <JsonLd data={localBusinessBoksburgSchema} />
-      <JsonLd data={localBusinessSchemaJsonLd} />
 
       <Hero />
       <FindTruckSection />
@@ -300,7 +136,7 @@ export default function Home() {
       <Featured />
       <AboutSection />
       <FAQSection />
-      <DealerFaqBlock withSchema />
+      <DealerFaqBlock />
       <CTA />
     </>
   )

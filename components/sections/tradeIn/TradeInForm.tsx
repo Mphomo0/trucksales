@@ -4,7 +4,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
@@ -24,6 +24,7 @@ import { toast } from 'react-toastify'
 import { tradeInFormSchema } from '@/lib/schemas'
 import { X, Upload, Image as ImageIcon } from 'lucide-react'
 import { z } from 'zod/v4'
+import TurnstileWidget from '@/components/shared/TurnstileWidget'
 
 type TradeInFormData = z.input<typeof tradeInFormSchema>
 
@@ -33,20 +34,10 @@ interface ImagePreview {
   id: string
 }
 
-function generateCaptcha() {
-  const a = Math.floor(Math.random() * 10) + 1
-  const b = Math.floor(Math.random() * 10) + 1
-  return { question: `${a} + ${b} = ?`, answer: a + b }
-}
-
 /* <h1>A-Z Truck Sales Components</h1> */ export default function TradeInForm() {
   const [selectedImages, setSelectedImages] = useState<ImagePreview[]>([])
-  const [captcha, setCaptcha] = useState<{ question: string; answer: number }>({ question: '', answer: 0 })
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCaptcha(generateCaptcha())
-  }, [])
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileReset, setTurnstileReset] = useState(0)
 
   const {
     register,
@@ -58,7 +49,6 @@ function generateCaptcha() {
     resolver: zodResolver(tradeInFormSchema),
     defaultValues: {
       comments: '',
-      captchaAnswer: '',
     },
   })
 
@@ -68,7 +58,7 @@ function generateCaptcha() {
       const newImages: ImagePreview[] = Array.from(files).map((file) => ({
         file,
         url: URL.createObjectURL(file),
-        id: Math.random().toString(36).substring(7),
+        id: crypto.randomUUID(),
       }))
 
       setSelectedImages((prev) => [...prev, ...newImages])
@@ -101,12 +91,9 @@ function generateCaptcha() {
 
     // Append all form fields except images
     for (const [key, value] of Object.entries(data)) {
-      if (key === 'captchaExpected') {
-        formData.append(key, captcha.answer.toString())
-      } else {
-        formData.append(key, value as string)
-      }
+      formData.append(key, value as string)
     }
+    formData.append('turnstileToken', turnstileToken ?? '')
 
     // Append images
     selectedImages.forEach((imagePreview) => {
@@ -125,7 +112,7 @@ function generateCaptcha() {
         toast.success('Message sent successfully!')
         reset()
         clearAllImages()
-        setCaptcha(generateCaptcha())
+        setTurnstileReset((n) => n + 1)
       } else {
         toast.error(result.message || 'Something went wrong')
       }
@@ -372,6 +359,7 @@ function generateCaptcha() {
                               width={200}
                               height={200}
                               className="w-full h-full object-cover"
+                              unoptimized
                             />
                           </div>
 
@@ -435,23 +423,10 @@ function generateCaptcha() {
                   )}
                 </div>
 
-                <div className="space-y-2 mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <Label htmlFor="captchaAnswer">Security Check</Label>
-                  <p className="text-sm text-gray-600 mb-2">
-                    Please solve this simple math problem: <span className="font-bold">{captcha.question}</span>
-                  </p>
-                  <Input
-                    id="captchaAnswer"
-                    type="number"
-                    placeholder="Your Answer"
-                    {...register('captchaAnswer')}
-                  />
-                  {errors.captchaAnswer && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.captchaAnswer.message}
-                    </p>
-                  )}
-                </div>
+                <TurnstileWidget
+                  onToken={setTurnstileToken}
+                  resetSignal={turnstileReset}
+                />
 
                 <Button size="lg" className="w-full" disabled={isSubmitting}>
                   {isSubmitting ? 'Submitting...' : ' Get My Estimate'}

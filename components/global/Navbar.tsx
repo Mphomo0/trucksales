@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react'
 import { Menu, X, User } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useUser } from '@clerk/nextjs'
 
 const NavLinks = [
   { name: 'Home', href: '/' },
@@ -21,7 +20,14 @@ const NavLinks = [
 
 /* <h1>A-Z Truck Sales Components</h1> */ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const { isSignedIn, isLoaded } = useUser()
+  // Clerk session cookie check instead of useUser() — keeps ClerkProvider (and
+  // its middleware requirement) off public pages. Only gates the staff Dashboard link.
+  const [isSignedIn, setIsSignedIn] = useState(false)
+  const isLoaded = true
+
+  useEffect(() => {
+    setIsSignedIn(document.cookie.includes('__session='))
+  }, [])
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => {

@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { getClientIp, rateLimit, rateLimitResponse } from '@/lib/rate-limit'
 import { prisma } from '@/lib/prisma'
 import { queryOpenRouter } from '@/lib/ai/openrouter'
 import {
@@ -68,6 +69,14 @@ Question:
 
 export async function POST(req: NextRequest) {
   try {
+    // Per-IP throttle: the per-session cap alone is bypassable by minting new
+    // sessions, and every message costs an OpenRouter call.
+    const ip = getClientIp(req)
+    const limit = rateLimit(`chatbot-send:${ip}`, 10, 60 * 1000)
+    if (!limit.ok) {
+      return rateLimitResponse(limit.retryAfterSeconds)
+    }
+
     const body = await req.json()
     const { message, sessionId } = body
 
@@ -119,25 +128,30 @@ export async function POST(req: NextRequest) {
         "I'm having trouble connecting to my knowledge base right now. Please contact A-Z Truck Sales directly at +27 11 902 6071 for assistance."
     }
 
-    await saveMessage(session.sessionId, 'assistant', aiResponse)
-
-    let lead = null
-    if (isLeadRequest(message)) {
+    // Run the assistant-message save and lead creation in parallel — neither
+    // depends on the other, and only leadCaptured is needed in the response.
+    const leadPromise = (async () => {
+      if (!isLeadRequest(message)) return null
       const leadInfo = extractLeadInfo(message)
-      if (leadInfo.name && leadInfo.phone) {
-        try {
-          lead = await createLead({
-            name: leadInfo.name,
-            phone: leadInfo.phone,
-            email: leadInfo.email,
-            message: leadInfo.message,
-            interestedVehicle: extractVehicleInterest(message, chunks),
-          })
-        } catch {
-          // Lead creation failed silently - don't block user
-        }
+      if (!leadInfo.name || !leadInfo.phone) return null
+      try {
+        return await createLead({
+          name: leadInfo.name,
+          phone: leadInfo.phone,
+          email: leadInfo.email,
+          message: leadInfo.message,
+          interestedVehicle: extractVehicleInterest(message, chunks),
+        })
+      } catch {
+        // Lead creation failed silently - don't block user
+        return null
       }
-    }
+    })()
+
+    const [, lead] = await Promise.all([
+      saveMessage(session.sessionId, 'assistant', aiResponse),
+      leadPromise,
+    ])
 
     return Response.json({
       response: aiResponse,

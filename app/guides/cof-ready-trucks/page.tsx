@@ -1,6 +1,7 @@
 export const revalidate = 86400
 
 import JsonLd from '@/components/global/JsonLd'
+import { articleSchema } from '@/lib/articleSchema'
 import { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -31,6 +32,14 @@ export default function CofReadyPage() {
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd
+        data={articleSchema({
+          headline: 'COF-Ready Trucks: What Buyers Should Know',
+          description:
+            'Understand Certificate of Fitness (COF) requirements for used trucks in Gauteng. Inspection items, costs, validity and why COF-ready trucks save time and money.',
+          url: 'https://www.a-ztrucksales.com/guides/cof-ready-trucks',
+        })}
+      />
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

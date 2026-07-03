@@ -45,12 +45,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const make = toTitleCase(vehicle.make)
     const model = toTitleCase(vehicle.model)
     const body = vehicle.bodyType ? ` ${toTitleCase(vehicle.bodyType)}` : ''
-    if (`${vehicle.year} ${make} ${model}${body}${suffix}`.length <= 60)
-      return `${vehicle.year} ${make} ${model}${body}${suffix}`
-    if (`${vehicle.year} ${make} ${model}${suffix}`.length <= 60)
-      return `${vehicle.year} ${make} ${model}${suffix}`
-    const available = 60 - suffix.length - String(vehicle.year).length - 1 - make.length - 1
-    return `${vehicle.year} ${make} ${model.slice(0, Math.max(available, 10))}${suffix}`
+    // Differentiates identical stock units that share year/make/model/body
+    const unit = vehicle.mileage
+      ? ` ${Math.round(vehicle.mileage / 1000)}k km`
+      : vehicle.registrationNo
+        ? ` ${vehicle.registrationNo.toUpperCase()}`
+        : ''
+    if (`${vehicle.year} ${make} ${model}${body}${unit}${suffix}`.length <= 60)
+      return `${vehicle.year} ${make} ${model}${body}${unit}${suffix}`
+    if (`${vehicle.year} ${make} ${model}${body}${suffix}`.length + unit.length <= 65)
+      return `${vehicle.year} ${make} ${model}${body}${unit}${suffix}`
+    if (`${vehicle.year} ${make} ${model}${unit}${suffix}`.length <= 65)
+      return `${vehicle.year} ${make} ${model}${unit}${suffix}`
+    const available = 60 - suffix.length - unit.length - String(vehicle.year).length - 1 - make.length - 1
+    return `${vehicle.year} ${make} ${model.slice(0, Math.max(available, 10))}${unit}${suffix}`
   }
   const titlePage = buildTitle()
 

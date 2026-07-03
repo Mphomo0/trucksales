@@ -4,29 +4,20 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
 import { contactFormSchema } from '@/lib/schemas'
 import { z } from 'zod/v4'
+import TurnstileWidget from '@/components/shared/TurnstileWidget'
 
 type ContactFormData = z.input<typeof contactFormSchema>
 
-function generateCaptcha() {
-  const a = Math.floor(Math.random() * 10) + 1
-  const b = Math.floor(Math.random() * 10) + 1
-  return { question: `${a} + ${b} = ?`, answer: a + b }
-}
-
 /* <h1>A-Z Truck Sales Components</h1> */ export default function ContactForm() {
-  const [captcha, setCaptcha] = useState<{ question: string; answer: number }>({ question: '', answer: 0 })
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCaptcha(generateCaptcha())
-  }, [])
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileReset, setTurnstileReset] = useState(0)
   const {
     register,
     handleSubmit,
@@ -44,11 +35,10 @@ function generateCaptcha() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          type: 'Contact', 
+        body: JSON.stringify({
+          type: 'Contact',
           ...data,
-          captchaAnswer: parseInt(data.captchaAnswer, 10),
-          captchaExpected: captcha.answer 
+          turnstileToken,
         }),
       })
 
@@ -60,7 +50,7 @@ function generateCaptcha() {
 
       toast.success('Message sent successfully!')
       reset()
-      setCaptcha(generateCaptcha())
+      setTurnstileReset((n) => n + 1)
     } catch (error) {
       console.error('Error submitting form:', error)
       toast.error(
@@ -216,25 +206,10 @@ function generateCaptcha() {
           </div>
 
           {/* CAPTCHA */}
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Security Check
-            </label>
-            <p className="text-sm text-gray-600 mb-2">
-              Please solve this simple math problem: <span className="font-bold">{captcha.question}</span>
-            </p>
-            <input
-              type="number"
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-              placeholder="Your Answer"
-              {...register('captchaAnswer')}
-            />
-            {errors.captchaAnswer && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.captchaAnswer.message}
-              </p>
-            )}
-          </div>
+          <TurnstileWidget
+            onToken={setTurnstileToken}
+            resetSignal={turnstileReset}
+          />
 
           {/* Submit Button */}
           <div className="mt-6">

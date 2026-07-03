@@ -314,6 +314,9 @@ interface Props {
                     <h1 className="font-semibold leading-none tracking-tight text-2xl md:text-3xl">
                       {vehicle.year} {vehicle.make.replace(/\b\w/g, c => c.toUpperCase())}{' '}
                       {vehicle.model.replace(/\b\w/g, c => c.toUpperCase())}
+                      {vehicle.mileage
+                        ? ` — ${Math.round(vehicle.mileage / 1000)}k km`
+                        : ''}
                     </h1>
                   </div>
                   <Badge className="bg-amber-600">{vehicle.condition}</Badge>

@@ -52,7 +52,7 @@ export const proxy = clerkMiddleware((_auth, request: NextRequest) => {
 })
 
 export const config = {
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js|woff2|woff|ttf|ico|xml|txt)$).*)',
-  ],
+  // Clerk auth is only used under /dashboard, /login and /api; public pages
+  // skip the middleware entirely (saves a function invocation per page view).
+  matcher: ['/dashboard(.*)', '/login', '/api/(.*)'],
 }

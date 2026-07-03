@@ -3,6 +3,7 @@
 /* application/ld+json */
 
 import { Geist_Mono } from 'next/font/google'
+import { ClerkProvider } from '@clerk/nextjs'
 import { auth } from '@/auth'
 
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
@@ -28,13 +29,15 @@ export default async function DashboardLayout({
   }
 
   return (
-    <DashboardProvider>
-      <div className={`dashboard-shell ${geistMono.variable}`}>
-        <DashboardSidebar />
-        <div className="dashboard-body">
-          {children}
+    <ClerkProvider>
+      <DashboardProvider>
+        <div className={`dashboard-shell ${geistMono.variable}`}>
+          <DashboardSidebar />
+          <div className="dashboard-body">
+            {children}
+          </div>
         </div>
-      </div>
-    </DashboardProvider>
+      </DashboardProvider>
+    </ClerkProvider>
   )
 }

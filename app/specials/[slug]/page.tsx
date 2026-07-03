@@ -9,9 +9,10 @@ import React from 'react'
 import { prisma } from '@/lib/prisma'
 import { cache } from 'react'
 import { Metadata } from 'next'
+import { notFound, permanentRedirect } from 'next/navigation'
 import JsonLd from '@/components/global/JsonLd'
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -79,11 +80,12 @@ export default async function Special({ params }: Props) {
   const inventory = await getSpecialInventory(slug)
 
   if (!inventory || !inventory.specialValidTo || !inventory.specialValidFrom) {
-    return <div>Special not found</div>
+    notFound()
   }
 
   if (now > inventory.specialValidTo || now < inventory.specialValidFrom) {
-    return <div>Special expired</div>
+    // Expired specials were indexed as soft 404s; send crawlers to the live list
+    permanentRedirect('/specials')
   }
 
   const breadcrumbSchema = {

@@ -1,6 +1,7 @@
 export const revalidate = 86400
 
 import JsonLd from '@/components/global/JsonLd'
+import { articleSchema } from '@/lib/articleSchema'
 import { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -31,6 +32,14 @@ export default function ChooseTruckPage() {
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd
+        data={articleSchema({
+          headline: 'Choose a Truck: Construction, Delivery or Cold Chain',
+          description:
+            'Match body type to your industry: dropside for building, refrigerated for cold chain, box body for deliveries. Browse used trucks in Gauteng.',
+          url: 'https://www.a-ztrucksales.com/guides/choose-truck-for-construction-delivery-cold-storage',
+        })}
+      />
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

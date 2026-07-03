@@ -1,5 +1,8 @@
 import { sendMail } from '@/lib/email'
 import { validateLanguage } from '@/lib/validateLanguage'
+import { escapeHtml } from '@/lib/escape-html'
+import { getClientIp, rateLimit, rateLimitResponse } from '@/lib/rate-limit'
+import { verifyTurnstile } from '@/lib/turnstile'
 import { NextRequest, NextResponse } from 'next/server'
 import { Readable } from 'stream'
 import { ReadableStream } from 'stream/web'
@@ -44,6 +47,12 @@ function validateEmailQuality(email: string) {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req)
+    const limit = rateLimit(`trade-in:${ip}`, 5, 10 * 60 * 1000)
+    if (!limit.ok) {
+      return rateLimitResponse(limit.retryAfterSeconds)
+    }
+
     const formData = await req.formData()
 
     // Extract all form fields
@@ -60,21 +69,12 @@ export async function POST(req: NextRequest) {
     const condition = formData.get('condition')?.toString() || ''
     const vin = formData.get('vin')?.toString() || ''
     const comments = formData.get('comments')?.toString() || ''
-    const captchaAnswer = parseInt(formData.get('captchaAnswer')?.toString() || '0', 10)
-    const captchaExpected = parseInt(formData.get('captchaExpected')?.toString() || '0', 10)
+    const turnstileToken = formData.get('turnstileToken')?.toString() || ''
 
     // Validate required fields
     if (!firstName || !lastName || !email || !phone) {
       return NextResponse.json(
         { message: 'Missing required fields' },
-        { status: 400 }
-      )
-    }
-
-    // Server-side CAPTCHA validation
-    if (captchaAnswer !== captchaExpected || captchaAnswer === 0) {
-      return NextResponse.json(
-        { message: 'Incorrect CAPTCHA answer. Please try again.' },
         { status: 400 }
       )
     }
@@ -116,6 +116,16 @@ export async function POST(req: NextRequest) {
       if (!commentsCheck.valid) {
         return NextResponse.json({ message: commentsCheck.message }, { status: 400 })
       }
+    }
+
+    // CAPTCHA last: tokens are single-use and this is a network round trip,
+    // so all free synchronous checks run first.
+    const turnstile = await verifyTurnstile(turnstileToken, ip)
+    if (!turnstile.valid) {
+      return NextResponse.json(
+        { message: turnstile.message },
+        { status: 400 }
+      )
     }
 
     // Multiple files (e.g. images)
@@ -176,6 +186,14 @@ export async function POST(req: NextRequest) {
       })
     )
 
+    // Escape user input before interpolating into the email HTML
+    const e = Object.fromEntries(
+      Object.entries({
+        firstName, lastName, email, phone, preferredContact, timeframe,
+        year, make, model, mileage, condition, vin, comments,
+      }).map(([k, v]) => [k, escapeHtml(v)]),
+    ) as Record<string, string>
+
     // Send email
     try {
       await sendMail({
@@ -188,31 +206,31 @@ export async function POST(req: NextRequest) {
             
             <h3 style="color: #555; margin-top: 30px;">Contact Information</h3>
             <table style="width: 100%; border-collapse: collapse;">
-              <tr><td style="padding: 8px 0; font-weight: bold;">Name:</td><td>${firstName} ${lastName}</td></tr>
-              <tr><td style="padding: 8px 0; font-weight: bold;">Email:</td><td>${email}</td></tr>
-              <tr><td style="padding: 8px 0; font-weight: bold;">Phone:</td><td>${phone}</td></tr>
-              <tr><td style="padding: 8px 0; font-weight: bold;">Preferred Contact:</td><td>${preferredContact}</td></tr>
-              <tr><td style="padding: 8px 0; font-weight: bold;">Purchase Timeframe:</td><td>${timeframe}</td></tr>
+              <tr><td style="padding: 8px 0; font-weight: bold;">Name:</td><td>${e.firstName} ${e.lastName}</td></tr>
+              <tr><td style="padding: 8px 0; font-weight: bold;">Email:</td><td>${e.email}</td></tr>
+              <tr><td style="padding: 8px 0; font-weight: bold;">Phone:</td><td>${e.phone}</td></tr>
+              <tr><td style="padding: 8px 0; font-weight: bold;">Preferred Contact:</td><td>${e.preferredContact}</td></tr>
+              <tr><td style="padding: 8px 0; font-weight: bold;">Purchase Timeframe:</td><td>${e.timeframe}</td></tr>
             </table>
 
             <h3 style="color: #555; margin-top: 30px;">Vehicle Information</h3>
             <table style="width: 100%; border-collapse: collapse;">
-              <tr><td style="padding: 8px 0; font-weight: bold;">Year:</td><td>${year}</td></tr>
-              <tr><td style="padding: 8px 0; font-weight: bold;">Make:</td><td>${make}</td></tr>
-              <tr><td style="padding: 8px 0; font-weight: bold;">Model:</td><td>${model}</td></tr>
-              <tr><td style="padding: 8px 0; font-weight: bold;">Mileage:</td><td>${mileage}</td></tr>
-              <tr><td style="padding: 8px 0; font-weight: bold;">Condition:</td><td>${condition}</td></tr>
+              <tr><td style="padding: 8px 0; font-weight: bold;">Year:</td><td>${e.year}</td></tr>
+              <tr><td style="padding: 8px 0; font-weight: bold;">Make:</td><td>${e.make}</td></tr>
+              <tr><td style="padding: 8px 0; font-weight: bold;">Model:</td><td>${e.model}</td></tr>
+              <tr><td style="padding: 8px 0; font-weight: bold;">Mileage:</td><td>${e.mileage}</td></tr>
+              <tr><td style="padding: 8px 0; font-weight: bold;">Condition:</td><td>${e.condition}</td></tr>
               <tr><td style="padding: 8px 0; font-weight: bold;">VIN:</td><td>${
-                vin || 'Not provided'
+                e.vin || 'Not provided'
               }</td></tr>
             </table>
 
             ${
-              comments
+              e.comments
                 ? `
               <h3 style="color: #555; margin-top: 30px;">Additional Comments</h3>
               <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 4px solid #007bff;">
-                ${comments.replace(/\n/g, '<br>')}
+                ${e.comments.replace(/\n/g, '<br>')}
               </div>
             `
                 : ''

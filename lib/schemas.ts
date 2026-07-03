@@ -16,9 +16,6 @@ export const contactFormSchema = z.object({
   message: z
     .string()
     .min(10, { message: 'Message must be at least 10 characters' }),
-  captchaAnswer: z
-    .string()
-    .min(1, { message: 'Please answer the math question' }),
 })
 
 export const vehicleSchema = z.object({
@@ -101,9 +98,6 @@ export const tradeInFormSchema = z.object({
     .transform((val) => val.trim()),
   mileage: z.string().min(1, { message: 'Mileage is required' }),
   comments: z.string().optional().default(''),
-  captchaAnswer: z
-    .string()
-    .min(1, { message: 'Please answer the math question' }),
 })
 
 export const enquiryFormSchema = z.object({
@@ -118,9 +112,6 @@ export const enquiryFormSchema = z.object({
   message: z
     .string()
     .min(10, { message: 'Message must be at least 10 characters' }),
-  captchaAnswer: z
-    .string()
-    .min(1, { message: 'Please answer the math question' }),
 })
 
 export const spareSchema = z.object({
