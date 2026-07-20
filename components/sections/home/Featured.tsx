@@ -59,7 +59,7 @@ const getFeaturedTrucks = unstable_cache(
     })
   },
   ['featured-trucks'],
-  { revalidate: 300 }
+  { revalidate: 86400, tags: ['inventory'] }
 )
 
 export default async function Featured() {

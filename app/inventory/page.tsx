@@ -78,22 +78,12 @@ const breadcrumbSchema = {
 }
 
 
-const getAllInventorySlugs = unstable_cache(
-  async () => {
-    return prisma.inventory.findMany({
-      select: { slug: true, year: true, make: true, model: true },
-      orderBy: { createdAt: 'desc' },
-    })
-  },
-  ['all-inventory-slugs'],
-  { revalidate: 86400, tags: ['inventory'] },
-)
-
 const getInventoryPageData = unstable_cache(
   async () => {
     const [
       vehicles,
       total,
+      allSlugs,
       makesResult,
       modelsResult,
       bodyTypesResult,
@@ -127,6 +117,10 @@ const getInventoryPageData = unstable_cache(
       }),
       prisma.inventory.count(),
       prisma.inventory.findMany({
+        select: { slug: true, year: true, make: true, model: true },
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.inventory.findMany({
         distinct: ['make'],
         select: { make: true },
         orderBy: { make: 'asc' },
@@ -150,6 +144,7 @@ const getInventoryPageData = unstable_cache(
     return {
       vehicles,
       total,
+      allSlugs,
       makesResult,
       modelsResult,
       bodyTypesResult,
@@ -161,17 +156,15 @@ const getInventoryPageData = unstable_cache(
 )
 
 export default async function Inventory() {
-  const [
-    {
-      vehicles,
-      total,
-      makesResult,
-      modelsResult,
-      bodyTypesResult,
-      truckSizesResult,
-    },
-    allVehicles,
-  ] = await Promise.all([getInventoryPageData(), getAllInventorySlugs()])
+  const {
+    vehicles,
+    total,
+    allSlugs: allVehicles,
+    makesResult,
+    modelsResult,
+    bodyTypesResult,
+    truckSizesResult,
+  } = await getInventoryPageData()
 
   const dedupeCaseInsensitive = (items: (string | null)[]) => {
     const seen = new Set<string>()

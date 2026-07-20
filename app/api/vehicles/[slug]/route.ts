@@ -64,6 +64,31 @@ export const GET = async (
   }
 }
 
+const SITE_URL = 'https://www.a-ztrucksales.com'
+const INDEXNOW_KEY = 'er3xkhfkmsvhepnk36zgjy2jgwynv75n'
+const INDEXNOW_ENGINES = [
+  'https://api.indexnow.org/indexnow',
+  'https://www.bing.com/indexnow',
+]
+
+async function notifyIndexNow(urls: string[]) {
+  const payload = {
+    host: 'www.a-ztrucksales.com',
+    key: INDEXNOW_KEY,
+    keyLocation: `${SITE_URL}/${INDEXNOW_KEY}.txt`,
+    urlList: urls,
+  }
+  await Promise.allSettled(
+    INDEXNOW_ENGINES.map((endpoint) =>
+      fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }),
+    ),
+  )
+}
+
 // DELETE /api/vehicles/[slug]
 export async function DELETE(
   req: Request,
@@ -81,7 +106,9 @@ export async function DELETE(
       where: { slug },
     })
 
-    await deleteChunk(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.a-ztrucksales.com'}/inventory/${slug}`)
+    const vehicleUrl = `${SITE_URL}/inventory/${slug}`
+
+    await deleteChunk(vehicleUrl)
 
     revalidatePath('/')
     revalidatePath('/inventory')
@@ -93,6 +120,9 @@ export async function DELETE(
     revalidatePath('/api/vehicles/filters')
     revalidatePath(`/api/vehicles/${slug}`)
     revalidateTag('inventory', 'default')
+
+    // Notify search engines so they re-crawl and deindex the sold vehicle promptly
+    notifyIndexNow([vehicleUrl, `${SITE_URL}/sitemap.xml`]).catch(() => {})
 
     return NextResponse.json(
       { message: 'Vehicle deleted successfully' },
