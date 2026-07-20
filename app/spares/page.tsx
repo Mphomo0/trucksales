@@ -328,7 +328,7 @@ const getSparePageData = unstable_cache(
                   before they go on the shelf.
                 </p>
                 <p>
-                  When enquiring, have your truck's model, year and — where
+                  When enquiring, have your truck&apos;s model, year and — where
                   possible — the gearbox casing number ready. Many ranges
                   changed gearbox specification mid-generation, and the casing
                   number is the quickest way to guarantee a correct match.

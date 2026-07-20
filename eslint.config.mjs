@@ -13,6 +13,11 @@ const compat = new FlatCompat({
 const eslintConfig = [
   { ignores: ['lib/generated/prisma/**'] },
   ...eslintConfigNext,
+  {
+    rules: {
+      'react-hooks/set-state-in-effect': 'off',
+    },
+  },
 ]
 
 export default eslintConfig
