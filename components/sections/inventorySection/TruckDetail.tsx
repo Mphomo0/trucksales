@@ -293,7 +293,7 @@ interface Props {
               {/* Video Link */}
               {videoLinkUrl && (
                 <div className="mt-4">
-                  <h2 className="text-lg font-semibold mb-2">Vehicle Video</h2>
+                  <p className="text-lg font-semibold mb-2">Vehicle Video</p>
                   <div className="aspect-w-16 aspect-h-9">
                     <iframe
                       src={convertYouTubeLink(videoLinkUrl)}
@@ -359,7 +359,11 @@ interface Props {
                 <Separator className="my-6" />
 
                 <div>
-                  <h2 className="text-lg font-semibold mb-4">Description</h2>
+                  <h2 className="text-lg font-semibold mb-4">
+                    About this {vehicle.year}{' '}
+                    {vehicle.make.replace(/\b\w/g, c => c.toUpperCase())}{' '}
+                    {vehicle.model.replace(/\b\w/g, c => c.toUpperCase())}
+                  </h2>
 
                   {/* Auto-generated intro */}
                   <p className="text-gray-600 leading-relaxed mb-4">

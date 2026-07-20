@@ -7,12 +7,12 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: { absolute: 'Used Truck Buying Guides | A-Z Truck Sales Gauteng' },
   description:
-    'Read practical used truck buying guides from A-Z Truck Sales, including body types, inspection tips, COF readiness and choosing the right commercial vehicle.',
+    'Practical used truck buying guides from A-Z Truck Sales: body types, inspection tips, COF readiness and choosing the right commercial vehicle.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/guides' },
   openGraph: {
     title: 'Used Truck Buying Guides | A-Z Truck Sales Gauteng',
     description:
-      'Read practical used truck buying guides from A-Z Truck Sales, including body types, inspection tips, COF readiness and choosing the right commercial vehicle.',
+      'Practical used truck buying guides from A-Z Truck Sales: body types, inspection tips, COF readiness and choosing the right commercial vehicle.',
     url: 'https://www.a-ztrucksales.com/guides',
     siteName: 'A-Z Truck Sales',
     images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'Used Truck Buying Guides - A-Z Truck Sales' }],

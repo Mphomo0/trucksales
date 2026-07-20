@@ -7,11 +7,11 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: { absolute: 'COF-Ready Trucks: What Buyers Should Know | A-Z Truck Sales' },
-  description: 'Understand Certificate of Fitness (COF) requirements for used trucks in Gauteng. Inspection items, costs, validity and why COF-ready trucks save time and money.',
+  description: 'Certificate of Fitness (COF) requirements for used trucks in Gauteng: inspection items, costs, validity and why COF-ready trucks save time and money.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/guides/cof-ready-trucks' },
   openGraph: {
     title: 'COF-Ready Trucks: What Buyers Should Know',
-    description: 'Understand Certificate of Fitness (COF) requirements for used trucks in Gauteng. Inspection items, costs, validity and why COF-ready trucks save time and money.',
+    description: 'Certificate of Fitness (COF) requirements for used trucks in Gauteng: inspection items, costs, validity and why COF-ready trucks save time and money.',
     url: 'https://www.a-ztrucksales.com/guides/cof-ready-trucks',
     siteName: 'A-Z Truck Sales',
     images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'COF-Ready Trucks - What Buyers Should Know' }],
@@ -36,7 +36,7 @@ export default function CofReadyPage() {
         data={articleSchema({
           headline: 'COF-Ready Trucks: What Buyers Should Know',
           description:
-            'Understand Certificate of Fitness (COF) requirements for used trucks in Gauteng. Inspection items, costs, validity and why COF-ready trucks save time and money.',
+            'Certificate of Fitness (COF) requirements for used trucks in Gauteng: inspection items, costs, validity and why COF-ready trucks save time and money.',
           url: 'https://www.a-ztrucksales.com/guides/cof-ready-trucks',
         })}
       />

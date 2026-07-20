@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     absolute: 'Truck Dealers in Alberton & Boksburg | A-Z Truck Sales',
   },
   description:
-    'Find used rigid trucks at A-Z Truck Sales in Alberton and Boksburg, Gauteng. Two branches, 100+ trucks in stock, 25+ years experience. Visit us Monday–Friday.',
+    'Find used rigid trucks at A-Z Truck Sales in Alberton and Boksburg, Gauteng. Two branches, 100+ trucks in stock, 25+ years experience.',
   alternates: { canonical: 'https://www.a-ztrucksales.com/locations' },
   openGraph: {
     title: 'Truck Dealers in Alberton & Boksburg | A-Z Truck Sales',

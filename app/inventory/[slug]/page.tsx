@@ -51,21 +51,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : vehicle.registrationNo
         ? ` ${vehicle.registrationNo.toUpperCase()}`
         : ''
-    if (`${vehicle.year} ${make} ${model}${body}${unit}${suffix}`.length <= 60)
-      return `${vehicle.year} ${make} ${model}${body}${unit}${suffix}`
-    if (`${vehicle.year} ${make} ${model}${body}${suffix}`.length + unit.length <= 65)
-      return `${vehicle.year} ${make} ${model}${body}${unit}${suffix}`
-    if (`${vehicle.year} ${make} ${model}${unit}${suffix}`.length <= 65)
-      return `${vehicle.year} ${make} ${model}${unit}${suffix}`
-    const available = 60 - suffix.length - unit.length - String(vehicle.year).length - 1 - make.length - 1
-    return `${vehicle.year} ${make} ${model.slice(0, Math.max(available, 10))}${unit}${suffix}`
+    // Drop parts in priority order until the full title fits within 60 chars
+    const candidates = [
+      `${vehicle.year} ${make} ${model}${body}${unit}${suffix}`,
+      `${vehicle.year} ${make} ${model}${unit}${suffix}`,
+      `${vehicle.year} ${make} ${model}${body}${suffix}`,
+      `${vehicle.year} ${make} ${model}${suffix}`,
+    ]
+    for (const c of candidates) if (c.length <= 60) return c
+    const available = 60 - suffix.length - String(vehicle.year).length - 1 - make.length - 1
+    return `${vehicle.year} ${make} ${model.slice(0, Math.max(available, 10))}${suffix}`
   }
   const titlePage = buildTitle()
 
   const mileageDesc = vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : ''
   const transmissionDesc = vehicle.transmission?.toLowerCase() ?? 'manual'
   const fuelDesc = vehicle.fuelType?.toLowerCase() ?? 'diesel'
-  const description = `View this ${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} for sale in Gauteng.${mileageDesc ? ` ${mileageDesc},` : ''} ${transmissionDesc}, ${fuelDesc}. Contact A-Z Truck Sales for price, viewing and availability.`
+  let description = `${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} for sale in Gauteng.${mileageDesc ? ` ${mileageDesc},` : ''} ${transmissionDesc}, ${fuelDesc}. Contact A-Z Truck Sales to view.`
+  if (description.length > 155) {
+    description = `${vehicle.year} ${vehicle.make} ${vehicle.model} for sale in Gauteng. Contact A-Z Truck Sales to view.`
+  }
 
   const canonicalUrl = `https://www.a-ztrucksales.com/inventory/${vehicle.slug}`
   const images = Array.isArray(vehicle.images)

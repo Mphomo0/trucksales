@@ -375,7 +375,10 @@ interface Special {
                 <Separator className="my-6" />
 
                 <div>
-                  <h2 className="text-lg font-semibold mb-4">Description</h2>
+                  <h2 className="text-lg font-semibold mb-4">
+                    About this {special.inventory.year} {special.inventory.make}{' '}
+                    {special.inventory.model}
+                  </h2>
                   <p className="text-gray-600 leading-relaxed">
                     {special.inventory.description}
                   </p>

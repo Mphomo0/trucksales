@@ -256,7 +256,7 @@ interface Props {
               {/* Video Link */}
               {videoLinkUrl && (
                 <div className="mt-4">
-                  <h2 className="text-lg font-semibold mb-2">Vehicle Video</h2>
+                  <p className="text-lg font-semibold mb-2">Vehicle Video</p>
                   <div className="aspect-w-16 aspect-h-9">
                     <iframe
                       src={convertYouTubeLink(videoLinkUrl)}
@@ -283,7 +283,7 @@ interface Props {
               </CardHeader>
               <CardContent>
                 <div>
-                  <h2 className="text-lg font-semibold mb-4">Description</h2>
+                  <h2 className="text-lg font-semibold mb-4">About this {spare.name}</h2>
                   <p className="text-gray-600 leading-relaxed">
                     {spare.description}
                   </p>
