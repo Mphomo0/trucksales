@@ -75,6 +75,11 @@ import Link from 'next/link'
               </Link>
             </li>
             <li>
+              <Link href="/tonnage" className="hover:underline">
+                Trucks by Tonnage
+              </Link>
+            </li>
+            <li>
               <Link href="/guides" className="hover:underline">
                 Guides
               </Link>
