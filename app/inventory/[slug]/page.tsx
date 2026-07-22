@@ -10,7 +10,7 @@ import { notFound } from 'next/navigation'
 import JsonLd from '@/components/global/JsonLd'
 
 export const dynamic = 'force-static'
-export const revalidate = false
+export const revalidate = 86400
 
 /** Cached per-request so generateMetadata and the page share one DB query */
 const getVehicle = cache(async (slug: string) =>

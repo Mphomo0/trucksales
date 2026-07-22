@@ -119,6 +119,7 @@ export async function DELETE(
     revalidatePath('/api/vehicles/featured')
     revalidatePath('/api/vehicles/filters')
     revalidatePath(`/api/vehicles/${slug}`)
+    revalidatePath('/sitemap.xml')
     revalidateTag('inventory', 'default')
 
     // Notify search engines so they re-crawl and deindex the sold vehicle promptly
@@ -211,6 +212,7 @@ export async function PATCH(
     revalidatePath(`/inventory/${slug}`)
     if (slug !== updatedVehicle.slug) {
       revalidatePath(`/inventory/${updatedVehicle.slug}`)
+      revalidatePath('/sitemap.xml')
     }
     revalidateTag('inventory', 'default')
 
