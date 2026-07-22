@@ -130,7 +130,7 @@ export default async function Special({ params }: Props) {
       value: inventory.mileage,
       unitCode: 'KMT',
     } : undefined,
-    vehicleCondition: inventory.condition === 'NEW' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
+    itemCondition: inventory.condition === 'NEW' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
     offers: specialOfferSchema,
   }
 

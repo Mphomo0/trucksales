@@ -154,7 +154,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ...(vehicle.transmission && { vehicleTransmission: vehicle.transmission }),
     ...(vehicle.fuelType && { fuelType: vehicle.fuelType }),
     ...(vehicle.bodyType && { bodyType: vehicle.bodyType }),
-    vehicleCondition: vehicle.condition === 'NEW'
+    itemCondition: vehicle.condition === 'NEW'
       ? 'https://schema.org/NewCondition'
       : 'https://schema.org/UsedCondition',
     offers: offerSchema,
