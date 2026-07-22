@@ -17,9 +17,12 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 
+const title = 'Contact A-Z Truck Sales | Call 011 902 6071 (Alberton & Boksburg)'
+const description = 'Call 011 902 6071 or visit A-Z Truck Sales in Alberton or Boksburg. Open Mon-Fri 8am-5pm, Sat 8am-1pm, for used trucks, spares, trade-ins and enquiries.'
+
 export const metadata: Metadata = {
-  title: { absolute: 'Contact A-Z Truck Sales | Alberton & Boksburg, Gauteng' },
-  description: 'Contact A-Z Truck Sales in Alberton or Boksburg for used trucks, truck spares, trade-ins and commercial vehicle enquiries.',
+  title: { absolute: title },
+  description,
   alternates: {
     canonical: 'https://www.a-ztrucksales.com/contact',
   },
@@ -28,14 +31,14 @@ export const metadata: Metadata = {
     locale: 'en_ZA',
     url: 'https://www.a-ztrucksales.com/contact',
     siteName: 'A-Z Truck Sales',
-    title: 'Contact A-Z Truck Sales | Alberton & Boksburg, Gauteng',
-    description: 'Contact A-Z Truck Sales in Alberton or Boksburg for used trucks, truck spares, trade-ins and commercial vehicle enquiries.',
+    title,
+    description,
     images: [{ url: 'https://www.a-ztrucksales.com/og-image.webp', width: 1200, height: 630, alt: 'Contact A-Z Truck Sales' }],
   },
   twitter: {
     card: 'summary_large_image' as const,
-    title: 'Contact A-Z Truck Sales | Alberton & Boksburg, Gauteng',
-    description: 'Contact A-Z Truck Sales in Alberton or Boksburg for used trucks, truck spares, trade-ins and commercial vehicle enquiries.',
+    title,
+    description,
     images: ['https://www.a-ztrucksales.com/og-image.webp'],
   },
 }

@@ -22,37 +22,57 @@ const AllVehiclesFilter = dynamic(
 
 export const revalidate = 86400
 
-export const metadata: Metadata = {
-  title: { absolute: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales' },
-  description:
-    'Browse used rigid trucks from A-Z Truck Sales in Gauteng — dropside, refrigerated, box body and more. View prices, mileage and details online.',
-  alternates: {
-    canonical: 'https://www.a-ztrucksales.com/inventory',
+const getInventoryStats = unstable_cache(
+  async () => {
+    const [total, minPriceResult] = await Promise.all([
+      prisma.inventory.count(),
+      prisma.inventory.aggregate({
+        _min: { vatPrice: true },
+        where: { vatPrice: { gt: 0 } },
+      }),
+    ])
+    return { total, minPrice: minPriceResult._min.vatPrice }
   },
-  openGraph: {
-    type: 'website',
-    locale: 'en_ZA',
-    url: 'https://www.a-ztrucksales.com/inventory',
-    siteName: 'A-Z Truck Sales',
-    title: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales',
-    description:
-      'Browse used rigid trucks from A-Z Truck Sales in Gauteng — dropside, refrigerated, box body and more. View prices, mileage and details online.',
-    images: [
-      {
-        url: 'https://www.a-ztrucksales.com/og-image.webp',
-        width: 1200,
-        height: 630,
-        alt: 'Used Trucks for Sale - A-Z Truck Sales',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Used Trucks for Sale in Gauteng | A-Z Truck Sales',
-    description:
-      'Browse used rigid trucks from A-Z Truck Sales in Gauteng — dropside, refrigerated, box body and more. View prices, mileage and details online.',
-    images: ['https://www.a-ztrucksales.com/og-image.webp'],
-  },
+  ['inventory-stats'],
+  { revalidate: 86400, tags: ['inventory'] },
+)
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { total, minPrice } = await getInventoryStats()
+  const priceFrom = minPrice ? ` from R${Math.round(minPrice).toLocaleString('en-ZA')}` : ''
+
+  const title = `${total} Used Trucks for Sale in Gauteng | A-Z Truck Sales`
+  const description = `${total} used trucks in stock${priceFrom} incl. VAT — dropside, refrigerated, box body and more. COF-ready, workshop-checked. View prices, mileage and photos online.`
+
+  return {
+    title: { absolute: title },
+    description,
+    alternates: {
+      canonical: 'https://www.a-ztrucksales.com/inventory',
+    },
+    openGraph: {
+      type: 'website',
+      locale: 'en_ZA',
+      url: 'https://www.a-ztrucksales.com/inventory',
+      siteName: 'A-Z Truck Sales',
+      title,
+      description,
+      images: [
+        {
+          url: 'https://www.a-ztrucksales.com/og-image.webp',
+          width: 1200,
+          height: 630,
+          alt: 'Used Trucks for Sale - A-Z Truck Sales',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['https://www.a-ztrucksales.com/og-image.webp'],
+    },
+  }
 }
 
 const LIMIT = 25
@@ -258,6 +278,12 @@ export default async function Inventory() {
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Link
+                href="/tonnage"
+                className="text-blue-700 hover:text-blue-800 font-medium"
+              >
+                Looking for a specific payload? Browse trucks by tonnage →
+              </Link>
               <Link
                 href="/specials"
                 className="text-blue-700 hover:text-blue-800 font-medium"

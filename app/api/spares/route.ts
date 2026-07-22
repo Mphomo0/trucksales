@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import slugify from 'slugify'
-import { revalidatePath } from 'next/cache' // 🔥 NATIVE REVALIDATION (Zero HTTP Overhead)
+import { revalidatePath, revalidateTag } from 'next/cache' // 🔥 NATIVE REVALIDATION (Zero HTTP Overhead)
 
 export const runtime = 'nodejs'
 
@@ -119,6 +119,7 @@ export async function POST(req: Request) {
     revalidatePath('/spares')
     revalidatePath('/specials')
     revalidatePath(`/spares/${newVehicle.slug}`)
+    revalidateTag('spares', 'default')
 
     return NextResponse.json(newVehicle, { status: 201 })
   } catch (error) {

@@ -27,32 +27,51 @@ import {
 import { prisma } from '@/lib/prisma'
 import { unstable_cache } from 'next/cache'
 
-export const metadata: Metadata = {
-  title: {
-    absolute: 'Truck Spares & Parts in Gauteng | Engines, Gearboxes & Diffs',
+const getSparesStats = unstable_cache(
+  async () => {
+    const [total, minPriceResult] = await Promise.all([
+      prisma.spares.count(),
+      prisma.spares.aggregate({
+        _min: { price: true },
+        where: { price: { gt: 0 } },
+      }),
+    ])
+    return { total, minPrice: minPriceResult._min.price }
   },
-  description:
-    'Find used truck spares in Gauteng, including engines, gearboxes, diffs and commercial vehicle parts from A-Z Truck Sales in Alberton and Boksburg.',
-  alternates: {
-    canonical: 'https://www.a-ztrucksales.com/spares',
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'en_ZA',
-    url: 'https://www.a-ztrucksales.com/spares',
-    siteName: 'A-Z Truck Sales',
-    title: 'Truck Spares & Parts in Gauteng | Engines, Gearboxes & Diffs',
-    description:
-      'Find used truck spares in Gauteng, including engines, gearboxes, diffs and commercial vehicle parts from A-Z Truck Sales in Alberton and Boksburg.',
-    images: [
-      {
-        url: 'https://www.a-ztrucksales.com/og-image.webp',
-        width: 1200,
-        height: 630,
-        alt: 'Truck Spares & Parts - A-Z Truck Sales',
-      },
-    ],
-  },
+  ['spares-stats'],
+  { revalidate: 86400, tags: ['spares'] },
+)
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { total, minPrice } = await getSparesStats()
+  const priceFrom = minPrice ? ` from R${Math.round(minPrice).toLocaleString('en-ZA')}` : ''
+
+  const title = `${total} Truck Spares & Parts in Gauteng | A-Z Truck Sales`
+  const description = `${total} used truck parts in stock${priceFrom} incl. VAT — engines, gearboxes, diffs and commercial vehicle parts, inspected before sale. Alberton and Boksburg.`
+
+  return {
+    title: { absolute: title },
+    description,
+    alternates: {
+      canonical: 'https://www.a-ztrucksales.com/spares',
+    },
+    openGraph: {
+      type: 'website',
+      locale: 'en_ZA',
+      url: 'https://www.a-ztrucksales.com/spares',
+      siteName: 'A-Z Truck Sales',
+      title,
+      description,
+      images: [
+        {
+          url: 'https://www.a-ztrucksales.com/og-image.webp',
+          width: 1200,
+          height: 630,
+          alt: 'Truck Spares & Parts - A-Z Truck Sales',
+        },
+      ],
+    },
+  }
 }
 
 const LIMIT = 12
