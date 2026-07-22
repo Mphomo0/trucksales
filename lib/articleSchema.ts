@@ -1,16 +1,21 @@
-/** JSON-LD Article node for guide pages, linked to the sitewide organization. */
+/**
+ * JSON-LD Article node for guide pages, linked to the sitewide organization.
+ * datePublished/dateModified are required (no shared default) so each guide
+ * reports its own real dates instead of silently inheriting a stale one —
+ * use each file's actual git history when adding or updating a guide.
+ */
 export function articleSchema({
   headline,
   description,
   url,
-  datePublished = '2026-04-27',
-  dateModified = '2026-06-21',
+  datePublished,
+  dateModified,
 }: {
   headline: string
   description: string
   url: string
-  datePublished?: string
-  dateModified?: string
+  datePublished: string
+  dateModified: string
 }) {
   return {
     '@context': 'https://schema.org',

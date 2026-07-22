@@ -115,6 +115,8 @@ export default function BuyingGuidePage() {
           description:
             'Complete guide to buying used rigid trucks in Gauteng. Where to buy, what to check, how to choose the right body type and brand for your business.',
           url: 'https://www.a-ztrucksales.com/guides/buying-guide',
+          datePublished: '2026-06-16',
+          dateModified: '2026-07-03',
         })}
       />
       <JsonLd data={faqSchema} />

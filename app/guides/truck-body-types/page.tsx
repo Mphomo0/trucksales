@@ -66,6 +66,8 @@ export default function TruckBodyTypesPage() {
           description:
             'Compare truck body types — dropside, box body, refrigerated, curtain side and more — and which suits your business.',
           url: 'https://www.a-ztrucksales.com/guides/truck-body-types',
+          datePublished: '2026-06-16',
+          dateModified: '2026-07-03',
         })}
       />
 

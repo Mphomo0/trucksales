@@ -38,6 +38,8 @@ export default function ChooseTruckPage() {
           description:
             'Match body type to your industry: dropside for building, refrigerated for cold chain, box body for deliveries. Browse used trucks in Gauteng.',
           url: 'https://www.a-ztrucksales.com/guides/choose-truck-for-construction-delivery-cold-storage',
+          datePublished: '2026-06-21',
+          dateModified: '2026-07-03',
         })}
       />
 

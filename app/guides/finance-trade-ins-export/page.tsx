@@ -38,6 +38,8 @@ export default function FinanceTradeInsExportPage() {
           description:
             'Payment options, trade-in process, export documentation and cross-border buying for African buyers. Used truck finance and trade-ins in Gauteng.',
           url: 'https://www.a-ztrucksales.com/guides/finance-trade-ins-export',
+          datePublished: '2026-06-21',
+          dateModified: '2026-07-20',
         })}
       />
 

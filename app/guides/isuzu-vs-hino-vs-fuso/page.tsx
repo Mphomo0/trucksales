@@ -38,6 +38,8 @@ export default function IsuzuVsHinoVsFusoPage() {
           description:
             'Compare Isuzu, Hino and Fuso for reliability, parts support, fuel economy and running costs. Find the right used truck brand in Gauteng.',
           url: 'https://www.a-ztrucksales.com/guides/isuzu-vs-hino-vs-fuso',
+          datePublished: '2026-06-21',
+          dateModified: '2026-07-03',
         })}
       />
 
