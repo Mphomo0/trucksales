@@ -4,6 +4,7 @@ import {
   getLeads,
   createLead,
 } from '@/lib/services/lead-management'
+import { getClientIp, rateLimit, rateLimitResponse } from '@/lib/rate-limit'
 
 export async function GET(req: NextRequest) {
   try {
@@ -28,6 +29,12 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req)
+    const limit = rateLimit(`chatbot-leads:${ip}`, 5, 60 * 1000)
+    if (!limit.ok) {
+      return rateLimitResponse(limit.retryAfterSeconds)
+    }
+
     const body = await req.json()
     const { name, phone, email, interestedVehicle, vehicleId, message } = body
 
