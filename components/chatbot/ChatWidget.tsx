@@ -217,14 +217,14 @@ export function ChatWidget() {
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter') {
         e.preventDefault()
-        const input = (e.target as HTMLInputElement).value.trim()
-        if (input) {
-          handleLeadResponse(input)
-          ;(e.target as HTMLInputElement).value = ''
+        const value = input.trim()
+        if (value) {
+          handleLeadResponse(value)
+          setInput('')
         }
       }
     },
-    [handleLeadResponse],
+    [input, handleLeadResponse],
   )
 
   return (
@@ -338,9 +338,7 @@ export function ChatWidget() {
                 ref={inputRef}
                 type="text"
                 value={input}
-                onChange={(e) => {
-                  if (!isCollectingLead) setInput(e.target.value)
-                }}
+                onChange={(e) => setInput(e.target.value)}
                 onKeyDown={
                   isCollectingLead ? handleLeadInputKeyDown : handleKeyDown
                 }
@@ -369,10 +367,7 @@ export function ChatWidget() {
                       }
                     : handleSend
                 }
-                disabled={
-                  isLoading ||
-                  (isCollectingLead ? !input.trim() : !input.trim())
-                }
+                disabled={isLoading || !input.trim()}
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#f5b800] text-black transition-colors hover:bg-[#e0a700] disabled:opacity-50"
               >
                 <Send size={15} />
