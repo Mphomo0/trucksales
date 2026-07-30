@@ -12,38 +12,7 @@ import {
 import {
   createLead,
 } from '@/lib/services/lead-management'
-
-const LEAD_TRIGGERS = [
-  'please call me',
-  'can someone contact me',
-  'i am interested in',
-  'i want a quote',
-  'i want financing',
-  'call me',
-  'contact me',
-  'interested in this truck',
-  'give me a quote',
-]
-
-function isLeadRequest(message: string): boolean {
-  const lower = message.toLowerCase().trim()
-  return LEAD_TRIGGERS.some((trigger) => lower.includes(trigger))
-}
-
-function extractLeadInfo(message: string) {
-  const nameMatch = message.match(/name\s+(?:is\s+)?(\w+(?:\s+\w+)?)/i)
-  const phoneMatch = message.match(
-    /(?:\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3}[-.\s]?\d{4}/,
-  )
-  const emailMatch = message.match(/[\w.-]+@[\w.-]+\.\w+/)
-
-  return {
-    name: nameMatch ? nameMatch[1].trim() : '',
-    phone: phoneMatch ? phoneMatch[0].trim() : '',
-    email: emailMatch ? emailMatch[0].trim() : null,
-    message: message.trim(),
-  }
-}
+import { detectLead } from '@/lib/chatbot/lead-detection'
 
 const SYSTEM_PROMPT_BASE = `You are the official AI assistant for A-Z Truck Sales.
 
@@ -131,19 +100,21 @@ export async function POST(req: NextRequest) {
     // Run the assistant-message save and lead creation in parallel — neither
     // depends on the other, and only leadCaptured is needed in the response.
     const leadPromise = (async () => {
-      if (!isLeadRequest(message)) return null
-      const leadInfo = extractLeadInfo(message)
-      if (!leadInfo.name || !leadInfo.phone) return null
+      const leadInfo = detectLead(message)
+      if (!leadInfo) return null
       try {
         return await createLead({
-          name: leadInfo.name,
+          // Someone who gives a number without a name is still worth calling.
+          name: leadInfo.name ?? 'Chatbot enquiry',
           phone: leadInfo.phone,
           email: leadInfo.email,
           message: leadInfo.message,
           interestedVehicle: extractVehicleInterest(message, chunks),
         })
-      } catch {
-        // Lead creation failed silently - don't block user
+      } catch (error) {
+        // Don't block the user's reply, but never swallow this silently again:
+        // a mute catch here is why zero-capture went unnoticed for weeks.
+        console.error('Chatbot lead creation failed:', error)
         return null
       }
     })()
