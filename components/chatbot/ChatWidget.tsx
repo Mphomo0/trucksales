@@ -152,6 +152,11 @@ export function ChatWidget() {
 
   const handleLeadResponse = useCallback(
     async (value: string) => {
+      // Echo the answer back as a message, the same as the normal chat path.
+      // Without it a mistyped phone number is invisible to the visitor, and an
+      // uncorrected digit is the difference between a lead and a dead end.
+      addMessage({ role: 'user', message: value })
+
       if (leadStep === 1) {
         setLeadData((prev) => ({ ...prev, name: value }))
         setLeadStep(2)
