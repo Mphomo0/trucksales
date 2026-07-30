@@ -5,6 +5,7 @@ import {
   createLead,
 } from '@/lib/services/lead-management'
 import { getClientIp, rateLimit, rateLimitResponse } from '@/lib/rate-limit'
+import { attributionSchema } from '@/lib/schemas'
 
 export async function GET(req: NextRequest) {
   try {
@@ -52,6 +53,8 @@ export async function POST(req: NextRequest) {
       interestedVehicle,
       vehicleId,
       message,
+      source: 'chatbot',
+      attribution: attributionSchema.parse(body.attribution ?? {}),
     })
 
     return Response.json({ success: true, lead }, { status: 201 })

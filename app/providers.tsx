@@ -12,6 +12,8 @@ import { usePostHog } from 'posthog-js/react'
 import posthog from 'posthog-js'
 import { PostHogProvider as PHProvider } from 'posthog-js/react'
 
+import { captureFirstTouch } from '@/lib/attribution-client'
+
 let posthogInitialized = false
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
@@ -25,6 +27,10 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       capture_pageview: false,
       capture_pageleave: true,
     })
+
+    // Runs on the landing page load, before any client-side navigation can
+    // replace the URL or referrer we need.
+    captureFirstTouch()
   }, [])
 
   return (

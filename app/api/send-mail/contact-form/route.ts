@@ -3,6 +3,9 @@ import { validateLanguage } from '@/lib/validateLanguage'
 import { escapeHtml } from '@/lib/escape-html'
 import { getClientIp, rateLimit, rateLimitResponse } from '@/lib/rate-limit'
 import { verifyTurnstile } from '@/lib/turnstile'
+import { createLead } from '@/lib/services/lead-management'
+import { attributionSchema } from '@/lib/schemas'
+import { formatChannel } from '@/lib/attribution'
 import { NextRequest } from 'next/server'
 
 function validateMessageQuality(message: string) {
@@ -51,7 +54,17 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
 
     // Destructure the expected contact form fields
-    const { name, email, phone, subject, branch, message, turnstileToken } = body
+    const {
+      name,
+      email,
+      phone,
+      subject,
+      branch,
+      message,
+      turnstileToken,
+      heardAboutUs,
+      heardAboutUsOther,
+    } = body
 
     // Validate required fields
     if (!name || !email || !phone || !subject || !message) {
@@ -121,6 +134,34 @@ export async function POST(req: NextRequest) {
         JSON.stringify({ message: turnstile.message }),
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       )
+    }
+
+    // "Other" is only meaningful together with what the visitor typed.
+    const selfReported =
+      heardAboutUs === 'Other'
+        ? heardAboutUsOther?.toString().trim().slice(0, 120) || null
+        : heardAboutUs?.toString().trim().slice(0, 120) || null
+
+    // Persist before emailing so a mail outage can't lose the lead. A database
+    // failure must not block the notification either — the inbox is what the
+    // sales team actually works from.
+    let leadChannel: string | null = null
+    try {
+      const lead = await createLead({
+        name,
+        phone,
+        email,
+        message,
+        subject,
+        branch,
+        source: 'contact_form',
+        heardAboutUs: selfReported,
+        attribution: attributionSchema.parse(body.attribution ?? {}),
+        sendEmail: false,
+      })
+      leadChannel = formatChannel(lead.channel)
+    } catch (error) {
+      console.error('Failed to persist contact-form lead:', error)
     }
 
     // Escape user input before interpolating into the email HTML
@@ -196,7 +237,29 @@ export async function POST(req: NextRequest) {
               <div class="label">Message:</div>
               <div class="message-box">${safeMessage.replace(/\n/g, "<br>")}</div>
             </div>
-            
+
+            ${
+              selfReported
+                ? `
+            <div class="field">
+              <div class="label">How they heard about us:</div>
+              <div class="value">${escapeHtml(selfReported)}</div>
+            </div>
+            `
+                : ''
+            }
+
+            ${
+              leadChannel
+                ? `
+            <div class="field">
+              <div class="label">Marketing channel:</div>
+              <div class="value">${escapeHtml(leadChannel)}</div>
+            </div>
+            `
+                : ''
+            }
+
             <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
             <p style="font-size: 12px; color: #666;">
               This email was sent from your website contact form on ${new Date().toLocaleString()}.

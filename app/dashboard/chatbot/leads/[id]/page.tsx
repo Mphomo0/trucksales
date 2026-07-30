@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Mail, Trash2, RefreshCw, Phone, Mail as MailIcon, Calendar, Truck, MessageSquare } from 'lucide-react'
+import { ArrowLeft, Mail, Trash2, RefreshCw, Phone, Mail as MailIcon, Calendar, Truck, MessageSquare, Megaphone } from 'lucide-react'
+import { formatChannel } from '@/lib/attribution'
 
 interface Lead {
   id: string
@@ -12,8 +13,17 @@ interface Lead {
   interestedVehicle: string | null
   vehicleId: string | null
   message: string | null
+  subject: string | null
+  branch: string | null
   status: 'NEW' | 'CONTACTED' | 'QUALIFIED' | 'CLOSED'
   source: string
+  channel: string | null
+  utmSource: string | null
+  utmMedium: string | null
+  utmCampaign: string | null
+  referrerDomain: string | null
+  landingPath: string | null
+  heardAboutUs: string | null
   emailSent: boolean
   emailError: string | null
   createdAt: string
@@ -21,6 +31,20 @@ interface Lead {
 }
 
 const STATUS_OPTIONS = ['NEW', 'CONTACTED', 'QUALIFIED', 'CLOSED'] as const
+
+const SOURCE_LABELS: Record<string, string> = {
+  chatbot: 'Chatbot',
+  contact_form: 'Contact form',
+}
+
+const ATTRIBUTION_FIELDS = [
+  { label: 'Heard about us', key: 'heardAboutUs' },
+  { label: 'Campaign', key: 'utmCampaign' },
+  { label: 'UTM source', key: 'utmSource' },
+  { label: 'UTM medium', key: 'utmMedium' },
+  { label: 'Referring site', key: 'referrerDomain' },
+  { label: 'Landing page', key: 'landingPath' },
+] as const satisfies ReadonlyArray<{ label: string; key: keyof Lead }>
 
 export default function LeadDetail() {
   const params = useParams()
@@ -250,6 +274,48 @@ export default function LeadDetail() {
                   <p className="text-gray-900">{lead.message}</p>
                 </div>
               </div>
+            )}
+          </div>
+
+          {/* Where this lead came from */}
+          <div className="mt-6 border-t border-gray-200 pt-6">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gray-100">
+                <Megaphone size={18} className="text-gray-600" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">
+                  Marketing channel
+                  <span className="ml-2 text-gray-400">
+                    via {SOURCE_LABELS[lead.source] ?? lead.source}
+                  </span>
+                </p>
+                <p className="font-medium text-gray-900">
+                  {formatChannel(lead.channel) ?? 'Unknown'}
+                </p>
+              </div>
+            </div>
+
+            <dl className="mt-4 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
+              {ATTRIBUTION_FIELDS.map(({ label, key }) => {
+                const value = lead[key]
+                if (!value) return null
+                return (
+                  <div key={key}>
+                    <dt className="text-xs text-gray-500">{label}</dt>
+                    <dd className="break-words text-sm font-medium text-gray-900">
+                      {value}
+                    </dd>
+                  </div>
+                )
+              })}
+            </dl>
+
+            {!lead.channel && !lead.heardAboutUs && (
+              <p className="mt-3 text-xs text-gray-500">
+                No attribution captured — this lead predates tracking, or the
+                visitor arrived with no campaign tags or referrer.
+              </p>
             )}
           </div>
         </div>

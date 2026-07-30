@@ -149,9 +149,37 @@ model ChatLead {
 
   message           String?
 
+  // Contact-form only
+  subject           String?
+  branch            String?
+
   status            LeadStatus @default(NEW)
 
-  source            String     @default("chatbot")
+  // Which form produced the lead: "chatbot" | "contact_form".
+  // No default on purpose — a silent default here previously labelled every
+  // lead "chatbot" regardless of origin.
+  source            String
+
+  // Marketing attribution (first touch where known, else the converting visit)
+  channel           String?
+  utmSource         String?
+  utmMedium         String?
+  utmCampaign       String?
+  utmTerm           String?
+  utmContent        String?
+  gclid             String?
+  fbclid            String?
+  referrer          String?
+  referrerDomain    String?
+  landingPath       String?
+  firstTouchAt      DateTime?
+
+  // Self-reported "How did you hear about us?" — catches word of mouth,
+  // driving past the yard, and other touches no tracking can see.
+  heardAboutUs      String?
+
+  // Anonymous PostHog device id, for joining back to the browsing journey
+  distinctId        String?
 
   emailSent         Boolean    @default(false)
 
@@ -166,6 +194,8 @@ model ChatLead {
   @@index([createdAt])
   @@index([expiresAt])
   @@index([emailSent])
+  @@index([source])
+  @@index([channel])
 }
 
 model IndexingLog {

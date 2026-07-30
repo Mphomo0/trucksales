@@ -12,6 +12,7 @@ import {
 import {
   createLead,
 } from '@/lib/services/lead-management'
+import { attributionSchema } from '@/lib/schemas'
 import { detectLead } from '@/lib/chatbot/lead-detection'
 
 const SYSTEM_PROMPT_BASE = `You are the official AI assistant for A-Z Truck Sales.
@@ -110,6 +111,8 @@ export async function POST(req: NextRequest) {
           email: leadInfo.email,
           message: leadInfo.message,
           interestedVehicle: extractVehicleInterest(message, chunks),
+          source: 'chatbot',
+          attribution: attributionSchema.parse(body.attribution ?? {}),
         })
       } catch (error) {
         // Don't block the user's reply, but never swallow this silently again:

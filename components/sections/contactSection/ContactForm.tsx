@@ -6,12 +6,14 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
-import { contactFormSchema } from '@/lib/schemas'
+import { contactFormSchema, HEARD_ABOUT_US_OPTIONS } from '@/lib/schemas'
 import { z } from 'zod/v4'
 import TurnstileWidget from '@/components/shared/TurnstileWidget'
+import { getAttributionPayload } from '@/lib/attribution-client'
+import { trackLeadCreated } from '@/lib/analytics-events'
 
 type ContactFormData = z.input<typeof contactFormSchema>
 
@@ -22,14 +24,19 @@ type ContactFormData = z.input<typeof contactFormSchema>
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
     mode: 'onBlur',
   })
 
+  const heardAboutUs = useWatch({ control, name: 'heardAboutUs' })
+
   const onSubmit = async (data: ContactFormData) => {
     try {
+      const attribution = getAttributionPayload()
+
       const response = await fetch('/api/send-mail/contact-form', {
         method: 'POST',
         headers: {
@@ -38,6 +45,7 @@ type ContactFormData = z.input<typeof contactFormSchema>
         body: JSON.stringify({
           type: 'Contact',
           ...data,
+          attribution,
           turnstileToken,
         }),
       })
@@ -47,6 +55,20 @@ type ContactFormData = z.input<typeof contactFormSchema>
       if (!response.ok) {
         throw new Error(result.message || 'Failed to send email')
       }
+
+      trackLeadCreated({
+        source: 'contact_form',
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        branch: data.branch,
+        subject: data.subject,
+        heardAboutUs:
+          data.heardAboutUs === 'Other'
+            ? data.heardAboutUsOther || null
+            : data.heardAboutUs || null,
+        attribution,
+      })
 
       toast.success('Message sent successfully!')
       reset()
@@ -202,6 +224,39 @@ type ContactFormData = z.input<typeof contactFormSchema>
               <p className="text-red-500 text-sm mt-1">
                 {errors.message.message}
               </p>
+            )}
+          </div>
+
+          {/* Self-reported attribution — optional, and the only way we ever see
+              word of mouth, driving past the yard, or print. */}
+          <div className="w-full mb-6">
+            <label
+              htmlFor="heardAboutUs"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              How did you hear about us?
+            </label>
+            <select
+              id="heardAboutUs"
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              {...register('heardAboutUs')}
+            >
+              <option value="">Prefer not to say</option>
+              {HEARD_ABOUT_US_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+
+            {heardAboutUs === 'Other' && (
+              <input
+                type="text"
+                className="w-full mt-3 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                placeholder="Where did you hear about us?"
+                aria-label="Tell us where you heard about us"
+                {...register('heardAboutUsOther')}
+              />
             )}
           </div>
 

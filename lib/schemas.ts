@@ -1,5 +1,15 @@
 import { z } from 'zod/v4'
 
+export const HEARD_ABOUT_US_OPTIONS = [
+  'Google search',
+  'Facebook or Instagram',
+  'Referred by a friend or colleague',
+  'Saw the dealership / drove past',
+  'Repeat customer',
+  'AutoTrader / Truck & Trailer',
+  'Other',
+] as const
+
 export const contactFormSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
   phone: z
@@ -16,7 +26,33 @@ export const contactFormSchema = z.object({
   message: z
     .string()
     .min(10, { message: 'Message must be at least 10 characters' }),
+  heardAboutUs: z.string().max(120).optional(),
+  heardAboutUsOther: z.string().max(120).optional(),
 })
+
+// Attribution arrives from the browser, so it is untrusted: cap every field and
+// fall back to null rather than rejecting. A malformed utm tag must never cost
+// us the lead itself.
+const attributionField = (max = 255) =>
+  z.string().trim().min(1).max(max).nullish().catch(null)
+
+export const attributionSchema = z
+  .object({
+    utmSource: attributionField(),
+    utmMedium: attributionField(),
+    utmCampaign: attributionField(),
+    utmTerm: attributionField(),
+    utmContent: attributionField(),
+    gclid: attributionField(),
+    fbclid: attributionField(),
+    referrer: attributionField(500),
+    referrerDomain: attributionField(),
+    landingPath: attributionField(),
+    timestamp: attributionField(40),
+    distinctId: attributionField(120),
+  })
+  .partial()
+  .catch({})
 
 export const vehicleSchema = z.object({
   name: z

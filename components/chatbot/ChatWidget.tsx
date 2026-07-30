@@ -14,6 +14,9 @@ import {
   UserIcon,
 } from 'lucide-react'
 
+import { getAttributionPayload } from '@/lib/attribution-client'
+import { trackLeadCreated } from '@/lib/analytics-events'
+
 interface ChatMessage {
   role: 'user' | 'assistant'
   message: string
@@ -80,7 +83,13 @@ export function ChatWidget() {
       const res = await fetch('/api/chatbot/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: trimmed, sessionId }),
+        // Sent on every message because the assistant can capture a lead from
+        // free text at any point in the conversation.
+        body: JSON.stringify({
+          message: trimmed,
+          sessionId,
+          attribution: getAttributionPayload(),
+        }),
       })
 
       const data = await res.json()
@@ -98,6 +107,13 @@ export function ChatWidget() {
       addMessage({ role: 'assistant', message: data.response })
 
       if (data.leadCaptured) {
+        // Details were extracted server-side from free text, so there is no
+        // identifier to identify() on here — but the conversion still counts.
+        trackLeadCreated({
+          source: 'chatbot',
+          attribution: getAttributionPayload(),
+        })
+
         setTimeout(() => {
           addMessage({
             role: 'assistant',
@@ -159,6 +175,8 @@ export function ChatWidget() {
         setIsCollectingLead(false)
 
         try {
+          const attribution = getAttributionPayload()
+
           await fetch('/api/chatbot/leads', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -166,7 +184,16 @@ export function ChatWidget() {
               name: fullLeadData.name,
               phone: fullLeadData.phone,
               email: fullLeadData.email || null,
+              attribution,
             }),
+          })
+
+          trackLeadCreated({
+            source: 'chatbot',
+            name: fullLeadData.name,
+            phone: fullLeadData.phone,
+            email: fullLeadData.email || null,
+            attribution,
           })
 
           addMessage({
