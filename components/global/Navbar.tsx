@@ -82,6 +82,7 @@ const NavLinks = [
                 <li key={link.name}>
                   <Link
                     href={link.href}
+                    prefetch={false}
                     className="text-gray-800 hover:text-gray-600 text-lg font-medium transition-colors"
                   >
                     {link.name}
@@ -131,6 +132,7 @@ const NavLinks = [
                   <Link
                     key={link.name}
                     href={link.href}
+                    prefetch={false}
                     className="text-gray-800 hover:text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-md text-base transition-colors"
                     onClick={() => {
                       setIsMobileMenuOpen(false)

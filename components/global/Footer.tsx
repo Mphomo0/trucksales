@@ -22,6 +22,7 @@ import Link from 'next/link'
           {/* Facebook Icon */}
           <div className="mt-4 flex space-x-4">
             <Link
+              prefetch={false}
               href="https://web.facebook.com/p/A-Z-TRUCK-SALES-100057330584780/"
               target="_blank"
               rel="noopener noreferrer"
@@ -45,57 +46,57 @@ import Link from 'next/link'
           <h3 className="text-white font-semibold mb-4">Quick Links</h3>
           <ul className="space-y-2 text-sm">
             <li>
-              <Link href="/" className="hover:underline">
+              <Link prefetch={false} href="/" className="hover:underline">
                 Home
               </Link>
             </li>
             <li>
-              <Link href="/inventory" className="hover:underline">
+              <Link prefetch={false} href="/inventory" className="hover:underline">
                 Truck Inventory
               </Link>
             </li>
             <li>
-              <Link href="/spares" className="hover:underline">
+              <Link prefetch={false} href="/spares" className="hover:underline">
                 Truck Spares
               </Link>
             </li>
             <li>
-              <Link href="/specials" className="hover:underline">
+              <Link prefetch={false} href="/specials" className="hover:underline">
                 Specials
               </Link>
             </li>
             <li>
-              <Link href="/sell-your-truck" className="hover:underline">
+              <Link prefetch={false} href="/sell-your-truck" className="hover:underline">
                 Sell Your Truck
               </Link>
             </li>
             <li>
-              <Link href="/brands" className="hover:underline">
+              <Link prefetch={false} href="/brands" className="hover:underline">
                 Brands
               </Link>
             </li>
             <li>
-              <Link href="/tonnage" className="hover:underline">
+              <Link prefetch={false} href="/tonnage" className="hover:underline">
                 Trucks by Tonnage
               </Link>
             </li>
             <li>
-              <Link href="/guides" className="hover:underline">
+              <Link prefetch={false} href="/guides" className="hover:underline">
                 Guides
               </Link>
             </li>
             <li>
-              <Link href="/about" className="hover:underline">
+              <Link prefetch={false} href="/about" className="hover:underline">
                 About Us
               </Link>
             </li>
             <li>
-              <Link href="/locations" className="hover:underline">
+              <Link prefetch={false} href="/locations" className="hover:underline">
                 Branches
               </Link>
             </li>
             <li>
-              <Link href="/contact" className="hover:underline">
+              <Link prefetch={false} href="/contact" className="hover:underline">
                 Contact Us
               </Link>
             </li>

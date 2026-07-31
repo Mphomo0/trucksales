@@ -384,7 +384,11 @@ export default function AllSparesFilter({
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {spares.map((spare) => (
-                <Link key={spare.id} href={`/spares/${spare.slug || spare.id}`}>
+                <Link
+                  key={spare.id}
+                  href={`/spares/${spare.slug || spare.id}`}
+                  prefetch={false}
+                >
                   <SpareCard spare={spare} />
                 </Link>
               ))}

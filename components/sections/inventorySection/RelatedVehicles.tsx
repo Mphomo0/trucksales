@@ -36,6 +36,7 @@ export default function RelatedVehicles({ vehicles, make }: Props) {
               <Link
                 key={v.slug}
                 href={`/inventory/${v.slug}`}
+                prefetch={false}
                 className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
               >
                 <div className="relative h-40">
