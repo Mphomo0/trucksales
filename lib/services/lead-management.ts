@@ -6,10 +6,19 @@ import {
   formatChannel,
   type AttributionPayload,
 } from '@/lib/attribution'
-import { getExpiresAt } from './chat-session'
-
 const LEAD_NOTIFICATION_EMAIL =
   process.env.LEAD_NOTIFICATION_EMAIL || 'mi118@mweb.co.za'
+
+// A lead is a business record, not chat ephemera. It previously inherited the
+// 30-day chat-session TTL, so the cleanup job deleted leads — and the marketing
+// attribution attached to them — a month after capture, while a truck deal can
+// still be in progress. Kept bounded rather than forever: this is personal
+// information, and POPIA expects it not to be retained indefinitely.
+const LEAD_RETENTION_DAYS = 730
+
+function getLeadExpiresAt() {
+  return new Date(Date.now() + LEAD_RETENTION_DAYS * 24 * 60 * 60 * 1000)
+}
 
 export type LeadSource = 'chatbot' | 'contact_form'
 
@@ -64,7 +73,7 @@ export async function createLead(params: CreateLeadParams) {
       firstTouchAt: toDate(attribution.timestamp),
       distinctId: attribution.distinctId || null,
 
-      expiresAt: getExpiresAt(),
+      expiresAt: getLeadExpiresAt(),
     },
   })
 

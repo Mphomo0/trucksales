@@ -12,6 +12,9 @@ export async function cleanupExpiredData() {
     await Promise.all([
       prisma.chatMessage.deleteMany({ where: { expiresAt: { lt: now } } }),
       prisma.chatSession.deleteMany({ where: { expiresAt: { lt: now } } }),
+      // Leads set their own, much longer expiresAt (see LEAD_RETENTION_DAYS in
+      // lead-management). Sharing the 30-day session TTL meant this line was
+      // deleting real leads, and their attribution, a month after capture.
       prisma.chatLead.deleteMany({
         where: { expiresAt: { lt: now }, emailSent: true, emailError: null },
       }),
