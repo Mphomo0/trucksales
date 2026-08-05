@@ -19,7 +19,51 @@ export const metadata: Metadata = {
   },
 }
 
+// Rendered as the visible FAQ block at the foot of the page and mirrored into
+// FAQPage markup. Keep the two in sync: the schema must reflect what is on screen.
+const faqs = [
+  {
+    question: 'What truck is best for construction work?',
+    answer:
+      'Dropside trucks are the most popular choice for construction because the sides open for easy loading of bricks, sand, timber and building materials. Tippers suit loose materials needing tipping discharge, and a chassis cab lets you mount a custom body.',
+  },
+  {
+    question: 'What payload do construction trucks need?',
+    answer:
+      'Construction work typically needs a higher payload capacity of 5 to 12 tons, along with durable bodies that withstand daily loading. Look for reinforced suspension, heavy-duty tyres and underbody protection for site work.',
+  },
+  {
+    question: 'What is the best truck body type for deliveries?',
+    answer:
+      'Box body trucks are the standard for furniture, retail goods and parcels because they are lockable and weatherproof. Curtain side suits palletised goods needing fast forklift loading, and refrigerated box bodies are essential for cold chain delivery.',
+  },
+  {
+    question: 'What payload range do delivery trucks usually need?',
+    answer:
+      'Delivery and distribution trucks typically operate in the 1 to 8 ton payload range, with the emphasis on fuel economy and manoeuvrability in urban areas. Tail lifts help where no loading dock is available.',
+  },
+  {
+    question: 'What should you check on a refrigerated truck before buying?',
+    answer:
+      'Verify the temperature range: some units only cool to -5°C while others reach -20°C for frozen goods. Check the fridge unit mounting type, inspect insulation panels, door seals and floor drainage, and ask for the compressor and refrigerant service history.',
+  },
+  {
+    question: 'What licence do you need to drive a truck in South Africa?',
+    answer:
+      'Licensing depends on the vehicle. Some trucks require a Code 10 or Code 14 licence, so confirm the requirement for the specific truck and payload before buying, alongside maintenance costs, parts availability and dealer support.',
+  },
+]
+
 export default function ChooseTruckPage() {
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  }
   const breadcrumbSchema = {
     '@context': 'https://schema.org', '@type': 'BreadcrumbList',
     itemListElement: [
@@ -39,9 +83,10 @@ export default function ChooseTruckPage() {
             'Match body type to your industry: dropside for building, refrigerated for cold chain, box body for deliveries. Browse used trucks in Gauteng.',
           url: 'https://www.a-ztrucksales.com/guides/choose-truck-for-construction-delivery-cold-storage',
           datePublished: '2026-06-21',
-          dateModified: '2026-07-03',
+          dateModified: '2026-08-05',
         })}
       />
+      <JsonLd data={faqSchema} />
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -114,6 +159,56 @@ export default function ChooseTruckPage() {
           </div>
 
           <div className="bg-white rounded-lg border border-neutral-200 p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Construction vs Delivery vs Cold Storage: Quick Comparison</h2>
+            <div className="text-gray-600 leading-relaxed">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="bg-amber-50">
+                      <th className="text-left p-3 border font-semibold">Factor</th>
+                      <th className="text-left p-3 border font-semibold">Construction</th>
+                      <th className="text-left p-3 border font-semibold">Delivery &amp; distribution</th>
+                      <th className="text-left p-3 border font-semibold">Cold storage</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="p-3 border font-medium">Common body types</td>
+                      <td className="p-3 border">Dropside, tipper, chassis cab</td>
+                      <td className="p-3 border">Box body, curtain side, refrigerated box</td>
+                      <td className="p-3 border">Refrigerated box body, insulated with a built-in fridge/freezer unit</td>
+                    </tr>
+                    <tr className="bg-gray-50">
+                      <td className="p-3 border font-medium">Typical cargo</td>
+                      <td className="p-3 border">Bricks, sand, timber, building materials, rubble</td>
+                      <td className="p-3 border">Furniture, retail goods, parcels, palletised loads</td>
+                      <td className="p-3 border">Frozen, chilled and ambient food and perishables</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 border font-medium">Typical payload</td>
+                      <td className="p-3 border">5–12 tons</td>
+                      <td className="p-3 border">1–8 tons</td>
+                      <td className="p-3 border">Set by the delivery role the truck fills</td>
+                    </tr>
+                    <tr className="bg-gray-50">
+                      <td className="p-3 border font-medium">Features to look for</td>
+                      <td className="p-3 border">Reinforced suspension, heavy-duty tyres, underbody protection; 4x4 where site access is poor</td>
+                      <td className="p-3 border">Tail lift where there is no loading dock; automatic transmission for urban routes</td>
+                      <td className="p-3 border">Fridge unit mounting type — rear-mount, under-mount or nose-mount</td>
+                    </tr>
+                    <tr>
+                      <td className="p-3 border font-medium">Main checks before buying</td>
+                      <td className="p-3 border">Body durability for daily loading; suspension and tyres suited to rough terrain</td>
+                      <td className="p-3 border">Fuel economy and manoeuvrability in urban areas; lockable, weatherproof body</td>
+                      <td className="p-3 border">Temperature range (−5°C vs −20°C), insulation panels, door seals, floor drainage, fridge service history</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg border border-neutral-200 p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">General Selection Checklist</h2>
             <div className="text-gray-600 leading-relaxed">
               <ul className="list-disc pl-6 space-y-2">
@@ -125,6 +220,18 @@ export default function ChooseTruckPage() {
                 <li>Compare fuel economy across models and body types.</li>
                 <li>Test drive to confirm the truck handles well with a representative load.</li>
               </ul>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg border border-neutral-200 p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Frequently Asked Questions About Choosing a Truck</h2>
+            <div className="text-gray-600 leading-relaxed space-y-6">
+              {faqs.map((faq) => (
+                <div key={faq.question}>
+                  <h3 className="font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                  <p>{faq.answer}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

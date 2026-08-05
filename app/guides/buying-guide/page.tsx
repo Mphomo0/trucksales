@@ -60,7 +60,7 @@ const faqs = [
       'Check the body type and payload fit, mileage against age, service history, tyres, brakes, lights, suspension, body condition, roadworthy status and spares availability for the brand and model.',
   },
   {
-    question: 'Does vehicle preparation matter when buying a used truck?',
+    question: 'Why does vehicle preparation matter when buying a used truck?',
     answer:
       'Yes. Vehicle preparation reduces buyer risk by checking visible faults, roadworthy readiness and safety items before collection. Ask the dealer what has been checked before you commit.',
   },

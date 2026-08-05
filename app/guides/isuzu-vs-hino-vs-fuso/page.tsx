@@ -19,7 +19,46 @@ export const metadata: Metadata = {
   },
 }
 
+// Rendered as the visible FAQ block near the foot of the page and mirrored into
+// FAQPage markup. Keep the two in sync: the schema must reflect what is on screen.
+const faqs = [
+  {
+    question: 'Which is better: Isuzu, Hino or Fuso?',
+    answer:
+      'No brand wins outright. Isuzu leads on parts availability and resale value, Hino offers Toyota-backed support and comfortable long-distance cabs, and Fuso gives the lowest entry price for light-duty work. Choose on the job, budget and ownership period rather than brand alone.',
+  },
+  {
+    question: 'Which Japanese truck brand has the best parts availability in South Africa?',
+    answer:
+      'Isuzu has excellent parts availability throughout South Africa, backed by an extensive dealer network. Hino parts are widely available through Toyota and Hino dealers, and Fuso parts come through the Mercedes-Benz and Fuso dealer network.',
+  },
+  {
+    question: 'Which used truck brand holds its value best?',
+    answer:
+      'Isuzu holds its value best of the three, with strong resale compared to other brands. Hino resale is good, particularly on well-maintained 500-Series models, while Fuso resale is moderate but comes with lower entry pricing.',
+  },
+  {
+    question: 'Which of the three is cheapest to buy used?',
+    answer:
+      'Fuso generally has the lowest used entry price of the three, with Hino moderate and Isuzu higher. The Canter is a popular affordable option for light delivery and courier work with low running costs.',
+  },
+  {
+    question: 'Who services Hino and Fuso trucks in South Africa?',
+    answer:
+      'Toyota dealerships across South Africa service Hino trucks, since Hino is a Toyota subsidiary. Mercedes-Benz dealers service Fuso trucks. Isuzu has its own extensive dealer network across Gauteng and the rest of the country.',
+  },
+]
+
 export default function IsuzuVsHinoVsFusoPage() {
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  }
   const breadcrumbSchema = {
     '@context': 'https://schema.org', '@type': 'BreadcrumbList',
     itemListElement: [
@@ -39,9 +78,10 @@ export default function IsuzuVsHinoVsFusoPage() {
             'Compare Isuzu, Hino and Fuso for reliability, parts support, fuel economy and running costs. Find the right used truck brand in Gauteng.',
           url: 'https://www.a-ztrucksales.com/guides/isuzu-vs-hino-vs-fuso',
           datePublished: '2026-06-21',
-          dateModified: '2026-07-03',
+          dateModified: '2026-08-05',
         })}
       />
+      <JsonLd data={faqSchema} />
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -184,6 +224,18 @@ export default function IsuzuVsHinoVsFusoPage() {
               <p>
                 Whichever brand you choose, always inspect the specific truck&rsquo;s condition, service history, body type and mileage rather than relying on brand reputation alone. See our <Link href="/guides/what-to-check-before-buying" className="text-amber-600 hover:underline">what to check before buying guide</Link> for inspection tips.
               </p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg border border-neutral-200 p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Frequently Asked Questions About Isuzu, Hino and Fuso</h2>
+            <div className="text-gray-600 leading-relaxed space-y-6">
+              {faqs.map((faq) => (
+                <div key={faq.question}>
+                  <h3 className="font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                  <p>{faq.answer}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

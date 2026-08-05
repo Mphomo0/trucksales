@@ -31,7 +31,46 @@ export const metadata: Metadata = {
   },
 }
 
+// Rendered as the visible FAQ block at the foot of the page and mirrored into
+// FAQPage markup. Keep the two in sync: the schema must reflect what is on screen.
+const faqs = [
+  {
+    question: 'What are the main truck body types?',
+    answer:
+      'The five common body types are dropside, box body, refrigerated, curtain side and chassis cab. Each suits a different kind of load: dropside for general and side-loaded goods, box for protected cargo, refrigerated for temperature-sensitive stock, curtain side for pallets, and chassis cab for custom builds.',
+  },
+  {
+    question: 'Which truck body type is best for building materials?',
+    answer:
+      'A dropside truck is best for building materials, hardware and general loads. The sides open downwards, so the load can be reached from either side and is easy to load and unload with a forklift or by hand.',
+  },
+  {
+    question: 'Which body type is best for palletised goods?',
+    answer:
+      'A curtain side body suits palletised goods and gives faster loading from the side. Check that forklifts can load from the side on your premises and that the curtain itself is in good condition before buying.',
+  },
+  {
+    question: 'What is a chassis cab truck?',
+    answer:
+      'A chassis cab is a truck supplied without a load body, so a custom body or superstructure can be fitted. Common uses include tippers, tankers, dropside bodies, utility bodies and fire trucks. Confirm the chassis specifications match the body you plan to fit.',
+  },
+  {
+    question: 'What should you check on a refrigerated truck body?',
+    answer:
+      'Check that the fridge unit works and can hold the temperature range your stock requires. Also inspect the insulation panels and door gaskets, since failed seals drive up running costs and put temperature-sensitive loads at risk.',
+  },
+]
+
 export default function TruckBodyTypesPage() {
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  }
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -67,9 +106,10 @@ export default function TruckBodyTypesPage() {
             'Compare truck body types — dropside, box body, refrigerated, curtain side and more — and which suits your business.',
           url: 'https://www.a-ztrucksales.com/guides/truck-body-types',
           datePublished: '2026-06-16',
-          dateModified: '2026-07-03',
+          dateModified: '2026-08-05',
         })}
       />
+      <JsonLd data={faqSchema} />
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -250,6 +290,18 @@ export default function TruckBodyTypesPage() {
                   the body you plan to fit.
                 </p>
               </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg border border-neutral-200 p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Frequently Asked Questions About Truck Body Types</h2>
+            <div className="text-gray-600 leading-relaxed space-y-6">
+              {faqs.map((faq) => (
+                <div key={faq.question}>
+                  <h3 className="font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                  <p>{faq.answer}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

@@ -19,7 +19,46 @@ export const metadata: Metadata = {
   },
 }
 
+// Mirrors the visible Q&A block further down the page. Keep the two in sync:
+// FAQPage markup must reflect content the user can actually see.
+const faqs = [
+  {
+    question: 'Can I get finance for a used truck?',
+    answer:
+      'Yes, used truck finance is available through lenders approved by our dealership. The interest rate and terms depend on your credit profile, the truck age and the loan amount.',
+  },
+  {
+    question: 'What deposit is required for used truck finance?',
+    answer:
+      'Deposit requirements vary by lender and your credit profile. Typically, buyers can expect to pay 10–30% of the purchase price as a deposit.',
+  },
+  {
+    question: 'Can I trade in a truck I still owe money on?',
+    answer:
+      'Yes, but the outstanding finance must be settled before the trade-in can proceed. We can help you understand the settlement process with your current lender.',
+  },
+  {
+    question: 'How long does it take to arrange used truck finance?',
+    answer:
+      'Finance approvals typically take 1–3 business days once the lender has received all required documentation. Having your documents ready speeds up the process.',
+  },
+  {
+    question: 'Do you deliver exported trucks to the border?',
+    answer:
+      'Yes, we can arrange transport of purchased vehicles to any South African border post or port of departure. Transport costs are quoted separately.',
+  },
+]
+
 export default function FinanceTradeInsExportPage() {
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  }
   const breadcrumbSchema = {
     '@context': 'https://schema.org', '@type': 'BreadcrumbList',
     itemListElement: [
@@ -39,9 +78,10 @@ export default function FinanceTradeInsExportPage() {
             'Payment options, trade-in process, export documentation and cross-border buying for African buyers. Used truck finance and trade-ins in Gauteng.',
           url: 'https://www.a-ztrucksales.com/guides/finance-trade-ins-export',
           datePublished: '2026-06-21',
-          dateModified: '2026-07-20',
+          dateModified: '2026-08-05',
         })}
       />
+      <JsonLd data={faqSchema} />
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

@@ -19,7 +19,46 @@ export const metadata: Metadata = {
   },
 }
 
+// Rendered as the visible FAQ block at the foot of the page and mirrored into
+// FAQPage markup. Keep the two in sync: the schema must reflect what is on screen.
+const faqs = [
+  {
+    question: 'What should you check first when buying a used truck?',
+    answer:
+      'Start with the engine, since it is the most expensive component to repair or replace. Listen for knocking or rattling at idle and under load, look for oil leaks around the block, turbo, sump and rocker cover, and check the coolant for milky oil contamination or rust.',
+  },
+  {
+    question: 'What does blue or white exhaust smoke mean on a used truck?',
+    answer:
+      'Blue smoke from the exhaust indicates the engine is burning oil. White smoke usually points to a coolant leak. Either sign warrants a proper mechanical inspection before you commit to the purchase.',
+  },
+  {
+    question: 'How long does a truck clutch last?',
+    answer:
+      'A truck clutch typically lasts 200,000 to 300,000 km depending on how the vehicle is used. Ask when the clutch was last replaced, test the bite point on a drive, and feel for slipping under acceleration.',
+  },
+  {
+    question: 'What tyre tread depth is legal on a truck in South Africa?',
+    answer:
+      'The legal minimum tread depth is 1.6 mm, but 3 mm or more is preferable on a working truck. Check the sidewalls for cracks or bulges, and look for uneven wear, which points to alignment, suspension or steering problems.',
+  },
+  {
+    question: 'How often should a used truck have been serviced?',
+    answer:
+      'A well-maintained truck engine should have documented oil changes every 10,000 to 15,000 km. Ask to see the service records and check the timing belt or chain replacement history before buying.',
+  },
+]
+
 export default function WhatToCheckPage() {
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  }
   const breadcrumbSchema = {
     '@context': 'https://schema.org', '@type': 'BreadcrumbList',
     itemListElement: [
@@ -39,9 +78,10 @@ export default function WhatToCheckPage() {
             'Used truck inspection checklist: engine, gearbox, body condition, tyres, brakes, paperwork, COF and roadworthy requirements for Gauteng buyers.',
           url: 'https://www.a-ztrucksales.com/guides/what-to-check-before-buying',
           datePublished: '2026-06-21',
-          dateModified: '2026-07-03',
+          dateModified: '2026-08-05',
         })}
       />
+      <JsonLd data={faqSchema} />
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -170,6 +210,18 @@ export default function WhatToCheckPage() {
                 <li>Have you asked about warranty, cooling-off period or after-sale support?</li>
                 <li>Have you confirmed viewing and inspection arrangements with the dealer?</li>
               </ul>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg border border-neutral-200 p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Frequently Asked Questions About Inspecting a Used Truck</h2>
+            <div className="text-gray-600 leading-relaxed space-y-6">
+              {faqs.map((faq) => (
+                <div key={faq.question}>
+                  <h3 className="font-semibold text-gray-900 mb-2">{faq.question}</h3>
+                  <p>{faq.answer}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

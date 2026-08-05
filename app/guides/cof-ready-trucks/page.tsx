@@ -19,7 +19,46 @@ export const metadata: Metadata = {
   },
 }
 
+// Mirrors the visible question headings and their answers below. Keep the two
+// in sync: FAQPage markup must reflect content the user can actually see.
+const faqs = [
+  {
+    question: 'What is a COF (Certificate of Fitness)?',
+    answer:
+      'A Certificate of Fitness is a legal requirement for all commercial vehicles in South Africa weighing over 3,500 kg. It certifies that the vehicle meets minimum safety and roadworthiness standards, and must be renewed annually at a registered testing station.',
+  },
+  {
+    question: 'What does the COF inspection cover?',
+    answer:
+      'The COF inspection checks brakes, lights, tyres, steering and suspension, body and chassis, windscreen and mirrors, exhaust and emissions, speedometer and odometer, and the horn and wipers.',
+  },
+  {
+    question: 'Why buy a COF-ready truck?',
+    answer:
+      'A COF-ready truck has already passed a COF test with any issues addressed. It saves you time and repair costs, confirms an independent test station verified roadworthiness, reduces the risk of hidden problems, and helps with finance approval.',
+  },
+  {
+    question: 'How much does a COF cost and how long is it valid?',
+    answer:
+      'COF testing fees vary by testing station and region, typically R300 to R600 per test. A COF is valid for 12 months from the date of issue and can be renewed up to 30 days before expiry without losing the remaining validity.',
+  },
+  {
+    question: 'What should you check when buying a truck without a COF?',
+    answer:
+      'Ask why the truck has no valid COF, get a pre-purchase inspection, and check the tyres, brakes and lights yourself since these are the most common failures. Price up the estimated repairs and testing fee, then negotiate accordingly.',
+  },
+]
+
 export default function CofReadyPage() {
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  }
   const breadcrumbSchema = {
     '@context': 'https://schema.org', '@type': 'BreadcrumbList',
     itemListElement: [
@@ -39,9 +78,10 @@ export default function CofReadyPage() {
             'Certificate of Fitness (COF) requirements for used trucks in Gauteng: inspection items, costs, validity and why COF-ready trucks save time and money.',
           url: 'https://www.a-ztrucksales.com/guides/cof-ready-trucks',
           datePublished: '2026-06-21',
-          dateModified: '2026-07-20',
+          dateModified: '2026-08-05',
         })}
       />
+      <JsonLd data={faqSchema} />
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -103,7 +143,7 @@ export default function CofReadyPage() {
           </div>
 
           <div className="bg-white rounded-lg border border-neutral-200 p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">COF Costs and Validity</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">How Much Does a COF Cost and How Long Is It Valid?</h2>
             <div className="text-gray-600 leading-relaxed space-y-4">
               <ul className="list-disc pl-6 space-y-2">
                 <li><strong>Cost:</strong> COF testing fees vary by testing station and region, typically ranging from R300–R600 per test.</li>
@@ -115,7 +155,7 @@ export default function CofReadyPage() {
           </div>
 
           <div className="bg-white rounded-lg border border-neutral-200 p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">What to Check When Buying a Truck Without COF</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">What Should You Check When Buying a Truck Without a COF?</h2>
             <div className="text-gray-600 leading-relaxed space-y-4">
               <p>
                 If a truck is sold without a valid COF, you need to factor in the cost and time of getting one yourself. Before buying:
