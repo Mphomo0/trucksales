@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { TONNAGE_BUCKETS } from '@/lib/tonnage'
 
 const INDEXNOW_KEY = 'er3xkhfkmsvhepnk36zgjy2jgwynv75n'
 const SITE_URL = 'https://www.a-ztrucksales.com'
@@ -51,9 +52,16 @@ export async function GET(request: NextRequest) {
       }),
     ])
 
-    const staticUrls = ['', '/inventory', '/spares', '/specials', '/sell-your-truck', '/contact'].map(
-      (r) => `${SITE_URL}${r}`
-    )
+    const staticUrls = [
+      '',
+      '/inventory',
+      '/spares',
+      '/specials',
+      '/sell-your-truck',
+      '/contact',
+      '/tonnage',
+      ...TONNAGE_BUCKETS.map((b) => `/tonnage/${b.slug}`),
+    ].map((r) => `${SITE_URL}${r}`)
     const vehicleUrls = vehicles.map((v) => `${SITE_URL}/inventory/${v.slug}`)
     const spareUrls = spareParts.map((s) => `${SITE_URL}/spares/${s.slug}`)
     const specialUrls = activeSpecials.map((s) => `${SITE_URL}/specials/${s.slug}`)

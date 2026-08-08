@@ -9,6 +9,7 @@ import { notFound } from 'next/navigation'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { TONNAGE_BUCKETS, getTonnageBucket } from '@/lib/tonnage'
+import TonnageSiblingLinks from '@/components/sections/tonnage/TonnageSiblingLinks'
 
 interface Props {
   params: Promise<{ size: string }>
@@ -244,6 +245,8 @@ export default async function TonnagePage({ params }: Props) {
           </div>
         </div>
       </section>
+
+      <TonnageSiblingLinks currentSlug={bucket.slug} />
 
       <section className="py-20 bg-linear-to-r from-amber-600 to-yellow-300 text-white text-center">
         <div className="max-w-2xl mx-auto px-4">

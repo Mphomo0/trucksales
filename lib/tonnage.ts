@@ -168,3 +168,28 @@ export const TONNAGE_BUCKETS: TonnageBucket[] = [
 export function getTonnageBucket(slug: string) {
   return TONNAGE_BUCKETS.find((b) => b.slug === slug)
 }
+
+/** Stored truckSize casing and spacing are inconsistent, so match on a normalised key. */
+const normaliseSize = (size: string) => size.trim().toLowerCase().replace(/\s+/g, ' ')
+
+const BUCKETS_BY_SIZE = new Map(
+  TONNAGE_BUCKETS.map((b) => [normaliseSize(b.dbValue), b]),
+)
+
+/**
+ * Resolves the tonnage bucket for an inventory record's `truckSize`.
+ * Returns undefined when the value is missing or falls outside our buckets,
+ * so callers can simply skip rendering the cross-link.
+ */
+export function getTonnageBucketBySize(size: string | null | undefined) {
+  if (!size) return undefined
+  return BUCKETS_BY_SIZE.get(normaliseSize(size))
+}
+
+/**
+ * The other tonnage buckets, in payload order, for sibling cross-linking.
+ * An unknown slug yields every bucket, so a caller can't end up with nothing to link to.
+ */
+export function getSiblingTonnageBuckets(slug: string) {
+  return TONNAGE_BUCKETS.filter((b) => b.slug !== slug)
+}
