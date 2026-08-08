@@ -1,6 +1,7 @@
 export const revalidate = 86400
 
 import JsonLd from '@/components/global/JsonLd'
+import { CONTENT_DATES } from '@/lib/content-dates'
 import { articleSchema } from '@/lib/articleSchema'
 import { Metadata } from 'next'
 import Link from 'next/link'
@@ -105,8 +106,8 @@ export default function TruckBodyTypesPage() {
           description:
             'Compare truck body types — dropside, box body, refrigerated, curtain side and more — and which suits your business.',
           url: 'https://www.a-ztrucksales.com/guides/truck-body-types',
-          datePublished: '2026-06-16',
-          dateModified: '2026-08-05',
+          datePublished: CONTENT_DATES['/guides/truck-body-types'].published,
+          dateModified: CONTENT_DATES['/guides/truck-body-types'].modified,
         })}
       />
       <JsonLd data={faqSchema} />

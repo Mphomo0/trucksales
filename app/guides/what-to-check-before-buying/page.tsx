@@ -1,6 +1,7 @@
 export const revalidate = 86400
 
 import JsonLd from '@/components/global/JsonLd'
+import { CONTENT_DATES } from '@/lib/content-dates'
 import { articleSchema } from '@/lib/articleSchema'
 import { Metadata } from 'next'
 import Link from 'next/link'
@@ -77,8 +78,8 @@ export default function WhatToCheckPage() {
           description:
             'Used truck inspection checklist: engine, gearbox, body condition, tyres, brakes, paperwork, COF and roadworthy requirements for Gauteng buyers.',
           url: 'https://www.a-ztrucksales.com/guides/what-to-check-before-buying',
-          datePublished: '2026-06-21',
-          dateModified: '2026-08-05',
+          datePublished: CONTENT_DATES['/guides/what-to-check-before-buying'].published,
+          dateModified: CONTENT_DATES['/guides/what-to-check-before-buying'].modified,
         })}
       />
       <JsonLd data={faqSchema} />

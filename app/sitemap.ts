@@ -1,63 +1,89 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
+import { CONTENT_DATES } from '@/lib/content-dates'
+import { BRAND_ROUTES } from '@/lib/brands'
+import { TONNAGE_BUCKETS, getTonnageBucketBySize } from '@/lib/tonnage'
 
 export const revalidate = 86400
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL || 'https://www.a-ztrucksales.com'
 
-const STATIC_PAGES: { route: string; lastModified: string }[] = [
-  { route: '',                                                            lastModified: '2026-06-21' },
-  { route: '/inventory',                                                  lastModified: '2026-06-22' },
-  { route: '/spares',                                                     lastModified: '2026-06-22' },
-  { route: '/specials',                                                   lastModified: '2026-06-22' },
-  { route: '/sell-your-truck',                                            lastModified: '2026-06-21' },
-  { route: '/contact',                                                    lastModified: '2026-06-21' },
-  { route: '/about',                                                      lastModified: '2026-06-21' },
-  { route: '/locations',                                                  lastModified: '2026-06-17' },
-  { route: '/locations/alberton',                                         lastModified: '2026-06-21' },
-  { route: '/locations/boksburg',                                         lastModified: '2026-06-21' },
-  { route: '/brands',                                                     lastModified: '2026-06-21' },
-  { route: '/brands/isuzu',                                               lastModified: '2026-06-20' },
-  { route: '/brands/hino',                                                lastModified: '2026-06-20' },
-  { route: '/brands/fuso',                                                lastModified: '2026-06-20' },
-  { route: '/brands/ud-trucks',                                           lastModified: '2026-06-20' },
-  { route: '/brands/man',                                                 lastModified: '2026-06-20' },
-  { route: '/brands/mercedes-benz',                                       lastModified: '2026-06-20' },
-  { route: '/brands/tata',                                                lastModified: '2026-06-20' },
-  { route: '/brands/toyota',                                              lastModified: '2026-06-20' },
-  { route: '/brands/hyundai',                                             lastModified: '2026-06-20' },
-  { route: '/tonnage',                                                    lastModified: '2026-07-22' },
-  { route: '/tonnage/1-to-2-5-ton',                                       lastModified: '2026-07-22' },
-  { route: '/tonnage/3-to-5-ton',                                         lastModified: '2026-07-22' },
-  { route: '/tonnage/6-to-7-ton',                                         lastModified: '2026-07-22' },
-  { route: '/tonnage/8-to-9-ton',                                         lastModified: '2026-07-22' },
-  { route: '/tonnage/10-to-18-ton',                                       lastModified: '2026-07-22' },
-  { route: '/tonnage/18-to-35-ton',                                       lastModified: '2026-07-22' },
-  { route: '/guides',                                                     lastModified: '2026-06-21' },
-  { route: '/guides/buying-guide',                                        lastModified: '2026-06-20' },
-  { route: '/guides/truck-body-types',                                    lastModified: '2026-06-16' },
-  { route: '/guides/cof-ready-trucks',                                    lastModified: '2026-06-21' },
-  { route: '/guides/isuzu-vs-hino-vs-fuso',                              lastModified: '2026-06-21' },
-  { route: '/guides/choose-truck-for-construction-delivery-cold-storage', lastModified: '2026-06-21' },
-  { route: '/guides/what-to-check-before-buying',                         lastModified: '2026-06-21' },
-  { route: '/guides/finance-trade-ins-export',                            lastModified: '2026-06-21' },
-]
+/**
+ * Editorial pages carry hand-maintained dates from lib/content-dates.ts.
+ * Everything else is database-backed and takes its lastModified from the most
+ * recent record behind it, so the sitemap reflects real content changes
+ * instead of dates frozen at whenever someone last edited this file.
+ */
+const EDITORIAL_ROUTES = Object.keys(CONTENT_DATES) as (keyof typeof CONTENT_DATES)[]
+
+const latest = (dates: (Date | null | undefined)[]): Date | undefined => {
+  const valid = dates.filter((d): d is Date => d instanceof Date)
+  return valid.length > 0
+    ? new Date(Math.max(...valid.map((d) => d.getTime())))
+    : undefined
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticUrls = STATIC_PAGES.map(({ route, lastModified }) => ({
+  const editorialUrls = EDITORIAL_ROUTES.map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date(lastModified),
+    lastModified: new Date(CONTENT_DATES[route].modified),
   }))
 
   try {
-    const [vehicles, spareParts] = await Promise.all([
+    const [vehicles, spareParts, byMake, bySize] = await Promise.all([
       prisma.inventory.findMany({ select: { slug: true, updatedAt: true } }),
       prisma.spares.findMany({ select: { slug: true, updatedAt: true } }),
+      prisma.inventory.groupBy({
+        by: ['make'],
+        _max: { updatedAt: true },
+      }),
+      prisma.inventory.groupBy({
+        by: ['truckSize'],
+        _max: { updatedAt: true },
+      }),
     ])
 
+    const inventoryUpdated = latest(vehicles.map((v) => v.updatedAt))
+    const sparesUpdated = latest(spareParts.map((s) => s.updatedAt))
+    const siteUpdated = latest([inventoryUpdated, sparesUpdated])
+
+    /** Most recent update across every make matching a brand page's search term. */
+    const brandUpdated = (match: string) =>
+      latest(
+        byMake
+          .filter((m) => m.make?.toLowerCase().includes(match.toLowerCase()))
+          .map((m) => m._max.updatedAt),
+      )
+
+    /** Most recent update across every stored truckSize falling in a bucket. */
+    const tonnageUpdated = (slug: string) =>
+      latest(
+        bySize
+          .filter((s) => getTonnageBucketBySize(s.truckSize)?.slug === slug)
+          .map((s) => s._max.updatedAt),
+      )
+
+    const dbBackedUrls: MetadataRoute.Sitemap = [
+      { url: `${baseUrl}`, lastModified: siteUpdated },
+      { url: `${baseUrl}/inventory`, lastModified: inventoryUpdated },
+      { url: `${baseUrl}/specials`, lastModified: inventoryUpdated },
+      { url: `${baseUrl}/spares`, lastModified: sparesUpdated },
+      { url: `${baseUrl}/brands`, lastModified: inventoryUpdated },
+      ...BRAND_ROUTES.map((b) => ({
+        url: `${baseUrl}/brands/${b.slug}`,
+        lastModified: brandUpdated(b.match) ?? inventoryUpdated,
+      })),
+      { url: `${baseUrl}/tonnage`, lastModified: inventoryUpdated },
+      ...TONNAGE_BUCKETS.map((b) => ({
+        url: `${baseUrl}/tonnage/${b.slug}`,
+        lastModified: tonnageUpdated(b.slug) ?? inventoryUpdated,
+      })),
+    ]
+
     return [
-      ...staticUrls,
+      ...dbBackedUrls,
+      ...editorialUrls,
       ...vehicles.map((v) => ({
         url: `${baseUrl}/inventory/${v.slug}`,
         lastModified: v.updatedAt,
@@ -68,6 +94,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })),
     ]
   } catch {
-    return staticUrls
+    // Database unreachable: still list the routes, but omit lastModified on the
+    // db-backed ones rather than inventing a date for them.
+    const staticRoutes = [
+      '',
+      '/inventory',
+      '/specials',
+      '/spares',
+      '/brands',
+      ...BRAND_ROUTES.map((b) => `/brands/${b.slug}`),
+      '/tonnage',
+      ...TONNAGE_BUCKETS.map((b) => `/tonnage/${b.slug}`),
+    ]
+    return [
+      ...staticRoutes.map((route) => ({ url: `${baseUrl}${route}` })),
+      ...editorialUrls,
+    ]
   }
 }

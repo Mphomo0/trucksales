@@ -1,6 +1,7 @@
 export const revalidate = 86400
 
 import JsonLd from '@/components/global/JsonLd'
+import { CONTENT_DATES } from '@/lib/content-dates'
 import { articleSchema } from '@/lib/articleSchema'
 import { Metadata } from 'next'
 import Link from 'next/link'
@@ -77,8 +78,8 @@ export default function CofReadyPage() {
           description:
             'Certificate of Fitness (COF) requirements for used trucks in Gauteng: inspection items, costs, validity and why COF-ready trucks save time and money.',
           url: 'https://www.a-ztrucksales.com/guides/cof-ready-trucks',
-          datePublished: '2026-06-21',
-          dateModified: '2026-08-05',
+          datePublished: CONTENT_DATES['/guides/cof-ready-trucks'].published,
+          dateModified: CONTENT_DATES['/guides/cof-ready-trucks'].modified,
         })}
       />
       <JsonLd data={faqSchema} />

@@ -1,6 +1,7 @@
 export const revalidate = 86400
 
 import JsonLd from '@/components/global/JsonLd'
+import { CONTENT_DATES } from '@/lib/content-dates'
 import { articleSchema } from '@/lib/articleSchema'
 import { Metadata } from 'next'
 import Link from 'next/link'
@@ -115,8 +116,8 @@ export default function BuyingGuidePage() {
           description:
             'Complete guide to buying used rigid trucks in Gauteng. Where to buy, what to check, how to choose the right body type and brand for your business.',
           url: 'https://www.a-ztrucksales.com/guides/buying-guide',
-          datePublished: '2026-06-16',
-          dateModified: '2026-07-03',
+          datePublished: CONTENT_DATES['/guides/buying-guide'].published,
+          dateModified: CONTENT_DATES['/guides/buying-guide'].modified,
         })}
       />
       <JsonLd data={faqSchema} />

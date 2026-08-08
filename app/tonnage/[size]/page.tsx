@@ -10,6 +10,7 @@ import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { TONNAGE_BUCKETS, getTonnageBucket } from '@/lib/tonnage'
 import TonnageSiblingLinks from '@/components/sections/tonnage/TonnageSiblingLinks'
+import { withIndefiniteArticle } from '@/lib/text'
 
 interface Props {
   params: Promise<{ size: string }>
@@ -251,7 +252,7 @@ export default async function TonnagePage({ params }: Props) {
       <section className="py-20 bg-linear-to-r from-amber-600 to-yellow-300 text-white text-center">
         <div className="max-w-2xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Looking for a {bucket.label} Truck?
+            Looking for {withIndefiniteArticle(bucket.label)} Truck?
           </h2>
           <p className="text-xl mb-8">
             Contact our team to discuss your payload needs or book a viewing.

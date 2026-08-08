@@ -1,6 +1,7 @@
 export const revalidate = 86400
 
 import JsonLd from '@/components/global/JsonLd'
+import { CONTENT_DATES } from '@/lib/content-dates'
 import { articleSchema } from '@/lib/articleSchema'
 import { Metadata } from 'next'
 import Link from 'next/link'
@@ -77,8 +78,8 @@ export default function IsuzuVsHinoVsFusoPage() {
           description:
             'Compare Isuzu, Hino and Fuso for reliability, parts support, fuel economy and running costs. Find the right used truck brand in Gauteng.',
           url: 'https://www.a-ztrucksales.com/guides/isuzu-vs-hino-vs-fuso',
-          datePublished: '2026-06-21',
-          dateModified: '2026-08-05',
+          datePublished: CONTENT_DATES['/guides/isuzu-vs-hino-vs-fuso'].published,
+          dateModified: CONTENT_DATES['/guides/isuzu-vs-hino-vs-fuso'].modified,
         })}
       />
       <JsonLd data={faqSchema} />
