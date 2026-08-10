@@ -7,6 +7,7 @@ import SpareDetail from '@/components/sections/spares/SpareDetail'
 import { prisma } from '@/lib/prisma'
 import { cache } from 'react'
 import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import JsonLd from '@/components/global/JsonLd'
 
 export const dynamic = 'force-static'
@@ -91,7 +92,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const spare = await getSpare(slug)
 
   if (!spare) {
-    return <div>Spare part not found</div>
+    notFound()
   }
 
   const images = Array.isArray(spare.images) 
