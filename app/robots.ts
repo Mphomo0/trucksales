@@ -4,6 +4,11 @@ const DISALLOW = [
   '/dashboard/',
   '/api/',
   '/login/',
+  // Framework image-optimizer route — unused since next.config.ts switched to a
+  // custom ImageKit loader. Left reachable by Next.js itself, but nothing on the
+  // site links to it; crawlers were finding stale /_next/image URLs from before
+  // the switch and getting 400s when their w/q params got stripped on revisit.
+  '/_next/image',
   '/inventory?*',
   '/spares?*',
   '/specials?*',
