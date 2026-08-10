@@ -3,6 +3,7 @@ import TruckDetail from '@/components/sections/inventorySection/TruckDetail'
 import QualityAssurance from '@/components/sections/inventorySection/QualityAssurance'
 import RelatedVehicles from '@/components/sections/inventorySection/RelatedVehicles'
 import TonnageCrossLink from '@/components/sections/inventorySection/TonnageCrossLink'
+import BrandCrossLink from '@/components/sections/inventorySection/BrandCrossLink'
 
 import { prisma } from '@/lib/prisma'
 import { cache } from 'react'
@@ -265,6 +266,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       {videoSchema && <JsonLd data={videoSchema} />}
       <TruckDetail vehicle={vehicle} />
       <TonnageCrossLink truckSize={vehicle.truckSize} />
+      <BrandCrossLink make={vehicle.make} />
       <RelatedVehicles
         vehicles={relatedVehicles.map(v => ({ ...v, images: (v.images as { url: string }[]) }))}
         make={vehicle.make}
