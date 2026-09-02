@@ -3,6 +3,9 @@ import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
   images: {
     // ImageKit images bypass Vercel's optimization (ImageKit handles its own transforms).
     // Local /public assets still go through Vercel optimization via the default loader.
