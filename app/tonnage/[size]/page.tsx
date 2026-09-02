@@ -178,7 +178,7 @@ export default async function TonnagePage({ params }: Props) {
                     {(truck.images as { url: string }[])?.[0]?.url && (
                       <Image
                         src={(truck.images as { url: string }[])[0].url}
-                        alt={`${truck.year} ${truck.name}`}
+                        alt={truck.name}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover"
@@ -188,7 +188,7 @@ export default async function TonnagePage({ params }: Props) {
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold text-gray-900">
-                      {truck.year} {truck.name}
+                      {truck.name}
                     </h3>
                     <p className="text-amber-600 font-bold text-lg">
                       {truck.vatPrice

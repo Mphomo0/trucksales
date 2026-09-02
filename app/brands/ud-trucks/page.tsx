@@ -116,11 +116,48 @@ export default async function UdTrucksPage() {
       acceptedAnswer: { '@type': 'Answer', text: faq.answer },
     })),
   }
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    '@id': 'https://www.a-ztrucksales.com/brands/ud-trucks#inventory',
+    name: 'Used UD Trucks in Stock',
+    itemListElement: vehicles.map((truck, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+      item: {
+        '@type': 'Vehicle',
+        '@id': `https://www.a-ztrucksales.com/inventory/${truck.slug}#product`,
+        name: truck.name,
+        url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+        image: (truck.images as any[])?.[0]?.url,
+        ...(truck.mileage != null && {
+          mileageFromOdometer: {
+            '@type': 'QuantitativeValue',
+            value: truck.mileage,
+            unitCode: 'KMT',
+          },
+        }),
+        ...(truck.transmission && { vehicleTransmission: truck.transmission }),
+        ...(truck.fuelType && { fuelType: truck.fuelType }),
+        offers: {
+          '@type': 'Offer',
+          url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+          priceCurrency: 'ZAR',
+          availability: 'https://schema.org/InStock',
+          itemCondition: 'https://schema.org/UsedCondition',
+          seller: { '@id': 'https://www.a-ztrucksales.com/#org' },
+          ...(truck.vatPrice != null && { price: truck.vatPrice }),
+        },
+      },
+    })),
+  }
 
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={faqSchema} />
+      {vehicles.length > 0 && <JsonLd data={itemListSchema} />}
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -161,12 +198,6 @@ export default async function UdTrucksPage() {
                   South Africa for durable, powerful trucks that handle tough
                   working conditions. The Condor range is especially popular for
                   medium-duty transport, construction and bulk delivery.
-                </p>
-                <p>
-                  Known for their robust engines and reliable drivetrains, UD
-                  Trucks offer excellent value in the used truck market. They
-                  are a popular choice for owner-drivers and small fleet
-                  operators who need a dependable workhorse.
                 </p>
                 <p>
                   Known for their robust engines and reliable drivetrains, UD
@@ -227,7 +258,7 @@ export default async function UdTrucksPage() {
                     {(truck.images as any[])?.[0]?.url && (
                       <Image
                         src={(truck.images as any[])[0].url}
-                        alt={`${truck.year} ${truck.name}`}
+                        alt={truck.name}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover"
@@ -237,7 +268,7 @@ export default async function UdTrucksPage() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold text-gray-900">
-                      {truck.year} {truck.name}
+                      {truck.name}
                     </h3>
                     <p className="text-amber-600 font-bold text-lg">
                       {truck.vatPrice

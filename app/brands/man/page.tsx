@@ -117,11 +117,48 @@ export default async function ManPage() {
       acceptedAnswer: { '@type': 'Answer', text: faq.answer },
     })),
   }
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    '@id': 'https://www.a-ztrucksales.com/brands/man#inventory',
+    name: 'Used MAN Trucks in Stock',
+    itemListElement: vehicles.map((truck, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+      item: {
+        '@type': 'Vehicle',
+        '@id': `https://www.a-ztrucksales.com/inventory/${truck.slug}#product`,
+        name: truck.name,
+        url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+        image: (truck.images as any[])?.[0]?.url,
+        ...(truck.mileage != null && {
+          mileageFromOdometer: {
+            '@type': 'QuantitativeValue',
+            value: truck.mileage,
+            unitCode: 'KMT',
+          },
+        }),
+        ...(truck.transmission && { vehicleTransmission: truck.transmission }),
+        ...(truck.fuelType && { fuelType: truck.fuelType }),
+        offers: {
+          '@type': 'Offer',
+          url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+          priceCurrency: 'ZAR',
+          availability: 'https://schema.org/InStock',
+          itemCondition: 'https://schema.org/UsedCondition',
+          seller: { '@id': 'https://www.a-ztrucksales.com/#org' },
+          ...(truck.vatPrice != null && { price: truck.vatPrice }),
+        },
+      },
+    })),
+  }
 
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={faqSchema} />
+      {vehicles.length > 0 && <JsonLd data={itemListSchema} />}
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -164,12 +201,6 @@ export default async function ManPage() {
                   for build quality, driver comfort and fuel-efficient engines,
                   MAN trucks are a popular choice for medium- to heavy-duty
                   transport.
-                </p>
-                <p>
-                  The TGL range is ideal for light-to-medium duty work up to 7.5
-                  tons, while the TGM handles medium-duty work up to 18 tons.
-                  MAN also offers heavier rigid trucks for construction, bulk
-                  transport and long-distance logistics.
                 </p>
                 <p>
                   The TGL range is ideal for light-to-medium duty work up to 7.5
@@ -230,7 +261,7 @@ export default async function ManPage() {
                     {(truck.images as any[])?.[0]?.url && (
                       <Image
                         src={(truck.images as any[])[0].url}
-                        alt={`${truck.year} ${truck.name}`}
+                        alt={truck.name}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover"
@@ -240,7 +271,7 @@ export default async function ManPage() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold text-gray-900">
-                      {truck.year} {truck.name}
+                      {truck.name}
                     </h3>
                     <p className="text-amber-600 font-bold text-lg">
                       {truck.vatPrice

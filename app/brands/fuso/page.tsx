@@ -116,11 +116,48 @@ export default async function FusoPage() {
       acceptedAnswer: { '@type': 'Answer', text: faq.answer },
     })),
   }
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    '@id': 'https://www.a-ztrucksales.com/brands/fuso#inventory',
+    name: 'Used Fuso Trucks in Stock',
+    itemListElement: vehicles.map((truck, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+      item: {
+        '@type': 'Vehicle',
+        '@id': `https://www.a-ztrucksales.com/inventory/${truck.slug}#product`,
+        name: truck.name,
+        url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+        image: (truck.images as any[])?.[0]?.url,
+        ...(truck.mileage != null && {
+          mileageFromOdometer: {
+            '@type': 'QuantitativeValue',
+            value: truck.mileage,
+            unitCode: 'KMT',
+          },
+        }),
+        ...(truck.transmission && { vehicleTransmission: truck.transmission }),
+        ...(truck.fuelType && { fuelType: truck.fuelType }),
+        offers: {
+          '@type': 'Offer',
+          url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+          priceCurrency: 'ZAR',
+          availability: 'https://schema.org/InStock',
+          itemCondition: 'https://schema.org/UsedCondition',
+          seller: { '@id': 'https://www.a-ztrucksales.com/#org' },
+          ...(truck.vatPrice != null && { price: truck.vatPrice }),
+        },
+      },
+    })),
+  }
 
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={faqSchema} />
+      {vehicles.length > 0 && <JsonLd data={itemListSchema} />}
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -161,12 +198,6 @@ export default async function FusoPage() {
                   reputation for light-duty trucks in South Africa. The Canter
                   range is one of the most popular choices for city delivery,
                   service vehicles and light commercial transport.
-                </p>
-                <p>
-                  The Canter is available from 3.5 to 8.5 tons GVM, making it an
-                  ideal choice for businesses needing a manoeuvrable,
-                  fuel-efficient truck for urban routes. The Fighter range
-                  handles heavier medium-duty work up to 18 tons GVM.
                 </p>
                 <p>
                   The Canter is available from 3.5 to 8.5 tons GVM, making it an
@@ -231,7 +262,7 @@ export default async function FusoPage() {
                     {(truck.images as any[])?.[0]?.url && (
                       <Image
                         src={(truck.images as any[])[0].url}
-                        alt={`${truck.year} ${truck.name}`}
+                        alt={truck.name}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover"
@@ -241,7 +272,7 @@ export default async function FusoPage() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold text-gray-900">
-                      {truck.year} {truck.name}
+                      {truck.name}
                     </h3>
                     <p className="text-amber-600 font-bold text-lg">
                       {truck.vatPrice

@@ -119,11 +119,48 @@ export default async function MercedesBenzPage() {
       acceptedAnswer: { '@type': 'Answer', text: faq.answer },
     })),
   }
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    '@id': 'https://www.a-ztrucksales.com/brands/mercedes-benz#inventory',
+    name: 'Used Mercedes-Benz Trucks in Stock',
+    itemListElement: vehicles.map((truck, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+      item: {
+        '@type': 'Vehicle',
+        '@id': `https://www.a-ztrucksales.com/inventory/${truck.slug}#product`,
+        name: truck.name,
+        url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+        image: (truck.images as any[])?.[0]?.url,
+        ...(truck.mileage != null && {
+          mileageFromOdometer: {
+            '@type': 'QuantitativeValue',
+            value: truck.mileage,
+            unitCode: 'KMT',
+          },
+        }),
+        ...(truck.transmission && { vehicleTransmission: truck.transmission }),
+        ...(truck.fuelType && { fuelType: truck.fuelType }),
+        offers: {
+          '@type': 'Offer',
+          url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+          priceCurrency: 'ZAR',
+          availability: 'https://schema.org/InStock',
+          itemCondition: 'https://schema.org/UsedCondition',
+          seller: { '@id': 'https://www.a-ztrucksales.com/#org' },
+          ...(truck.vatPrice != null && { price: truck.vatPrice }),
+        },
+      },
+    })),
+  }
 
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={faqSchema} />
+      {vehicles.length > 0 && <JsonLd data={itemListSchema} />}
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -167,12 +204,6 @@ export default async function MercedesBenzPage() {
                   comfort and advanced technology. In South Africa,
                   Mercedes-Benz trucks are a popular choice for premium
                   transport operations.
-                </p>
-                <p>
-                  The Atego range covers light- to medium-duty work from 7.5 to
-                  16 tons, making it ideal for distribution, refrigerated
-                  transport and municipal applications. The Axor range handles
-                  heavier work and long-distance routes.
                 </p>
                 <p>
                   The Atego range covers light- to medium-duty work from 7.5 to
@@ -238,7 +269,7 @@ export default async function MercedesBenzPage() {
                     {(truck.images as any[])?.[0]?.url && (
                       <Image
                         src={(truck.images as any[])[0].url}
-                        alt={`${truck.year} ${truck.name}`}
+                        alt={truck.name}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover"
@@ -248,7 +279,7 @@ export default async function MercedesBenzPage() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold text-gray-900">
-                      {truck.year} {truck.name}
+                      {truck.name}
                     </h3>
                     <p className="text-amber-600 font-bold text-lg">
                       {truck.vatPrice

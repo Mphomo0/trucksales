@@ -5,6 +5,7 @@
 export const revalidate = 86400
 
 import AboutSection from '@/components/sections/home/AboutSection'
+import BrandsSection from '@/components/sections/home/BrandsSection'
 import CTA from '@/components/sections/home/CTA'
 import FAQSection from '@/components/sections/home/FAQSection'
 import Featured from '@/components/sections/home/Featured'
@@ -135,6 +136,7 @@ export default function Home() {
       <FindTruckSection />
       <Features />
       <Featured />
+      <BrandsSection />
       <AboutSection />
       <FAQSection />
       <DealerFaqBlock />
