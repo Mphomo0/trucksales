@@ -19,17 +19,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  async redirects() {
-    return [
-      {
-        // Apex → www as a permanent 308 (Vercel's dashboard redirect issues a 307)
-        source: '/:path*',
-        has: [{ type: 'host', value: 'a-ztrucksales.com' }],
-        destination: 'https://www.a-ztrucksales.com/:path*',
-        permanent: true,
-      },
-    ]
-  },
   async headers() {
     return [
       {
