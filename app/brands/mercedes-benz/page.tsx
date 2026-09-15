@@ -132,8 +132,10 @@ export default async function MercedesBenzPage() {
         '@type': 'Vehicle',
         '@id': `https://www.a-ztrucksales.com/inventory/${truck.slug}#product`,
         name: truck.name,
+        description: `Used ${truck.name} for sale at A-Z Truck Sales in Gauteng${truck.mileage != null ? `, ${truck.mileage.toLocaleString()} km` : ''}${truck.fuelType ? `, ${truck.fuelType.toLowerCase()} engine` : ''}${truck.transmission ? `, ${truck.transmission.toLowerCase()} transmission` : ''}.`,
         url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
         image: (truck.images as any[])?.[0]?.url,
+        brand: { '@type': 'Brand', name: 'Mercedes-Benz' },
         ...(truck.mileage != null && {
           mileageFromOdometer: {
             '@type': 'QuantitativeValue',
