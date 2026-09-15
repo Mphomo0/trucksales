@@ -41,12 +41,17 @@ const faqs = [
   {
     question: 'Does A-Z Truck Sales sell used Isuzu trucks in Gauteng?',
     answer:
-      'Yes, we stock used Isuzu trucks including N-Series and F-Series models. Isuzu is one of our most popular brands due to strong parts availability, reliable engines and broad dealer network across South Africa.',
+      'Yes, we stock used Isuzu trucks for sale including N-Series and F-Series models. Isuzu is one of our most popular brands due to strong parts availability, reliable engines and broad dealer network across South Africa.',
   },
   {
     question: 'What Isuzu truck models do you sell?',
     answer:
       'We sell used Isuzu N-Series (NPR, NQR, NPS) and F-Series (FRR, FSR, FVR, FVZ) rigid trucks in various body configurations including dropside, box body, refrigerated and curtain side.',
+  },
+  {
+    question: 'Do you have used Isuzu NPR trucks for sale?',
+    answer:
+      'Yes, the Isuzu NPR is one of our most popular models and stock changes regularly. The NPR is well suited to city delivery, retail distribution and service work, with strong parts availability across South Africa. Check our current stock below or contact us for the latest NPR availability.',
   },
   {
     question: 'Why buy a used Isuzu truck from A-Z?',
