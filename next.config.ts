@@ -8,7 +8,8 @@ const nextConfig: NextConfig = {
   },
   images: {
     // ImageKit images bypass Vercel's optimization (ImageKit handles its own transforms).
-    // Local /public assets still go through Vercel optimization via the default loader.
+    // Local /public assets are passed through unchanged by this loader, so any <Image>
+    // rendering one must pass the `unoptimized` prop (see Hero, AboutSection, Navbar).
     loader: 'custom',
     loaderFile: './lib/imagekit-loader.ts',
     remotePatterns: [

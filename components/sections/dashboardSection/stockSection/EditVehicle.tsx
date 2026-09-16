@@ -54,7 +54,7 @@ export default function EditVehicle() {
     control,
     setValue,
     reset,
-    watch,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<VehicleFormData>({
     resolver: zodResolver(vehicleSchema),
@@ -263,7 +263,7 @@ export default function EditVehicle() {
     'The vehicle has been checked by our workshop, with lube service, quality check and testing completed. A-Z Truck Sales can also assist with paperwork for export buyers across Africa.'
 
   const generateDescription = () => {
-    const values = watch()
+    const values = getValues()
     const bodyType = values.bodyType?.toLowerCase().trim() ?? ''
     const suitableFor = bodyTypeSuitableFor[bodyType] || defaultSuitableFor
 

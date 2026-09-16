@@ -117,7 +117,7 @@ export default function ChatbotDashboard() {
   }, [])
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     fetchStats()
     const id = setInterval(() => {
       if (document.visibilityState === 'visible') fetchStats()

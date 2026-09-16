@@ -221,7 +221,11 @@ export function AnalyticsDashboard() {
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#888' }} />
                 <Tooltip
                   contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
-                  labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                  labelFormatter={(value) =>
+                    typeof value === 'string' || typeof value === 'number'
+                      ? new Date(value).toLocaleDateString()
+                      : ''
+                  }
                   formatter={(value: any) => [value?.toLocaleString() ?? '0', 'Page Views']}
                 />
                 <Line

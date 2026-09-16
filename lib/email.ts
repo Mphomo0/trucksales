@@ -1,5 +1,4 @@
-import nodemailer from 'nodemailer'
-import { Attachment } from 'nodemailer/lib/mailer'
+import nodemailer, { Attachment } from 'nodemailer'
 
 // Define the expected input for sending an email
 interface SendMailParams {

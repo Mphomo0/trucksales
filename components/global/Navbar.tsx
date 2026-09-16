@@ -70,6 +70,7 @@ const NavLinks = [
                 width={300}
                 height={150}
                 priority
+                unoptimized
                 className="h-12 w-auto"
               />
             </Link>

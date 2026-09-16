@@ -51,8 +51,8 @@ import Link from 'next/link'
               alt="Dealership Image"
               width={800}
               height={600}
+              unoptimized
               className="w-full h-auto rounded-lg shadow-lg"
-
             />
           </div>
         </div>

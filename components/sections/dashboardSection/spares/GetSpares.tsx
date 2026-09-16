@@ -5,7 +5,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { ColumnDef } from '@tanstack/react-table'
+import type { LegacyColumnDef } from '@tanstack/react-table/legacy'
 import { DataTable } from './data-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -69,7 +69,7 @@ interface ImageFile {
   }
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     getAllSpares(1)
   }, [])
 
@@ -115,7 +115,7 @@ interface ImageFile {
     }
   }
 
-  const columns: ColumnDef<SparesItem>[] = [
+  const columns: LegacyColumnDef<SparesItem>[] = [
     {
       accessorKey: 'thumbnail',
       header: 'Thumbnail',

@@ -5,7 +5,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import type { ColumnDef } from '@tanstack/react-table'
+import type { LegacyColumnDef } from '@tanstack/react-table/legacy'
 import { DataTable } from './data-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -159,7 +159,7 @@ interface Meta {
     }
   }
 
-  const columns: ColumnDef<Vehicle>[] = [
+  const columns: LegacyColumnDef<Vehicle>[] = [
     {
       accessorKey: 'thumbnail',
       header: 'Thumbnail',

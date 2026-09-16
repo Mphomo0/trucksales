@@ -17,6 +17,7 @@ import Link from 'next/link'
         alt="Used trucks parked at A-Z Truck Sales dealership in Gauteng"
         fill
         priority
+        unoptimized
         sizes="100vw"
         className="object-cover object-center"
       />

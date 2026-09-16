@@ -4,14 +4,14 @@
 
 'use client'
 
+import { flexRender, RowData } from '@tanstack/react-table'
 import {
-  flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
-  ColumnDef,
-} from '@tanstack/react-table'
+  useLegacyTable,
+  LegacyColumnDef,
+} from '@tanstack/react-table/legacy'
 import {
   Table,
   TableBody,
@@ -22,15 +22,15 @@ import {
 } from '@/components/ui/table'
 import { useState } from 'react'
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
+interface DataTableProps<TData extends RowData> {
+  columns: LegacyColumnDef<TData>[]
   data: TData[]
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends RowData>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<
     import('@tanstack/react-table').SortingState
   >([])
@@ -42,8 +42,7 @@ export function DataTable<TData, TValue>({
     pageSize: 550,
   })
 
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const table = useReactTable({
+  const table = useLegacyTable({
     data,
     columns,
     state: {

@@ -235,7 +235,7 @@ export default function AllSparesFilter({
 
   useEffect(() => {
     if (initialSpares && initialSpares.length > 0) return
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     fetchSpares(buildFilters(1))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

@@ -52,7 +52,7 @@ const UploadMultiple = ({
         preview: img.url,
         isExisting: true,
       }))
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setPreviews(initialPreviews)
     } else {
       setPreviews([])
