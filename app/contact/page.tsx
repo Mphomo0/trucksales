@@ -66,95 +66,7 @@ const contactFaqs = [
   },
 ]
 
-const localBusinessSchemaJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'AutoDealer',
-  '@id': 'https://www.a-ztrucksales.com/#business',
-  name: 'A-Z Truck Sales',
-  url: 'https://www.a-ztrucksales.com/',
-  logo: 'https://www.a-ztrucksales.com/logo.png',
-  description: 'A-Z Truck Sales is a used commercial vehicle dealer in Gauteng with branches in Alberton and Boksburg, supplying used rigid trucks, commercial vehicles and truck spares.',
-  telephone: '+27 11 902 6071',
-  email: 'aztrucksales@mweb.co.za',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: '9 Chrislou Crescent',
-    addressLocality: 'Alberton North',
-    addressRegion: 'Gauteng',
-    postalCode: '1449',
-    addressCountry: 'ZA',
-  },
-  areaServed: ['Alberton', 'Boksburg', 'Johannesburg', 'East Rand', 'Gauteng', 'South Africa'],
-  openingHours: 'Mo-Fr 08:00-17:00',
-  sameAs: [
-    'https://web.facebook.com/p/A-Z-TRUCK-SALES-100057330584780/',
-    'https://www.linkedin.com/company/a-z-truck-sales/?originalSubdomain=za',
-  ],
-}
-
-const localBusinessSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'AutoDealer',
-  '@id': 'https://www.a-ztrucksales.com/#org',
-  name: 'A-Z Truck Sales',
-  image: 'https://www.a-ztrucksales.com/og-image.webp',
-  telephone: '+27119026071',
-  email: 'aztrucksales@mweb.co.za',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: '9 Chrislou Crescent',
-    addressLocality: 'Alberton North',
-    addressRegion: 'Gauteng',
-    postalCode: '1449',
-    addressCountry: 'ZA',
-  },
-  geo: { '@type': 'GeoCoordinates', latitude: -26.2694, longitude: 28.1221 },
-  openingHoursSpecification: [
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      opens: '08:00',
-      closes: '17:00',
-    },
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: 'Saturday',
-      opens: '08:00',
-      closes: '13:00',
-    },
-  ],
-  areaServed: { '@type': 'Country', name: 'South Africa' },
-  department: [
-    {
-      '@type': 'AutoDealer',
-      name: 'A-Z Truck Sales — Alberton',
-      telephone: '+27119026071',
-      email: 'aztrucksales@mweb.co.za',
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: '9 Chrislou Crescent',
-        addressLocality: 'Alberton North',
-        addressRegion: 'Gauteng',
-        postalCode: '1449',
-        addressCountry: 'ZA',
-      },
-    },
-    {
-      '@type': 'AutoDealer',
-      name: 'A-Z Truck Sales — Boksburg',
-      telephone: '+27832345377',
-      email: 'aztruckboks@gmail.com',
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: 'Corner Trichardts Road & Ravenswood Street',
-        addressLocality: 'Ravenswood',
-        addressRegion: 'Gauteng',
-        postalCode: '1451',
-        addressCountry: 'ZA',
-      },
-    },
-  ],
-}
+// Business and branch entities live in app/layout.tsx (#org) and the /locations pages.
 
 /* application/ld+json */ export default function Contact() {
   const breadcrumbSchema = {
@@ -198,8 +110,6 @@ const localBusinessSchema = {
         {/* application/ld+json */}
       </div>
       <JsonLd data={breadcrumbSchema} />
-      <JsonLd data={localBusinessSchema} />
-      <JsonLd data={localBusinessSchemaJsonLd} />
       <JsonLd data={contactFaqSchema} />
       
       <div className="container mx-auto px-4 text-center mb-12">

@@ -23,49 +23,14 @@ export const metadata: Metadata = {
   },
 }
 
-const orgSchema = {
+// The business itself (#org) is defined once in app/layout.tsx; this page only refers to it.
+const aboutPageSchema = {
   '@context': 'https://schema.org',
-  '@type': 'AutoDealer',
-  '@id': 'https://www.a-ztrucksales.com/#org',
-  name: 'A-Z Truck Sales',
-  url: 'https://www.a-ztrucksales.com',
-  logo: 'https://www.a-ztrucksales.com/images/logo.png',
-  image: 'https://www.a-ztrucksales.com/og-image.webp',
-  description:
-    'Used rigid truck dealer in Gauteng, South Africa, established in 1999. Two branches in Alberton and Boksburg. COF-ready trucks and truck spares.',
-  foundingDate: '1999-01-01',
-  areaServed: 'Gauteng, South Africa',
-  sameAs: [
-    'https://web.facebook.com/p/A-Z-TRUCK-SALES-100057330584780/',
-    'https://www.linkedin.com/company/a-z-truck-sales/?originalSubdomain=za',
-    'https://www.youtube.com/@A-ZTRUCKSALES',
-  ],
-}
-
-const localBusinessSchemaJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'AutoDealer',
-  '@id': 'https://www.a-ztrucksales.com/#business',
-  name: 'A-Z Truck Sales',
-  url: 'https://www.a-ztrucksales.com/',
-  logo: 'https://www.a-ztrucksales.com/logo.png',
-  description: 'A-Z Truck Sales is a used commercial vehicle dealer in Gauteng with branches in Alberton and Boksburg, supplying used rigid trucks, commercial vehicles and truck spares.',
-  telephone: '+27 11 902 6071',
-  email: 'aztrucksales@mweb.co.za',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: '9 Chrislou Crescent, Alberton North',
-    addressLocality: 'Alberton',
-    addressRegion: 'Gauteng',
-    postalCode: '1449',
-    addressCountry: 'ZA',
-  },
-  areaServed: ['Alberton', 'Boksburg', 'Johannesburg', 'East Rand', 'Gauteng', 'South Africa'],
-  openingHours: 'Mo-Fr 08:00-17:00',
-  sameAs: [
-    'https://web.facebook.com/p/A-Z-TRUCK-SALES-100057330584780/',
-    'https://www.linkedin.com/company/a-z-truck-sales/?originalSubdomain=za',
-  ],
+  '@type': 'AboutPage',
+  '@id': 'https://www.a-ztrucksales.com/about#webpage',
+  url: 'https://www.a-ztrucksales.com/about',
+  name: 'About A-Z Truck Sales',
+  about: { '@id': 'https://www.a-ztrucksales.com/#org' },
 }
 
 const breadcrumbSchema = {
@@ -90,9 +55,8 @@ const breadcrumbSchema = {
 export default function AboutPage() {
   return (
     <>
-      <JsonLd data={orgSchema} />
+      <JsonLd data={aboutPageSchema} />
       <JsonLd data={breadcrumbSchema} />
-      <JsonLd data={localBusinessSchemaJsonLd} />
 
       {/* Hero */}
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
