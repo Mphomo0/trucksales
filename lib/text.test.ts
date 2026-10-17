@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { indefiniteArticle, withIndefiniteArticle } from './text'
+import { formatDisplayName, indefiniteArticle, withIndefiniteArticle } from './text'
 import { TONNAGE_BUCKETS } from './tonnage'
 
 describe('indefiniteArticle', () => {
@@ -36,5 +36,19 @@ describe('indefiniteArticle', () => {
       'a 10 to 18 Ton',
       'an 18 to 35 Ton',
     ])
+  })
+})
+
+describe('formatDisplayName', () => {
+  it('keeps model codes and acronyms upright', () => {
+    expect(formatDisplayName('ud kuzer rke150')).toBe('UD Kuzer RKE150')
+    expect(formatDisplayName('faw 6-130fl')).toBe('FAW 6-130FL')
+    expect(formatDisplayName('MAN')).toBe('MAN')
+  })
+
+  it('title-cases plain brand and body words', () => {
+    expect(formatDisplayName('isuzu')).toBe('Isuzu')
+    expect(formatDisplayName('mercedes benz')).toBe('Mercedes Benz')
+    expect(formatDisplayName('curtain side truck')).toBe('Curtain Side Truck')
   })
 })

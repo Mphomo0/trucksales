@@ -10,6 +10,7 @@ import { cache } from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import JsonLd from '@/components/global/JsonLd'
+import { formatDisplayName } from '@/lib/text'
 
 export const dynamic = 'force-static'
 export const revalidate = 86400
@@ -39,8 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     notFound()
   }
 
-  const toTitleCase = (s: string) =>
-    s.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+  const toTitleCase = formatDisplayName
 
   const buildTitle = () => {
     const suffix = ' for Sale | A-Z Truck Sales'
@@ -69,9 +69,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const mileageDesc = vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : ''
   const transmissionDesc = vehicle.transmission?.toLowerCase() ?? 'manual'
   const fuelDesc = vehicle.fuelType?.toLowerCase() ?? 'diesel'
-  let description = `${vehicle.year} ${vehicle.make} ${vehicle.model}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} for sale in Gauteng.${mileageDesc ? ` ${mileageDesc},` : ''} ${transmissionDesc}, ${fuelDesc}. Contact A-Z Truck Sales to view.`
+  let description = `${vehicle.year} ${toTitleCase(vehicle.make)} ${toTitleCase(vehicle.model)}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} for sale in Gauteng.${mileageDesc ? ` ${mileageDesc},` : ''} ${transmissionDesc}, ${fuelDesc}. Contact A-Z Truck Sales to view.`
   if (description.length > 155) {
-    description = `${vehicle.year} ${vehicle.make} ${vehicle.model} for sale in Gauteng. Contact A-Z Truck Sales to view.`
+    description = `${vehicle.year} ${toTitleCase(vehicle.make)} ${toTitleCase(vehicle.model)} for sale in Gauteng. Contact A-Z Truck Sales to view.`
   }
 
   const canonicalUrl = `https://www.a-ztrucksales.com/inventory/${vehicle.slug}`
@@ -116,7 +116,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? (vehicle.images as { url: string }[]).map(img => img.url)
     : []
 
-  const description = `This ${vehicle.year} ${vehicle.make} ${vehicle.model} is a used ${vehicle.truckSize ?? ''} ${vehicle.bodyType ?? ''} truck available from A-Z Truck Sales in Gauteng. It has ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : ''}, a ${(vehicle.fuelType ?? 'diesel').toLowerCase()} engine and ${(vehicle.transmission ?? 'manual').toLowerCase()} transmission.`
+  // bodyType often already ends in "truck" ("curtain side truck"); avoid "truck truck"
+  const bodyDesc = (vehicle.bodyType ?? '').replace(/\s*truck$/i, '').trim()
+  const sizeDesc = vehicle.truckSize ? `${vehicle.truckSize} ` : ''
+  const description = `This ${vehicle.year} ${formatDisplayName(vehicle.make)} ${formatDisplayName(vehicle.model)} is a used ${sizeDesc}${bodyDesc ? `${bodyDesc} ` : ''}truck available from A-Z Truck Sales in Gauteng.${vehicle.mileage ? ` It has ${vehicle.mileage.toLocaleString()} km,` : ' It has'} a ${(vehicle.fuelType ?? 'diesel').toLowerCase()} engine and ${(vehicle.transmission ?? 'manual').toLowerCase()} transmission.`
 
   const offerSchema: Record<string, unknown> = {
     '@type': 'Offer',
@@ -133,8 +136,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     offerSchema.price = price
   }
 
-  const toTitleCase = (s: string) =>
-    s.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+  const toTitleCase = formatDisplayName
 
   const vehicleSchema = {
     '@context': 'https://schema.org',
@@ -217,7 +219,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.a-ztrucksales.com/' },
       { '@type': 'ListItem', position: 2, name: 'Inventory', item: 'https://www.a-ztrucksales.com/inventory' },
-      { '@type': 'ListItem', position: 3, name: `${vehicle.year} ${vehicle.make} ${vehicle.model}`, item: `https://www.a-ztrucksales.com/inventory/${vehicle.slug}` },
+      { '@type': 'ListItem', position: 3, name: `${vehicle.year} ${formatDisplayName(vehicle.make)} ${formatDisplayName(vehicle.model)}`, item: `https://www.a-ztrucksales.com/inventory/${vehicle.slug}` },
     ],
   }
 

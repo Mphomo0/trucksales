@@ -32,6 +32,7 @@ import { WhatsAppButton } from '@/components/sections/inventorySection/WhatsAppB
 import EnquiryForm from '@/components/sections/inventorySection/EnquiryForm'
 import { useKeenSlider } from 'keen-slider/react'
 import { getCurrentPrice } from '@/lib/pricing'
+import { formatDisplayName } from '@/lib/text'
 import { ikHero, ikThumb } from '@/lib/imagekit'
 import 'keen-slider/keen-slider.min.css'
 
@@ -208,7 +209,7 @@ interface Props {
                             {shouldRenderSlide(index) && (
                             <Image
                               src={ikHero(img.url)}
-                              alt={`${vehicle.year} ${vehicle.make.replace(/\b\w/g, c => c.toUpperCase())} ${vehicle.model.replace(/\b\w/g, c => c.toUpperCase())}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} - image ${index + 1}`}
+                              alt={`${vehicle.year} ${formatDisplayName(vehicle.make)} ${formatDisplayName(vehicle.model)}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} - image ${index + 1}`}
                               width={1200}
                               height={800}
                               className="object-cover w-full h-full"
@@ -292,7 +293,7 @@ interface Props {
                           <div className="relative w-full h-full">
                             <Image
                               src={ikThumb(img.url)}
-                              alt={`${vehicle.year} ${vehicle.make.replace(/\b\w/g, c => c.toUpperCase())} ${vehicle.model.replace(/\b\w/g, c => c.toUpperCase())}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} - image ${index + 1}`}
+                              alt={`${vehicle.year} ${formatDisplayName(vehicle.make)} ${formatDisplayName(vehicle.model)}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} - image ${index + 1}`}
                               width={300}
                               height={200}
                               className="object-cover w-full h-full"
@@ -329,8 +330,8 @@ interface Props {
                 <div className="flex justify-between items-start">
                   <div>
                     <h1 className="font-semibold leading-none tracking-tight text-2xl md:text-3xl">
-                      {vehicle.year} {vehicle.make.replace(/\b\w/g, c => c.toUpperCase())}{' '}
-                      {vehicle.model.replace(/\b\w/g, c => c.toUpperCase())}
+                      {vehicle.year} {formatDisplayName(vehicle.make)}{' '}
+                      {formatDisplayName(vehicle.model)}
                       {vehicle.mileage
                         ? ` — ${Math.round(vehicle.mileage / 1000)}k km`
                         : ''}
@@ -378,8 +379,8 @@ interface Props {
                 <div>
                   <h2 className="text-lg font-semibold mb-4">
                     About this {vehicle.year}{' '}
-                    {vehicle.make.replace(/\b\w/g, c => c.toUpperCase())}{' '}
-                    {vehicle.model.replace(/\b\w/g, c => c.toUpperCase())}
+                    {formatDisplayName(vehicle.make)}{' '}
+                    {formatDisplayName(vehicle.model)}
                   </h2>
 
                   {/* Auto-generated intro */}

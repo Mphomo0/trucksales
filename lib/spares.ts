@@ -1,34 +1,13 @@
+import { formatDisplayName } from './text'
+
 /**
  * Spares come from supplier stock lists in ALL CAPS ("NISSAN UD90 CENTRE PORTION").
  * These helpers turn that into readable names, titles and descriptions
  * without touching the stored data.
  */
 
-// Uppercase tokens that must stay uppercase when title-casing (engine/model codes
-// with digits are handled separately).
-const KEEP_UPPER = new Set([
-  'UD', 'MAN', 'FAW', 'VW', 'ECU', 'PTO', 'ABS', 'LHD', 'RHD', 'EGR', 'LPG',
-  'NPR', 'NQR', 'NKR', 'FTR', 'FSR', 'FVR', 'FRR', 'GVR', 'FM', 'FH', 'FE',
-  'FC', 'FD', 'TD', 'GH', 'RF', 'SUV', 'CAB',
-])
-
-// "CAB" is a word on spares ("Cab") rather than a code; keep it readable.
-KEEP_UPPER.delete('CAB')
-
-function formatToken(token: string): string {
-  if (/\d/.test(token)) return token.toUpperCase()
-  const upper = token.toUpperCase()
-  if (token.length <= 2 || KEEP_UPPER.has(upper)) return upper
-  return upper.charAt(0) + upper.slice(1).toLowerCase()
-}
-
 /** "NISSAN / UD FD46 ENGINE" -> "Nissan / UD FD46 Engine" */
-export function formatSpareName(name: string): string {
-  return name
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replace(/[A-Za-z0-9]+/g, formatToken)
-}
+export const formatSpareName = formatDisplayName
 
 /** "ud" -> "UD", "isuzu" -> "Isuzu" */
 export function formatMake(make: string): string {

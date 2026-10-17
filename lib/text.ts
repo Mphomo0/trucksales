@@ -26,3 +26,29 @@ export function indefiniteArticle(phrase: string): 'a' | 'an' {
 export function withIndefiniteArticle(phrase: string): string {
   return `${indefiniteArticle(phrase)} ${phrase}`
 }
+
+// Uppercase tokens that must stay uppercase when title-casing supplier/DB text.
+const KEEP_UPPER = new Set([
+  'UD', 'MAN', 'FAW', 'VW', 'ECU', 'PTO', 'ABS', 'LHD', 'RHD', 'EGR', 'LPG',
+  'NPR', 'NQR', 'NKR', 'FTR', 'FSR', 'FVR', 'FRR', 'GVR', 'FM', 'FH', 'FE',
+  'FC', 'FD', 'TD', 'GH', 'RF', 'SUV', 'GMC', 'BMW', 'DAF', 'TATA',
+])
+KEEP_UPPER.delete('TATA') // brand, not an acronym: "Tata"
+
+function formatToken(token: string): string {
+  if (/\d/.test(token)) return token.toUpperCase()
+  const upper = token.toUpperCase()
+  if (token.length <= 2 || KEEP_UPPER.has(upper)) return upper
+  return upper.charAt(0) + upper.slice(1).toLowerCase()
+}
+
+/**
+ * Title-cases lowercase or ALL CAPS stock text while keeping model codes and
+ * acronyms upright: "ud kuzer rke150" -> "UD Kuzer RKE150", "faw 6-130fl" -> "FAW 6-130FL".
+ */
+export function formatDisplayName(text: string): string {
+  return text
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/[A-Za-z0-9]+/g, formatToken)
+}
