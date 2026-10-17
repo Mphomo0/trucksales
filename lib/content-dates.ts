@@ -20,8 +20,8 @@ export interface ContentDate {
 }
 
 export const CONTENT_DATES = {
-  '/about': { published: '2026-06-21', modified: '2026-06-21' },
-  '/contact': { published: '2026-06-21', modified: '2026-06-21' },
+  '/about': { published: '2026-06-21', modified: '2026-10-17' },
+  '/contact': { published: '2026-06-21', modified: '2026-10-17' },
   '/locations': { published: '2026-06-17', modified: '2026-06-17' },
   '/locations/alberton': { published: '2026-06-21', modified: '2026-06-21' },
   '/locations/boksburg': { published: '2026-06-21', modified: '2026-06-21' },
