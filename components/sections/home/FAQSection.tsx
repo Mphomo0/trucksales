@@ -36,15 +36,16 @@ const guideSections = [
   {
     heading: 'Are the trucks at A-Z Truck Sales COF-ready?',
     summary:
-      'Many trucks at A-Z Truck Sales are COF-ready or can be prepared for roadworthy certification. Always confirm the current COF status of the specific vehicle, what has been checked or replaced, and what remains before the truck can go to work.',
+      'Yes. Every truck we sell is prepared to meet the Certificate of Fitness (COF) roadworthiness standard before it leaves our yard, so it is either COF-current or ready to be submitted. Still confirm the COF status of the specific vehicle and what was checked or replaced.',
     content: (
       <p>
-        Many trucks at A-Z Truck Sales are COF-ready or can be prepared for
-        roadworthy certification before collection. Always confirm the current
-        COF status of the specific vehicle, what has been inspected or
-        replaced, and what still needs attention before the truck is ready for
-        work. A work-ready truck reduces time off the road and prevents
-        unexpected repair costs after purchase.
+        Yes. Every truck we sell is prepared to meet the Certificate of Fitness
+        (COF) roadworthiness standard before it leaves our yard, so it is
+        either COF-current or ready to be submitted for COF. Still confirm the
+        COF status of the specific vehicle, what was inspected or replaced, and
+        what still needs attention before the truck goes to work. A work-ready
+        truck reduces time off the road and prevents unexpected repair costs
+        after purchase.
       </p>
     ),
   },

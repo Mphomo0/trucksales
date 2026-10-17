@@ -11,7 +11,6 @@ import FAQSection from '@/components/sections/home/FAQSection'
 import Featured from '@/components/sections/home/Featured'
 import Features from '@/components/sections/home/Features'
 import Hero from '@/components/sections/home/Hero'
-import DealerFaqBlock from '@/components/sections/shared/DealerFaqBlock'
 import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 
@@ -137,9 +136,6 @@ export default function Home() {
       </div>
       <div className="cv-auto">
         <FAQSection />
-      </div>
-      <div className="cv-auto">
-        <DealerFaqBlock />
       </div>
       <div className="cv-auto">
         <CTA />
