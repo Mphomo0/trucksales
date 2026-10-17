@@ -17,7 +17,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 
-const title = 'Contact A-Z Truck Sales | Call 011 902 6071 (Alberton & Boksburg)'
+const title = 'Contact A-Z Truck Sales | Call 011 902 6071'
 const description = 'Call 011 902 6071 or visit A-Z Truck Sales in Alberton or Boksburg. Open Mon-Fri 8am-5pm, Sat 8am-1pm, for used trucks, spares, trade-ins and enquiries.'
 
 export const metadata: Metadata = {
@@ -46,15 +46,15 @@ export const metadata: Metadata = {
 const contactFaqs = [
   {
     question: 'Where can I find Isuzu trucks for sale in Gauteng?',
-    answer: 'You can enquire with A-Z Truck Sales for used Isuzu rigid trucks in Gauteng. Always confirm current stock, mileage, body type, condition and branch location before visiting.',
+    answer: 'Isuzu is the make we stock most. Browse the used Isuzu trucks currently in stock, or call us to confirm mileage, body type, condition and which branch a truck is at before you visit.',
   },
   {
     question: 'Does A-Z Truck Sales sell Hino trucks?',
-    answer: 'A-Z Truck Sales should list current Hino stock on its inventory page and explain the body type, tonnage, mileage, condition, branch and price for each truck.',
+    answer: 'Yes, we stock used Hino trucks. Each listing shows the body type, tonnage, mileage, condition, branch and price, and you can browse them on our Hino page.',
   },
   {
     question: 'Can I buy Fuso trucks from outside Gauteng?',
-    answer: 'Yes, buyers across South Africa can enquire about Fuso and other used commercial vehicles, but viewing, payment, paperwork and transport details should be confirmed first.',
+    answer: 'Yes. Buyers across South Africa can enquire about Fuso and our other used trucks. We confirm viewing, payment, paperwork and transport details with you before any sale.',
   },
   {
     question: 'What documents should I ask for when buying a used truck?',
@@ -103,7 +103,7 @@ const contactFaqs = [
 
   return (
     <div className="bg-gray-50 py-12">
-      <h1 className="sr-only">Contact A-Z Truck Sales | Alberton & Boksburg, Gauteng</h1>
+      <h1 className="sr-only">Contact A-Z Truck Sales in Alberton & Boksburg</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-06-21</span>

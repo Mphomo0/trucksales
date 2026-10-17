@@ -187,7 +187,7 @@ const getSpecialsData = unstable_cache(
 
   return (
     <div className="bg-gray-100">
-      <h1 className="sr-only">Truck Specials & Discounts | A-Z Truck Sales</h1>
+      <h1 className="sr-only">Truck Specials & Discounts</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-04-27</span>

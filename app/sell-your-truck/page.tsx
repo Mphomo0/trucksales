@@ -84,7 +84,7 @@ const tradeInFaqs = [
 
   return (
     <>
-      <h1 className="sr-only">Sell or Trade In Your Used Truck | A-Z Truck Sales</h1>
+      <h1 className="sr-only">Sell or Trade In Your Used Truck</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
         <span>Last Updated: 2026-06-21</span>

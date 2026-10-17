@@ -43,17 +43,37 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const toTitleCase = formatDisplayName
 
+  // Identical stock units (same year/make/model/mileage) would share one title
+  const twins = await prisma.inventory.findMany({
+    where: {
+      year: vehicle.year,
+      make: { equals: vehicle.make, mode: 'insensitive' },
+      model: { equals: vehicle.model, mode: 'insensitive' },
+      mileage: vehicle.mileage,
+    },
+    select: { slug: true },
+    orderBy: { createdAt: 'asc' },
+  })
+  const twinIndex = twins.findIndex((t) => t.slug === vehicle.slug)
+  const twinTag =
+    twins.length > 1
+      ? vehicle.registrationNo
+        ? ` ${vehicle.registrationNo.toUpperCase()}`
+        : ` (Unit ${twinIndex + 1})`
+      : ''
+
   const buildTitle = () => {
     const suffix = ' for Sale | A-Z Truck Sales'
     const make = toTitleCase(vehicle.make)
     const model = toTitleCase(vehicle.model)
     const body = vehicle.bodyType ? ` ${toTitleCase(vehicle.bodyType)}` : ''
     // Differentiates identical stock units that share year/make/model/body
-    const unit = vehicle.mileage
-      ? ` ${Math.round(vehicle.mileage / 1000)}k km`
-      : vehicle.registrationNo
-        ? ` ${vehicle.registrationNo.toUpperCase()}`
-        : ''
+    const unit =
+      (vehicle.mileage
+        ? ` ${Math.round(vehicle.mileage / 1000)}k km`
+        : vehicle.registrationNo
+          ? ` ${vehicle.registrationNo.toUpperCase()}`
+          : '') + twinTag
     // Drop parts in priority order until the full title fits within 60 chars
     const candidates = [
       `${vehicle.year} ${make} ${model}${body}${unit}${suffix}`,
