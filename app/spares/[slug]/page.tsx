@@ -9,6 +9,7 @@ import { cache } from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import JsonLd from '@/components/global/JsonLd'
+import { buildSpareDescription, buildSpareTitle, formatSpareName } from '@/lib/spares'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -40,20 +41,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
-  // Layout appends "| A-Z Truck Sales" (17 chars); keep page portion ≤ 43 so full title ≤ 60
-  let title = `${spare.name} | ${spare.category}`
-  if (title.length > 43) {
-    title = title.substring(0, 40) + '...'
-  }
-
-  const baseDescription = `${spare.condition} ${spare.name} for ${spare.make} trucks. Available at A-Z Truck Sales, Gauteng.`.trim()
-  const charsLeft = 155 - baseDescription.length
-  let description = baseDescription
-
-  if (charsLeft > 5 && spare.description) {
-    const cleanDesc = spare.description.replace(/\s+/g, ' ').trim()
-    description = `${baseDescription} ${cleanDesc.substring(0, charsLeft)}${cleanDesc.length > charsLeft ? '...' : ''}`
-  }
+  const title = buildSpareTitle(spare.name)
+  const description = buildSpareDescription(spare)
 
   const canonicalUrl = `https://www.a-ztrucksales.com/spares/${spare.slug}`
   const images = Array.isArray(spare.images)
@@ -102,7 +91,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: spare.name,
+    name: formatSpareName(spare.name),
     image: images,
     description: spare.description,
     brand: {
@@ -166,11 +155,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ],
   }
 
+  const related = await prisma.spares.findMany({
+    where: {
+      id: { not: spare.id },
+      OR: [{ category: spare.category }, { make: spare.make }],
+    },
+    select: { slug: true, name: true, make: true, category: true, price: true },
+    orderBy: { createdAt: 'desc' },
+    take: 12,
+  })
+  // Same category first, then same make, four links max
+  const relatedSpares = [
+    ...related.filter((r) => r.category === spare.category),
+    ...related.filter((r) => r.category !== spare.category),
+  ].slice(0, 4)
+
   return (
     <div>
       <JsonLd data={productSchema} />
       <JsonLd data={spareFaqSchema} />
-      <SpareDetail spare={spare} />
+      <SpareDetail spare={spare} related={relatedSpares} />
     </div>
   )
 }

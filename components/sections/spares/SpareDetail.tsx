@@ -24,6 +24,8 @@ import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
 import { getCurrentPrice } from '@/lib/pricing'
 import { ikHero, ikThumb } from '@/lib/imagekit'
+import { formatMake, formatSpareName } from '@/lib/spares'
+import { getBrandRouteByMake } from '@/lib/brands'
 
 interface SparePartImage {
   url: string
@@ -48,13 +50,26 @@ interface SparePart {
   specialValidTo?: Date | string | null
 }
 
+interface RelatedSpare {
+  slug: string
+  name: string
+  make: string
+  category: string
+  price: number
+}
+
 interface Props {
   spare: SparePart
+  related?: RelatedSpare[]
 }
 
 /* <h1>A-Z Truck Sales Components</h1> */ export default function SpareDetail({
   spare,
+  related = [],
 }: Props) {
+  const displayName = formatSpareName(spare.name)
+  const displayMake = formatMake(spare.make)
+  const brandRoute = getBrandRouteByMake(spare.make)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [loaded, setLoaded] = useState(false)
 
@@ -275,7 +290,7 @@ interface Props {
                 <div className="flex justify-between items-start">
                   <div>
                     <h1 className="font-semibold leading-none tracking-tight text-2xl md:text-3xl">
-                      {spare.name.toUpperCase()}
+                      {displayName}
                     </h1>
                   </div>
                   <Badge className="bg-amber-600">{spare.condition}</Badge>
@@ -283,13 +298,76 @@ interface Props {
               </CardHeader>
               <CardContent>
                 <div>
-                  <h2 className="text-lg font-semibold mb-4">About this {spare.name}</h2>
-                  <p className="text-gray-600 leading-relaxed">
+                  <h2 className="text-lg font-semibold mb-4">About this {displayName}</h2>
+                  <p className="text-gray-600 leading-relaxed mb-4">
                     {spare.description}
                   </p>
-                  <p className="text-gray-600 leading-relaxed">
-                    <span className="font-bold">- Spares Category: </span>
-                    {spare.category || 'N/A'}
+                  <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 text-sm">
+                    <div>
+                      <dt className="font-semibold text-gray-900">Fits</dt>
+                      <dd className="text-gray-600">{displayMake} trucks</dd>
+                    </div>
+                    <div>
+                      <dt className="font-semibold text-gray-900">Part type</dt>
+                      <dd className="text-gray-600">{spare.category || 'N/A'}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-semibold text-gray-900">Condition</dt>
+                      <dd className="text-gray-600 capitalize">{spare.condition.toLowerCase()}</dd>
+                    </div>
+                  </dl>
+
+                  <h2 className="text-lg font-semibold mb-2">Before you buy</h2>
+                  <ul className="list-disc pl-5 space-y-2 text-gray-600 leading-relaxed mb-6">
+                    <li>
+                      Confirm fitment first: send us your truck&apos;s make, model, year and
+                      the part number or engine number, and we will check it against this part.
+                    </li>
+                    <li>
+                      Every part is inspected before sale. Ask us about warranty terms for this
+                      specific {spare.category ? spare.category.toLowerCase() : 'part'}.
+                    </li>
+                    <li>
+                      Collect from our Alberton or Boksburg branch, or we can arrange courier
+                      delivery anywhere in South Africa. Fitting can be arranged on request.
+                    </li>
+                  </ul>
+
+                  {related.length > 0 && (
+                    <>
+                      <h2 className="text-lg font-semibold mb-2">
+                        More {displayMake} and {spare.category ? spare.category.toLowerCase() : 'truck'} spares
+                      </h2>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-6">
+                        {related.map((r) => (
+                          <li key={r.slug}>
+                            <Link
+                              href={`/spares/${r.slug}`}
+                              className="text-sm text-blue-700 hover:underline"
+                            >
+                              {formatSpareName(r.name)} — R{r.price.toLocaleString('en-ZA')}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                  <p className="text-gray-600 text-sm">
+                    <Link href="/spares" className="text-blue-700 hover:underline">
+                      Browse all spare parts
+                    </Link>{' '}
+                    {brandRoute ? (
+                      <>
+                        or{' '}
+                        <Link
+                          href={`/brands/${brandRoute.slug}`}
+                          className="text-blue-700 hover:underline"
+                        >
+                          view used {brandRoute.label} trucks for sale
+                        </Link>
+                      </>
+                    ) : null}
+                    .
                   </p>
                 </div>
               </CardContent>
