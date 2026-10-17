@@ -19,7 +19,8 @@ describe('robots.txt', () => {
     ]) {
       expect(body).toContain(`User-Agent: ${ua}\n`)
     }
-    expect(body).toContain('Content-Signal: search=yes, ai-input=yes, ai-train=yes')
+    // every group carries the signal, since named groups do not inherit from '*'
+    expect(body.match(/Content-Signal: search=yes, ai-input=yes, ai-train=yes/g)).toHaveLength(8)
     expect(body).toMatch(/Sitemap: https?:\/\/.+\/sitemap\.xml/)
   })
 

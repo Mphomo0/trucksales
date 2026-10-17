@@ -36,9 +36,10 @@ const AI_USER_AGENTS = [
   'ChatGPT-User',
 ]
 
-// Content-Signal (contentsignals.org) states how content may be used. This matches
-// the existing policy: everything above is allowed, so search, AI answers and AI
-// training are all "yes". Change these values to change the declared policy.
+// Content-Signal (contentsignals.org) states how content may be used. It is repeated in
+// every group because a crawler that matches a named group ignores the '*' group. This
+// matches the existing policy: everything above is allowed, so search, AI answers and
+// AI training are all "yes". Change these values to change the declared policy.
 const CONTENT_SIGNAL = 'search=yes, ai-input=yes, ai-train=yes'
 
 function group(userAgent: string, withSignal: boolean): string {
@@ -53,7 +54,7 @@ export function GET() {
     process.env.NEXT_PUBLIC_BASE_URL || 'https://www.a-ztrucksales.com'
 
   const body = [
-    ...AI_USER_AGENTS.map((ua) => group(ua, false)),
+    ...AI_USER_AGENTS.map((ua) => group(ua, true)),
     group('*', true),
     `Sitemap: ${baseUrl}/sitemap.xml`,
   ].join('\n\n')
