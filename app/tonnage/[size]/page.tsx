@@ -1,4 +1,4 @@
-export const revalidate = 86400
+export const revalidate = 3600
 export const dynamicParams = false
 
 import JsonLd from '@/components/global/JsonLd'
@@ -24,7 +24,6 @@ const getTonnageVehicles = unstable_cache(
   (dbValue: string) =>
     prisma.inventory.findMany({
       where: { truckSize: { equals: dbValue, mode: 'insensitive' } },
-      take: 12,
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
@@ -39,16 +38,7 @@ const getTonnageVehicles = unstable_cache(
       },
     }),
   ['tonnage-vehicles'],
-  { tags: ['inventory'], revalidate: 86400 },
-)
-
-const getTonnageCount = unstable_cache(
-  (dbValue: string) =>
-    prisma.inventory.count({
-      where: { truckSize: { equals: dbValue, mode: 'insensitive' } },
-    }),
-  ['tonnage-count'],
-  { tags: ['inventory'], revalidate: 86400 },
+  { tags: ['inventory'], revalidate: 3600 },
 )
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -56,9 +46,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const bucket = getTonnageBucket(size)
   if (!bucket) return {}
 
-  const count = await getTonnageCount(bucket.dbValue)
-  const title = `${bucket.metaTitle} in Gauteng | ${count} in Stock`
-  const description = `Used ${bucket.label} trucks for sale in Gauteng (${count} in stock) — ideal for ${bucket.useCases}. COF-ready, workshop-checked. View prices and photos online.`
+  // No live stock count here: it drifted from the page and the sitemap
+  const title = `${bucket.metaTitle} in Gauteng | A-Z Truck Sales`
+  const description = `Used ${bucket.label} trucks for sale in Gauteng — ideal for ${bucket.useCases}. COF-ready, workshop-checked. View prices and photos online.`
   const canonicalUrl = `https://www.a-ztrucksales.com/tonnage/${bucket.slug}`
 
   return {
@@ -217,7 +207,7 @@ export default async function TonnagePage({ params }: Props) {
               href="/inventory"
               className="inline-flex items-center justify-center px-6 py-3 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition"
             >
-              View All Trucks in Stock
+              Browse All Trucks (Every Tonnage)
             </Link>
           </div>
         </div>
