@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { CONTENT_DATES } from '@/lib/content-dates'
 import { BRAND_ROUTES } from '@/lib/brands'
 import { TONNAGE_BUCKETS, getTonnageBucketBySize } from '@/lib/tonnage'
+import { isOffThemeVehicle } from '@/lib/off-theme'
 
 export const revalidate = 86400
 
@@ -32,7 +33,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const [vehicles, spareParts, byMake, bySize] = await Promise.all([
-      prisma.inventory.findMany({ select: { slug: true, updatedAt: true } }),
+      prisma.inventory.findMany({
+        select: { slug: true, model: true, name: true, updatedAt: true },
+      }),
       prisma.spares.findMany({ select: { slug: true, updatedAt: true } }),
       prisma.inventory.groupBy({
         by: ['make'],
@@ -84,10 +87,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return [
       ...dbBackedUrls,
       ...editorialUrls,
-      ...vehicles.map((v) => ({
-        url: `${baseUrl}/inventory/${v.slug}`,
-        lastModified: v.updatedAt,
-      })),
+      ...vehicles
+        .filter((v) => !isOffThemeVehicle(v))
+        .map((v) => ({
+          url: `${baseUrl}/inventory/${v.slug}`,
+          lastModified: v.updatedAt,
+        })),
       ...spareParts.map((s) => ({
         url: `${baseUrl}/spares/${s.slug}`,
         lastModified: s.updatedAt,

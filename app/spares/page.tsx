@@ -43,11 +43,12 @@ const getSparesStats = unstable_cache(
 )
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { total, minPrice } = await getSparesStats()
+  const { minPrice } = await getSparesStats()
   const priceFrom = minPrice ? ` from R${Math.round(minPrice).toLocaleString('en-ZA')}` : ''
 
-  const title = `${total} Truck Spares & Parts in Gauteng | A-Z Truck Sales`
-  const description = `${total} used truck parts in stock${priceFrom} incl. VAT — engines, gearboxes, diffs and commercial vehicle parts, inspected before sale. Alberton and Boksburg.`
+  // No live stock count in the title or description: it drifts from the page and sitemap
+  const title = 'Truck Spares & Parts in Gauteng | A-Z Truck Sales'
+  const description = `Used truck parts in stock${priceFrom} incl. VAT — engines, gearboxes, diffs and commercial vehicle parts, inspected before sale. Alberton and Boksburg.`
 
   return {
     title: { absolute: title },

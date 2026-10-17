@@ -40,11 +40,12 @@ const getInventoryStats = unstable_cache(
 )
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { total, minPrice } = await getInventoryStats()
+  const { minPrice } = await getInventoryStats()
   const priceFrom = minPrice ? ` from R${Math.round(minPrice).toLocaleString('en-ZA')}` : ''
 
-  const title = `${total} Used Trucks for Sale in South Africa | A-Z Truck Sales`
-  const description = `${total} used trucks in stock${priceFrom} incl. VAT — dropside, refrigerated, box body and more. COF-ready, workshop-checked, in Gauteng with delivery across South Africa. View prices, mileage and photos online.`
+  // No live stock count in the title or description: it drifts from the page and sitemap
+  const title = 'Used Trucks for Sale in South Africa | A-Z Truck Sales'
+  const description = `Used trucks in stock${priceFrom} incl. VAT — dropside, refrigerated, box body and more. COF-ready, workshop-checked, in Gauteng with delivery across South Africa. View prices, mileage and photos online.`
 
   return {
     title: { absolute: title },

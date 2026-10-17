@@ -11,6 +11,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import JsonLd from '@/components/global/JsonLd'
 import { formatDisplayName } from '@/lib/text'
+import { isOffThemeVehicle } from '@/lib/off-theme'
 
 export const dynamic = 'force-static'
 export const revalidate = 86400
@@ -101,6 +102,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [ogImage[0].url],
     },
     alternates: { canonical: canonicalUrl },
+    // Not a truck (car, bakkie, van): visible on the site but kept out of search
+    ...(isOffThemeVehicle(vehicle) && { robots: { index: false, follow: true } }),
   }
 }
 
