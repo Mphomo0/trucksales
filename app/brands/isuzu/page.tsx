@@ -4,6 +4,7 @@ import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { WhatsAppButton } from '@/components/sections/inventorySection/WhatsAppButton'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 
@@ -266,11 +267,14 @@ export default async function IsuzuPage() {
           {vehicles.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {vehicles.map((truck, i) => (
-                <Link
+                <div
                   key={truck.id}
-                  href={`/inventory/${truck.slug}`}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition"
+                  className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition flex flex-col"
                 >
+                  <Link
+                    href={`/inventory/${truck.slug}`}
+                    className="block flex-1"
+                  >
                   <div className="aspect-video bg-gray-200 relative overflow-hidden">
                     {(truck.images as any[])?.[0]?.url && (
                       <Image
@@ -300,7 +304,15 @@ export default async function IsuzuPage() {
                       <span>{truck.transmission ?? '-'}</span>
                     </div>
                   </div>
-                </Link>
+                  </Link>
+                  <div className="px-4 pb-4">
+                    <WhatsAppButton
+                      compact
+                      label="WhatsApp about this truck"
+                      url={`https://www.a-ztrucksales.com/inventory/${truck.slug}`}
+                    />
+                  </div>
+                </div>
               ))}
             </div>
           ) : (
