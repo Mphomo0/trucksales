@@ -10,6 +10,7 @@ import JsonLd from '@/components/global/JsonLd'
 import Link from 'next/link'
 import DealerFaqBlock from '@/components/sections/shared/DealerFaqBlock'
 import { prisma } from '@/lib/prisma'
+import { formatDisplayName } from '@/lib/text'
 import { buildVehicleItemList } from '@/lib/vehicle-list-schema'
 import { unstable_cache } from 'next/cache'
 
@@ -257,7 +258,7 @@ export default async function Inventory() {
                   href={`/inventory/${v.slug}`}
                   className="text-sm text-blue-700 hover:underline"
                 >
-                  {v.year} {v.make} {v.model}
+                  {v.year} {formatDisplayName(v.make)} {formatDisplayName(v.model)}
                 </Link>
               </li>
             ))}

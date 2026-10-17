@@ -1,3 +1,4 @@
+import { formatDisplayName } from '@/lib/text'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -16,8 +17,7 @@ interface Props {
   make: string
 }
 
-const toTitleCase = (s: string) =>
-  s.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+const toTitleCase = formatDisplayName
 
 export default function RelatedVehicles({ vehicles, make }: Props) {
   if (vehicles.length === 0) return null

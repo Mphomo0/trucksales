@@ -388,7 +388,7 @@ interface Props {
 
                   {/* Auto-generated intro */}
                   <p className="text-gray-600 leading-relaxed mb-4">
-                    This {vehicle.year} {vehicle.make} {vehicle.model} is a used {vehicle.truckSize ? `${vehicle.truckSize} ` : ''}{vehicle.bodyType ? `${vehicle.bodyType} ` : ''}available from A-Z Truck Sales in Gauteng. It has {(vehicle.mileage ?? 0).toLocaleString()} km, a {vehicle.fuelType?.toLowerCase() ?? 'diesel'} engine and {vehicle.transmission?.toLowerCase() ?? 'manual'} transmission.
+                    This {vehicle.year} {formatDisplayName(vehicle.make)} {formatDisplayName(vehicle.model)} is a used {vehicle.truckSize ? `${vehicle.truckSize} ` : ''}{vehicle.bodyType ? `${vehicle.bodyType} ` : ''}available from A-Z Truck Sales in Gauteng. It has {(vehicle.mileage ?? 0).toLocaleString()} km, a {vehicle.fuelType?.toLowerCase() ?? 'diesel'} engine and {vehicle.transmission?.toLowerCase() ?? 'manual'} transmission.
                   </p>
 
                   {/* Auto-generated suitable-for + stored description */}
@@ -411,13 +411,13 @@ interface Props {
                   <div className="mb-4">
                     <h3 className="font-semibold text-gray-800 mb-2">Key details:</h3>
                     <ul className="text-gray-600 space-y-1">
-                      <li><span className="font-medium">Make:</span> {vehicle.make}</li>
-                      <li><span className="font-medium">Model:</span> {vehicle.model}</li>
+                      <li><span className="font-medium">Make:</span> {formatDisplayName(vehicle.make)}</li>
+                      <li><span className="font-medium">Model:</span> {formatDisplayName(vehicle.model)}</li>
                       <li><span className="font-medium">Year:</span> {vehicle.year}</li>
                       <li><span className="font-medium">Mileage:</span> {(vehicle.mileage ?? 0).toLocaleString()} km</li>
                       <li><span className="font-medium">Fuel type:</span> {vehicle.fuelType?.toLowerCase() ?? 'diesel'}</li>
                       <li><span className="font-medium">Transmission:</span> {vehicle.transmission?.toLowerCase() ?? 'manual'}</li>
-                      <li><span className="font-medium">Body type:</span> {vehicle.bodyType}</li>
+                      <li><span className="font-medium">Body type:</span> {vehicle.bodyType ? formatDisplayName(vehicle.bodyType) : ''}</li>
                       <li><span className="font-medium">Truck size:</span> {vehicle.truckSize || 'N/A'}</li>
                       <li><span className="font-medium">Price incl. VAT:</span> R{vehicle.vatPrice.toLocaleString()}</li>
                       <li><span className="font-medium">Price excl. VAT:</span> R{vehicle.pricenoVat.toLocaleString()}</li>
