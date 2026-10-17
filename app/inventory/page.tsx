@@ -3,6 +3,7 @@
 /* application/ld+json */
 
 import dynamic from 'next/dynamic'
+import { Suspense } from 'react'
 import InventoryFeatures from '@/components/sections/inventorySection/InventoryFeatures'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
@@ -221,11 +222,14 @@ export default async function Inventory() {
       </div>
       <JsonLd data={breadcrumbSchema} />
 
-      <AllVehiclesFilter
-        initialVehicles={vehicles}
-        initialMeta={initialMeta}
-        initialFilterOptions={initialFilterOptions}
-      />
+      {/* useSearchParams in the filter needs a Suspense boundary on a static page */}
+      <Suspense fallback={null}>
+        <AllVehiclesFilter
+          initialVehicles={vehicles}
+          initialMeta={initialMeta}
+          initialFilterOptions={initialFilterOptions}
+        />
+      </Suspense>
 
       <DealerFaqBlock
         heading="Frequently Asked Questions About Used Trucks"

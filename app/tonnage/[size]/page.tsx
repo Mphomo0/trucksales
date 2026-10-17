@@ -120,10 +120,10 @@ export default async function TonnagePage({ params }: Props) {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/inventory"
+              href={`/inventory?size=${encodeURIComponent(bucket.dbValue)}`}
               className="inline-flex items-center justify-center px-8 py-3 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition"
             >
-              View All Trucks in Stock
+              View {bucket.label} Trucks in Stock
             </Link>
             <Link
               href="/contact"
@@ -204,10 +204,10 @@ export default async function TonnagePage({ params }: Props) {
           )}
           <div className="text-center mt-8">
             <Link
-              href="/inventory"
+              href={`/inventory?size=${encodeURIComponent(bucket.dbValue)}`}
               className="inline-flex items-center justify-center px-6 py-3 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition"
             >
-              Browse All Trucks (Every Tonnage)
+              Filter the Full Inventory to {bucket.label}
             </Link>
           </div>
         </div>

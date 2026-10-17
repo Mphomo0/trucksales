@@ -15,6 +15,7 @@ import {
 import { Search, Filter, Gauge } from 'lucide-react'
 import ImageComponent from 'next/image'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { Pagination } from '@/components/global/Pagination'
 import { getCurrentPrice } from '@/lib/pricing'
 import { ikCard } from '@/lib/imagekit'
@@ -176,7 +177,9 @@ export default function AllVehiclesFilter({
   const [makeFilter, setMakeFilter] = useState('all')
   const [modelFilter, setModelFilter] = useState('all')
   const [bodyTypeFilter, setBodyTypeFilter] = useState('all')
-  const [truckSizeFilter, setTruckSizeFilter] = useState('all')
+  // ?size=3 to 5 ton preselects the tonnage filter (linked from /tonnage pages)
+  const sizeParam = useSearchParams().get('size')
+  const [truckSizeFilter, setTruckSizeFilter] = useState(sizeParam || 'all')
   const [currentPage, setCurrentPage] = useState(1)
   const [limit, setLimit] = useState(25)
   const [meta, setMeta] = useState<VehicleMeta>({
@@ -294,7 +297,8 @@ export default function AllVehiclesFilter({
     const loadInitialData = async () => {
       const tasks: Promise<void>[] = []
       if (!initialFilterOptions) tasks.push(fetchFilterOptions())
-      if (initialVehicles.length === 0) tasks.push(fetchTrucks(buildFilters(1)))
+      if (initialVehicles.length === 0 || sizeParam)
+        tasks.push(fetchTrucks(buildFilters(1)))
       if (tasks.length > 0) await Promise.all(tasks)
     }
 
