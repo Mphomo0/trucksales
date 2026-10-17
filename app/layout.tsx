@@ -7,7 +7,7 @@ import { Geist } from 'next/font/google'
 import './globals.css'
 import ClientLayout from '@/components/global/ClientLayout'
 import { PostHogProvider } from './providers'
-import { GoogleAnalytics } from '@next/third-parties/google'
+import DeferredGoogleAnalytics from '@/components/global/DeferredGoogleAnalytics'
 import Script from 'next/script'
 
 const geistSans = Geist({
@@ -172,7 +172,7 @@ export default function RootLayout({
         className={`${geistSans.variable} antialiased`}
       >
         <PostHogProvider>
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
+          <DeferredGoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
 
           <JsonLd data={localBusinessSchema} />
           <JsonLd data={websiteSchema} />
