@@ -10,7 +10,6 @@ import CTA from '@/components/sections/home/CTA'
 import FAQSection from '@/components/sections/home/FAQSection'
 import Featured from '@/components/sections/home/Featured'
 import Features from '@/components/sections/home/Features'
-import FindTruckSection from '@/components/sections/home/FindTruckSection'
 import Hero from '@/components/sections/home/Hero'
 import DealerFaqBlock from '@/components/sections/shared/DealerFaqBlock'
 import JsonLd from '@/components/global/JsonLd'
@@ -128,7 +127,6 @@ export default function Home() {
       <JsonLd data={localBusinessBoksburgSchema} />
 
       <Hero />
-      <FindTruckSection />
       <Features />
       <Featured />
       <div className="cv-auto">
