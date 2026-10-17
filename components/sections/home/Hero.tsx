@@ -2,24 +2,39 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
-import Image from 'next/image'
+import { preload } from 'react-dom'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
 /* <h1>A-Z Truck Sales Components</h1> */ export default function Hero() {
+  // Start the hero download from the document head, matched to the srcset above
+  preload('/images/truckBg.webp', {
+    as: 'image',
+    imageSrcSet:
+      '/images/truckBg-1280.webp 1280w, /images/truckBg.webp 1920w',
+    imageSizes: '100vw',
+    fetchPriority: 'high',
+  })
+
   return (
     <section
       className="relative text-white overflow-hidden md:h-175 h-125"
       aria-label="Hero section with promotional message"
     >
-      <Image
+      {/* Plain <img> with a 1280w variant for phones and tablets (~45KB vs ~84KB).
+          next/image can't do this here: images are unoptimized to save Vercel
+          optimisation credits, so it would only ever serve the 1920w file. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src="/images/truckBg.webp"
-        alt="Used trucks parked at A-Z Truck Sales dealership in Gauteng"
-        fill
-        priority
-        unoptimized
+        srcSet="/images/truckBg-1280.webp 1280w, /images/truckBg.webp 1920w"
         sizes="100vw"
-        className="object-cover object-center"
+        width={1920}
+        height={765}
+        alt="Used trucks parked at A-Z Truck Sales dealership in Gauteng"
+        fetchPriority="high"
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover object-center"
       />
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-linear-to-r from-amber-600 to-yellow-600 opacity-60" />
