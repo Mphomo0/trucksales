@@ -25,6 +25,8 @@ export const CONTENT_DATES = {
   '/locations': { published: '2026-06-17', modified: '2026-06-17' },
   '/locations/alberton': { published: '2026-06-21', modified: '2026-06-21' },
   '/locations/boksburg': { published: '2026-06-21', modified: '2026-06-21' },
+  '/privacy-policy': { published: '2026-10-17', modified: '2026-10-17' },
+  '/terms': { published: '2026-10-17', modified: '2026-10-17' },
   '/sell-your-truck': { published: '2026-06-21', modified: '2026-06-21' },
   '/guides': { published: '2026-06-21', modified: '2026-06-21' },
   '/guides/buying-guide': { published: '2026-06-16', modified: '2026-07-03' },

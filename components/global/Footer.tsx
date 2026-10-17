@@ -133,8 +133,15 @@ import Link from 'next/link'
       </div>
 
       <div className="mt-12 text-center text-xs text-white">
-        &copy; {new Date().getFullYear()} A-Z Truck Sales. All rights reserved.
-        Designed by{' '}
+        &copy; {new Date().getFullYear()} A-Z Truck Sales. All rights reserved.{' '}
+        <Link prefetch={false} href="/privacy-policy" className="underline">
+          Privacy Policy
+        </Link>
+        {' | '}
+        <Link prefetch={false} href="/terms" className="underline">
+          Terms of Use
+        </Link>
+        . Designed by{' '}
         <a
           href="https://nostalgic-studio.co.za"
           target="_blank"
