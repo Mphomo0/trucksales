@@ -48,3 +48,6 @@ next-env.d.ts
 /docs
 
 skills-lock.json
+# local tooling and SEO audit reports
+.superpowers/
+a-ztrucksales.com-audit/
