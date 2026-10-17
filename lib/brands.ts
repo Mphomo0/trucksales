@@ -31,3 +31,28 @@ export function getBrandRouteByMake(make: string | null | undefined) {
   const lower = make.toLowerCase()
   return BRAND_ROUTES.find((b) => lower.includes(b.match.toLowerCase()))
 }
+
+/**
+ * Makes with stock on the site today, in the order they are named in copy.
+ * Single source for prose that lists brands (about, FAQs, quality blurb) so
+ * the lists cannot drift apart. Eicher appears occasionally and is left out.
+ */
+export const STOCKED_BRANDS = [
+  'Isuzu',
+  'UD Trucks',
+  'Hino',
+  'Fuso',
+  'Nissan',
+  'Toyota',
+  'FAW',
+  'Tata',
+  'Mercedes-Benz',
+  'MAN',
+  'Hyundai',
+] as const
+
+/** "Isuzu, UD Trucks, ... and Hyundai" */
+export function stockedBrandsSentence(): string {
+  const brands = [...STOCKED_BRANDS]
+  return `${brands.slice(0, -1).join(', ')} and ${brands[brands.length - 1]}`
+}

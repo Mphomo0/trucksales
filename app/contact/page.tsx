@@ -128,7 +128,7 @@ const contactFaqs = [
                 <p>9 Chrislou Crescent, Alberton North, Gauteng, 1449</p>
                 <p>Phone: <a href="tel:0119026071" className="text-amber-600 hover:underline">011 902 6071</a></p>
                 <p>Email: <a href="mailto:aztrucksales@mweb.co.za" className="text-amber-600 hover:underline">aztrucksales@mweb.co.za</a></p>
-                <p>Hours: Monday to Friday, 08:00–17:00</p>
+                <p>Hours: Monday to Friday, 08:00–17:00; Saturday, 08:00–13:00</p>
                 <a
                   href="https://www.google.com/maps/place/9+Chrislou+Crescent,+Alberton+North,+Gauteng,+1449"
                   target="_blank"

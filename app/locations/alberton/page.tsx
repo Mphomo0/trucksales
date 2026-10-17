@@ -3,6 +3,7 @@ export const revalidate = 86400
 import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 import Link from 'next/link'
+import { REVIEW_COUNT } from '@/lib/reviews'
 import Image from 'next/image'
 import { ikCard } from '@/lib/imagekit'
 import { prisma } from '@/lib/prisma'
@@ -199,7 +200,7 @@ export default async function AlbertonPage() {
                   <div className="text-gray-600">Years Experience</div>
                 </div>
                 <div className="text-center p-4 bg-amber-50 rounded-lg">
-                  <div className="text-3xl font-bold text-amber-500">245+</div>
+                  <div className="text-3xl font-bold text-amber-500">{REVIEW_COUNT}</div>
                   <div className="text-gray-600">Verified Reviews</div>
                 </div>
                 <div className="text-center p-4 bg-amber-50 rounded-lg">

@@ -4,7 +4,7 @@ export const DEALER_FAQS = [
   {
     question: 'What types of used trucks does A-Z Truck Sales stock?',
     answer:
-      'A-Z Truck Sales stocks used rigid commercial trucks ranging from 1.5 to 35 tons across all major body types: dropside trucks for construction and general freight, box body trucks for secure enclosed delivery, refrigerated trucks for food and cold-chain transport, curtain side trucks for palletised warehouse distribution, and chassis cabs for specialist superstructures. Brands in stock include Isuzu (N-Series and F-Series), Hino (300 and 500 Series), Mercedes-Benz (Atego, Axor), Fuso (Canter, Fighter), MAN (TGL, TGM), UD Trucks (Condor, Croner), and Nissan. Current stock exceeds 100 units across both Gauteng branches. Browse the full inventory at a-ztrucksales.com/inventory.',
+      'A-Z Truck Sales stocks used rigid commercial trucks ranging from 1.5 to 35 tons across all major body types: dropside trucks for construction and general freight, box body trucks for secure enclosed delivery, refrigerated trucks for food and cold-chain transport, curtain side trucks for palletised warehouse distribution, and chassis cabs for specialist superstructures. Brands in stock include Isuzu (N-Series and F-Series), Hino (300 and 500 Series), Mercedes-Benz (Atego, Axor), Fuso (Canter, Fighter), MAN (TGL, TGM), UD Trucks (Condor, Croner), Nissan, Toyota, FAW and Tata. Current stock exceeds 100 units across both Gauteng branches. Browse the full inventory at a-ztrucksales.com/inventory.',
   },
   {
     question: 'Do your used trucks come with a Certificate of Fitness (COF)?',

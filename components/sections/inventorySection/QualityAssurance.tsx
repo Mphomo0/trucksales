@@ -1,6 +1,7 @@
 /* author: A-Z Truck Sales */
 /* datePublished: 2026-05-15 */
 
+import { stockedBrandsSentence } from '@/lib/brands'
 import React from 'react'
 import { CheckCircle2, ShieldCheck, Settings2, Award } from 'lucide-react'
 
@@ -65,7 +66,7 @@ export default function QualityAssurance() {
                   A-Z Truck Sales has been a cornerstone of the Gauteng commercial vehicle market 
                   for over two decades. Our long-standing reputation is built on transparency, 
                   fair pricing, and expert knowledge of rigid trucks ranging from 1.5 to 35 tons.
-                  Our deep understanding of brands like Isuzu, Hino, Mercedes-Benz, Ford, MAN, Fuso, Toyota and Nissan allows 
+                  Our deep understanding of brands like {stockedBrandsSentence()} allows 
                   us to source and prepare the best used trucks available in South Africa today.
                 </p>
               </div>

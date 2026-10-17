@@ -17,7 +17,7 @@ export const TONNAGE_BUCKETS: TonnageBucket[] = [
     h1: '1 to 2.5 Ton Trucks for Sale in Gauteng',
     metaTitle: '1 to 2.5 Ton Trucks for Sale',
     intro:
-      'Light commercial trucks in the 1 to 2.5 ton class are the most affordable entry point into truck ownership, and the easiest to license and drive on a standard code.',
+      'Light commercial trucks in the 1 to 2.5 ton class are the most affordable entry point into truck ownership, and the easiest to license, with many falling under a Code B or Code C1 licence.',
     useCases:
       'courier and parcel delivery, small business logistics, mobile trades and light distribution work',
     faqs: [
@@ -45,7 +45,7 @@ export const TONNAGE_BUCKETS: TonnageBucket[] = [
     h1: '3 to 5 Ton Trucks for Sale in Gauteng',
     metaTitle: '3 to 5 Ton Trucks for Sale',
     intro:
-      'The 3 to 5 ton class is one of the most popular sizes for South African small and medium businesses — big enough for real payloads, small enough to drive on a standard licence.',
+      'The 3 to 5 ton class is one of the most popular sizes for South African small and medium businesses — big enough for real payloads, small enough to drive on a Code C1 licence (GVM up to 16,000 kg).',
     useCases:
       'furniture removals, parcel and courier delivery, retail distribution and light construction supply',
     faqs: [

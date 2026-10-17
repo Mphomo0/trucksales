@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import JsonLd from '@/components/global/JsonLd'
+import { stockedBrandsSentence } from '@/lib/brands'
 
 export const metadata: Metadata = {
   title: { absolute: 'About A-Z Truck Sales | Truck Dealer Since 1999' },
@@ -97,16 +98,15 @@ export default function AboutPage() {
             </h2>
             <div className="text-lg text-gray-600 space-y-4">
               <p>
-                A-Z Truck Sales was established in 1999 and has grown into one
-                of Gauteng&apos;s most trusted used commercial vehicle dealers.
-                From our roots in Alberton, we expanded to open a second branch
+                A-Z Truck Sales was established in 1999 and has grown into a
+                used commercial vehicle dealer serving Gauteng. From our roots
+                in Alberton, we expanded to open a second branch
                 in Boksburg to serve more of the East Rand and greater Gauteng.
               </p>
               <p>
                 We specialise in pre-owned rigid trucks from 1.5 to 35 tons
-                across all major commercial vehicle brands — Isuzu, Hino,
-                Mercedes-Benz, Fuso, MAN, UD Trucks, Toyota, Nissan, Tata and
-                Hyundai. Every truck we sell is COF-ready (Certificate of
+                across all major commercial vehicle brands —{' '}
+                {stockedBrandsSentence()}. Every truck we sell is COF-ready (Certificate of
                 Fitness) before it leaves our yard.
               </p>
               <p>
