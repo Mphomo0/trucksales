@@ -273,12 +273,14 @@ interface Props {
                   {vehicle.images.length > 1 && (
                     <div
                       ref={thumbnailRef}
+                      // slide widths are preset (4/5 per view) so the strip keeps its height
+                      // until keen-slider initialises, instead of collapsing and shifting the page
                       className="keen-slider mb-8 cursor-pointer px-2"
                     >
                       {(vehicle.images || []).map((img: any, index: number) => (
                         <div
                           key={index}
-                          className={`keen-slider__slide transition-all rounded overflow-hidden aspect-video ${
+                          className={`keen-slider__slide min-w-[calc((100%-30px)/4)] max-w-[calc((100%-30px)/4)] md:min-w-[calc((100%-40px)/5)] md:max-w-[calc((100%-40px)/5)] transition-all rounded overflow-hidden aspect-video ${
                             currentSlide === index
                               ? 'ring-2 ring-yellow-600 scale-95'
                               : 'opacity-70 hover:opacity-100'
