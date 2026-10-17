@@ -34,6 +34,7 @@ import EnquiryForm, {
 } from '@/components/sections/inventorySection/LazyEnquiryForm'
 import { useKeenSlider } from 'keen-slider/react'
 import { getCurrentPrice } from '@/lib/pricing'
+import { REVIEW_COUNT, REVIEW_RATING } from '@/lib/reviews'
 import { formatDisplayName } from '@/lib/text'
 import { ikHero, ikThumb } from '@/lib/imagekit'
 import 'keen-slider/keen-slider.min.css'
@@ -532,7 +533,7 @@ interface Props {
                     ))}
                   </div>
                   <span className="text-sm text-gray-600">
-                    4.0 (242 reviews)
+                    {REVIEW_RATING} ({REVIEW_COUNT} reviews)
                   </span>
                 </div>
                 <p className="text-sm text-gray-600">

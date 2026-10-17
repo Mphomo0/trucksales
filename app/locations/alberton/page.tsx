@@ -1,5 +1,6 @@
 export const revalidate = 86400
 
+import { REVIEW_COUNT, REVIEW_RATING } from '@/lib/reviews'
 import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 import Link from 'next/link'
@@ -122,8 +123,8 @@ export default async function AlbertonPage() {
     areaServed: 'Gauteng, South Africa',
     aggregateRating: {
       '@type': 'AggregateRating',
-      ratingValue: '4.0',
-      reviewCount: '245',
+      ratingValue: REVIEW_RATING,
+      reviewCount: String(REVIEW_COUNT),
       bestRating: '5',
       worstRating: '1',
     },

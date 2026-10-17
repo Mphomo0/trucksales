@@ -29,6 +29,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { REVIEW_COUNT, REVIEW_RATING } from '@/lib/reviews'
 import { WhatsAppButton } from '@/components/sections/inventorySection/WhatsAppButton'
 import EnquiryForm, {
   preloadEnquiryForm,
@@ -475,7 +476,7 @@ interface Special {
                     ))}
                   </div>
                   <span className="text-sm text-gray-600">
-                    4.0 (242 reviews)
+                    {REVIEW_RATING} ({REVIEW_COUNT} reviews)
                   </span>
                 </div>
                 <p className="text-sm text-gray-600">

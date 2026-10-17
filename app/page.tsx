@@ -4,6 +4,7 @@
 
 export const revalidate = 86400
 
+import { REVIEW_COUNT, REVIEW_RATING } from '@/lib/reviews'
 import AboutSection from '@/components/sections/home/AboutSection'
 import BrandsSection from '@/components/sections/home/BrandsSection'
 import CTA from '@/components/sections/home/CTA'
@@ -86,8 +87,8 @@ const localBusinessAlbertonSchema = {
   priceRange: '$$',
   aggregateRating: {
     '@type': 'AggregateRating',
-    ratingValue: '4.0',
-    reviewCount: '245',
+    ratingValue: REVIEW_RATING,
+    reviewCount: String(REVIEW_COUNT),
   },
 }
 
