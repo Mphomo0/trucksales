@@ -1,81 +1,81 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Gauge } from "lucide-react";
-import { useKeenSlider, KeenSliderPlugin } from "keen-slider/react";
-import "keen-slider/keen-slider.min.css";
-import { getCurrentPrice } from "@/lib/pricing";
-import { ikCard } from "@/lib/imagekit";
-import { formatDisplayName } from "@/lib/text";
+import Image from 'next/image'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { ChevronLeft, ChevronRight, Gauge } from 'lucide-react'
+import { useKeenSlider, KeenSliderPlugin } from 'keen-slider/react'
+import 'keen-slider/keen-slider.min.css'
+import { getCurrentPrice } from '@/lib/pricing'
+import { ikCard } from '@/lib/imagekit'
+import { formatDisplayName } from '@/lib/text'
 
 interface TruckItem {
-  id: string;
-  name: string;
-  make: string;
-  model: string;
-  year: number;
-  vatPrice: number;
-  mileage: number | null;
-  fuelType: string | null;
-  condition: string;
-  transmission: string | null;
-  thumbnail?: { fileId?: string; url: string } | null;
-  slug: string;
-  specialPrice: number | null;
-  specialValidFrom: Date | string | null;
-  specialValidTo: Date | string | null;
+  id: string
+  name: string
+  make: string
+  model: string
+  year: number
+  vatPrice: number
+  mileage: number | null
+  fuelType: string | null
+  condition: string
+  transmission: string | null
+  thumbnail?: { fileId?: string; url: string } | null
+  slug: string
+  specialPrice: number | null
+  specialValidFrom: Date | string | null
+  specialValidTo: Date | string | null
 }
 
 const noImage = (
   <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
     No Image Available
   </div>
-);
+)
 
 // Advances one slide every few seconds; pauses while the user hovers, touches or drags.
 const autoplay: KeenSliderPlugin = (slider) => {
-  let timeout: ReturnType<typeof setTimeout>;
-  let paused = false;
-  const clear = () => clearTimeout(timeout);
+  let timeout: ReturnType<typeof setTimeout>
+  let paused = false
+  const clear = () => clearTimeout(timeout)
   const next = () => {
-    clear();
-    if (paused) return;
-    timeout = setTimeout(() => slider.next(), 3500);
-  };
-  slider.on("created", () => {
-    slider.container.addEventListener("mouseover", () => {
-      paused = true;
-      clear();
-    });
-    slider.container.addEventListener("mouseout", () => {
-      paused = false;
-      next();
-    });
-    next();
-  });
-  slider.on("dragStarted", clear);
-  slider.on("animationEnded", next);
-  slider.on("updated", next);
-  slider.on("destroyed", clear);
-};
+    clear()
+    if (paused) return
+    timeout = setTimeout(() => slider.next(), 3500)
+  }
+  slider.on('created', () => {
+    slider.container.addEventListener('mouseover', () => {
+      paused = true
+      clear()
+    })
+    slider.container.addEventListener('mouseout', () => {
+      paused = false
+      next()
+    })
+    next()
+  })
+  slider.on('dragStarted', clear)
+  slider.on('animationEnded', next)
+  slider.on('updated', next)
+  slider.on('destroyed', clear)
+}
 
 export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
   const [sliderRef, sliderInstanceRef] = useKeenSlider<HTMLDivElement>(
     {
       loop: true,
-      mode: "free-snap",
+      mode: 'free-snap',
       slides: { perView: 1.15, spacing: 12 },
       breakpoints: {
-        "(min-width: 640px)": { slides: { perView: 2, spacing: 16 } },
-        "(min-width: 1024px)": { slides: { perView: 4, spacing: 16 } },
+        '(min-width: 640px)': { slides: { perView: 2, spacing: 16 } },
+        '(min-width: 1024px)': { slides: { perView: 4, spacing: 16 } },
       },
     },
     [autoplay],
-  );
+  )
 
   return (
     <section className="py-16">
@@ -101,14 +101,14 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                 truck.specialPrice ?? null,
                 truck.specialValidFrom ?? null,
                 truck.specialValidTo ?? null,
-              );
+              )
               const validUntil = truck.specialValidTo
-                ? new Date(truck.specialValidTo).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
+                ? new Date(truck.specialValidTo).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
                   })
-                : null;
+                : null
 
               return (
                 <div
@@ -140,7 +140,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
 
                       <CardContent className="p-4 flex flex-col justify-between grow">
                         <h3 className="text-xl font-bold mb-2 line-clamp-1">
-                          {truck.year} {truck.make.toUpperCase()}{" "}
+                          {truck.year} {truck.make.toUpperCase()}{' '}
                           {truck.model.toUpperCase()}
                         </h3>
                         <div className="flex flex-col items-start mb-3">
@@ -164,7 +164,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                           ) : (
                             <div>
                               <span className="text-2xl font-bold text-yellow-600">
-                                R{truck.vatPrice.toLocaleString()}{" "}
+                                R{truck.vatPrice.toLocaleString()}{' '}
                                 <span className="text-sm">inc. VAT</span>
                               </span>
                             </div>
@@ -172,7 +172,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                           <div>
                             <span className="text-gray-600 flex items-center">
                               <Gauge size={18} className="mr-1" />
-                              {truck.mileage?.toLocaleString() ?? "N/A"} km
+                              {truck.mileage?.toLocaleString() ?? 'N/A'} km
                             </span>
                           </div>
                         </div>
@@ -188,7 +188,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                     </Card>
                   </Link>
                 </div>
-              );
+              )
             })}
           </div>
 
@@ -222,5 +222,5 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
         </div>
       </div>
     </section>
-  );
+  )
 }
