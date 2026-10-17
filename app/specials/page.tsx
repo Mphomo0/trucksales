@@ -3,7 +3,7 @@
 /* application/ld+json */
 
 export const dynamic = 'force-static'
-export const revalidate = 86400
+export const revalidate = 3600 // keep in sync with SPECIALS_REVALIDATE_SECONDS
 
 import dynamicImport from 'next/dynamic'
 import SpecialsFeatures from '@/components/sections/specials/SpecialsFeatures'
@@ -19,6 +19,10 @@ const AllSpecials = dynamicImport(
 )
 import JsonLd from '@/components/global/JsonLd'
 import { prisma } from '@/lib/prisma'
+import {
+  activeVehicleSpecialWhere,
+  SPECIALS_REVALIDATE_SECONDS,
+} from '@/lib/specials'
 import { unstable_cache } from 'next/cache'
 import Link from 'next/link'
 
@@ -85,15 +89,8 @@ const getSpecialsData = unstable_cache(
     // Run both queries in parallel — cuts DB round-trip time in half
     const [vehicles, spares] = await Promise.all([
       prisma.inventory.findMany({
-        where: {
-          specialPrice: { not: null },
-          AND: [
-            { specialPrice: { gt: 0 } },
-            {
-              OR: [{ specialValidTo: null }, { specialValidTo: { gte: now } }],
-            },
-          ],
-        },
+        // Same rule as /specials/[slug] so listed links never redirect back here
+        where: activeVehicleSpecialWhere(now),
         select: {
           id: true,
           name: true,
@@ -146,7 +143,7 @@ const getSpecialsData = unstable_cache(
     return { vehicles, spares }
   },
   ['specials-page-data'],
-  { revalidate: 86400, tags: ['inventory', 'spares'] },
+  { revalidate: SPECIALS_REVALIDATE_SECONDS, tags: ['inventory', 'spares'] },
 )
 
 /* application/ld+json */ export default async function Specials() {

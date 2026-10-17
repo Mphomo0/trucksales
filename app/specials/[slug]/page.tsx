@@ -11,8 +11,9 @@ import { cache } from 'react'
 import { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
 import JsonLd from '@/components/global/JsonLd'
+import { isSpecialActive } from '@/lib/specials'
 
-export const revalidate = 86400
+export const revalidate = 3600 // keep in sync with SPECIALS_REVALIDATE_SECONDS
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -32,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Special Not Found' }
   }
 
-  if (now > inventory.specialValidTo || now < inventory.specialValidFrom) {
+  if (!isSpecialActive(inventory, now)) {
     return { title: 'Special Expired', robots: { index: false } }
   }
 
@@ -83,7 +84,7 @@ export default async function Special({ params }: Props) {
     notFound()
   }
 
-  if (now > inventory.specialValidTo || now < inventory.specialValidFrom) {
+  if (!isSpecialActive(inventory, now)) {
     // Expired specials were indexed as soft 404s; send crawlers to the live list
     permanentRedirect('/specials')
   }
