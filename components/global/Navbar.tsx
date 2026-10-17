@@ -67,8 +67,8 @@ const NavLinks = [
               <Image
                 src="/images/logo.png"
                 alt="A-Z Truck Sales logo"
-                width={300}
-                height={150}
+                width={320}
+                height={80}
                 priority
                 unoptimized
                 className="h-12 w-auto"

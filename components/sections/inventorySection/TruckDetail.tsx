@@ -152,6 +152,17 @@ interface Props {
 
   const videoLinkUrl = getVideoLinkUrl(vehicle.videoLink)
 
+  // Only slide 0 is fetched on first paint; the rest load once the slider is
+  // live and only for the current slide and its neighbours (loop-aware), so
+  // they stop competing with the LCP image for bandwidth.
+  const imageCount = vehicle.images?.length ?? 0
+  const shouldRenderSlide = (index: number) => {
+    if (index === 0) return true
+    if (!loaded || imageCount === 0) return false
+    const distance = Math.abs(index - currentSlide)
+    return Math.min(distance, imageCount - distance) <= 1
+  }
+
   const handlePrevious = useCallback(() => {
     sliderInstanceRef.current?.prev()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -194,6 +205,7 @@ interface Props {
                           key={index}
                         >
                           <div className="relative w-full h-60 md:h-96">
+                            {shouldRenderSlide(index) && (
                             <Image
                               src={ikHero(img.url)}
                               alt={`${vehicle.year} ${vehicle.make.replace(/\b\w/g, c => c.toUpperCase())} ${vehicle.model.replace(/\b\w/g, c => c.toUpperCase())}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} - image ${index + 1}`}
@@ -202,8 +214,9 @@ interface Props {
                               className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
                               priority={index === 0}
-                              fetchPriority={index === 0 ? 'high' : 'auto'}
+                              fetchPriority={index === 0 ? 'high' : 'low'}
                             />
+                            )}
                           </div>
                         </div>
                       ))}
@@ -282,6 +295,7 @@ interface Props {
                               height={200}
                               className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 100px, (max-width: 1024px) 150px, 200px"
+                              fetchPriority="low"
                             />
                           </div>
                         </div>
