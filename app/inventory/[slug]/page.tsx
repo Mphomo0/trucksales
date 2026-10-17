@@ -190,52 +190,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const productSchema = vehicleSchema
 
-  const vehicleFaqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'Is this truck still available?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Stock changes daily. Contact us at 011 902 6071 to confirm availability.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Can I view and test drive this truck?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Yes. Viewings by appointment at our Alberton branch. Call 011 902 6071 to arrange.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Do you offer warranty on this truck?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Every truck is COF-certified before sale. Contact us for full vehicle details.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Can I trade in my current truck?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Yes. We accept trade-ins and can use your current truck as partial payment.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Do you deliver trucks?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Yes, we can arrange transport of purchased vehicles across South Africa.',
-        },
-      },
-    ],
-  }
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -288,7 +242,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return (
     <div>
       <JsonLd data={productSchema} />
-      <JsonLd data={vehicleFaqSchema} />
       <JsonLd data={breadcrumbSchema} />
       {videoSchema && <JsonLd data={videoSchema} />}
       <TruckDetail vehicle={vehicle} />

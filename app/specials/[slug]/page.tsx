@@ -135,51 +135,12 @@ export default async function Special({ params }: Props) {
     offers: specialOfferSchema,
   }
 
-  const specialFaqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'Is this special truck still available?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: `Yes. Specials are valid until the stated expiry date. Stock is first-come, first-served.`,
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Can I view this truck before buying?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Yes, visits by appointment at our Alberton branch. Call 011 902 6071 to arrange.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Do you offer trade-in on special trucks?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Yes. You can use your current truck as partial or full payment on any special-priced vehicle.',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'Is delivery available?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Yes, we can arrange transport of purchased vehicles across South Africa.',
-        },
-      },
-    ],
-  }
 
   return (
     <div>
       <h1 className="sr-only">{inventory.year} {inventory.make} Special Offer</h1>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={productSchema} />
-      <JsonLd data={specialFaqSchema} />
       <SpecialDetails />
       <QualityAssurance />
     </div>
