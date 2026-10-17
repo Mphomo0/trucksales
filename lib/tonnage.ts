@@ -103,7 +103,17 @@ export const TONNAGE_BUCKETS: TonnageBucket[] = [
       {
         question: 'What can an 8 ton truck carry?',
         answer:
-          'An 8 to 9 ton truck typically carries several tons of palletised or bulk goods, depending on body type. This class is common for wholesale and refrigerated delivery.',
+          'An 8 to 9 ton truck is built to carry roughly 8 to 9 tonnes of palletised or bulk goods. The exact payload depends on the body: a heavy refrigerated body or crane leaves less capacity than a dropside or curtain side. Ask us for the payload of the specific truck before you buy.',
+      },
+      {
+        question: 'What is the difference between payload and GVM on an 8 ton truck?',
+        answer:
+          'Payload is what the truck can carry. GVM (gross vehicle mass) is the legal maximum for the truck, body and load together, so it is always higher. Trucks sold as 8 to 9 ton usually have a GVM of about 15 to 16 tonnes, for example the FAW 15-180FL, Fuso FJ16 and Hino 1627. The GVM is on the vehicle plate, and we can confirm it for any truck in stock.',
+      },
+      {
+        question: 'Which licence do I need to drive an 8 to 9 ton truck?',
+        answer:
+          'In South Africa a Code C1 licence covers vehicles with a GVM between 3,500 kg and 16,000 kg, which includes most trucks in this class. A truck above 16,000 kg GVM needs a Code C licence, so check the GVM of the specific truck first.',
       },
       {
         question: 'Do you have refrigerated 8 ton trucks in stock?',
