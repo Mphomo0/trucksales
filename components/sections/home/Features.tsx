@@ -2,6 +2,7 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
+import { REVIEW_COUNT, REVIEW_RATING } from '@/lib/reviews'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Shield, Wrench, Star } from 'lucide-react'
 
@@ -45,12 +46,12 @@ import { Shield, Wrench, Star } from 'lucide-react'
           <Card>
             <CardHeader className="text-center">
               <Star className="h-12 w-12 text-amber-300 mx-auto mb-4" />
-              <CardTitle>4.0-Star Reviews</CardTitle>
+              <CardTitle>{REVIEW_RATING}-Star Reviews</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-gray-600">
-                Our 4.0 customer rating reflects our commitment to quality and
-                reliability.
+                Rated {REVIEW_RATING} out of 5 from {REVIEW_COUNT} customer
+                reviews.
               </p>
             </CardContent>
           </Card>
