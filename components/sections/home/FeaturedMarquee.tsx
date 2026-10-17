@@ -1,12 +1,9 @@
-'use client'
-
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Gauge } from 'lucide-react'
-import Marquee from 'react-fast-marquee'
 import { getCurrentPrice } from '@/lib/pricing'
 import { ikCard } from '@/lib/imagekit'
 
@@ -44,16 +41,13 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
           </p>
         </div>
 
-        <div className="overflow-hidden">
-          <Marquee
-            speed={80}
-            pauseOnHover={true}
-            pauseOnClick={true}
-            delay={0}
-            play={true}
-            direction="left"
-          >
-            {trucks.map((truck, index) => {
+        {/* Server-rendered, swipeable row: truck links are in the HTML for crawlers and
+            there is no auto-scrolling to chase on mobile. */}
+        <div
+          className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0"
+          aria-label="Featured used trucks"
+        >
+            {trucks.slice(0, 12).map((truck) => {
               const priceInfo = getCurrentPrice(
                 truck.vatPrice,
                 truck.specialPrice ?? null,
@@ -69,7 +63,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                 : null
 
               return (
-                <div key={truck.id} className="min-w-75 max-w-75 mx-4 shrink-0">
+                <div key={truck.id} className="min-w-75 max-w-75 shrink-0 snap-start">
                   <Link href={`/inventory/${truck.slug}`} prefetch={false}>
                     <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300">
                       <div className="relative">
@@ -144,7 +138,6 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                 </div>
               )
             })}
-          </Marquee>
         </div>
 
         <div className="text-center mt-12">
