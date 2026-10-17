@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
+import { formatDisplayName } from '@/lib/text'
 
 export const metadata: Metadata = {
   title: { absolute: 'Used Hyundai Trucks for Sale | A-Z Truck Sales' },
@@ -64,11 +65,11 @@ const getHyundaiVehicles = unstable_cache(
   () =>
     prisma.inventory.findMany({
       where: { make: { contains: 'Hyundai', mode: 'insensitive' } },
-      take: 6,
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
         name: true,
+        model: true,
         year: true,
         vatPrice: true,
         mileage: true,
@@ -84,6 +85,13 @@ const getHyundaiVehicles = unstable_cache(
 
 export default async function HyundaiPage() {
   const vehicles = await getHyundaiVehicles()
+
+  const modelCounts = new Map<string, number>()
+  for (const v of vehicles) {
+    const model = formatDisplayName(v.model ?? '')
+    if (model) modelCounts.set(model, (modelCounts.get(model) ?? 0) + 1)
+  }
+  const modelChips = [...modelCounts.entries()].sort((a, b) => b[1] - a[1])
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -237,8 +245,23 @@ export default async function HyundaiPage() {
             Used Hyundai Trucks in Stock
           </h2>
           <p className="text-lg text-gray-600 mb-12">
-            Recently added Hyundai trucks available at our Gauteng branches.
+            Every Hyundai truck currently in stock at our Gauteng branches.
           </p>
+          {modelChips.length > 0 && (
+            <ul
+              className="flex flex-wrap gap-2 mb-10"
+              aria-label="Models in stock"
+            >
+              {modelChips.map(([model, count]) => (
+                <li
+                  key={model}
+                  className="rounded-full border border-gray-300 bg-white px-3 py-1 text-sm text-gray-700"
+                >
+                  {model} ({count})
+                </li>
+              ))}
+            </ul>
+          )}
           {vehicles.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {vehicles.map((truck, i) => (
@@ -267,6 +290,11 @@ export default async function HyundaiPage() {
                       {truck.vatPrice
                         ? `R${truck.vatPrice.toLocaleString()}`
                         : 'Call for price'}
+                      {truck.vatPrice ? (
+                        <span className="ml-1 text-xs font-normal text-gray-500">
+                          incl. VAT
+                        </span>
+                      ) : null}
                     </p>
                     <div className="flex gap-2 mt-2 text-sm text-gray-500">
                       <span>{truck.mileage?.toLocaleString() ?? '-'} km</span>
