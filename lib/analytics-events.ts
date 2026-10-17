@@ -1,6 +1,6 @@
 'use client'
 
-import posthog from 'posthog-js'
+import { loadPostHog } from './posthog-client'
 import { classifyChannel, type AttributionPayload } from './attribution'
 
 export interface TrackLeadParams {
@@ -36,7 +36,8 @@ function normalizePhone(phone?: string | null): string | null {
  * conversion looks like it came from nowhere.
  */
 export function trackLeadCreated(params: TrackLeadParams): void {
-  const identifier = normalizeEmail(params.email) ?? normalizePhone(params.phone)
+  const identifier =
+    normalizeEmail(params.email) ?? normalizePhone(params.phone)
   const { attribution } = params
   const channel = classifyChannel(attribution)
 
@@ -53,30 +54,35 @@ export function trackLeadCreated(params: TrackLeadParams): void {
     branch: params.branch ?? null,
   }
 
-  try {
-    if (identifier) {
-      posthog.identify(
-        identifier,
-        {
-          name: params.name ?? undefined,
-          email: normalizeEmail(params.email) ?? undefined,
-          phone: normalizePhone(params.phone) ?? undefined,
-          last_lead_source: params.source,
-        },
-        // $set_once: the first channel that ever brought this person in should
-        // never be overwritten by a later branded-search or direct visit.
-        {
-          first_touch_channel: channel,
-          first_touch_utm_source: attribution.utmSource ?? undefined,
-          first_touch_utm_campaign: attribution.utmCampaign ?? undefined,
-          first_touch_referrer_domain: attribution.referrerDomain ?? undefined,
-          first_touch_landing_path: attribution.landingPath ?? undefined,
-        }
-      )
-    }
+  // PostHog loads lazily; wait for it (or skip) without blocking the submission.
+  void loadPostHog().then((posthog) => {
+    if (!posthog) return
+    try {
+      if (identifier) {
+        posthog.identify(
+          identifier,
+          {
+            name: params.name ?? undefined,
+            email: normalizeEmail(params.email) ?? undefined,
+            phone: normalizePhone(params.phone) ?? undefined,
+            last_lead_source: params.source,
+          },
+          // $set_once: the first channel that ever brought this person in should
+          // never be overwritten by a later branded-search or direct visit.
+          {
+            first_touch_channel: channel,
+            first_touch_utm_source: attribution.utmSource ?? undefined,
+            first_touch_utm_campaign: attribution.utmCampaign ?? undefined,
+            first_touch_referrer_domain:
+              attribution.referrerDomain ?? undefined,
+            first_touch_landing_path: attribution.landingPath ?? undefined,
+          },
+        )
+      }
 
-    posthog.capture('lead_created', conversionProps)
-  } catch {
-    // Analytics must never break a lead submission.
-  }
+      posthog.capture('lead_created', conversionProps)
+    } catch {
+      // Analytics must never break a lead submission.
+    }
+  })
 }

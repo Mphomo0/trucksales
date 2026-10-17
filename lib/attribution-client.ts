@@ -1,6 +1,6 @@
 'use client'
 
-import posthog from 'posthog-js'
+import { getPostHog } from './posthog-client'
 import type { AttributionPayload, AttributionTouch } from './attribution'
 import { isExcludedReferrerHost } from './attribution'
 
@@ -119,6 +119,8 @@ export function captureFirstTouch(): void {
  */
 function getAnonymousId(): string | null {
   try {
+    const posthog = getPostHog()
+    if (!posthog) return null
     const deviceId = posthog.get_property('$device_id')
     if (typeof deviceId === 'string' && deviceId) return clamp(deviceId)
 
