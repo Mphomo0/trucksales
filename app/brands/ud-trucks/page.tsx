@@ -135,7 +135,7 @@ export default async function UdTrucksPage() {
       position: i + 1,
       url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
       item: {
-        '@type': 'Vehicle',
+        '@type': ['Vehicle', 'Product'],
         '@id': `https://www.a-ztrucksales.com/inventory/${truck.slug}#product`,
         name: truck.name,
         description: `Used ${truck.name} for sale at A-Z Truck Sales in Gauteng${truck.mileage != null ? `, ${truck.mileage.toLocaleString()} km` : ''}${truck.fuelType ? `, ${truck.fuelType.toLowerCase()} engine` : ''}${truck.transmission ? `, ${truck.transmission.toLowerCase()} transmission` : ''}.`,

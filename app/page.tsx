@@ -11,7 +11,6 @@ import FAQSection from '@/components/sections/home/FAQSection'
 import Featured from '@/components/sections/home/Featured'
 import Features from '@/components/sections/home/Features'
 import Hero from '@/components/sections/home/Hero'
-import JsonLd from '@/components/global/JsonLd'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -49,82 +48,12 @@ export const metadata: Metadata = {
   },
 }
 
-const localBusinessAlbertonSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  '@id': 'https://www.a-ztrucksales.com/#alberton',
-  name: 'A-Z Truck Sales - Alberton',
-  parentOrganization: { '@id': 'https://www.a-ztrucksales.com/#org' },
-  image: 'https://www.a-ztrucksales.com/og-image.webp',
-  url: 'https://www.a-ztrucksales.com/locations/alberton',
-  hasMap: 'https://maps.google.com/?cid=4407112129060334219',
-  telephone: '+27-11-902-6071',
-  email: 'aztrucksales@mweb.co.za',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: '9 Chrislou Crescent, Alberton North',
-    addressLocality: 'Alberton',
-    addressRegion: 'Gauteng',
-    postalCode: '1449',
-    addressCountry: 'ZA',
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: '-26.2694',
-    longitude: '28.1221',
-  },
-  openingHoursSpecification: [
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      opens: '08:00',
-      closes: '17:00',
-    },
-  ],
-  priceRange: '$$',
-}
-
-const localBusinessBoksburgSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  '@id': 'https://www.a-ztrucksales.com/#boksburg',
-  name: 'A-Z Truck Sales - Boksburg',
-  parentOrganization: { '@id': 'https://www.a-ztrucksales.com/#org' },
-  image: 'https://www.a-ztrucksales.com/og-image.webp',
-  url: 'https://www.a-ztrucksales.com/locations/boksburg',
-  hasMap: 'https://www.google.com/maps/search/?api=1&query=-26.1711,28.2414',
-  telephone: '+27-83-234-5377',
-  email: 'aztruckboks@gmail.com',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'Corner Trichardts Road & Ravenswood Street, Ravenswood',
-    addressLocality: 'Boksburg',
-    addressRegion: 'Gauteng',
-    postalCode: '1451',
-    addressCountry: 'ZA',
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: '-26.1711',
-    longitude: '28.2414',
-  },
-  openingHoursSpecification: [
-    {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-      opens: '08:00',
-      closes: '17:00',
-    },
-  ],
-  priceRange: '$$',
-}
+// The business (#org) is defined in app/layout.tsx and each branch (#branch) on its
+// /locations page, so the homepage no longer repeats them with different data.
 
 export default function Home() {
   return (
     <>
-      <JsonLd data={localBusinessAlbertonSchema} />
-      <JsonLd data={localBusinessBoksburgSchema} />
-
       <Hero />
       <Features />
       <Featured />

@@ -9,7 +9,7 @@ import { cache } from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import JsonLd from '@/components/global/JsonLd'
-import { buildSpareDescription, buildSpareTitle, formatSpareName } from '@/lib/spares'
+import { buildSpareDescription, buildSpareTitle, formatMake, formatSpareName } from '@/lib/spares'
 
 export const dynamic = 'force-static'
 export const revalidate = false
@@ -91,16 +91,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
+    '@id': `https://www.a-ztrucksales.com/spares/${spare.slug}#product`,
     name: formatSpareName(spare.name),
+    sku: spare.slug,
     image: images,
     description: spare.description,
     brand: {
       '@type': 'Brand',
-      name: spare.make,
+      name: formatMake(spare.make),
     },
     offers: {
       '@type': 'Offer',
       url: `https://www.a-ztrucksales.com/spares/${spare.slug}`,
+      seller: { '@id': 'https://www.a-ztrucksales.com/#org' },
       priceCurrency: 'ZAR',
       price: spare.price,
       itemCondition: spare.condition === 'NEW' ? 'https://schema.org/NewCondition' : 'https://schema.org/UsedCondition',
