@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
+import RelatedGuides from '@/components/sections/shared/RelatedGuides'
 import { formatDisplayName } from '@/lib/text'
 
 export const metadata: Metadata = {
@@ -348,6 +349,8 @@ export default async function IsuzuPage() {
       </section>
 
       {/* FAQ */}
+      <RelatedGuides guides={['isuzu-vs-hino-vs-fuso', 'buying-guide', 'what-to-check-before-buying']} />
+
       <section className="py-20 bg-neutral-50">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">

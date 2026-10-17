@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
+import RelatedGuides from '@/components/sections/shared/RelatedGuides'
 import { buildVehicleItemList } from '@/lib/vehicle-list-schema'
 import { TONNAGE_BUCKETS, getTonnageBucket } from '@/lib/tonnage'
 import TonnageSiblingLinks from '@/components/sections/tonnage/TonnageSiblingLinks'
@@ -247,6 +248,15 @@ export default async function TonnagePage({ params }: Props) {
           </div>
         </div>
       </section>
+
+      <RelatedGuides
+        guides={[
+          'buying-guide',
+          'truck-body-types',
+          'choose-truck-for-construction-delivery-cold-storage',
+          'finance-trade-ins-export',
+        ]}
+      />
 
       <TonnageSiblingLinks currentSlug={bucket.slug} />
 

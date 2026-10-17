@@ -12,6 +12,7 @@ import { notFound } from 'next/navigation'
 import JsonLd from '@/components/global/JsonLd'
 import { formatDisplayName } from '@/lib/text'
 import { isOffThemeVehicle } from '@/lib/off-theme'
+import RelatedGuides from '@/components/sections/shared/RelatedGuides'
 
 export const dynamic = 'force-static'
 export const revalidate = 86400
@@ -274,6 +275,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       <RelatedVehicles
         vehicles={relatedVehicles.map(v => ({ ...v, images: (v.images as { url: string }[]) }))}
         make={vehicle.make}
+      />
+      <RelatedGuides
+        guides={[
+          'what-to-check-before-buying',
+          'cof-ready-trucks',
+          'finance-trade-ins-export',
+          'buying-guide',
+        ]}
       />
       <QualityAssurance />
     </div>

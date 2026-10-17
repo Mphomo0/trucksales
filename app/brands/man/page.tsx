@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
+import RelatedGuides from '@/components/sections/shared/RelatedGuides'
 import { formatDisplayName } from '@/lib/text'
 
 export const metadata: Metadata = {
@@ -334,6 +335,8 @@ export default async function ManPage() {
           </div>
         </div>
       </section>
+
+      <RelatedGuides guides={['buying-guide', 'what-to-check-before-buying', 'cof-ready-trucks']} />
 
       <section className="py-20 bg-neutral-50">
         <div className="container mx-auto px-4">
