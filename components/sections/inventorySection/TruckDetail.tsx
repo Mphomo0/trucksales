@@ -29,7 +29,9 @@ import {
 import Image from 'next/image'
 import Link from 'next/link'
 import { WhatsAppButton } from '@/components/sections/inventorySection/WhatsAppButton'
-import EnquiryForm from '@/components/sections/inventorySection/EnquiryForm'
+import EnquiryForm, {
+  preloadEnquiryForm,
+} from '@/components/sections/inventorySection/LazyEnquiryForm'
 import { useKeenSlider } from 'keen-slider/react'
 import { getCurrentPrice } from '@/lib/pricing'
 import { formatDisplayName } from '@/lib/text'
@@ -481,6 +483,9 @@ interface Props {
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
+                      onPointerEnter={preloadEnquiryForm}
+                      onFocus={preloadEnquiryForm}
+                      onTouchStart={preloadEnquiryForm}
                       variant="outline"
                       className="w-full bg-transparent mt-4"
                       size="lg"
