@@ -408,6 +408,8 @@ export default function AllVehiclesFilter({
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
+                  type="search"
+                  aria-label="Search trucks by make or model"
                   placeholder="Search make or model..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -422,7 +424,7 @@ export default function AllVehiclesFilter({
                 if (value === 'all') delete f.truckSize; else f.truckSize = value
                 fetchTrucks(f)
               }}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full" aria-label="Filter by truck size">
                   <SelectValue placeholder="All Truck Sizes" />
                 </SelectTrigger>
                 <SelectContent>
@@ -444,7 +446,7 @@ export default function AllVehiclesFilter({
                 if (value === 'all') delete f.make; else f.make = value
                 fetchTrucks(f)
               }}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full" aria-label="Filter by make">
                   <SelectValue placeholder="All Makes" />
                 </SelectTrigger>
                 <SelectContent>
@@ -468,7 +470,7 @@ export default function AllVehiclesFilter({
                 }}
                 disabled={makeFilter === 'all'}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full" aria-label="Filter by model">
                   <SelectValue placeholder="All Models" />
                 </SelectTrigger>
                 <SelectContent>
@@ -488,7 +490,7 @@ export default function AllVehiclesFilter({
                 if (value === 'all') delete f.bodyType; else f.bodyType = value
                 fetchTrucks(f)
               }}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full" aria-label="Filter by body type">
                   <SelectValue placeholder="All Body Types" />
                 </SelectTrigger>
                 <SelectContent>

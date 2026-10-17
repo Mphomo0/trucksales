@@ -318,6 +318,8 @@ export default function AllSparesFilter({
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
+                  type="search"
+                  aria-label="Search spare parts by name, make or description"
                   placeholder="Search by name, make, or description..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -327,7 +329,7 @@ export default function AllSparesFilter({
 
               {/* Make Filter */}
               <Select value={makeFilter} onValueChange={setMakeFilter}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full" aria-label="Filter by make">
                   <SelectValue placeholder="All Makes" />
                 </SelectTrigger>
                 <SelectContent>
@@ -342,7 +344,7 @@ export default function AllSparesFilter({
 
               {/* Category Filter */}
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full" aria-label="Filter by category">
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
