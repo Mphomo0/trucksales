@@ -140,7 +140,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const vehicleSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Vehicle',
+    // Vehicle alone is not a Google rich-result type; Product makes price snippets possible
+    '@type': ['Vehicle', 'Product'],
     '@id': `https://www.a-ztrucksales.com/inventory/${vehicle.slug}#product`,
     name: `${vehicle.year} ${toTitleCase(vehicle.make)} ${toTitleCase(vehicle.model)}${vehicle.bodyType ? ` ${toTitleCase(vehicle.bodyType)}` : ''}`,
     description,
@@ -247,7 +248,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           description: `Watch this video walkthrough of the ${vehicleName} available at A-Z Truck Sales in Gauteng.`,
           thumbnailUrl: `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`,
           embedUrl: `https://www.youtube.com/embed/${ytId}`,
-          uploadDate: `${vehicle.year}-01-01T00:00:00+00:00`,
+          // the listing's creation date, not the model year
+          uploadDate: vehicle.createdAt.toISOString(),
           publisher: {
             '@type': 'Organization',
             name: 'A-Z Truck Sales',

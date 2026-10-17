@@ -10,6 +10,7 @@ import JsonLd from '@/components/global/JsonLd'
 import Link from 'next/link'
 import DealerFaqBlock from '@/components/sections/shared/DealerFaqBlock'
 import { prisma } from '@/lib/prisma'
+import { buildVehicleItemList } from '@/lib/vehicle-list-schema'
 import { unstable_cache } from 'next/cache'
 
 const AllVehiclesFilter = dynamic(
@@ -221,6 +222,13 @@ export default async function Inventory() {
         {/* application/ld+json */}
       </div>
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd
+        data={buildVehicleItemList({
+          id: 'https://www.a-ztrucksales.com/inventory#inventory',
+          name: 'Used Trucks in Stock',
+          vehicles,
+        })}
+      />
 
       {/* useSearchParams in the filter needs a Suspense boundary on a static page */}
       <Suspense fallback={null}>

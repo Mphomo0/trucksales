@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
+import { buildVehicleItemList } from '@/lib/vehicle-list-schema'
 import { TONNAGE_BUCKETS, getTonnageBucket } from '@/lib/tonnage'
 import TonnageSiblingLinks from '@/components/sections/tonnage/TonnageSiblingLinks'
 import { withIndefiniteArticle } from '@/lib/text'
@@ -28,6 +29,7 @@ const getTonnageVehicles = unstable_cache(
       select: {
         id: true,
         name: true,
+        make: true,
         year: true,
         vatPrice: true,
         mileage: true,
@@ -111,6 +113,15 @@ export default async function TonnagePage({ params }: Props) {
     <>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={faqSchema} />
+      {vehicles.length > 0 && (
+        <JsonLd
+          data={buildVehicleItemList({
+            id: `https://www.a-ztrucksales.com/tonnage/${bucket.slug}#inventory`,
+            name: `Used ${bucket.label} Trucks in Stock`,
+            vehicles,
+          })}
+        />
+      )}
 
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
