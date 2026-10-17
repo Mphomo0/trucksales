@@ -5,7 +5,7 @@ export default function imagekitLoader({ src, width, quality }: ImageLoaderProps
   if (!src.includes('ik.imagekit.io')) return src
 
   const url = new URL(src)
-  // ImageKit transformation params: tr=w-{width},q-{quality}
-  url.searchParams.set('tr', `w-${width},q-${quality ?? 75}`)
+  // ImageKit transformation params: tr=w-{width},q-{quality},f-auto
+  url.searchParams.set('tr', `w-${width},q-${quality ?? 75},f-auto`)
   return url.toString()
 }

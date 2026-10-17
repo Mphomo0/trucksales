@@ -202,6 +202,7 @@ interface Props {
                               className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
                               priority={index === 0}
+                              fetchPriority={index === 0 ? 'high' : 'auto'}
                             />
                           </div>
                         </div>
