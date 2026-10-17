@@ -46,7 +46,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   // No live stock count in the title or description: it drifts from the page and sitemap
   const title = 'Used Trucks for Sale in South Africa | A-Z Truck Sales'
-  const description = `Used trucks in stock${priceFrom} incl. VAT — dropside, refrigerated, box body and more. COF-ready, workshop-checked, in Gauteng with delivery across South Africa. View prices, mileage and photos online.`
+  const description = `Used trucks in stock${priceFrom} incl. VAT — dropside, refrigerated, box body and more. COF-ready and workshop-checked, delivered across South Africa.`
 
   return {
     title: { absolute: title },

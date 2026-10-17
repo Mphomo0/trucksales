@@ -13,6 +13,7 @@ import { buildVehicleItemList } from '@/lib/vehicle-list-schema'
 import { TONNAGE_BUCKETS, getTonnageBucket } from '@/lib/tonnage'
 import TonnageSiblingLinks from '@/components/sections/tonnage/TonnageSiblingLinks'
 import { withIndefiniteArticle } from '@/lib/text'
+import { fitToLength } from '@/lib/spares'
 
 interface Props {
   params: Promise<{ size: string }>
@@ -51,7 +52,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // No live stock count here: it drifted from the page and the sitemap
   const title = `${bucket.metaTitle} in Gauteng | A-Z Truck Sales`
-  const description = `Used ${bucket.label} trucks for sale in Gauteng — ideal for ${bucket.useCases}. COF-ready, workshop-checked. View prices and photos online.`
+  const baseDescription = `Used ${bucket.label} trucks for sale in Gauteng, ideal for ${bucket.useCases}.`
+  const description =
+    `${baseDescription} COF-ready and workshop-checked. View prices online.`.length <= 158
+      ? `${baseDescription} COF-ready and workshop-checked. View prices online.`
+      : fitToLength(baseDescription, 158)
   const canonicalUrl = `https://www.a-ztrucksales.com/tonnage/${bucket.slug}`
 
   return {
@@ -196,6 +201,11 @@ export default async function TonnagePage({ params }: Props) {
                       {truck.vatPrice
                         ? `R${truck.vatPrice.toLocaleString()}`
                         : 'Call for price'}
+                      {truck.vatPrice ? (
+                        <span className="ml-1 text-xs font-normal text-gray-500">
+                          incl. VAT
+                        </span>
+                      ) : null}
                     </p>
                     <div className="flex gap-2 mt-2 text-sm text-gray-500">
                       <span>{truck.mileage?.toLocaleString() ?? '-'} km</span>
