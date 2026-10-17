@@ -174,12 +174,34 @@ export default function AllVehiclesFilter({
   const [loading, setLoading] = useState(initialVehicles.length === 0)
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
-  const [makeFilter, setMakeFilter] = useState('all')
-  const [modelFilter, setModelFilter] = useState('all')
-  const [bodyTypeFilter, setBodyTypeFilter] = useState('all')
-  // ?size=3 to 5 ton preselects the tonnage filter (linked from /tonnage pages)
-  const sizeParam = useSearchParams().get('size')
-  const [truckSizeFilter, setTruckSizeFilter] = useState(sizeParam || 'all')
+  // Links such as /inventory?make=Isuzu or ?size=3 to 5 ton preselect filters. Values are
+  // matched case-insensitively to the stored option so the select shows the right entry.
+  const searchParams = useSearchParams()
+  const fromParam = (
+    key: string,
+    options: string[] | undefined,
+  ): string => {
+    const raw = searchParams.get(key)
+    if (!raw) return 'all'
+    return options?.find((o) => o.toLowerCase() === raw.toLowerCase()) ?? raw
+  }
+  const [makeFilter, setMakeFilter] = useState(() =>
+    fromParam('make', initialFilterOptions?.makes),
+  )
+  const [modelFilter, setModelFilter] = useState(() =>
+    fromParam('model', initialFilterOptions?.models),
+  )
+  const [bodyTypeFilter, setBodyTypeFilter] = useState(() =>
+    fromParam('bodyType', initialFilterOptions?.bodyTypes),
+  )
+  const [truckSizeFilter, setTruckSizeFilter] = useState(() =>
+    fromParam('size', initialFilterOptions?.truckSizes),
+  )
+  const hasParamFilters =
+    makeFilter !== 'all' ||
+    modelFilter !== 'all' ||
+    bodyTypeFilter !== 'all' ||
+    truckSizeFilter !== 'all'
   const [currentPage, setCurrentPage] = useState(1)
   const [limit, setLimit] = useState(25)
   const [meta, setMeta] = useState<VehicleMeta>({
@@ -297,7 +319,7 @@ export default function AllVehiclesFilter({
     const loadInitialData = async () => {
       const tasks: Promise<void>[] = []
       if (!initialFilterOptions) tasks.push(fetchFilterOptions())
-      if (initialVehicles.length === 0 || sizeParam)
+      if (initialVehicles.length === 0 || hasParamFilters)
         tasks.push(fetchTrucks(buildFilters(1)))
       if (tasks.length > 0) await Promise.all(tasks)
     }
@@ -515,7 +537,9 @@ export default function AllVehiclesFilter({
         {/* Results */}
         <div className="mb-6">
           <p className="hidden md:block text-gray-600">
-            Showing {loading ? '...' : trucks.length} trucks
+            Showing {loading ? '...' : trucks.length}
+            {!loading && meta.total > trucks.length ? ` of ${meta.total}` : ''}{' '}
+            trucks
           </p>
         </div>
 
