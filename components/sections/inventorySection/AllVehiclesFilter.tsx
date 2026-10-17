@@ -15,7 +15,6 @@ import {
 import { Search, Filter, Gauge } from 'lucide-react'
 import ImageComponent from 'next/image'
 import Link from 'next/link'
-import { WhatsAppButton } from '@/components/sections/inventorySection/WhatsAppButton'
 import { Pagination } from '@/components/global/Pagination'
 import { getCurrentPrice } from '@/lib/pricing'
 import { ikCard } from '@/lib/imagekit'
@@ -87,11 +86,6 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <Link
-        href={`/inventory/${truck.slug || truck.id}`}
-        prefetch={false}
-        className="block"
-      >
       <div className="relative">
         <ImageComponent
           src={ikCard(truck.images?.[0]?.url || '/placeholder-truck.svg')}
@@ -166,14 +160,6 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
           View Details
         </Button>
       </CardContent>
-      </Link>
-      <div className="px-6 pb-6">
-        <WhatsAppButton
-          compact
-          label="WhatsApp about this truck"
-          url={`https://www.a-ztrucksales.com/inventory/${truck.slug || truck.id}`}
-        />
-      </div>
     </Card>
   )
 })
@@ -539,11 +525,13 @@ export default function AllVehiclesFilter({
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {trucks.map((truck, index) => (
-                <TruckCard
+                <Link
                   key={truck.id}
-                  truck={truck}
-                  priority={index < 3}
-                />
+                  href={`/inventory/${truck.slug || truck.id}`}
+                  prefetch={false}
+                >
+                  <TruckCard truck={truck} priority={index < 3} />
+                </Link>
               ))}
             </div>
 
