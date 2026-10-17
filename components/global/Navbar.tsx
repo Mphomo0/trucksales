@@ -65,7 +65,7 @@ const NavLinks = [
           <div>
             <Link href="/" className="flex items-center">
               <Image
-                src="/images/logo.png"
+                src="/images/logo.webp"
                 alt="A-Z Truck Sales logo"
                 width={320}
                 height={80}
