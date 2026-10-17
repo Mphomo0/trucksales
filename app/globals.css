@@ -591,3 +591,10 @@
     padding: 20px 16px;
   }
 }
+
+/* Below-the-fold sections: skip layout/paint until they near the viewport
+   (react-best-practices: rendering-content-visibility). */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 700px;
+}

@@ -131,11 +131,21 @@ export default function Home() {
       <FindTruckSection />
       <Features />
       <Featured />
-      <BrandsSection />
-      <AboutSection />
-      <FAQSection />
-      <DealerFaqBlock />
-      <CTA />
+      <div className="cv-auto">
+        <BrandsSection />
+      </div>
+      <div className="cv-auto">
+        <AboutSection />
+      </div>
+      <div className="cv-auto">
+        <FAQSection />
+      </div>
+      <div className="cv-auto">
+        <DealerFaqBlock />
+      </div>
+      <div className="cv-auto">
+        <CTA />
+      </div>
     </>
   )
 }

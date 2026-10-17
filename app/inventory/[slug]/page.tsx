@@ -244,7 +244,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       <JsonLd data={productSchema} />
       <JsonLd data={breadcrumbSchema} />
       {videoSchema && <JsonLd data={videoSchema} />}
-      <TruckDetail vehicle={vehicle} />
+      <TruckDetail
+        vehicle={{
+          id: vehicle.id,
+          name: vehicle.name,
+          make: vehicle.make,
+          model: vehicle.model,
+          year: vehicle.year,
+          vatPrice: vehicle.vatPrice,
+          pricenoVat: vehicle.pricenoVat,
+          mileage: vehicle.mileage,
+          fuelType: vehicle.fuelType,
+          condition: vehicle.condition,
+          transmission: vehicle.transmission,
+          description: vehicle.description,
+          slug: vehicle.slug,
+          // only the URL is used on the client; drop the ImageKit fileId
+          images: images.map((url) => ({ url })),
+          videoLink: vehicle.videoLink,
+          truckSize: vehicle.truckSize,
+          bodyType: vehicle.bodyType,
+          specialPrice: vehicle.specialPrice,
+          specialValidFrom: vehicle.specialValidFrom,
+          specialValidTo: vehicle.specialValidTo,
+        }}
+      />
       <TonnageCrossLink truckSize={vehicle.truckSize} />
       <BrandCrossLink make={vehicle.make} />
       <RelatedVehicles

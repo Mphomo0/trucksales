@@ -1,18 +1,29 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import Navbar from '@/components/global/Navbar'
 import Footer from '@/components/global/Footer'
-import ClientToast from '@/components/global/ClientToast'
 import dynamic from 'next/dynamic'
+import { afterLoadIdle } from '@/lib/after-load'
+
+// Neither is needed for first paint: the chat bubble is opt-in and toasts only
+// appear after a form action (react-toastify queues any toast fired before the
+// container mounts). Fetch them once the page has loaded and gone idle.
 const ChatWidget = dynamic(
   () => import('@/components/chatbot/ChatWidget').then(m => ({ default: m.ChatWidget })),
   { ssr: false }
 )
+const ClientToast = dynamic(() => import('@/components/global/ClientToast'), {
+  ssr: false,
+})
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const isDashboard = pathname?.startsWith('/dashboard')
+  const [secondaryReady, setSecondaryReady] = useState(false)
+
+  useEffect(() => afterLoadIdle(() => setSecondaryReady(true)), [])
 
   if (isDashboard) {
     return <>{children}</>
@@ -29,8 +40,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <Navbar />
       <main id="main-content">{children}</main>
       <Footer />
-      <ChatWidget />
-      <ClientToast />
+      {secondaryReady && (
+        <>
+          <ChatWidget />
+          <ClientToast />
+        </>
+      )}
     </>
   )
 }
