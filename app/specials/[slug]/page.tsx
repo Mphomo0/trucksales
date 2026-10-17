@@ -12,6 +12,9 @@ import { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
 import JsonLd from '@/components/global/JsonLd'
 import { isSpecialActive } from '@/lib/specials'
+import { isOffThemeVehicle } from '@/lib/off-theme'
+import { fitToLength } from '@/lib/spares'
+import { formatDisplayName } from '@/lib/text'
 
 export const revalidate = 3600 // keep in sync with SPECIALS_REVALIDATE_SECONDS
 
@@ -37,15 +40,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Special Expired', robots: { index: false } }
   }
 
+  const truckName = `${inventory.year} ${formatDisplayName(inventory.make)} ${formatDisplayName(inventory.model)}`
   // Layout appends "| A-Z Truck Sales" (17 chars); keep page portion ≤ 43 so full title ≤ 60
-  let title = `Special: ${inventory.year} ${inventory.make} ${inventory.model}`
-  if (title.length > 43) {
-    title = title.substring(0, 40) + '...'
-  }
+  const title = fitToLength(`Special: ${truckName}`, 43)
 
-  const description = `Don't miss this special offer on a ${inventory.year} ${inventory.make} ${inventory.model}. Limited time deal at A-Z Truck Sales.`
+  const description = `Don't miss this special offer on a ${truckName}. Limited time deal at A-Z Truck Sales.`
 
-  const canonicalUrl = `https://www.a-ztrucksales.com/specials/${slug}`
+  // The vehicle's own page is the canonical home for this truck; this page only adds
+  // the offer. Off-theme vehicles (not trucks) are noindex there, so noindex here too.
+  const offTheme = isOffThemeVehicle(inventory)
+  const canonicalUrl = `https://www.a-ztrucksales.com/inventory/${inventory.slug}`
   const images = Array.isArray(inventory.images)
     ? (inventory.images as any[]).map((img) => img.url)
     : []
@@ -72,6 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [ogImage[0].url],
     },
     alternates: { canonical: canonicalUrl },
+    ...(offTheme && { robots: { index: false, follow: true } }),
   }
 }
 
@@ -119,12 +124,12 @@ export default async function Special({ params }: Props) {
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': 'Car',
-    name: `${inventory.year} ${inventory.make} ${inventory.model}`,
+    name: `${inventory.year} ${formatDisplayName(inventory.make)} ${formatDisplayName(inventory.model)}`,
     image: images.length > 0 ? images : undefined,
     description: inventory.description || undefined,
     vehicleIdentificationNumber: inventory.registrationNo || undefined,
-    brand: { '@type': 'Brand', name: inventory.make },
-    manufacturer: { '@type': 'Organization', name: inventory.make },
+    brand: { '@type': 'Brand', name: formatDisplayName(inventory.make) },
+    manufacturer: { '@type': 'Organization', name: formatDisplayName(inventory.make) },
     vehicleModelDate: inventory.year,
     mileageFromOdometer: inventory.mileage != null ? {
       '@type': 'QuantitativeValue',
@@ -138,7 +143,7 @@ export default async function Special({ params }: Props) {
 
   return (
     <div>
-      <h1 className="sr-only">{inventory.year} {inventory.make} Special Offer</h1>
+      <h1 className="sr-only">{inventory.year} {formatDisplayName(inventory.make)} Special Offer</h1>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={productSchema} />
       <SpecialDetails />
