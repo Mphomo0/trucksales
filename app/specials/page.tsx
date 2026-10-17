@@ -190,7 +190,6 @@ const getSpecialsData = unstable_cache(
       <h1 className="sr-only">Truck Specials & Discounts</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
-        <span>Last Updated: 2026-04-27</span>
       </div>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={specialsFaqSchema} />

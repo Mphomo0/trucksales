@@ -10,12 +10,6 @@ import ContactForm from '@/components/sections/contactSection/ContactForm'
 import FAQSection from '@/components/sections/home/FAQSection'
 import { Metadata } from 'next'
 import JsonLd from '@/components/global/JsonLd'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
 
 const title = 'Contact A-Z Truck Sales | Call 011 902 6071'
 const description = 'Call 011 902 6071 or visit A-Z Truck Sales in Alberton or Boksburg. Open Mon-Fri 8am-5pm, Sat 8am-1pm, for used trucks, spares, trade-ins and enquiries.'
@@ -106,7 +100,7 @@ const contactFaqs = [
       <h1 className="sr-only">Contact A-Z Truck Sales in Alberton & Boksburg</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
-        <span>Last Updated: 2026-06-21</span>
+        <span>Last Updated: 2026-10-17</span>
         {/* application/ld+json */}
       </div>
       <JsonLd data={breadcrumbSchema} />
@@ -169,18 +163,19 @@ const contactFaqs = [
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Frequently asked questions about used trucks in Gauteng</h2>
             </div>
             
-            <Accordion type="single" collapsible className="w-full">
+            <div className="w-full">
               {contactFaqs.map((faq, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="bg-white px-6 rounded-lg mb-4 border border-neutral-200">
-                  <AccordionTrigger className="text-left font-semibold py-4 hover:no-underline">
+                <details
+                  key={index}
+                  className="group bg-white px-6 py-4 rounded-lg mb-4 border border-neutral-200"
+                >
+                  <summary className="cursor-pointer list-none text-left font-semibold">
                     {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-neutral-600 pb-4">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
+                  </summary>
+                  <p className="mt-3 text-neutral-600">{faq.answer}</p>
+                </details>
               ))}
-            </Accordion>
+            </div>
           </div>
         </div>
       </section>

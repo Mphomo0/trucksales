@@ -18,12 +18,6 @@ const AllSparesFilter = dynamic(
 )
 import JsonLd from '@/components/global/JsonLd'
 import Link from 'next/link'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
 import { prisma } from '@/lib/prisma'
 import { unstable_cache } from 'next/cache'
 
@@ -219,7 +213,6 @@ const getSparePageData = unstable_cache(
       <h1 className="sr-only">Truck Spares & Parts in Gauteng</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
-        <span>Last Updated: 2026-06-21</span>
         {/* application/ld+json */}
       </div>
       <JsonLd data={breadcrumbSchema} />
@@ -243,22 +236,19 @@ const getSparePageData = unstable_cache(
               </p>
             </div>
 
-            <Accordion type="single" collapsible className="w-full">
+            <div className="w-full">
               {sparesFaqs.map((faq, index) => (
-                <AccordionItem
+                <details
                   key={index}
-                  value={`item-${index}`}
-                  className="bg-white px-6 rounded-lg mb-4 border border-neutral-200"
+                  className="group bg-white px-6 py-4 rounded-lg mb-4 border border-neutral-200"
                 >
-                  <AccordionTrigger className="text-left font-semibold py-4 hover:no-underline">
+                  <summary className="cursor-pointer list-none text-left font-semibold">
                     {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-neutral-600 pb-4">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
+                  </summary>
+                  <p className="mt-3 text-neutral-600">{faq.answer}</p>
+                </details>
               ))}
-            </Accordion>
+            </div>
           </div>
         </div>
       </section>

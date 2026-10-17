@@ -220,7 +220,6 @@ export default async function Inventory() {
       <h1 className="sr-only">Used Trucks for Sale in South Africa: Full Stock List</h1>
       <div className="sr-only">
         <span>Author: A-Z Truck Sales</span>
-        <span>Last Updated: 2026-06-21</span>
         {/* application/ld+json */}
       </div>
       <JsonLd data={breadcrumbSchema} />
