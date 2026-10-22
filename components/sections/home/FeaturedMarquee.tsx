@@ -1,11 +1,14 @@
 'use client'
 
 import Image from 'next/image'
+import { formatNumber } from '@/lib/format'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ChevronLeft, ChevronRight, Gauge } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Gauge, Pause, Play } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { cn } from '@/lib/utils'
 import { useKeenSlider, KeenSliderPlugin } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
 import { getCurrentPrice } from '@/lib/pricing'
@@ -36,34 +39,85 @@ const noImage = (
   </div>
 )
 
-// Advances one slide every few seconds; pauses while the user hovers, touches or drags.
-const autoplay: KeenSliderPlugin = (slider) => {
-  let timeout: ReturnType<typeof setTimeout>
-  let paused = false
-  const clear = () => clearTimeout(timeout)
-  const next = () => {
-    clear()
-    if (paused) return
-    timeout = setTimeout(() => slider.next(), 3500)
-  }
-  slider.on('created', () => {
-    slider.container.addEventListener('mouseover', () => {
-      paused = true
+const validUntilFormat = new Intl.DateTimeFormat('en-ZA', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  timeZone: 'Africa/Johannesburg',
+})
+
+const AUTOPLAY_MS = 3500
+
+// Advances one slide every few seconds. Pauses while the pointer is over the
+// slider, while anything inside it has keyboard focus, during a drag, while the
+// tab is hidden, or while stopped (pause button, reduced motion). Starts
+// stopped: the server can't know the visitor's motion preference.
+function createAutoplay() {
+  let stopped = true
+  let restart = () => {}
+
+  const plugin: KeenSliderPlugin = (slider) => {
+    let timeout: ReturnType<typeof setTimeout>
+    let hovered = false
+    let focused = false
+    const clear = () => clearTimeout(timeout)
+    const next = () => {
       clear()
-    })
-    slider.container.addEventListener('mouseout', () => {
-      paused = false
+      if (hovered || focused || stopped || document.hidden) return
+      timeout = setTimeout(() => slider.next(), AUTOPLAY_MS)
+    }
+    restart = next
+    const onVisibility = () => next()
+    slider.on('created', () => {
+      const el = slider.container
+      el.addEventListener('mouseover', () => {
+        hovered = true
+        clear()
+      })
+      el.addEventListener('mouseout', () => {
+        hovered = false
+        next()
+      })
+      el.addEventListener('focusin', () => {
+        focused = true
+        clear()
+      })
+      el.addEventListener('focusout', () => {
+        focused = false
+        next()
+      })
+      document.addEventListener('visibilitychange', onVisibility)
       next()
     })
-    next()
-  })
-  slider.on('dragStarted', clear)
-  slider.on('animationEnded', next)
-  slider.on('updated', next)
-  slider.on('destroyed', clear)
+    slider.on('dragStarted', clear)
+    slider.on('animationEnded', next)
+    slider.on('updated', next)
+    slider.on('destroyed', () => {
+      clear()
+      document.removeEventListener('visibilitychange', onVisibility)
+    })
+  }
+
+  return {
+    plugins: [plugin],
+    setStopped(value: boolean) {
+      stopped = value
+      restart()
+    },
+  }
 }
 
 export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
+  // null until mounted: the server can't know the visitor's motion preference
+  const [userPaused, setUserPaused] = useState<boolean | null>(null)
+  const [autoplay] = useState(createAutoplay)
+
+  useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    autoplay.setStopped(reduce)
+    setUserPaused(reduce)
+  }, [autoplay])
+
   const [sliderRef, sliderInstanceRef] = useKeenSlider<HTMLDivElement>(
     {
       loop: true,
@@ -74,13 +128,22 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
         '(min-width: 1024px)': { slides: { perView: 4, spacing: 16 } },
       },
     },
-    [autoplay],
+    autoplay.plugins,
   )
+
+  const togglePaused = () => {
+    const paused = !userPaused
+    autoplay.setStopped(paused)
+    setUserPaused(paused)
+  }
 
   return (
     <section className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4 text-balance">
+            Featured Used Trucks
+          </h2>
           <p className="text-lg text-gray-600">
             Check out our most popular vehicles
           </p>
@@ -93,6 +156,8 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
           <div
             ref={sliderRef}
             className="keen-slider"
+            role="region"
+            aria-roledescription="carousel"
             aria-label="Featured used trucks"
           >
             {trucks.slice(0, 12).map((truck) => {
@@ -103,11 +168,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                 truck.specialValidTo ?? null,
               )
               const validUntil = truck.specialValidTo
-                ? new Date(truck.specialValidTo).toLocaleDateString('en-GB', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
-                  })
+                ? validUntilFormat.format(new Date(truck.specialValidTo))
                 : null
 
               return (
@@ -118,7 +179,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                   <Link
                     href={`/inventory/${truck.slug}`}
                     prefetch={false}
-                    className="block h-full"
+                    className="block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2"
                   >
                     <Card className="h-full flex flex-col overflow-hidden hover:shadow-lg transition-shadow duration-300">
                       <div className="relative">
@@ -143,17 +204,17 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                           {truck.year} {truck.make.toUpperCase()}{' '}
                           {truck.model.toUpperCase()}
                         </h3>
-                        <div className="flex flex-col items-start mb-3">
+                        <div className="flex flex-col items-start mb-3 tabular-nums">
                           {priceInfo.isSpecial ? (
                             <div className="flex flex-col">
                               <span className="text-xl font-bold text-red-500 line-through">
-                                R{priceInfo.originalPrice.toLocaleString()}
+                                R{formatNumber(priceInfo.originalPrice)}
                               </span>
                               <span className="text-2xl font-bold text-yellow-600">
-                                R{priceInfo.currentPrice.toLocaleString()}
+                                R{formatNumber(priceInfo.currentPrice)}
                               </span>
                               <span className="text-xs text-gray-500">
-                                inc. VAT
+                                incl. VAT
                               </span>
                               {validUntil && (
                                 <span className="text-xs text-green-600 font-medium">
@@ -164,15 +225,15 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                           ) : (
                             <div>
                               <span className="text-2xl font-bold text-yellow-600">
-                                R{truck.vatPrice.toLocaleString()}{' '}
-                                <span className="text-sm">inc. VAT</span>
+                                R{formatNumber(truck.vatPrice)}{' '}
+                                <span className="text-sm">incl. VAT</span>
                               </span>
                             </div>
                           )}
                           <div>
                             <span className="text-gray-600 flex items-center">
                               <Gauge size={18} className="mr-1" />
-                              {truck.mileage?.toLocaleString() ?? 'N/A'} km
+                              {formatNumber(truck.mileage) ?? 'N/A'} km
                             </span>
                           </div>
                         </div>
@@ -183,7 +244,10 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                             <Badge>{truck.transmission}</Badge>
                           )}
                         </div>
-                        <Button className="w-full mt-auto">View Details</Button>
+                        {/* The card is the link; a <button> inside an <a> is invalid HTML */}
+                        <span className={cn(buttonVariants(), 'w-full mt-auto')}>
+                          View Details
+                        </span>
                       </CardContent>
                     </Card>
                   </Link>
@@ -209,6 +273,20 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
+
+        {userPaused !== null && (
+          <div className="mt-4 flex justify-center">
+            <button
+              type="button"
+              onClick={togglePaused}
+              aria-pressed={userPaused}
+              className="inline-flex items-center gap-2 rounded-full border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600"
+            >
+              {userPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
+              {userPaused ? 'Play Slideshow' : 'Pause Slideshow'}
+            </button>
+          </div>
+        )}
 
         <div className="text-center mt-12">
           <Button

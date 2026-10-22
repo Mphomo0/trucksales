@@ -77,15 +77,15 @@ type ContactFormData = z.input<typeof contactFormSchema>
       console.error('Error submitting form:', error)
       toast.error(
         error instanceof Error
-          ? error.message
-          : 'Failed to send message. Please try again later.'
+          ? `${error.message}. Please try again or call us on 011 902 6071.`
+          : 'Your message was not sent. Check your connection and try again, or call us on 011 902 6071.'
       )
     }
   }
 
   return (
     <div className="py-16">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-6 bg-transparent md:bg-white md:shadow-lg rmd:ounded-lg p-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-6 bg-transparent md:bg-white md:shadow-lg md:rounded-lg p-12">
         <h2 className="text-center text-3xl font-bold text-gray-900 mb-8">
           Contact Form
         </h2>
@@ -102,13 +102,16 @@ type ContactFormData = z.input<typeof contactFormSchema>
               </label>
               <input
                 id="name"
+                autoComplete="name"
+                aria-invalid={!!errors.name}
+                aria-describedby={errors.name ? 'name-error' : undefined}
                 type="text"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                placeholder="Your Name"
+                className="w-full p-3 border border-gray-300 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
+                placeholder="e.g. Thabo Mokoena"
                 {...register('name')}
               />
               {errors.name && (
-                <p className="text-red-500 text-sm mt-1">
+                <p id="name-error" role="alert" className="text-red-600 text-sm mt-1">
                   {errors.name.message}
                 </p>
               )}
@@ -123,13 +126,17 @@ type ContactFormData = z.input<typeof contactFormSchema>
               </label>
               <input
                 id="email"
+                autoComplete="email"
+                spellCheck={false}
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'email-error' : undefined}
                 type="email"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                placeholder="Your Email"
+                className="w-full p-3 border border-gray-300 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
+                placeholder="e.g. thabo@company.co.za"
                 {...register('email')}
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">
+                <p id="email-error" role="alert" className="text-red-600 text-sm mt-1">
                   {errors.email.message}
                 </p>
               )}
@@ -147,13 +154,16 @@ type ContactFormData = z.input<typeof contactFormSchema>
               </label>
               <input
                 id="subject"
+                autoComplete="off"
+                aria-invalid={!!errors.subject}
+                aria-describedby={errors.subject ? 'subject-error' : undefined}
                 type="text"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                placeholder="Subject"
+                className="w-full p-3 border border-gray-300 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
+                placeholder="e.g. 8 ton dropside enquiry"
                 {...register('subject')}
               />
               {errors.subject && (
-                <p className="text-red-500 text-sm mt-1">
+                <p id="subject-error" role="alert" className="text-red-600 text-sm mt-1">
                   {errors.subject.message}
                 </p>
               )}
@@ -168,13 +178,17 @@ type ContactFormData = z.input<typeof contactFormSchema>
               </label>
               <input
                 id="phone"
+                autoComplete="tel"
+                inputMode="tel"
+                aria-invalid={!!errors.phone}
+                aria-describedby={errors.phone ? 'phone-error' : undefined}
                 type="tel"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                placeholder="Your Phone Number"
+                className="w-full p-3 border border-gray-300 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
+                placeholder="e.g. 082 123 4567"
                 {...register('phone')}
               />
               {errors.phone && (
-                <p className="text-red-500 text-sm mt-1">
+                <p id="phone-error" role="alert" className="text-red-600 text-sm mt-1">
                   {errors.phone.message}
                 </p>
               )}
@@ -191,7 +205,8 @@ type ContactFormData = z.input<typeof contactFormSchema>
             </label>
             <select
               id="branch"
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              autoComplete="off"
+              className="w-full bg-white text-gray-900 p-3 border border-gray-300 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
               {...register('branch')}
             >
               <option value="">Select Branch</option>
@@ -199,7 +214,7 @@ type ContactFormData = z.input<typeof contactFormSchema>
               <option value="Boksburg">Boksburg</option>
             </select>
             {errors.branch && (
-              <p className="text-red-500 text-sm mt-1">
+              <p id="branch-error" role="alert" className="text-red-600 text-sm mt-1">
                 {errors.branch.message}
               </p>
             )}
@@ -215,13 +230,16 @@ type ContactFormData = z.input<typeof contactFormSchema>
             </label>
             <textarea
               id="message"
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              autoComplete="off"
+              aria-invalid={!!errors.message}
+              aria-describedby={errors.message ? 'message-error' : undefined}
+              className="w-full p-3 border border-gray-300 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
               rows={6}
-              placeholder="Your Message"
+              placeholder="Tell us what truck you need, your budget and when…"
               {...register('message')}
             ></textarea>
             {errors.message && (
-              <p className="text-red-500 text-sm mt-1">
+              <p id="message-error" role="alert" className="text-red-600 text-sm mt-1">
                 {errors.message.message}
               </p>
             )}
@@ -238,7 +256,8 @@ type ContactFormData = z.input<typeof contactFormSchema>
             </label>
             <select
               id="heardAboutUs"
-              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+              autoComplete="off"
+              className="w-full bg-white text-gray-900 p-3 border border-gray-300 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
               {...register('heardAboutUs')}
             >
               <option value="">Prefer not to say</option>
@@ -252,8 +271,8 @@ type ContactFormData = z.input<typeof contactFormSchema>
             {heardAboutUs === 'Other' && (
               <input
                 type="text"
-                className="w-full mt-3 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                placeholder="Where did you hear about us?"
+                className="w-full mt-3 p-3 border border-gray-300 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:border-yellow-500"
+                placeholder="e.g. a friend, a billboard…"
                 aria-label="Tell us where you heard about us"
                 {...register('heardAboutUsOther')}
               />
@@ -273,7 +292,7 @@ type ContactFormData = z.input<typeof contactFormSchema>
               className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Sending...' : 'Send Message'}
+              {isSubmitting ? 'Sending…' : 'Send Message'}
             </Button>
           </div>
         </form>

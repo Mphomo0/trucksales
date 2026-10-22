@@ -5,6 +5,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { formatNumber } from '@/lib/format'
 import { useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -185,7 +186,7 @@ interface Special {
   }
 
   if (loading)
-    return <p className="flex justify-center items-center h-96">Loading...</p>
+    return <p className="flex justify-center items-center h-96">Loading…</p>
   if (error) return <p>{error}</p>
   if (!special)
     return (
@@ -291,12 +292,15 @@ interface Special {
                   {special.inventory.images.length > 1 && (
                     <div
                       ref={thumbnailRef}
-                      className="keen-slider mb-8 cursor-pointer px-2"
+                      className="keen-slider mb-8 px-2"
                     >
                       {special.inventory.images.map((img, index) => (
-                        <div
+                        <button
+                          type="button"
                           key={index}
-                          className={`keen-slider__slide transition-all rounded overflow-hidden aspect-video ${
+                          aria-label={`Show image ${index + 1}`}
+                          aria-current={currentSlide === index ? 'true' : undefined}
+                          className={`keen-slider__slide transition-[opacity,transform,box-shadow] rounded overflow-hidden aspect-video cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 ${
                             currentSlide === index
                               ? 'ring-2 ring-yellow-600 scale-95'
                               : 'opacity-70 hover:opacity-100'
@@ -305,17 +309,17 @@ interface Special {
                             sliderInstanceRef.current?.moveToIdx(index)
                           }
                         >
-                          <div className="relative w-full h-full">
+                          <span className="relative block w-full h-full">
                             <Image
                               src={ikThumb(img.url)}
-                              alt={`Thumbnail ${index + 1}`}
+                              alt=""
                               width={300}
                               height={200}
                               className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 100px, (max-width: 1024px) 150px, 200px"
                             />
-                          </div>
-                        </div>
+                          </span>
+                        </button>
                       ))}
                     </div>
                   )}
@@ -351,7 +355,7 @@ interface Special {
                     <div>
                       <p className="text-sm text-gray-500">Mileage</p>
                       <p className="font-semibold">
-                        {special.inventory.mileage.toLocaleString()}
+                        {formatNumber(special.inventory.mileage)}
                       </p>
                     </div>
                   </div>
@@ -406,13 +410,13 @@ interface Special {
                 <div className="text-center">
                   {/* Original Price - Was */}
                   <div className="text-lg text-red-500 line-through">
-                    Was: R{special.inventory.vatPrice.toLocaleString()}{' '}
+                    Was: R{formatNumber(special.inventory.vatPrice)}{' '}
                     <span className="text-sm">incl. VAT</span>
                   </div>
 
                   {/* Discounted Price - Now */}
                   <div className="text-3xl font-bold text-amber-600">
-                    Now: R{special.amount.toLocaleString()}{' '}
+                    Now: R{formatNumber(special.amount)}{' '}
                     <span className="text-sm">incl. VAT</span>
                   </div>
                 </div>

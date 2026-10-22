@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Search, RefreshCw, ArrowUpDown } from 'lucide-react'
 
 interface Lead {
@@ -84,7 +85,7 @@ export default function ChatbotLeads() {
 
       {/* Filters */}
       <div className="mb-6 flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 py-2">
+        <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 py-2 focus-within:border-[#f5b800] focus-within:ring-1 focus-within:ring-[#f5b800]">
           <Search size={16} className="text-gray-400" />
           <input
             type="text"
@@ -93,7 +94,10 @@ export default function ChatbotLeads() {
               setSearch(e.target.value)
               setPage(1)
             }}
-            placeholder="Search leads..."
+            placeholder="Search leads…"
+            aria-label="Search leads"
+            name="search"
+            autoComplete="off"
             className="bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400"
           />
         </div>
@@ -103,7 +107,8 @@ export default function ChatbotLeads() {
             setStatusFilter(e.target.value)
             setPage(1)
           }}
-          className="rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 outline-none"
+          aria-label="Filter by status"
+          className="rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus-visible:border-[#f5b800] focus-visible:ring-1 focus-visible:ring-[#f5b800]"
         >
           <option value="">All Statuses</option>
           <option value="NEW">New</option>
@@ -159,7 +164,16 @@ export default function ChatbotLeads() {
                       <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
                         {formatDate(lead.createdAt)}
                       </td>
-                      <td className="px-4 py-3 font-medium text-gray-900">{lead.name}</td>
+                      <td className="px-4 py-3 font-medium text-gray-900">
+                        {/* Real link so the row is reachable by keyboard and opens in a new tab */}
+                        <Link
+                          href={`/dashboard/chatbot/leads/${lead.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="rounded hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f5b800]"
+                        >
+                          {lead.name}
+                        </Link>
+                      </td>
                       <td className="px-4 py-3 text-gray-700">{lead.phone}</td>
                       <td className="px-4 py-3 text-gray-500">
                         {lead.email || '-'}

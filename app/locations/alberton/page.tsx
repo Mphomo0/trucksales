@@ -1,6 +1,7 @@
 export const revalidate = 86400
 
 import JsonLd from '@/components/global/JsonLd'
+import { formatNumber } from '@/lib/format'
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { REVIEW_COUNT } from '@/lib/reviews'
@@ -306,11 +307,11 @@ export default async function AlbertonPage() {
                     </h3>
                     <p className="text-amber-600 font-bold text-lg">
                       {truck.vatPrice
-                        ? `R${truck.vatPrice.toLocaleString()}`
+                        ? `R${formatNumber(truck.vatPrice)}`
                         : 'Call for price'}
                     </p>
                     <div className="flex gap-2 mt-2 text-sm text-gray-500">
-                      <span>{truck.mileage?.toLocaleString() ?? '-'} km</span>
+                      <span>{formatNumber(truck.mileage) ?? '-'} km</span>
                       <span>|</span>
                       <span>{truck.fuelType ?? '-'}</span>
                       <span>|</span>

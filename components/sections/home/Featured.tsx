@@ -15,7 +15,7 @@ type FeaturedTruck = {
 const getFeaturedTrucks = unstable_cache(
   async (): Promise<FeaturedTruck[]> => {
     const vehicles = await prisma.inventory.findMany({
-      take: 20,
+      take: 12,
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,

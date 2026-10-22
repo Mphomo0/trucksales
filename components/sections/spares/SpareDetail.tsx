@@ -5,6 +5,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { formatNumber } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -240,12 +241,15 @@ interface Props {
                   {spare.images.length > 1 && (
                     <div
                       ref={thumbnailRef}
-                      className="keen-slider mb-8 cursor-pointer px-2"
+                      className="keen-slider mb-8 px-2"
                     >
                       {(spare.images || []).map((img: any, index: number) => (
-                        <div
+                        <button
+                          type="button"
                           key={index}
-                          className={`keen-slider__slide transition-all rounded overflow-hidden aspect-video ${
+                          aria-label={`Show image ${index + 1}`}
+                          aria-current={currentSlide === index ? 'true' : undefined}
+                          className={`keen-slider__slide transition-[opacity,transform,box-shadow] rounded overflow-hidden aspect-video cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 ${
                             currentSlide === index
                               ? 'ring-2 ring-yellow-600 scale-95'
                               : 'opacity-70 hover:opacity-100'
@@ -254,17 +258,17 @@ interface Props {
                             sliderInstanceRef.current?.moveToIdx(index)
                           }
                         >
-                          <div className="relative w-full h-full">
+                          <span className="relative block w-full h-full">
                             <Image
                               src={ikThumb(img.url)}
-                              alt={`Thumbnail ${index + 1}`}
+                              alt=""
                               width={300}
                               height={200}
                               className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 100px, (max-width: 1024px) 150px, 200px"
                             />
-                          </div>
-                        </div>
+                          </span>
+                        </button>
                       ))}
                     </div>
                   )}
@@ -399,10 +403,10 @@ interface Props {
                       return (
                         <div className="flex flex-col">
                           <span className="text-xl font-bold text-red-500 line-through">
-                            R{spare.price.toLocaleString()}
+                            R{formatNumber(spare.price)}
                           </span>
                           <span className="text-3xl font-bold text-amber-600">
-                            R{priceInfo.currentPrice.toLocaleString()}
+                            R{formatNumber(priceInfo.currentPrice)}
                           </span>
                           <Badge className="mt-2 bg-red-600">SPECIAL</Badge>
                           {validUntil && (
@@ -415,7 +419,7 @@ interface Props {
                     }
                     return (
                       <div className="text-3xl font-bold text-amber-600">
-                        R{spare.price.toLocaleString()}
+                        R{formatNumber(spare.price)}
                       </div>
                     )
                   })()}
@@ -425,7 +429,7 @@ interface Props {
                     if (!noVatPrice) return null
                     return (
                       <p className="text-gray-600">
-                        R{noVatPrice.toLocaleString()} excl. VAT
+                        R{formatNumber(noVatPrice)} excl. VAT
                       </p>
                     )
                   })()}

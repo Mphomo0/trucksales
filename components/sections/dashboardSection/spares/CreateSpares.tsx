@@ -324,7 +324,7 @@ type SparesFormData = z.input<typeof spareSchema>
           </div>
 
           <Button type="submit" disabled={isSubmitting || isUploading}>
-            {isSubmitting || isUploading ? 'Creating...' : 'Create Spare'}
+            {isSubmitting || isUploading ? 'Creating…' : 'Create Spare'}
           </Button>
         </form>
       </div>

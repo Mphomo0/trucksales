@@ -248,14 +248,14 @@ interface Meta {
       {/* Top controls */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <Input
-          placeholder="Search vehicles (name, make, model, reg, body type, size)..."
+          placeholder="Search vehicles (name, make, model, reg, body type, size)…"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           className="w-full sm:max-w-md"
         />
         <div className="text-sm text-gray-500">
           {loading ? (
-            <>Loading...</>
+            <>Loading…</>
           ) : (
             <>{meta.total > 0 ? `Showing ${startItem} - ${endItem} of ${meta.total} vehicles` : 'No vehicles found'}</>
           )}
@@ -266,7 +266,7 @@ interface Meta {
       <div className="w-full overflow-x-auto">
         {loading ? (
           <div className="flex items-center justify-center h-64">
-            <p>Loading vehicles...</p>
+            <p>Loading vehicles…</p>
           </div>
         ) : (
           <>

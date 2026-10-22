@@ -3,7 +3,8 @@
 /* application/ld+json */
 
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
 import { Menu, X, User } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -18,44 +19,51 @@ const NavLinks = [
   { name: 'Contact Us', href: '/contact' },
 ]
 
+function isActive(pathname: string | null, href: string) {
+  if (!pathname) return false
+  return href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`)
+}
+
 /* <h1>A-Z Truck Sales Components</h1> */ export default function Navbar() {
+  const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   // Clerk session cookie check instead of useUser() — keeps ClerkProvider (and
   // its middleware requirement) off public pages. Only gates the staff Dashboard link.
   const [isSignedIn, setIsSignedIn] = useState(false)
-  const isLoaded = true
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const mobileMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setIsSignedIn(document.cookie.includes('__session='))
   }, [])
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen((prev) => {
-      document.body.style.overflow = prev ? 'unset' : 'hidden'
-      return !prev
-    })
+  // Close the menu whenever the route changes
+  const [lastPathname, setLastPathname] = useState(pathname)
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname)
+    setIsMobileMenuOpen(false)
   }
 
-  // Cleanup overflow style when component unmounts
+  // Lock page scroll while the menu is open, move focus into it, and close on Escape
   useEffect(() => {
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [])
+    if (!isMobileMenuOpen) return
+    document.body.style.overflow = 'hidden'
+    mobileMenuRef.current?.querySelector<HTMLElement>('a')?.focus()
 
-  useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsMobileMenuOpen(false)
-        document.body.style.overflow = 'unset'
+        menuButtonRef.current?.focus()
       }
     }
-
-    if (isMobileMenuOpen) {
-      document.addEventListener('keydown', handleEscape)
-      return () => document.removeEventListener('keydown', handleEscape)
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.body.style.overflow = ''
+      document.removeEventListener('keydown', handleEscape)
     }
   }, [isMobileMenuOpen])
+
+  const closeMenu = () => setIsMobileMenuOpen(false)
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
@@ -84,7 +92,8 @@ const NavLinks = [
                   <Link
                     href={link.href}
                     prefetch={false}
-                    className="text-gray-800 hover:text-gray-600 text-lg font-medium transition-colors"
+                    aria-current={isActive(pathname, link.href) ? 'page' : undefined}
+                    className="text-gray-800 hover:text-gray-600 text-lg font-medium transition-colors rounded aria-[current=page]:text-amber-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2"
                   >
                     {link.name}
                   </Link>
@@ -95,7 +104,7 @@ const NavLinks = [
 
           {/* Desktop Auth Section */}
           <div className="hidden lg:flex items-center space-x-4">
-            {isLoaded && isSignedIn ? (
+            {isSignedIn ? (
               <Link
                 href="/dashboard"
                 className="flex items-center gap-2 px-3 py-2 text-gray-800 hover:text-gray-600 rounded-md transition-colors"
@@ -108,10 +117,13 @@ const NavLinks = [
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
-            onClick={toggleMobileMenu}
-            aria-label="Toggle mobile menu"
+            ref={menuButtonRef}
+            type="button"
+            className="lg:hidden p-2 rounded-md hover:bg-gray-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600"
+            onClick={() => setIsMobileMenuOpen((open) => !open)}
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu"
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -120,40 +132,38 @@ const NavLinks = [
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <>
+            {/* Click-away backdrop; keyboard users close with Escape or the menu button */}
             <div
-              className="lg:hidden fixed inset-0 bg-transparent bg-opacity-25 z-40"
-              onClick={() => {
-                setIsMobileMenuOpen(false)
-                document.body.style.overflow = 'unset'
-              }}
+              className="lg:hidden fixed inset-0 bg-transparent z-40"
+              aria-hidden="true"
+              onClick={closeMenu}
             />
-            <div className="lg:hidden fixed top-20 left-0 right-0 bg-white shadow-lg z-50 border-t border-gray-200">
+            <div
+              id="mobile-menu"
+              ref={mobileMenuRef}
+              className="lg:hidden fixed top-20 left-0 right-0 max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain bg-white shadow-lg z-50 border-t border-gray-200"
+            >
               <div className="flex flex-col space-y-1 px-4 py-4">
                 {NavLinks.map((link) => (
                   <Link
                     key={link.name}
                     href={link.href}
                     prefetch={false}
-                    className="text-gray-800 hover:text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-md text-base transition-colors"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false)
-                      document.body.style.overflow = 'unset'
-                    }}
+                    aria-current={isActive(pathname, link.href) ? 'page' : undefined}
+                    className="text-gray-800 hover:text-gray-600 hover:bg-gray-50 px-3 py-2 rounded-md text-base transition-colors aria-[current=page]:bg-amber-50 aria-[current=page]:text-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600"
+                    onClick={closeMenu}
                   >
                     {link.name}
                   </Link>
                 ))}
 
                 {/* Mobile Auth Section */}
-                {isLoaded && isSignedIn && (
+                {isSignedIn && (
                   <div className="pt-2 mt-2 border-t border-gray-200 flex flex-col space-y-1">
                     <Link
                       href="/dashboard"
                       className="flex items-center gap-2 px-3 py-2 text-gray-800 hover:text-gray-600 hover:bg-gray-50 rounded-md transition-colors"
-                      onClick={() => {
-                        setIsMobileMenuOpen(false)
-                        document.body.style.overflow = 'unset'
-                      }}
+                      onClick={closeMenu}
                     >
                       <User size={18} />
                       <span>Dashboard</span>

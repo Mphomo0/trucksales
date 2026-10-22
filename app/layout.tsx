@@ -2,7 +2,7 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist } from 'next/font/google'
 import './globals.css'
 import ClientLayout from '@/components/global/ClientLayout'
@@ -16,6 +16,10 @@ const geistSans = Geist({
 })
 
 import JsonLd from '@/components/global/JsonLd'
+
+export const viewport: Viewport = {
+  themeColor: '#ffffff',
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(

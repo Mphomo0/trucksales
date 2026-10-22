@@ -38,12 +38,14 @@ export function ChatWidget() {
   const [error, setError] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const toggleRef = useRef<HTMLButtonElement>(null)
   const [isCollectingLead, setIsCollectingLead] = useState(false)
   const [leadStep, setLeadStep] = useState(0)
   const [leadData, setLeadData] = useState({ name: '', phone: '', email: '' })
 
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    messagesEndRef.current?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' })
   }, [])
 
   useEffect(() => {
@@ -52,7 +54,9 @@ export function ChatWidget() {
 
   useEffect(() => {
     if (isOpen) {
-      inputRef.current?.focus()
+      // Focus the input on desktop only; on phones it would pop the keyboard
+      // over the welcome message before the visitor has read it
+      if (window.matchMedia('(pointer: fine)').matches) inputRef.current?.focus()
       const stored = sessionStorage.getItem('chatSessionId')
       if (stored)
          
@@ -128,6 +132,21 @@ export function ChatWidget() {
 
     setIsLoading(false)
   }, [input, isLoading, sessionId, addMessage])
+
+  // Return focus to the toggle once the window has closed. It has to wait for
+  // the render: on phones the toggle is display:none while the chat is open.
+  const [returnFocus, setReturnFocus] = useState(false)
+  useEffect(() => {
+    if (!isOpen && returnFocus) {
+      toggleRef.current?.focus()
+      setReturnFocus(false)
+    }
+  }, [isOpen, returnFocus])
+
+  const closeChat = useCallback(() => {
+    setIsOpen(false)
+    setReturnFocus(true)
+  }, [])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -236,8 +255,12 @@ export function ChatWidget() {
     <>
       {/* Toggle Button */}
       <button
+        ref={toggleRef}
+        type="button"
         onClick={() => setIsOpen((v) => !v)}
-        className={`fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#f5b800] text-black shadow-lg transition-all hover:scale-105 hover:shadow-xl active:scale-95 ${isOpen ? 'max-sm:hidden' : ''}`}
+        aria-expanded={isOpen}
+        aria-controls="chat-window"
+        className={`fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#f5b800] text-black shadow-lg transition-[transform,box-shadow] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 motion-reduce:hover:scale-100 motion-reduce:active:scale-100 hover:shadow-xl active:scale-95 ${isOpen ? 'max-sm:hidden' : ''}`}
         aria-label={isOpen ? 'Close chat' : 'Open chat'}
       >
         {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
@@ -245,7 +268,15 @@ export function ChatWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 flex h-150 w-95 flex-col rounded-2xl border border-gray-200 bg-white shadow-2xl max-sm:bottom-0 max-sm:right-0 max-sm:h-dvh max-sm:w-screen max-sm:rounded-none max-sm:border-0">
+        <div
+          id="chat-window"
+          role="dialog"
+          aria-label="Chat with A-Z Truck Sales"
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') closeChat()
+          }}
+          className="fixed bottom-24 right-6 z-50 flex h-150 w-95 flex-col rounded-2xl border border-gray-200 bg-white shadow-2xl max-sm:bottom-0 max-sm:right-0 max-sm:h-dvh max-sm:w-screen max-sm:rounded-none max-sm:border-0 max-sm:pt-[env(safe-area-inset-top)]"
+        >
           {/* Header */}
           <div className="flex items-center gap-3 rounded-t-2xl bg-[#0f1117] px-5 py-4 text-white max-sm:rounded-none">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f5b800]">
@@ -256,15 +287,22 @@ export function ChatWidget() {
               <p className="text-[11px] text-gray-400">Online</p>
             </div>
             <button
-              onClick={() => setIsOpen(false)}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 hover:bg-white/10 hover:text-white"
+              type="button"
+              onClick={closeChat}
+              aria-label="Minimise chat"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f5b800]"
             >
               <ChevronDown size={18} />
             </button>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-4 py-4">
+          <div
+            className="flex-1 overflow-y-auto overscroll-contain px-4 py-4"
+            role="log"
+            aria-live="polite"
+            aria-label="Chat messages"
+          >
             {messages.map((msg, i) => (
               <div
                 key={i}
@@ -308,14 +346,15 @@ export function ChatWidget() {
                     <Bot size={14} className="text-black" />
                   </div>
                   <div className="rounded-2xl bg-gray-100 px-4 py-3">
-                    <Loader2 size={16} className="animate-spin text-gray-500" />
+                    <Loader2 size={16} className="motion-safe:animate-spin text-gray-500" />
+                    <span className="sr-only">Assistant is typing…</span>
                   </div>
                 </div>
               </div>
             )}
 
             {error && (
-              <div className="mb-2 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">
+              <div role="alert" className="mb-2 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">
                 {error}
               </div>
             )}
@@ -327,6 +366,7 @@ export function ChatWidget() {
           {!isCollectingLead && !isLoading && (
             <div className="px-4 pb-2">
               <button
+                type="button"
                 onClick={startLeadCollection}
                 className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 py-2.5 text-sm text-gray-600 transition-colors hover:border-[#f5b800] hover:text-[#f5b800]"
               >
@@ -341,7 +381,22 @@ export function ChatWidget() {
             <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 py-1.5 focus-within:border-[#f5b800] focus-within:ring-1 focus-within:ring-[#f5b800]">
               <input
                 ref={inputRef}
-                type="text"
+                // The lead steps ask for name, phone and email, so switch the
+                // keyboard and autofill to match the question being asked
+                type={isCollectingLead && leadStep === 2 ? 'tel' : 'text'}
+                name={isCollectingLead ? (['', 'name', 'tel', 'email'][leadStep] || 'message') : 'message'}
+                autoComplete={
+                  isCollectingLead
+                    ? (['off', 'name', 'tel', 'email'][leadStep] ?? 'off')
+                    : 'off'
+                }
+                inputMode={isCollectingLead && leadStep === 3 ? 'email' : undefined}
+                spellCheck={isCollectingLead && leadStep === 3 ? false : undefined}
+                aria-label={
+                  isCollectingLead
+                    ? ['Message', 'Your name', 'Your phone number', 'Your email address'][leadStep]
+                    : 'Message'
+                }
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={
@@ -350,15 +405,14 @@ export function ChatWidget() {
                 placeholder={
                   isCollectingLead
                     ? leadStep === 1
-                      ? 'Enter your name...'
+                      ? 'Enter your name…'
                       : leadStep === 2
-                        ? 'Enter your phone number...'
-                        : 'Enter your email (or type "skip")...'
-                    : 'Type your message...'
+                        ? 'Enter your phone number…'
+                        : 'Enter your email (or type “skip”)…'
+                    : 'Type your message…'
                 }
                 className="flex-1 bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400"
                 maxLength={500}
-                disabled={isLoading}
               />
               <button
                 onClick={
@@ -372,6 +426,8 @@ export function ChatWidget() {
                       }
                     : handleSend
                 }
+                type="button"
+                aria-label="Send message"
                 disabled={isLoading || !input.trim()}
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#f5b800] text-black transition-colors hover:bg-[#e0a700] disabled:opacity-50"
               >

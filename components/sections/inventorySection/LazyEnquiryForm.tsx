@@ -18,7 +18,7 @@ export const preloadEnquiryForm = () => {
 const LazyEnquiryForm = dynamic(loadEnquiryForm, {
   ssr: false,
   loading: () => (
-    <p className="py-6 text-center text-sm text-gray-500">Loading form...</p>
+    <p className="py-6 text-center text-sm text-gray-500">Loading form…</p>
   ),
 })
 

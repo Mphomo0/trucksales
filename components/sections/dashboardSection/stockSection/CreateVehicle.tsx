@@ -523,7 +523,7 @@ type VehicleFormData = z.input<typeof vehicleSchema>
           </div>
 
           <Button type="submit" disabled={isSubmitting || isUploading}>
-            {isSubmitting || isUploading ? 'Creating...' : 'Create Vehicle'}
+            {isSubmitting || isUploading ? 'Creating…' : 'Create Vehicle'}
           </Button>
         </form>
       </div>

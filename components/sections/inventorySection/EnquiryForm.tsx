@@ -4,7 +4,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-toastify'
@@ -19,6 +19,7 @@ interface EnquiryFormProps {
 }
 
 /* <h1>A-Z Truck Sales Components</h1> */ export default function EnquiryForm({ vehicleSlug }: EnquiryFormProps) {
+  const id = useId()
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [turnstileReset, setTurnstileReset] = useState(0)
 
@@ -54,11 +55,15 @@ interface EnquiryFormProps {
         reset()
         setTurnstileReset((n) => n + 1)
       } else {
-        toast.error(`Error: ${result.message || 'Something went wrong'}`)
+        toast.error(
+          `${result.message || 'Your enquiry was not sent'}. Please try again or call us on 011 902 6071.`
+        )
       }
     } catch (error) {
       console.error('Error submitting form:', error)
-      toast.error('Failed to send message. Please try again later.')
+      toast.error(
+        'Your enquiry was not sent. Check your connection and try again, or call us on 011 902 6071.'
+      )
     }
   }
 
@@ -66,53 +71,65 @@ interface EnquiryFormProps {
     <div>
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         <div>
-          <label className="block text-sm font-medium">Name & Surname</label>
+          <label htmlFor={`${id}-name`} className="block text-sm font-medium">Name & Surname</label>
           <input
+            id={`${id}-name`}
             type="text"
-            className="w-full border px-3 py-2 rounded"
+            autoComplete="name"
+            className="w-full border px-3 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#24603a]"
             aria-invalid={!!errors.name}
+            aria-describedby={errors.name ? `${id}-name-error` : undefined}
             {...register('name')}
           />
-          {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+          {errors.name && <p id={`${id}-name-error`} role="alert" className="text-red-600 text-sm">{errors.name.message}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Email</label>
+          <label htmlFor={`${id}-email`} className="block text-sm font-medium">Email</label>
           <input
+            id={`${id}-email`}
             type="email"
-            className="w-full border px-3 py-2 rounded"
+            autoComplete="email" spellCheck={false}
+            className="w-full border px-3 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#24603a]"
             aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? `${id}-email-error` : undefined}
             {...register('email')}
           />
           {errors.email && (
-            <p className="text-red-500">{errors.email.message}</p>
+            <p id={`${id}-email-error`} role="alert" className="text-red-600 text-sm">{errors.email.message}</p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Contact Number</label>
+          <label htmlFor={`${id}-phone`} className="block text-sm font-medium">Contact Number</label>
           <input
+            id={`${id}-phone`}
             type="tel"
-            className="w-full border px-3 py-2 rounded"
+            autoComplete="tel" inputMode="tel"
+            className="w-full border px-3 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#24603a]"
             aria-invalid={!!errors.phone}
+            aria-describedby={errors.phone ? `${id}-phone-error` : undefined}
             {...register('phone')}
           />
           {errors.phone && (
-            <p className="text-red-500">{errors.phone.message}</p>
+            <p id={`${id}-phone-error`} role="alert" className="text-red-600 text-sm">{errors.phone.message}</p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Message</label>
+          <label htmlFor={`${id}-message`} className="block text-sm font-medium">Message</label>
           <textarea
-            className="w-full border px-3 py-2 rounded"
+            id={`${id}-message`}
+            autoComplete="off"
+            className="w-full border px-3 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#24603a]"
             rows={4}
             defaultValue={`I would like to check the availability of the https://www.a-ztrucksales.com/inventory/${vehicleSlug}`}
             aria-invalid={!!errors.message}
+            aria-describedby={errors.message ? `${id}-message-error` : undefined}
             {...register('message')}
           />
           {errors.message && (
-            <p className="text-red-500">{errors.message.message}</p>
+            <p id={`${id}-message-error`} role="alert" className="text-red-600 text-sm">{errors.message.message}</p>
           )}
         </div>
 
@@ -123,12 +140,12 @@ interface EnquiryFormProps {
 
         <button
           type="submit"
-          className={`w-full bg-[#24603a] text-white py-2 rounded transition-opacity ${
+          className={`w-full bg-[#24603a] hover:bg-[#1c4d2e] text-white py-2 rounded transition-[opacity,background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#24603a] focus-visible:ring-offset-2 ${
             isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
           }`}
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Submitting...' : 'Send Enquiry'}
+          {isSubmitting ? 'Sending…' : 'Send Enquiry'}
         </button>
       </form>
     </div>

@@ -52,19 +52,30 @@ interface ImagePreview {
     },
   })
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (files) {
-      const newImages: ImagePreview[] = Array.from(files).map((file) => ({
+  const [isDragging, setIsDragging] = useState(false)
+
+  const addImages = (files: FileList | null) => {
+    if (!files) return
+    const newImages: ImagePreview[] = Array.from(files)
+      .filter((file) => file.type.startsWith('image/'))
+      .map((file) => ({
         file,
         url: URL.createObjectURL(file),
         id: crypto.randomUUID(),
       }))
+    setSelectedImages((prev) => [...prev, ...newImages])
+  }
 
-      setSelectedImages((prev) => [...prev, ...newImages])
-    }
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    addImages(e.target.files)
     // Reset the input so the same file can be selected again if needed
     e.target.value = ''
+  }
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setIsDragging(false)
+    addImages(e.dataTransfer.files)
   }
 
   const removeImage = (id: string) => {
@@ -84,7 +95,7 @@ interface ImagePreview {
 
   const onSubmit = async (data: TradeInFormData) => {
     if (selectedImages.length === 0) {
-      toast.error('At least one image is required.')
+      toast.error('Add at least one photo of your truck so we can value it.')
       return
     }
     const formData = new FormData()
@@ -114,11 +125,15 @@ interface ImagePreview {
         clearAllImages()
         setTurnstileReset((n) => n + 1)
       } else {
-        toast.error(result.message || 'Something went wrong')
+        toast.error(
+          `${result.message || 'Your request was not sent'}. Please try again or call us on 011 902 6071.`
+        )
       }
     } catch (error) {
       console.error('Error submitting form:', error)
-      toast.error('Failed to send message. Please try again later.')
+      toast.error(
+        'Your request was not sent. Check your connection and try again, or call us on 011 902 6071.'
+      )
     }
   }
 
@@ -147,11 +162,14 @@ interface ImagePreview {
                       <Label htmlFor="firstName">First Name</Label>
                       <Input
                         id="firstName"
-                        placeholder="Enter your first name"
+                        autoComplete="given-name"
+                        aria-invalid={!!errors.firstName}
+                        aria-describedby={errors.firstName ? 'firstName-error' : undefined}
+                        placeholder="e.g. Thabo"
                         {...register('firstName')}
                       />
                       {errors.firstName && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p id="firstName-error" role="alert" className="text-red-600 text-sm mt-1">
                           {errors.firstName.message}
                         </p>
                       )}
@@ -161,11 +179,14 @@ interface ImagePreview {
                       <Label htmlFor="lastName">Last Name</Label>
                       <Input
                         id="lastName"
-                        placeholder="Enter your last name"
+                        autoComplete="family-name"
+                        aria-invalid={!!errors.lastName}
+                        aria-describedby={errors.lastName ? 'lastName-error' : undefined}
+                        placeholder="e.g. Mokoena"
                         {...register('lastName')}
                       />
                       {errors.lastName && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p id="lastName-error" role="alert" className="text-red-600 text-sm mt-1">
                           {errors.lastName.message}
                         </p>
                       )}
@@ -175,12 +196,16 @@ interface ImagePreview {
                       <Label htmlFor="email">Email</Label>
                       <Input
                         id="email"
+                        autoComplete="email"
+                        spellCheck={false}
+                        aria-invalid={!!errors.email}
+                        aria-describedby={errors.email ? 'email-error' : undefined}
                         type="email"
-                        placeholder="Enter your email"
+                        placeholder="e.g. thabo@company.co.za"
                         {...register('email')}
                       />
                       {errors.email && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p id="email-error" role="alert" className="text-red-600 text-sm mt-1">
                           {errors.email.message}
                         </p>
                       )}
@@ -190,12 +215,16 @@ interface ImagePreview {
                       <Label htmlFor="phone">Phone Number</Label>
                       <Input
                         id="phone"
+                        autoComplete="tel"
+                        inputMode="tel"
+                        aria-invalid={!!errors.phone}
+                        aria-describedby={errors.phone ? 'phone-error' : undefined}
                         type="tel"
-                        placeholder="Enter your phone number e.g(011-011-0000)"
+                        placeholder="e.g. 082 123 4567"
                         {...register('phone')}
                       />
                       {errors.phone && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p id="phone-error" role="alert" className="text-red-600 text-sm mt-1">
                           {errors.phone.message}
                         </p>
                       )}
@@ -213,7 +242,12 @@ interface ImagePreview {
                             onValueChange={field.onChange}
                             value={field.value ? String(field.value) : ''}
                           >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger
+                              id="preferredContact"
+                              className="w-full"
+                              aria-invalid={!!errors.preferredContact}
+                              aria-describedby={errors.preferredContact ? 'preferredContact-error' : undefined}
+                            >
                               <SelectValue placeholder="How would you like to be contacted?" />
                             </SelectTrigger>
                             <SelectContent>
@@ -225,7 +259,7 @@ interface ImagePreview {
                         )}
                       />
                       {errors.preferredContact && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p id="preferredContact-error" role="alert" className="text-red-600 text-sm mt-1">
                           {errors.preferredContact.message}
                         </p>
                       )}
@@ -242,11 +276,15 @@ interface ImagePreview {
                       <Label htmlFor="year">Year</Label>
                       <Input
                         id="year"
-                        placeholder="Enter Vehicle Year"
+                        autoComplete="off"
+                        inputMode="numeric"
+                        aria-invalid={!!errors.year}
+                        aria-describedby={errors.year ? 'year-error' : undefined}
+                        placeholder="e.g. 2018"
                         {...register('year')}
                       />
                       {errors.year && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p id="year-error" role="alert" className="text-red-600 text-sm mt-1">
                           {errors.year.message}
                         </p>
                       )}
@@ -256,12 +294,15 @@ interface ImagePreview {
                       <Label htmlFor="make">Make</Label>
                       <Input
                         id="make"
+                        autoComplete="off"
+                        aria-invalid={!!errors.make}
+                        aria-describedby={errors.make ? 'make-error' : undefined}
                         type="text"
-                        placeholder="Enter vehicle make (e.g., Toyota, Ford)"
+                        placeholder="e.g. Isuzu, Hino"
                         {...register('make')}
                       />
                       {errors.make && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p id="make-error" role="alert" className="text-red-600 text-sm mt-1">
                           {errors.make.message}
                         </p>
                       )}
@@ -271,12 +312,15 @@ interface ImagePreview {
                       <Label htmlFor="model">Model</Label>
                       <Input
                         id="model"
+                        autoComplete="off"
+                        aria-invalid={!!errors.model}
+                        aria-describedby={errors.model ? 'model-error' : undefined}
                         type="text"
-                        placeholder="Enter model"
+                        placeholder="e.g. NPR 400"
                         {...register('model')}
                       />
                       {errors.model && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p id="model-error" role="alert" className="text-red-600 text-sm mt-1">
                           {errors.model.message}
                         </p>
                       )}
@@ -286,11 +330,15 @@ interface ImagePreview {
                       <Label htmlFor="mileage">Mileage</Label>
                       <Input
                         id="mileage"
-                        placeholder="Enter current mileage e.g 100000"
+                        autoComplete="off"
+                        inputMode="numeric"
+                        aria-invalid={!!errors.mileage}
+                        aria-describedby={errors.mileage ? 'mileage-error' : undefined}
+                        placeholder="e.g. 250000"
                         {...register('mileage')}
                       />
                       {errors.mileage && (
-                        <p className="text-red-500 text-sm mt-1">
+                        <p id="mileage-error" role="alert" className="text-red-600 text-sm mt-1">
                           {errors.mileage.message}
                         </p>
                       )}
@@ -318,18 +366,29 @@ interface ImagePreview {
                   </div>
 
                   {/* File Upload Area */}
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                  <div
+                    onDragOver={(e) => {
+                      e.preventDefault()
+                      setIsDragging(true)
+                    }}
+                    onDragLeave={() => setIsDragging(false)}
+                    onDrop={handleDrop}
+                    className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors focus-within:border-gray-500 ${
+                      isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                  >
+                    {/* sr-only rather than hidden so the picker stays reachable by keyboard */}
                     <input
                       id="tradeImages"
                       type="file"
                       multiple
                       accept="image/*"
                       onChange={handleImageUpload}
-                      className="hidden"
+                      className="peer sr-only"
                     />
                     <label
                       htmlFor="tradeImages"
-                      className="cursor-pointer flex flex-col items-center space-y-2"
+                      className="cursor-pointer flex flex-col items-center space-y-2 rounded peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500 peer-focus-visible:ring-offset-2"
                     >
                       <Upload className="h-8 w-8 text-gray-400" />
                       <div className="text-sm">
@@ -367,14 +426,14 @@ interface ImagePreview {
                           <button
                             type="button"
                             onClick={() => removeImage(imagePreview.id)}
-                            className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                            aria-label="Remove image"
+                            className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full sm:opacity-0 sm:group-hover:opacity-100 transition-[opacity,background-color] hover:bg-red-700 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                            aria-label={`Remove ${imagePreview.file.name}`}
                           >
                             <X className="h-4 w-4" />
                           </button>
 
                           {/* File name overlay */}
-                          <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white p-2 text-xs truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/75 text-white p-2 text-xs truncate opacity-0 group-hover:opacity-100 transition-opacity">
                             {imagePreview.file.name}
                           </div>
                         </div>
@@ -401,8 +460,8 @@ interface ImagePreview {
                           ) /
                           1024 /
                           1024
-                        ).toFixed(2)}{' '}
-                        MB
+                        ).toFixed(2)}
+                        &nbsp;MB
                       </span>
                     </div>
                   )}
@@ -412,12 +471,12 @@ interface ImagePreview {
                   <Label htmlFor="comments">Additional Comments</Label>
                   <Textarea
                     id="comments"
-                    placeholder="Tell us about any recent repairs, modifications, or other details that might affect your vehicle's value..."
+                    placeholder="Tell us about any recent repairs, modifications, or other details that might affect your vehicle's value…"
                     className="resize h-36"
                     {...register('comments')}
                   />
                   {errors.comments && (
-                    <p className="text-red-500 text-sm mt-1">
+                    <p id="comments-error" role="alert" className="text-red-600 text-sm mt-1">
                       {errors.comments.message}
                     </p>
                   )}
@@ -428,8 +487,8 @@ interface ImagePreview {
                   resetSignal={turnstileReset}
                 />
 
-                <Button size="lg" className="w-full" disabled={isSubmitting}>
-                  {isSubmitting ? 'Submitting...' : ' Get My Estimate'}
+                <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? 'Sending…' : 'Get My Estimate'}
                 </Button>
 
                 <p className="text-sm text-muted-foreground text-center mt-4">

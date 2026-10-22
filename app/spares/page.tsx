@@ -12,7 +12,7 @@ const AllSparesFilter = dynamic(
   () => import('@/components/sections/spares/AllSparesFilter'),
   {
     loading: () => (
-      <div className="py-20 text-center text-gray-500">Loading spares...</div>
+      <div className="py-20 text-center text-gray-500">Loading spares…</div>
     ),
   },
 )

@@ -4,7 +4,7 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
-import { FC, useState } from 'react'
+import { FC, useEffect, useId, useRef, useState } from 'react'
 
 // Define the Special type if not imported from elsewhere
 export interface Special {
@@ -33,6 +33,19 @@ export const Modal: FC<ModalProps> = ({
   initialData,
 }) => {
   const [submitting, setSubmitting] = useState(false)
+  const titleId = useId()
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  // Focus the first field on open and close on Escape
+  useEffect(() => {
+    if (!isOpen) return
+    dialogRef.current?.querySelector<HTMLElement>('input')?.focus()
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !submitting) onClose()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [isOpen, onClose, submitting])
 
   if (!isOpen) return null
 
@@ -66,9 +79,15 @@ export const Modal: FC<ModalProps> = ({
   const today = new Date().toISOString().split('T')[0]
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-8 rounded-lg max-w-md w-full">
-        <h3 className="text-xl font-semibold mb-4">Edit Special</h3>
+    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 overscroll-contain">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="bg-white p-8 rounded-lg max-w-md w-full"
+      >
+        <h3 id={titleId} className="text-xl font-semibold mb-4">Edit Special</h3>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="amount" className="block">
@@ -117,17 +136,17 @@ export const Modal: FC<ModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-500 text-white px-4 py-2 rounded"
+              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded transition-colors"
               disabled={submitting}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="bg-black text-white px-4 py-2 rounded disabled:opacity-50"
+              className="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded transition-colors disabled:opacity-50"
               disabled={submitting}
             >
-              {submitting ? 'Saving...' : 'Save Changes'}
+              {submitting ? 'Saving…' : 'Save Changes'}
             </button>
           </div>
         </form>

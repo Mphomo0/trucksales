@@ -1,6 +1,7 @@
 export const revalidate = 86400
 
 import JsonLd from '@/components/global/JsonLd'
+import { formatNumber } from '@/lib/format'
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -139,7 +140,7 @@ export default async function ManPage() {
         '@type': ['Vehicle', 'Product'],
         '@id': `https://www.a-ztrucksales.com/inventory/${truck.slug}#product`,
         name: truck.name,
-        description: `Used ${truck.name} for sale at A-Z Truck Sales in Gauteng${truck.mileage != null ? `, ${truck.mileage.toLocaleString()} km` : ''}${truck.fuelType ? `, ${truck.fuelType.toLowerCase()} engine` : ''}${truck.transmission ? `, ${truck.transmission.toLowerCase()} transmission` : ''}.`,
+        description: `Used ${truck.name} for sale at A-Z Truck Sales in Gauteng${truck.mileage != null ? `, ${formatNumber(truck.mileage)} km` : ''}${truck.fuelType ? `, ${truck.fuelType.toLowerCase()} engine` : ''}${truck.transmission ? `, ${truck.transmission.toLowerCase()} transmission` : ''}.`,
         url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
         image: (truck.images as any[])?.[0]?.url,
         brand: { '@type': 'Brand', name: 'MAN' },
@@ -301,7 +302,7 @@ export default async function ManPage() {
                     </h3>
                     <p className="text-amber-600 font-bold text-lg">
                       {truck.vatPrice
-                        ? `R${truck.vatPrice.toLocaleString()}`
+                        ? `R${formatNumber(truck.vatPrice)}`
                         : 'Call for price'}
                       {truck.vatPrice ? (
                         <span className="ml-1 text-xs font-normal text-gray-500">
@@ -310,7 +311,7 @@ export default async function ManPage() {
                       ) : null}
                     </p>
                     <div className="flex gap-2 mt-2 text-sm text-gray-500">
-                      <span>{truck.mileage?.toLocaleString() ?? '-'} km</span>
+                      <span>{formatNumber(truck.mileage) ?? '-'} km</span>
                       <span>|</span>
                       <span>{truck.fuelType ?? '-'}</span>
                       <span>|</span>

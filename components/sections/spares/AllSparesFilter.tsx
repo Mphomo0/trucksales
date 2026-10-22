@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef, memo } from 'react'
+import { formatNumber } from '@/lib/format'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -102,10 +103,10 @@ const SpareCard = memo(function SpareCard({ spare }: SpareCardProps) {
           {priceInfo.isSpecial ? (
             <div className="flex flex-col gap-1">
               <span className="text-lg font-bold text-red-500 line-through">
-                R{spare.price.toLocaleString()}
+                R{formatNumber(spare.price)}
               </span>
               <span className="text-2xl font-bold text-yellow-600">
-                R{priceInfo.currentPrice.toLocaleString()}
+                R{formatNumber(priceInfo.currentPrice)}
                 <span className="text-xs font-normal text-gray-500 ml-1">
                   incl. VAT
                 </span>
@@ -118,7 +119,7 @@ const SpareCard = memo(function SpareCard({ spare }: SpareCardProps) {
             </div>
           ) : (
             <p className="text-2xl font-bold text-yellow-600">
-              R{spare.price.toLocaleString()}
+              R{formatNumber(spare.price)}
               <span className="text-xs font-normal text-gray-500 ml-1">
                 incl. VAT
               </span>
@@ -320,7 +321,7 @@ export default function AllSparesFilter({
                 <Input
                   type="search"
                   aria-label="Search spare parts by name, make or description"
-                  placeholder="Search by name, make, or description..."
+                  placeholder="Search by name, make, or description…"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -369,7 +370,7 @@ export default function AllSparesFilter({
         {/* Total Count */}
         <div className="mb-6 text-center sm:text-left">
           <p className="text-gray-600">
-            Showing {loading ? '...' : spares.length} spare
+            Showing {loading ? '…' : spares.length} spare
             {spares.length === 1 ? '' : 's'}
           </p>
         </div>
@@ -377,7 +378,7 @@ export default function AllSparesFilter({
         {/* Loading */}
         {loading && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">Loading spare parts...</p>
+            <p className="text-gray-500 text-lg">Loading spare parts…</p>
           </div>
         )}
 

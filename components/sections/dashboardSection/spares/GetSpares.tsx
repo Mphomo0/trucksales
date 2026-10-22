@@ -163,7 +163,7 @@ interface ImageFile {
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
         <Input
-          placeholder="Search Spares..."
+          placeholder="Search Spares…"
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
           className="max-w-sm"
@@ -175,7 +175,7 @@ interface ImageFile {
 
       {loading ? (
         <div className="flex items-center justify-center h-64">
-          <p>Loading spares...</p>
+          <p>Loading spares…</p>
         </div>
       ) : (
         <>

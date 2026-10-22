@@ -275,7 +275,7 @@ export default function EditVehicle() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-32">
-        <span className="text-muted-foreground">Loading vehicle data...</span>
+        <span className="text-muted-foreground">Loading vehicle data…</span>
       </div>
     )
   }
@@ -644,7 +644,7 @@ export default function EditVehicle() {
           </div>
 
           <Button type="submit" disabled={isSubmitting || isUploading}>
-            {isSubmitting || isUploading ? 'Editing...' : 'Edit Vehicle'}
+            {isSubmitting || isUploading ? 'Editing…' : 'Edit Vehicle'}
           </Button>
         </form>
       </div>

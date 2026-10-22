@@ -48,7 +48,7 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
           <Search className="search-icon" size={16} />
           <input
             type="text"
-            placeholder="Search vehicles..."
+            placeholder="Search vehicles…"
             className="search-input"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

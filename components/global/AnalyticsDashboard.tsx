@@ -5,6 +5,7 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import { formatNumber } from '@/lib/format'
 import {
   Card,
   CardContent,
@@ -159,7 +160,7 @@ export function AnalyticsDashboard() {
             </div>
           </div>
           <p className="dash-stat-label">Total Users</p>
-          <p className="dash-stat-value">{data.totalUsers.toLocaleString()}</p>
+          <p className="dash-stat-value">{formatNumber(data.totalUsers)}</p>
         </div>
 
         <div className="dash-stat-card">
@@ -173,7 +174,7 @@ export function AnalyticsDashboard() {
             </div>
           </div>
           <p className="dash-stat-label">Page Views</p>
-          <p className="dash-stat-value">{data.totalPageviews.toLocaleString()}</p>
+          <p className="dash-stat-value">{formatNumber(data.totalPageviews)}</p>
         </div>
 
         <div className="dash-stat-card">
@@ -183,7 +184,7 @@ export function AnalyticsDashboard() {
             </div>
           </div>
           <p className="dash-stat-label">Total Events</p>
-          <p className="dash-stat-value">{data.totalEvents.toLocaleString()}</p>
+          <p className="dash-stat-value">{formatNumber(data.totalEvents)}</p>
         </div>
 
         <div className="dash-stat-card">
@@ -226,7 +227,7 @@ export function AnalyticsDashboard() {
                       ? new Date(value).toLocaleDateString()
                       : ''
                   }
-                  formatter={(value: any) => [value?.toLocaleString() ?? '0', 'Page Views']}
+                  formatter={(value: any) => [formatNumber(value) ?? '0', 'Page Views']}
                 />
                 <Line
                   type="monotone"
@@ -265,7 +266,7 @@ export function AnalyticsDashboard() {
                 </Pie>
                 <Tooltip
                   contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
-                  formatter={(value: any) => [value?.toLocaleString() ?? '0', 'Users']}
+                  formatter={(value: any) => [formatNumber(value) ?? '0', 'Users']}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -305,7 +306,7 @@ export function AnalyticsDashboard() {
                     />
                   </div>
                   <span className="text-xs font-bold text-dash-text-muted">
-                    {page.views.toLocaleString()}
+                    {formatNumber(page.views)}
                   </span>
                 </div>
               </div>
@@ -329,7 +330,7 @@ export function AnalyticsDashboard() {
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#888' }} />
                 <Tooltip
                   contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
-                  formatter={(value: any) => [value?.toLocaleString() ?? '0', 'Count']}
+                  formatter={(value: any) => [formatNumber(value) ?? '0', 'Count']}
                 />
                 <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
               </BarChart>

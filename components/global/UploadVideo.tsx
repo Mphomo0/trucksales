@@ -112,7 +112,7 @@ const UploadVideo = ({ onFileSelected, className }: UploadVideoProps) => {
       {/* Upload Area */}
       <Card
         className={cn(
-          'border-2 border-dashed transition-all duration-200 cursor-pointer hover:border-primary/50',
+          'border-2 border-dashed transition-colors duration-200 cursor-pointer hover:border-primary/50',
           isDragOver && 'border-primary bg-primary/5',
           preview && 'opacity-50 cursor-not-allowed'
         )}

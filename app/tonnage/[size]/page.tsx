@@ -2,6 +2,7 @@ export const revalidate = 3600
 export const dynamicParams = false
 
 import JsonLd from '@/components/global/JsonLd'
+import { formatNumber } from '@/lib/format'
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -199,7 +200,7 @@ export default async function TonnagePage({ params }: Props) {
                     </h3>
                     <p className="text-amber-600 font-bold text-lg">
                       {truck.vatPrice
-                        ? `R${truck.vatPrice.toLocaleString()}`
+                        ? `R${formatNumber(truck.vatPrice)}`
                         : 'Call for price'}
                       {truck.vatPrice ? (
                         <span className="ml-1 text-xs font-normal text-gray-500">
@@ -208,7 +209,7 @@ export default async function TonnagePage({ params }: Props) {
                       ) : null}
                     </p>
                     <div className="flex gap-2 mt-2 text-sm text-gray-500">
-                      <span>{truck.mileage?.toLocaleString() ?? '-'} km</span>
+                      <span>{formatNumber(truck.mileage) ?? '-'} km</span>
                       <span>|</span>
                       <span>{truck.fuelType ?? '-'}</span>
                       <span>|</span>

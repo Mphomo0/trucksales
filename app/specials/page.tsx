@@ -13,7 +13,7 @@ const AllSpecials = dynamicImport(
   () => import('@/components/sections/special/AllSpecials'),
   {
     loading: () => (
-      <div className="py-20 text-center text-gray-500">Loading specials...</div>
+      <div className="py-20 text-center text-gray-500">Loading specials…</div>
     ),
   },
 )

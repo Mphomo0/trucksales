@@ -1,4 +1,5 @@
 import React from 'react'
+import { formatNumber } from '@/lib/format'
 import TruckDetail from '@/components/sections/inventorySection/TruckDetail'
 import QualityAssurance from '@/components/sections/inventorySection/QualityAssurance'
 import RelatedVehicles from '@/components/sections/inventorySection/RelatedVehicles'
@@ -88,7 +89,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   const titlePage = buildTitle()
 
-  const mileageDesc = vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : ''
+  const mileageDesc = vehicle.mileage ? `${formatNumber(vehicle.mileage)} km` : ''
   const transmissionDesc = vehicle.transmission?.toLowerCase() ?? 'manual'
   const fuelDesc = vehicle.fuelType?.toLowerCase() ?? 'diesel'
   let description = `${vehicle.year} ${toTitleCase(vehicle.make)} ${toTitleCase(vehicle.model)}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} for sale in Gauteng.${mileageDesc ? ` ${mileageDesc},` : ''} ${transmissionDesc}, ${fuelDesc}. Contact A-Z Truck Sales to view.`
@@ -143,7 +144,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // bodyType often already ends in "truck" ("curtain side truck"); avoid "truck truck"
   const bodyDesc = (vehicle.bodyType ?? '').replace(/\s*truck$/i, '').trim()
   const sizeDesc = vehicle.truckSize ? `${vehicle.truckSize} ` : ''
-  const description = `This ${vehicle.year} ${formatDisplayName(vehicle.make)} ${formatDisplayName(vehicle.model)} is a used ${sizeDesc}${bodyDesc ? `${bodyDesc} ` : ''}truck available from A-Z Truck Sales in Gauteng.${vehicle.mileage ? ` It has ${vehicle.mileage.toLocaleString()} km,` : ' It has'} a ${(vehicle.fuelType ?? 'diesel').toLowerCase()} engine and ${(vehicle.transmission ?? 'manual').toLowerCase()} transmission.`
+  const description = `This ${vehicle.year} ${formatDisplayName(vehicle.make)} ${formatDisplayName(vehicle.model)} is a used ${sizeDesc}${bodyDesc ? `${bodyDesc} ` : ''}truck available from A-Z Truck Sales in Gauteng.${vehicle.mileage ? ` It has ${formatNumber(vehicle.mileage)} km,` : ' It has'} a ${(vehicle.fuelType ?? 'diesel').toLowerCase()} engine and ${(vehicle.transmission ?? 'manual').toLowerCase()} transmission.`
 
   const offerSchema: Record<string, unknown> = {
     '@type': 'Offer',

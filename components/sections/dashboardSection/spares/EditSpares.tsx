@@ -203,7 +203,7 @@ type PreviewFile = {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96 p-8">
-        Loading...
+        Loading…
       </div>
     )
   }
@@ -328,7 +328,7 @@ type PreviewFile = {
           </div>
 
           <Button type="submit" disabled={isSubmitting || isUploading}>
-            {isSubmitting || isUploading ? 'Updating...' : 'Update Spare'}
+            {isSubmitting || isUploading ? 'Updating…' : 'Update Spare'}
           </Button>
         </form>
       </div>

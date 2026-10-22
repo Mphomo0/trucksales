@@ -18,7 +18,7 @@ const AllVehiclesFilter = dynamic(
   () => import('@/components/sections/inventorySection/AllVehiclesFilter'),
   {
     loading: () => (
-      <div className="py-20 text-center text-gray-500">Loading trucks...</div>
+      <div className="py-20 text-center text-gray-500">Loading trucks…</div>
     ),
   },
 )
@@ -150,8 +150,8 @@ const getInventoryPageData = unstable_cache(
         orderBy: { make: 'asc' },
       }),
       prisma.inventory.findMany({
-        distinct: ['model'],
-        select: { model: true },
+        distinct: ['make', 'model'],
+        select: { make: true, model: true },
         orderBy: { model: 'asc' },
       }),
       prisma.inventory.findMany({
@@ -204,6 +204,14 @@ export default async function Inventory() {
   const initialFilterOptions = {
     makes: dedupeCaseInsensitive(makesResult.map((r) => r.make)),
     models: dedupeCaseInsensitive(modelsResult.map((r) => r.model)),
+    // Lets the model select list every model for a make, not just those on the current page
+    modelsByMake: modelsResult.reduce<Record<string, string[]>>((acc, { make, model }) => {
+      if (!make || !model) return acc
+      const key = make.trim().toLowerCase()
+      const models = (acc[key] ??= [])
+      if (!models.some((m) => m.toLowerCase() === model.trim().toLowerCase())) models.push(model)
+      return acc
+    }, {}),
     bodyTypes: dedupeCaseInsensitive(bodyTypesResult.map((r) => r.bodyType)),
     truckSizes: dedupeCaseInsensitive(truckSizesResult.map((r) => r.truckSize)),
   }

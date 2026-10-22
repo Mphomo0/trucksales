@@ -2,42 +2,30 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
-'use client'
-
-import { useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import {
   ArrowLeft,
   Phone,
-  Mail,
   Calendar,
   Gauge,
   Fuel,
   Settings,
   Star,
 } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { WhatsAppButton } from '@/components/sections/inventorySection/WhatsAppButton'
-import EnquiryForm, {
-  preloadEnquiryForm,
-} from '@/components/sections/inventorySection/LazyEnquiryForm'
-import { useKeenSlider } from 'keen-slider/react'
-import { getCurrentPrice } from '@/lib/pricing'
+import TruckGallery from '@/components/sections/inventorySection/TruckGallery'
+import TruckPrice from '@/components/sections/inventorySection/TruckPrice'
+import EnquiryDialog from '@/components/sections/inventorySection/EnquiryDialog'
 import { REVIEW_COUNT, REVIEW_RATING } from '@/lib/reviews'
 import { formatDisplayName } from '@/lib/text'
-import { ikHero, ikThumb } from '@/lib/imagekit'
-import 'keen-slider/keen-slider.min.css'
+import { formatNumber } from '@/lib/format'
+
+// Server component: the copy, spec list and use-case map render to HTML only.
+// The gallery, live price and enquiry dialog are the client islands.
 
 const YOUTUBE_REGEXP =
   /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/
@@ -100,7 +88,7 @@ interface Vehicle {
   transmission: string | null
   description: string
   slug: string
-  images: any
+  images: { url: string }[]
   videoLink?: string | null
   truckSize?: string | null
   bodyType?: string | null
@@ -116,66 +104,10 @@ interface Props {
 /* <h1>A-Z Truck Sales Components</h1> */ export default function TruckDetail({
   vehicle,
 }: Props) {
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [loaded, setLoaded] = useState(false)
-
-  const [sliderRef, sliderInstanceRef] = useKeenSlider<HTMLDivElement>(
-    {
-      initial: 0,
-      slideChanged(slider) {
-        setCurrentSlide(slider.track.details.rel)
-      },
-      created() {
-        setLoaded(true)
-      },
-      slides: {
-        perView: 1,
-        spacing: 0,
-      },
-      loop: true,
-    },
-    [],
-  )
-
-  const [thumbnailRef, thumbnailInstanceRef] = useKeenSlider<HTMLDivElement>(
-    {
-      initial: 0,
-      slides: {
-        perView: 4,
-        spacing: 10,
-        origin: 'center',
-      },
-      breakpoints: {
-        '(min-width: 768px)': {
-          slides: { perView: 5, spacing: 10 },
-        },
-      },
-    },
-    [],
-  )
-
   const videoLinkUrl = getVideoLinkUrl(vehicle.videoLink)
-
-  // Only slide 0 is fetched on first paint; the rest load once the slider is
-  // live and only for the current slide and its neighbours (loop-aware), so
-  // they stop competing with the LCP image for bandwidth.
-  const imageCount = vehicle.images?.length ?? 0
-  const shouldRenderSlide = (index: number) => {
-    if (index === 0) return true
-    if (!loaded || imageCount === 0) return false
-    const distance = Math.abs(index - currentSlide)
-    return Math.min(distance, imageCount - distance) <= 1
-  }
-
-  const handlePrevious = useCallback(() => {
-    sliderInstanceRef.current?.prev()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const handleNext = useCallback(() => {
-    sliderInstanceRef.current?.next()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const altBase = `${vehicle.year} ${formatDisplayName(vehicle.make)} ${formatDisplayName(vehicle.model)}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''}`
+  const bodyType = (vehicle.bodyType ?? '').toLowerCase().trim()
+  const useCase = USE_CASES[bodyType] || 'reliable commercial transport for their daily operations.'
 
   return (
     <div className="min-h-screen bg-background">
@@ -195,121 +127,7 @@ interface Props {
           <div className="lg:col-span-2">
             {/* Images */}
             <div className="mb-8">
-              {vehicle.images.length > 0 && (
-                <>
-                  {/* Main image slider */}
-                  <div className="relative">
-                    <div
-                      ref={sliderRef}
-                      className="keen-slider aspect-video w-full mb-4 rounded-lg overflow-hidden shadow-lg border bg-neutral-50"
-                    >
-                      {(vehicle.images || []).map((img: any, index: number) => (
-                        <div
-                          className="keen-slider__slide relative flex items-center justify-center bg-neutral-100"
-                          key={index}
-                        >
-                          <div className="relative w-full h-60 md:h-96">
-                            {shouldRenderSlide(index) && (
-                            <Image
-                              src={ikHero(img.url)}
-                              alt={`${vehicle.year} ${formatDisplayName(vehicle.make)} ${formatDisplayName(vehicle.model)}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} - image ${index + 1}`}
-                              width={1200}
-                              height={800}
-                              className="object-cover w-full h-full"
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
-                              priority={index === 0}
-                              fetchPriority={index === 0 ? 'high' : 'low'}
-                            />
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Navigation arrows */}
-                    {vehicle.images.length > 1 && (
-                      <>
-                        <button
-                          onClick={() => sliderInstanceRef.current?.prev()}
-                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
-                          aria-label="Previous image"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M15 19l-7-7 7-7"
-                            />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => sliderInstanceRef.current?.next()}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
-                          aria-label="Next image"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5l7 7-7 7"
-                            />
-                          </svg>
-                        </button>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Thumbnail slider */}
-                  {vehicle.images.length > 1 && (
-                    <div
-                      ref={thumbnailRef}
-                      // slide widths are preset (4/5 per view) so the strip keeps its height
-                      // until keen-slider initialises, instead of collapsing and shifting the page
-                      className="keen-slider mb-8 cursor-pointer px-2"
-                    >
-                      {(vehicle.images || []).map((img: any, index: number) => (
-                        <div
-                          key={index}
-                          className={`keen-slider__slide min-w-[calc((100%-30px)/4)] max-w-[calc((100%-30px)/4)] md:min-w-[calc((100%-40px)/5)] md:max-w-[calc((100%-40px)/5)] transition-all rounded overflow-hidden aspect-video ${
-                            currentSlide === index
-                              ? 'ring-2 ring-yellow-600 scale-95'
-                              : 'opacity-70 hover:opacity-100'
-                          }`}
-                          onClick={() =>
-                            sliderInstanceRef.current?.moveToIdx(index)
-                          }
-                        >
-                          <div className="relative w-full h-full">
-                            <Image
-                              src={ikThumb(img.url)}
-                              alt={`${vehicle.year} ${formatDisplayName(vehicle.make)} ${formatDisplayName(vehicle.model)}${vehicle.bodyType ? ` ${vehicle.bodyType}` : ''} - image ${index + 1}`}
-                              width={300}
-                              height={200}
-                              className="object-cover w-full h-full"
-                              sizes="(max-width: 768px) 100px, (max-width: 1024px) 150px, 200px"
-                              fetchPriority="low"
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
+              <TruckGallery images={vehicle.images} altBase={altBase} />
 
               {/* Video Link */}
               {videoLinkUrl && (
@@ -318,8 +136,11 @@ interface Props {
                   <div className="aspect-w-16 aspect-h-9">
                     <iframe
                       src={convertYouTubeLink(videoLinkUrl)}
-                      title="Vehicle Video"
+                      title={`${altBase} video walkaround`}
                       className="w-full h-64 md:h-96 rounded-lg shadow-lg border"
+                      loading="lazy"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     ></iframe>
                   </div>
@@ -332,7 +153,7 @@ interface Props {
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <h1 className="font-semibold leading-none tracking-tight text-2xl md:text-3xl">
+                    <h1 className="font-semibold leading-tight tracking-tight text-2xl md:text-3xl text-balance">
                       {vehicle.year} {formatDisplayName(vehicle.make)}{' '}
                       {formatDisplayName(vehicle.model)}
                       {vehicle.mileage
@@ -357,7 +178,7 @@ interface Props {
                     <div>
                       <p className="text-sm text-gray-500">Mileage</p>
                       <p className="font-semibold">
-                        {(vehicle.mileage || 0).toLocaleString()}
+                        {vehicle.mileage != null ? `${formatNumber(vehicle.mileage)} km` : 'N/A'}
                       </p>
                     </div>
                   </div>
@@ -388,16 +209,12 @@ interface Props {
 
                   {/* Auto-generated intro */}
                   <p className="text-gray-600 leading-relaxed mb-4">
-                    This {vehicle.year} {formatDisplayName(vehicle.make)} {formatDisplayName(vehicle.model)} is a used {vehicle.truckSize ? `${vehicle.truckSize} ` : ''}{vehicle.bodyType ? `${vehicle.bodyType} ` : ''}available from A-Z Truck Sales in Gauteng. It has {(vehicle.mileage ?? 0).toLocaleString()} km, a {vehicle.fuelType?.toLowerCase() ?? 'diesel'} engine and {vehicle.transmission?.toLowerCase() ?? 'manual'} transmission.
+                    This {vehicle.year} {formatDisplayName(vehicle.make)} {formatDisplayName(vehicle.model)} is a used {vehicle.truckSize ? `${vehicle.truckSize} ` : ''}{vehicle.bodyType ? `${vehicle.bodyType} ` : ''}available from A-Z Truck Sales in Gauteng. It has {formatNumber(vehicle.mileage ?? 0)} km, a {vehicle.fuelType?.toLowerCase() ?? 'diesel'} engine and {vehicle.transmission?.toLowerCase() ?? 'manual'} transmission.
                   </p>
 
                   {/* Auto-generated suitable-for + stored description */}
                   <p className="text-gray-600 leading-relaxed mb-4">
-                    {(() => {
-                      const bodyType = (vehicle.bodyType ?? '').toLowerCase().trim()
-                      const useCase = USE_CASES[bodyType] || 'reliable commercial transport for their daily operations.'
-                      return `This truck may be suitable for businesses needing ${useCase} Contact our team to confirm current availability, viewing location, COF status and final pricing.`
-                    })()}
+                    This truck may be suitable for businesses needing {useCase} Contact our team to confirm current availability, viewing location, COF status and final pricing.
                   </p>
 
                   {/* Stored description (workshop/unique text) */}
@@ -414,13 +231,13 @@ interface Props {
                       <li><span className="font-medium">Make:</span> {formatDisplayName(vehicle.make)}</li>
                       <li><span className="font-medium">Model:</span> {formatDisplayName(vehicle.model)}</li>
                       <li><span className="font-medium">Year:</span> {vehicle.year}</li>
-                      <li><span className="font-medium">Mileage:</span> {(vehicle.mileage ?? 0).toLocaleString()} km</li>
+                      <li><span className="font-medium">Mileage:</span> {vehicle.mileage != null ? `${formatNumber(vehicle.mileage)} km` : 'N/A'}</li>
                       <li><span className="font-medium">Fuel type:</span> {vehicle.fuelType?.toLowerCase() ?? 'diesel'}</li>
                       <li><span className="font-medium">Transmission:</span> {vehicle.transmission?.toLowerCase() ?? 'manual'}</li>
                       <li><span className="font-medium">Body type:</span> {vehicle.bodyType ? formatDisplayName(vehicle.bodyType) : ''}</li>
                       <li><span className="font-medium">Truck size:</span> {vehicle.truckSize || 'N/A'}</li>
-                      <li><span className="font-medium">Price incl. VAT:</span> R{vehicle.vatPrice.toLocaleString()}</li>
-                      <li><span className="font-medium">Price excl. VAT:</span> R{vehicle.pricenoVat.toLocaleString()}</li>
+                      <li><span className="font-medium">Price incl. VAT:</span> R{formatNumber(vehicle.vatPrice)}</li>
+                      <li><span className="font-medium">Price excl. VAT:</span> R{formatNumber(vehicle.pricenoVat)}</li>
                     </ul>
                   </div>
 
@@ -438,75 +255,19 @@ interface Props {
             {/* Price & Contact */}
             <Card className="mb-6 sticky top-24">
               <CardHeader>
-                <div className="text-center">
-                  {(() => {
-                    const priceInfo = getCurrentPrice(
-                      vehicle.vatPrice,
-                      vehicle.specialPrice ?? null,
-                      vehicle.specialValidFrom ?? null,
-                      vehicle.specialValidTo ?? null,
-                    )
-                    const validUntil = vehicle.specialValidTo
-                      ? new Date(vehicle.specialValidTo).toLocaleDateString(
-                          'en-GB',
-                        )
-                      : null
-                    if (priceInfo.isSpecial) {
-                      return (
-                        <div className="flex flex-col">
-                          <span className="text-xl font-bold text-red-500 line-through">
-                            R{vehicle.vatPrice.toLocaleString()}
-                          </span>
-                          <span className="text-3xl font-bold text-amber-600">
-                            R{priceInfo.currentPrice.toLocaleString()}
-                          </span>
-                          {validUntil && (
-                            <span className="text-sm text-gray-500">
-                              Valid until {validUntil}
-                            </span>
-                          )}
-                        </div>
-                      )
-                    }
-                    return (
-                      <div className="text-3xl font-bold text-amber-600 mb-2">
-                        R{vehicle.vatPrice.toLocaleString()}
-                      </div>
-                    )
-                  })()}
-                  <p className="text-gray-600">
-                    R{vehicle.pricenoVat.toLocaleString()} excl. VAT
-                  </p>
-                </div>
+                <TruckPrice
+                  vatPrice={vehicle.vatPrice}
+                  pricenoVat={vehicle.pricenoVat}
+                  specialPrice={vehicle.specialPrice ?? null}
+                  specialValidFrom={vehicle.specialValidFrom ?? null}
+                  specialValidTo={vehicle.specialValidTo ?? null}
+                />
               </CardHeader>
               <CardContent className="space-y-4">
                 <WhatsAppButton vehicleSlug={vehicle.slug} />
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      onPointerEnter={preloadEnquiryForm}
-                      onFocus={preloadEnquiryForm}
-                      onTouchStart={preloadEnquiryForm}
-                      variant="outline"
-                      className="w-full bg-transparent mt-4"
-                      size="lg"
-                    >
-                      <Mail className="h-4 w-4 mr-2" />
-                      Email Dealer
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent
-                    className="sm:max-w-106.25"
-                    aria-describedby="Description"
-                  >
-                    <DialogHeader>
-                      <DialogTitle>Enquire About This Vehicle</DialogTitle>
-                    </DialogHeader>
-                    <EnquiryForm vehicleSlug={vehicle.slug} />
-                  </DialogContent>
-                </Dialog>
+                <EnquiryDialog vehicleSlug={vehicle.slug} />
                 <Button asChild className="w-full py-4" size="lg">
-                  <a href="tel:(011) 902-6071">
+                  <a href="tel:+27119026071">
                     <Phone className="h-4 w-4 mr-2" />
                     Call (011) 902-6071
                   </a>
@@ -524,7 +285,7 @@ interface Props {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="flex">
+                  <div className="flex" aria-hidden="true">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star
                         key={star}
@@ -533,7 +294,7 @@ interface Props {
                     ))}
                   </div>
                   <span className="text-sm text-gray-600">
-                    {REVIEW_RATING} ({REVIEW_COUNT} reviews)
+                    {REVIEW_RATING} out of 5 ({REVIEW_COUNT} reviews)
                   </span>
                 </div>
                 <p className="text-sm text-gray-600">
