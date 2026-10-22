@@ -1,76 +1,70 @@
 export const revalidate = 86400
+export const dynamicParams = false
 
 import JsonLd from '@/components/global/JsonLd'
 import { formatNumber } from '@/lib/format'
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import RelatedGuides from '@/components/sections/shared/RelatedGuides'
 import { formatDisplayName } from '@/lib/text'
+import { BRAND_ROUTES } from '@/lib/brands'
+import { getBrandPage } from '@/lib/brand-pages'
 
-export const metadata: Metadata = {
-  title: { absolute: 'Used Fuso Trucks for Sale | A-Z Truck Sales' },
-  description:
-    'Browse used Fuso trucks for sale in Gauteng. Canter, Fighter & more. Visit our Alberton or Boksburg branch.',
-  alternates: { canonical: 'https://www.a-ztrucksales.com/brands/fuso' },
-  openGraph: {
-    title: 'Used Fuso Trucks for Sale | A-Z Truck Sales',
-    description: 'Shop used Fuso trucks in Gauteng. Canter and Fighter models.',
-    url: 'https://www.a-ztrucksales.com/brands/fuso',
-    siteName: 'A-Z Truck Sales',
-    images: [
-      {
-        url: 'https://www.a-ztrucksales.com/og-image.webp',
-        width: 1200,
-        height: 630,
-        alt: 'Used Fuso Trucks for Sale - A-Z Truck Sales',
-      },
-    ],
-    locale: 'en_ZA',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Used Fuso Trucks for Sale | A-Z Truck Sales',
-    description: 'Shop used Fuso trucks in Gauteng. Canter and Fighter models.',
-    images: ['https://www.a-ztrucksales.com/og-image.webp'],
-  },
+const SITE = 'https://www.a-ztrucksales.com'
+
+interface Props {
+  params: Promise<{ brand: string }>
 }
 
-const faqs = [
-  {
-    question: 'Does A-Z Truck Sales sell used Fuso trucks?',
-    answer:
-      'Yes, we stock used Fuso trucks including the Canter and Fighter ranges. Fuso is one of our key brands, valued for its light-duty capability, fuel efficiency and parts availability.',
-  },
-  {
-    question: 'What Fuso truck models do you sell?',
-    answer:
-      'We sell used Fuso Canter (3.5 to 8.5 tons GVM) and Fighter (8.5 to 18 tons GVM) rigid trucks in dropside, box body, refrigerated and curtain side configurations.',
-  },
-  {
-    question: 'Why buy a used Fuso truck from A-Z?',
-    answer:
-      'Our Canter range is especially popular for city delivery and light commercial work. Fuso trucks offer excellent fuel economy, tight turning circles and reliable performance.',
-  },
-  {
-    question: 'Are Fuso Canter trucks good for city delivery?',
-    answer:
-      'Yes, the Fuso Canter is one of the most popular light-duty trucks for city delivery in South Africa. Its tight turning circle, good fuel economy and 3.5 to 8.5 ton GVM range make it ideal for urban routes.',
-  },
-  {
-    question: 'Where can I view Fuso trucks in Gauteng?',
-    answer:
-      'Visit our Alberton or Boksburg branch by appointment. Call us to arrange a viewing of our current Fuso stock.',
-  },
-]
+export function generateStaticParams() {
+  return BRAND_ROUTES.map((b) => ({ brand: b.slug }))
+}
 
-const getFusoVehicles = unstable_cache(
-  () =>
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { brand: slug } = await params
+  const brand = getBrandPage(slug)
+  if (!brand) return {}
+
+  const title = `Used ${brand.label} Trucks for Sale | A-Z Truck Sales`
+  const url = `${SITE}/brands/${brand.slug}`
+  return {
+    title: { absolute: title },
+    description: brand.metaDescription,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description: brand.socialDescription,
+      url,
+      siteName: 'A-Z Truck Sales',
+      images: [
+        {
+          url: `${SITE}/og-image.webp`,
+          width: 1200,
+          height: 630,
+          alt: `Used ${brand.label} Trucks for Sale - A-Z Truck Sales`,
+        },
+      ],
+      locale: 'en_ZA',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: brand.socialDescription,
+      images: [`${SITE}/og-image.webp`],
+    },
+  }
+}
+
+// `match` is part of the cache key, so each brand keeps its own entry.
+const getBrandVehicles = unstable_cache(
+  (match: string) =>
     prisma.inventory.findMany({
-      where: { make: { contains: 'Fuso', mode: 'insensitive' } },
+      where: { make: { contains: match, mode: 'insensitive' } },
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
@@ -85,12 +79,18 @@ const getFusoVehicles = unstable_cache(
         slug: true,
       },
     }),
-  ['fuso-brand-vehicles'],
+  ['brand-vehicles'],
   { tags: ['inventory'], revalidate: 86400 }
 )
 
-export default async function FusoPage() {
-  const vehicles = await getFusoVehicles()
+export default async function BrandPage({ params }: Props) {
+  const { brand: slug } = await params
+  const brand = getBrandPage(slug)
+  if (!brand) notFound()
+
+  const { label } = brand
+  const pageUrl = `${SITE}/brands/${brand.slug}`
+  const vehicles = await getBrandVehicles(brand.match)
 
   const modelCounts = new Map<string, number>()
   for (const v of vehicles) {
@@ -107,20 +107,20 @@ export default async function FusoPage() {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: 'https://www.a-ztrucksales.com',
+        item: SITE,
       },
       {
         '@type': 'ListItem',
         position: 2,
-        name: 'Used Fuso Trucks',
-        item: 'https://www.a-ztrucksales.com/brands/fuso',
+        name: `Used ${label} Trucks`,
+        item: pageUrl,
       },
     ],
   }
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faqs.map((faq) => ({
+    mainEntity: brand.faqs.map((faq) => ({
       '@type': 'Question',
       name: faq.question,
       acceptedAnswer: { '@type': 'Answer', text: faq.answer },
@@ -129,20 +129,20 @@ export default async function FusoPage() {
   const itemListSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    '@id': 'https://www.a-ztrucksales.com/brands/fuso#inventory',
-    name: 'Used Fuso Trucks in Stock',
+    '@id': `${pageUrl}#inventory`,
+    name: `Used ${label} Trucks in Stock`,
     itemListElement: vehicles.map((truck, i) => ({
       '@type': 'ListItem',
       position: i + 1,
-      url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+      url: `${SITE}/inventory/${truck.slug}`,
       item: {
         '@type': ['Vehicle', 'Product'],
-        '@id': `https://www.a-ztrucksales.com/inventory/${truck.slug}#product`,
+        '@id': `${SITE}/inventory/${truck.slug}#product`,
         name: truck.name,
         description: `Used ${truck.name} for sale at A-Z Truck Sales in Gauteng${truck.mileage != null ? `, ${formatNumber(truck.mileage)} km` : ''}${truck.fuelType ? `, ${truck.fuelType.toLowerCase()} engine` : ''}${truck.transmission ? `, ${truck.transmission.toLowerCase()} transmission` : ''}.`,
-        url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+        url: `${SITE}/inventory/${truck.slug}`,
         image: (truck.images as any[])?.[0]?.url,
-        brand: { '@type': 'Brand', name: 'Fuso' },
+        brand: { '@type': 'Brand', name: brand.schemaBrandName ?? label },
         ...(truck.mileage != null && {
           mileageFromOdometer: {
             '@type': 'QuantitativeValue',
@@ -154,11 +154,11 @@ export default async function FusoPage() {
         ...(truck.fuelType && { fuelType: truck.fuelType }),
         offers: {
           '@type': 'Offer',
-          url: `https://www.a-ztrucksales.com/inventory/${truck.slug}`,
+          url: `${SITE}/inventory/${truck.slug}`,
           priceCurrency: 'ZAR',
           availability: 'https://schema.org/InStock',
           itemCondition: 'https://schema.org/UsedCondition',
-          seller: { '@id': 'https://www.a-ztrucksales.com/#org' },
+          seller: { '@id': `${SITE}/#org` },
           ...(truck.vatPrice != null && { price: truck.vatPrice }),
         },
       },
@@ -174,18 +174,17 @@ export default async function FusoPage() {
       <section className="bg-linear-to-r from-gray-900 to-gray-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Used Fuso Trucks for Sale in Gauteng
+            {`Used ${label} Trucks for Sale in Gauteng`}
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-            Browse our range of used Fuso Canter and Fighter rigid trucks. Every
-            vehicle is available for viewing at our Alberton or Boksburg branch.
+            {brand.heroIntro}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href={`/inventory?make=Fuso`}
+              href={`/inventory?make=${brand.match}`}
               className="inline-flex items-center justify-center px-8 py-3 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition"
             >
-              View All Fuso Trucks
+              {`View All ${label} Trucks`}
             </Link>
             <Link
               href="/contact"
@@ -197,70 +196,46 @@ export default async function FusoPage() {
         </div>
       </section>
 
+      {/* About */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                Fuso Trucks — Light- and Medium-Duty Excellence
+                {brand.aboutHeading}
               </h2>
               <div className="text-lg text-gray-600 space-y-4">
-                <p>
-                  Fuso is a leading commercial vehicle brand with a strong
-                  reputation for light-duty trucks in South Africa. The Canter
-                  range is one of the most popular choices for city delivery,
-                  service vehicles and light commercial transport.
-                </p>
-                <p>
-                  The Canter is available from 3.5 to 8.5 tons GVM, making it an
-                  ideal choice for businesses needing a manoeuvrable,
-                  fuel-efficient truck for urban routes. The Fighter range
-                  handles heavier medium-duty work up to 18 tons GVM.
-                </p>
+                {brand.about.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
               </div>
             </div>
             <div className="bg-gray-100 rounded-lg p-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4">
-                Why Choose a Fuso Truck?
+                {brand.whyHeading}
               </h3>
               <ul className="space-y-3 text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-500 font-bold">-</span> Excellent
-                  fuel economy — especially the Canter
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-500 font-bold">-</span> Tight
-                  turning circle for city driving
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-500 font-bold">-</span> Reliable
-                  and easy to maintain
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-500 font-bold">-</span> Wide range
-                  of body configurations
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-500 font-bold">-</span> Strong
-                  dealer network in South Africa
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-amber-500 font-bold">-</span>{' '}
-                  Competitive pricing in the light-duty segment
-                </li>
+                {brand.whyPoints.map((point) => (
+                  <li key={point} className="flex items-start gap-2">
+                    <span className="text-amber-500 font-bold">-</span>
+                    {` ${point}`}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Stock */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Used Fuso Trucks in Stock
+            {`Used ${label} Trucks in Stock`}
           </h2>
           <p className="text-lg text-gray-600 mb-12">
-            Every Fuso truck currently in stock at our Gauteng branches.
+            {brand.stockIntro ??
+              `Every ${label} truck currently in stock at our Gauteng branches.`}
           </p>
           {modelChips.length > 0 && (
             <ul
@@ -324,33 +299,34 @@ export default async function FusoPage() {
             </div>
           ) : (
             <p className="text-gray-500 text-center py-8">
-              No Fuso trucks currently in stock. Check back soon or contact us.
+              {`No ${label} trucks currently in stock. Check back soon or contact us.`}
             </p>
           )}
           <div className="text-center mt-8">
             <Link
-              href={`/inventory?make=Fuso`}
+              href={`/inventory?make=${brand.match}`}
               className="inline-flex items-center justify-center px-6 py-3 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition"
             >
-              View All Fuso Trucks
+              {`View All ${label} Trucks`}
             </Link>
           </div>
         </div>
       </section>
 
-      <RelatedGuides guides={['isuzu-vs-hino-vs-fuso', 'buying-guide', 'what-to-check-before-buying']} />
+      <RelatedGuides guides={brand.guides} />
 
+      {/* FAQ */}
       <section className="py-20 bg-neutral-50">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">
-              Fuso Trucks — FAQ
+              {`${label} Trucks — FAQ`}
             </h2>
             <p className="text-lg text-gray-600 mb-8 text-center">
-              Common questions about buying used Fuso trucks from A-Z Truck
-              Sales.
+              {brand.faqIntro ??
+                `Common questions about buying used ${label} trucks from A-Z Truck Sales.`}
             </p>
-            {faqs.map((faq, i) => (
+            {brand.faqs.map((faq, i) => (
               <details
                 key={i}
                 className="bg-white rounded-lg mb-4 border border-neutral-200 p-6"
@@ -365,13 +341,14 @@ export default async function FusoPage() {
         </div>
       </section>
 
+      {/* CTA */}
       <section className="py-20 bg-linear-to-r from-amber-600 to-yellow-300 text-white text-center">
         <div className="max-w-2xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Looking for a Used Fuso Truck?
+            {`Looking for a Used ${label} Truck?`}
           </h2>
           <p className="text-xl mb-8">
-            Contact our team to discuss your Fuso truck needs or book a viewing.
+            {`Contact our team to discuss your ${label} truck needs or book a viewing.`}
           </p>
           <Link
             href="/contact"
