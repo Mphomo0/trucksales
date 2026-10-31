@@ -22,6 +22,7 @@ interface UpdateSparesBody {
   specialPriceNoVat?: number | null
   specialValidFrom?: string | null
   specialValidTo?: string | null
+  specialCampaign?: 'black-friday' | null
   deletedFileIds?: string[]
 }
 
@@ -174,6 +175,7 @@ export async function PATCH(
         specialValidTo: body.specialValidTo
           ? new Date(body.specialValidTo)
           : null,
+        specialCampaign: body.specialCampaign ?? null,
       },
     })
 

@@ -36,6 +36,7 @@ export async function POST(req: Request) {
       specialPrice,
       specialValidFrom,
       specialValidTo,
+      specialCampaign,
     } = body
 
     const requiredFields = [
@@ -145,6 +146,7 @@ export async function POST(req: Request) {
         specialPrice: specialPrice ? parseFloat(specialPrice) : null,
         specialValidFrom: specialValidFrom ? new Date(specialValidFrom) : null,
         specialValidTo: specialValidTo ? new Date(specialValidTo) : null,
+        specialCampaign: specialCampaign ?? null,
       },
     })
 
@@ -242,6 +244,7 @@ export const GET = async (req: NextRequest) => {
           specialPrice: true,
           specialValidFrom: true,
           specialValidTo: true,
+          specialCampaign: true,
           createdAt: true,
           updatedAt: true,
         },
