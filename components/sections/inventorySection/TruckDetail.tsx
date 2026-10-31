@@ -95,6 +95,7 @@ interface Vehicle {
   specialPrice?: number | null
   specialValidFrom?: Date | string | null
   specialValidTo?: Date | string | null
+  specialCampaign?: string | null
 }
 
 interface Props {
@@ -261,6 +262,7 @@ interface Props {
                   specialPrice={vehicle.specialPrice ?? null}
                   specialValidFrom={vehicle.specialValidFrom ?? null}
                   specialValidTo={vehicle.specialValidTo ?? null}
+                  specialCampaign={vehicle.specialCampaign ?? null}
                 />
               </CardHeader>
               <CardContent className="space-y-4">

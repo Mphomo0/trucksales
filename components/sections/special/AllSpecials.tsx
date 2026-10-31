@@ -6,11 +6,13 @@
 
 import { Badge } from '@/components/ui/badge'
 import { formatNumber } from '@/lib/format'
+import { getSavingsPercent } from '@/lib/pricing'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ikCard } from '@/lib/imagekit'
+import BlackFridayTag from '@/components/shared/BlackFridayTag'
 
 interface Image {
   fileId: string
@@ -31,6 +33,7 @@ interface VehicleSpecial {
   specialPrice: number
   specialValidFrom?: Date | string | null
   specialValidTo?: Date | string | null
+  specialCampaign?: string | null
 }
 
 interface SpareSpecial {
@@ -48,6 +51,7 @@ interface SpareSpecial {
   specialPriceNoVat?: number | null
   specialValidFrom?: Date | string | null
   specialValidTo?: Date | string | null
+  specialCampaign?: string | null
 }
 
 interface Props {
@@ -85,9 +89,13 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                       height={300}
                       className="w-full h-48 object-cover"
                     />
-                    <Badge className="absolute top-2 right-2 bg-red-600">
-                      SPECIAL
-                    </Badge>
+                    {vehicle.specialCampaign === 'black-friday' ? (
+                      <BlackFridayTag className="absolute top-2 right-2" />
+                    ) : (
+                      <Badge className="absolute top-2 right-2 bg-red-600">
+                        SPECIAL
+                      </Badge>
+                    )}
                   </div>
                   <CardContent className="p-6">
                     <h4 className="text-xl font-bold mb-2">
@@ -108,6 +116,12 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                           </p>
                         </div>
                       </div>
+                      {vehicle.specialCampaign === 'black-friday' &&
+                        vehicle.vatPrice > vehicle.specialPrice && (
+                          <p className="mt-1 text-sm font-bold text-red-600">
+                            Save R{formatNumber(vehicle.vatPrice - vehicle.specialPrice)}
+                          </p>
+                        )}
                     </div>
                     {vehicle.specialValidTo && (
                       <div className="text-sm text-gray-600">
@@ -139,9 +153,13 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                       height={300}
                       className="w-full h-48 object-cover"
                     />
-                    <Badge className="absolute top-2 right-2 bg-red-600">
-                      SPECIAL
-                    </Badge>
+                    {spare.specialCampaign === 'black-friday' ? (
+                      <BlackFridayTag className="absolute top-2 right-2" />
+                    ) : (
+                      <Badge className="absolute top-2 right-2 bg-red-600">
+                        SPECIAL
+                      </Badge>
+                    )}
                     <Badge className="absolute top-2 left-2 bg-blue-600 capitalize">
                       {spare.condition.toLowerCase()}
                     </Badge>
@@ -168,6 +186,12 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                           </p>
                         </div>
                       </div>
+                      {spare.specialCampaign === 'black-friday' &&
+                        getSavingsPercent(spare.price, spare.specialPrice) > 0 && (
+                          <p className="mt-1 text-sm font-bold text-red-600">
+                            Save {getSavingsPercent(spare.price, spare.specialPrice)}%
+                          </p>
+                        )}
                     </div>
                     {spare.specialValidTo && (
                       <div className="text-sm text-gray-600">

@@ -17,7 +17,8 @@ import { Search, Filter } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Pagination } from '@/components/global/Pagination'
-import { getCurrentPrice } from '@/lib/pricing'
+import { getCurrentPrice, getSavingsPercent } from '@/lib/pricing'
+import BlackFridayTag from '@/components/shared/BlackFridayTag'
 import { ikCard } from '@/lib/imagekit'
 
 interface SparesItem {
@@ -35,6 +36,7 @@ interface SparesItem {
   specialPriceNoVat?: number | null
   specialValidFrom?: Date | string | null
   specialValidTo?: Date | string | null
+  specialCampaign?: string | null
 }
 
 interface FilterOptions {
@@ -60,7 +62,8 @@ const SpareCard = memo(function SpareCard({ spare }: SpareCardProps) {
     spare.price,
     spare.specialPrice ?? null,
     spare.specialValidFrom ?? null,
-    spare.specialValidTo ?? null
+    spare.specialValidTo ?? null,
+    spare.specialCampaign ?? null
   )
   const validUntil = spare.specialValidTo
     ? new Date(spare.specialValidTo).toLocaleDateString('en-GB', {
@@ -90,9 +93,12 @@ const SpareCard = memo(function SpareCard({ spare }: SpareCardProps) {
         <Badge className="absolute top-2 left-2 bg-blue-600 capitalize">
           {spare.category.toLowerCase()}
         </Badge>
-        {priceInfo.isSpecial && (
-          <Badge className="absolute top-10 left-2 bg-red-600">SPECIAL</Badge>
-        )}
+        {priceInfo.isSpecial &&
+          (priceInfo.campaign === 'black-friday' ? (
+            <BlackFridayTag className="absolute top-10 left-2" />
+          ) : (
+            <Badge className="absolute top-10 left-2 bg-red-600">SPECIAL</Badge>
+          ))}
       </div>
       <CardContent className="p-4">
         <h3 className="text-lg font-bold mb-1 truncate">{spare.name}</h3>
@@ -111,6 +117,12 @@ const SpareCard = memo(function SpareCard({ spare }: SpareCardProps) {
                   incl. VAT
                 </span>
               </span>
+              {priceInfo.campaign === 'black-friday' &&
+                getSavingsPercent(spare.price, priceInfo.currentPrice) > 0 && (
+                  <span className="text-xs font-bold text-red-600">
+                    Save {getSavingsPercent(spare.price, priceInfo.currentPrice)}%
+                  </span>
+                )}
               {validUntil && (
                 <span className="text-xs text-green-600 font-medium">
                   Valid until {validUntil}
