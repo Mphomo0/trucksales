@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getCurrentPrice } from './pricing'
+import { getCurrentPrice, getSavingsPercent } from './pricing'
 import { isSpecialActive } from './specials'
 
 const FROM = '2026-11-09'
@@ -79,5 +79,19 @@ describe('getCurrentPrice', () => {
         ),
       )
     }
+  })
+})
+
+describe('getSavingsPercent', () => {
+  it('rounds the percentage saved', () => {
+    expect(getSavingsPercent(1000, 850)).toBe(15)
+    expect(getSavingsPercent(2400, 2040)).toBe(15)
+  })
+
+  it('is 0 when there is no saving or inputs are invalid', () => {
+    expect(getSavingsPercent(1000, 1000)).toBe(0)
+    expect(getSavingsPercent(1000, 1200)).toBe(0)
+    expect(getSavingsPercent(0, 50)).toBe(0)
+    expect(getSavingsPercent(1000, 0)).toBe(0)
   })
 })
