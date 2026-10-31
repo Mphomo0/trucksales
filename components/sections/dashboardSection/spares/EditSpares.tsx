@@ -37,6 +37,7 @@ interface SparesItem {
   specialPriceNoVat?: number | null
   specialValidFrom?: Date | string | null
   specialValidTo?: Date | string | null
+  specialCampaign?: string | null
 }
 
 type PreviewFile = {
@@ -88,6 +89,7 @@ type PreviewFile = {
           specialPriceNoVat: item.specialPriceNoVat ?? '',
           specialValidFrom: item.specialValidFrom ? new Date(item.specialValidFrom).toISOString().split('T')[0] : '',
           specialValidTo: item.specialValidTo ? new Date(item.specialValidTo).toISOString().split('T')[0] : '',
+          specialCampaign: item.specialCampaign ?? '',
         })
       } catch (error) {
         console.error('Error fetching spare item:', error)
@@ -174,6 +176,7 @@ type PreviewFile = {
       const updatedFormData = {
         ...formData,
         images: allImages,
+        specialCampaign: formData.specialCampaign || null,
         deletedFileIds:
           deletedFileIds.length > 0 ? deletedFileIds : undefined,
       }
@@ -310,6 +313,17 @@ type PreviewFile = {
             </div>
           </div>
 
+          <div className="mb-4 space-y-2 md:w-1/2">
+            <Label>Special type</Label>
+            <select
+              {...register('specialCampaign')}
+              className="w-full p-2 border rounded"
+            >
+              <option value="">Normal special</option>
+              <option value="black-friday">Black Friday</option>
+            </select>
+          </div>
+
           <div className="grid md:grid-cols-2 gap-4">
             <div className="mb-4 space-y-2">
               <Label>Special Valid From</Label>
@@ -326,6 +340,9 @@ type PreviewFile = {
               />
             </div>
           </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            Start and end dates are inclusive, South African time.
+          </p>
 
           <Button type="submit" disabled={isSubmitting || isUploading}>
             {isSubmitting || isUploading ? 'Updating…' : 'Update Spare'}

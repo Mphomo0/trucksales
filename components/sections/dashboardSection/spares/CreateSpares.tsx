@@ -104,6 +104,7 @@ type SparesFormData = z.input<typeof spareSchema>
         images: uploadedImages,
         condition: data.condition.toUpperCase(),
         category: data.category?.toUpperCase() ?? null,
+        specialCampaign: data.specialCampaign || null,
       }
 
       const res = await fetch('/api/spares', {
@@ -298,6 +299,28 @@ type SparesFormData = z.input<typeof spareSchema>
             </div>
           </div>
 
+          <div className="mb-4 space-y-2 md:w-1/3">
+            <Label>Special type</Label>
+            <Controller
+              control={control}
+              name="specialCampaign"
+              render={({ field }) => (
+                <Select
+                  onValueChange={(v) => field.onChange(v === 'normal' ? null : v)}
+                  value={field.value || 'normal'}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Normal special" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="normal">Normal special</SelectItem>
+                    <SelectItem value="black-friday">Black Friday</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
+
           <div className="grid md:grid-cols-2 gap-4">
             <div className="mb-4 space-y-2">
               <Label htmlFor="specialValidFrom">Special Valid From</Label>
@@ -322,6 +345,9 @@ type SparesFormData = z.input<typeof spareSchema>
               )}
             </div>
           </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            Start and end dates are inclusive, South African time.
+          </p>
 
           <Button type="submit" disabled={isSubmitting || isUploading}>
             {isSubmitting || isUploading ? 'Creating…' : 'Create Spare'}

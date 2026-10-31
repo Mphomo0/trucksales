@@ -98,11 +98,12 @@ export default function EditVehicle() {
           images: vehicle.images || [],
           specialPrice: vehicle.specialPrice ?? '',
           specialValidFrom: vehicle.specialValidFrom
-            ? new Date(vehicle.specialValidFrom).toISOString().slice(0, 16)
+            ? new Date(vehicle.specialValidFrom).toISOString().slice(0, 10)
             : '',
           specialValidTo: vehicle.specialValidTo
-            ? new Date(vehicle.specialValidTo).toISOString().slice(0, 16)
+            ? new Date(vehicle.specialValidTo).toISOString().slice(0, 10)
             : '',
+          specialCampaign: vehicle.specialCampaign ?? null,
         })
       } catch (error) {
         console.error('Error fetching vehicle:', error)
@@ -206,6 +207,7 @@ export default function EditVehicle() {
         specialPrice: data.specialPrice ? Number(data.specialPrice) : null,
         specialValidFrom: data.specialValidFrom || null,
         specialValidTo: data.specialValidTo || null,
+        specialCampaign: data.specialCampaign || null,
         deletedFileIds:
           deletedFileIds.length > 0 ? deletedFileIds : undefined,
       }
@@ -387,6 +389,27 @@ export default function EditVehicle() {
             <h3 className="text-lg font-semibold mb-4 text-red-600">
               Special Offer (Optional)
             </h3>
+            <div className="mb-4 space-y-2 md:w-1/3">
+              <Label>Special type</Label>
+              <Controller
+                control={control}
+                name="specialCampaign"
+                render={({ field }) => (
+                  <Select
+                    onValueChange={(v) => field.onChange(v === 'normal' ? null : v)}
+                    value={field.value || 'normal'}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Normal special" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="normal">Normal special</SelectItem>
+                      <SelectItem value="black-friday">Black Friday</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
             <div className="grid md:grid-cols-3 gap-4">
               <div className="mb-4 space-y-2">
                 <Label htmlFor="specialPrice">Special Price (VAT Incl)</Label>
@@ -401,7 +424,7 @@ export default function EditVehicle() {
                 <Label htmlFor="specialValidFrom">Special Valid From</Label>
                 <Input
                   id="specialValidFrom"
-                  type="datetime-local"
+                  type="date"
                   {...register('specialValidFrom')}
                 />
               </div>
@@ -409,11 +432,14 @@ export default function EditVehicle() {
                 <Label htmlFor="specialValidTo">Special Valid To</Label>
                 <Input
                   id="specialValidTo"
-                  type="datetime-local"
+                  type="date"
                   {...register('specialValidTo')}
                 />
               </div>
             </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Start and end dates are inclusive, South African time.
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">

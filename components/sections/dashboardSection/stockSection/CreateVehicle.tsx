@@ -112,6 +112,7 @@ type VehicleFormData = z.input<typeof vehicleSchema>
         fuelType: data.fuelType?.toUpperCase() ?? null,
         condition: data.condition.toUpperCase(),
         transmission: data.transmission?.toUpperCase() ?? null,
+        specialCampaign: data.specialCampaign || null,
       }
 
       const res = await fetch('/api/vehicles', {
@@ -283,6 +284,27 @@ type VehicleFormData = z.input<typeof vehicleSchema>
 
           <div className="border-t pt-4 mt-4 mb-4">
             <h3 className="text-lg font-semibold mb-4 text-red-600">Special Offer (Optional)</h3>
+            <div className="mb-4 space-y-2 md:w-1/3">
+              <Label>Special type</Label>
+              <Controller
+                control={control}
+                name="specialCampaign"
+                render={({ field }) => (
+                  <Select
+                    onValueChange={(v) => field.onChange(v === 'normal' ? null : v)}
+                    value={field.value || 'normal'}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Normal special" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="normal">Normal special</SelectItem>
+                      <SelectItem value="black-friday">Black Friday</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
             <div className="grid md:grid-cols-3 gap-4">
               <div className="mb-4 space-y-2">
                 <Label htmlFor="specialPrice">Special Price (VAT Incl)</Label>
@@ -297,7 +319,7 @@ type VehicleFormData = z.input<typeof vehicleSchema>
                 <Label htmlFor="specialValidFrom">Special Valid From</Label>
                 <Input
                   id="specialValidFrom"
-                  type="datetime-local"
+                  type="date"
                   {...register('specialValidFrom')}
                 />
               </div>
@@ -305,11 +327,14 @@ type VehicleFormData = z.input<typeof vehicleSchema>
                 <Label htmlFor="specialValidTo">Special Valid To</Label>
                 <Input
                   id="specialValidTo"
-                  type="datetime-local"
+                  type="date"
                   {...register('specialValidTo')}
                 />
               </div>
             </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Start and end dates are inclusive, South African time.
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
