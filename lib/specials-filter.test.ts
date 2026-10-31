@@ -3,6 +3,7 @@ import {
   filterSpecials,
   getBodyTypes,
   parseTypeParam,
+  SPECIALS_TYPE_CHANGE_EVENT,
 } from './specials-filter'
 
 const v = (id: string, bodyType?: string | null) => ({ id, bodyType })
@@ -56,5 +57,8 @@ describe('parseTypeParam', () => {
   it('falls back to all', () => {
     expect(parseTypeParam(null)).toEqual({ kind: 'all' })
     expect(parseTypeParam('x')).toEqual({ kind: 'all' })
+  })
+  it('exposes the shared event name', () => {
+    expect(SPECIALS_TYPE_CHANGE_EVENT).toBe('specials:type-change')
   })
 })
