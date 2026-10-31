@@ -273,6 +273,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           specialPrice: displayVehicle.specialPrice,
           specialValidFrom: displayVehicle.specialValidFrom,
           specialValidTo: displayVehicle.specialValidTo,
+          specialCampaign: displayVehicle.specialCampaign,
         }}
       />
       <TonnageCrossLink truckSize={vehicle.truckSize} />

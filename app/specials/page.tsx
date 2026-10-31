@@ -103,6 +103,7 @@ const vehicleSelect = {
   specialPrice: true,
   specialValidFrom: true,
   specialValidTo: true,
+  specialCampaign: true,
 } as const
 
 const spareSelect = {
@@ -120,6 +121,7 @@ const spareSelect = {
   specialPriceNoVat: true,
   specialValidFrom: true,
   specialValidTo: true,
+  specialCampaign: true,
 } as const
 
 function dedupeById<T extends { id: string }>(items: T[]): T[] {

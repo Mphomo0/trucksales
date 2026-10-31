@@ -25,7 +25,8 @@ import EnquiryForm, {
 } from '@/components/sections/inventorySection/LazyEnquiryForm'
 import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
-import { getCurrentPrice } from '@/lib/pricing'
+import { getCurrentPrice, getSavingsPercent } from '@/lib/pricing'
+import BlackFridayTag from '@/components/shared/BlackFridayTag'
 import { REVIEW_COUNT, REVIEW_RATING } from '@/lib/reviews'
 import { ikHero, ikThumb } from '@/lib/imagekit'
 import { formatMake, formatSpareName } from '@/lib/spares'
@@ -52,6 +53,7 @@ interface SparePart {
   specialPriceNoVat?: number | null
   specialValidFrom?: Date | string | null
   specialValidTo?: Date | string | null
+  specialCampaign?: string | null
 }
 
 interface RelatedSpare {
@@ -149,6 +151,7 @@ interface Props {
     spare.specialPrice ?? null,
     spare.specialValidFrom ?? null,
     spare.specialValidTo ?? null,
+    spare.specialCampaign ?? null,
   )
 
   return (
@@ -409,7 +412,26 @@ interface Props {
                           <span className="text-3xl font-bold text-amber-600">
                             R{formatNumber(priceInfo.currentPrice)}
                           </span>
-                          <Badge className="mt-2 bg-red-600">SPECIAL</Badge>
+                          {priceInfo.campaign === 'black-friday' ? (
+                            <>
+                              <BlackFridayTag className="mt-2 self-center" />
+                              {getSavingsPercent(
+                                spare.price,
+                                priceInfo.currentPrice,
+                              ) > 0 && (
+                                <span className="text-sm font-bold text-red-600">
+                                  Save{' '}
+                                  {getSavingsPercent(
+                                    spare.price,
+                                    priceInfo.currentPrice,
+                                  )}
+                                  %
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            <Badge className="mt-2 bg-red-600">SPECIAL</Badge>
+                          )}
                           {validUntil && (
                             <span className="text-sm text-green-600">
                               Valid until {validUntil}

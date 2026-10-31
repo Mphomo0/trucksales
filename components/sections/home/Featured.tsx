@@ -10,6 +10,7 @@ type FeaturedTruck = {
   vatPrice: number; mileage: number | null; fuelType: string | null;
   condition: string; transmission: string | null; slug: string;
   specialPrice: number | null; specialValidFrom: string | null; specialValidTo: string | null;
+  specialCampaign: string | null;
   thumbnail: { fileId?: string; url: string } | null;
 }
 
@@ -33,6 +34,7 @@ const getFeaturedTrucks = unstable_cache(
         specialPrice: true,
         specialValidFrom: true,
         specialValidTo: true,
+        specialCampaign: true,
         images: true,
       },
     })
@@ -54,6 +56,7 @@ const getFeaturedTrucks = unstable_cache(
         specialPrice: v.specialPrice,
         specialValidFrom: v.specialValidFrom instanceof Date ? v.specialValidFrom.toISOString() : v.specialValidFrom ?? null,
         specialValidTo: v.specialValidTo instanceof Date ? v.specialValidTo.toISOString() : v.specialValidTo ?? null,
+        specialCampaign: v.specialCampaign ?? null,
         thumbnail: (imgArray[0] as { fileId?: string; url: string } | undefined) ?? null,
       }
     })

@@ -10,6 +10,7 @@ import { useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import BlackFridayTag from '@/components/shared/BlackFridayTag'
 import { Separator } from '@/components/ui/separator'
 import {
   Dialog,
@@ -60,6 +61,7 @@ interface Inventory {
   truckSize: string
   bodyType: string
   slug: string
+  specialCampaign?: string | null
 }
 
 interface Special {
@@ -338,7 +340,11 @@ interface Special {
                       {special.inventory.model.toUpperCase()}
                     </CardTitle>
                   </div>
-                  <Badge className="bg-red-600 uppercase">on special</Badge>
+                  {special.inventory.specialCampaign === 'black-friday' ? (
+                    <BlackFridayTag />
+                  ) : (
+                    <Badge className="bg-red-600 uppercase">on special</Badge>
+                  )}
                 </div>
               </CardHeader>
               <CardContent>

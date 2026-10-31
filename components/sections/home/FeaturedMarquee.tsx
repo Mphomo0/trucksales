@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils'
 import { useKeenSlider, KeenSliderPlugin } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css'
 import { getCurrentPrice } from '@/lib/pricing'
+import BlackFridayTag from '@/components/shared/BlackFridayTag'
 import { ikCard } from '@/lib/imagekit'
 import { formatDisplayName } from '@/lib/text'
 
@@ -31,6 +32,7 @@ interface TruckItem {
   specialPrice: number | null
   specialValidFrom: Date | string | null
   specialValidTo: Date | string | null
+  specialCampaign?: string | null
 }
 
 const noImage = (
@@ -166,6 +168,7 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                 truck.specialPrice ?? null,
                 truck.specialValidFrom ?? null,
                 truck.specialValidTo ?? null,
+                truck.specialCampaign ?? null,
               )
               const validUntil = truck.specialValidTo
                 ? validUntilFormat.format(new Date(truck.specialValidTo))
@@ -207,6 +210,9 @@ export default function FeaturedMarquee({ trucks }: { trucks: TruckItem[] }) {
                         <div className="flex flex-col items-start mb-3 tabular-nums">
                           {priceInfo.isSpecial ? (
                             <div className="flex flex-col">
+                              {priceInfo.campaign === 'black-friday' && (
+                                <BlackFridayTag className="self-start mb-1" />
+                              )}
                               <span className="text-xl font-bold text-red-500 line-through">
                                 R{formatNumber(priceInfo.originalPrice)}
                               </span>
