@@ -1,15 +1,17 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { isSpecialActive } from './specials'
 import {
   BLACK_FRIDAY,
   applyDemoSpareSpecials,
   applyDemoVehicleSpecials,
   buildDeals,
+  emptyDeals,
   isBlackFridayWindow,
   isDemoDealId,
   isDemoMode,
   pickFeatured,
   reviveRows,
+  settleDeals,
   shouldShowBlackFriday,
   withDemoSpareSpecials,
   withDemoVehicleSpecials,
@@ -357,5 +359,41 @@ describe('withDemo wrappers', () => {
     const rows = [{ id: demoV.id, vatPrice: 500000, specialPrice: null as number | null }]
     const [out] = withDemoVehicleSpecials(rows, PREVIEW, DEMO_NOW)
     expect(out.specialPrice).toBeLessThan(500000)
+  })
+})
+
+describe('settleDeals', () => {
+  it('resolves with the loader value', async () => {
+    const deals = { ...emptyDeals(), count: 3 }
+    await expect(settleDeals(async () => deals)).resolves.toBe(deals)
+  })
+
+  it('returns empty deals and calls onError once when the loader rejects', async () => {
+    const err = new Error('column does not exist')
+    const onError = vi.fn()
+    const out = await settleDeals(() => Promise.reject(err), onError)
+    expect(out.count).toBe(0)
+    expect(out.featured).toBeNull()
+    expect(out.isDemo).toBe(false)
+    expect(out.vehicles).toEqual([])
+    expect(out.spares).toEqual([])
+    expect(out.more).toEqual([])
+    expect(onError).toHaveBeenCalledTimes(1)
+    expect(onError).toHaveBeenCalledWith(err)
+  })
+
+  it('catches a synchronous throw inside the loader', async () => {
+    const err = new Error('boom')
+    const onError = vi.fn()
+    const out = await settleDeals(() => {
+      throw err
+    }, onError)
+    expect(out.count).toBe(0)
+    expect(onError).toHaveBeenCalledWith(err)
+  })
+
+  it('works without an onError handler', async () => {
+    const out = await settleDeals(() => Promise.reject(new Error('x')))
+    expect(out.count).toBe(0)
   })
 })
