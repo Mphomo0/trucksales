@@ -22,11 +22,11 @@ type Props = {
   children: React.ReactNode
   /** Rendered above the Navbar (non-dashboard pages only). */
   topBar?: React.ReactNode
-  /** Used for the chat greeting in a later task; not consumed yet. */
+  /** Shows the Black Friday greeting in the chat widget. */
   blackFridayLive?: boolean
 }
 
-export default function ClientLayout({ children, topBar }: Props) {
+export default function ClientLayout({ children, topBar, blackFridayLive }: Props) {
   const pathname = usePathname()
   const isDashboard = pathname?.startsWith('/dashboard')
   const [secondaryReady, setSecondaryReady] = useState(false)
@@ -51,7 +51,7 @@ export default function ClientLayout({ children, topBar }: Props) {
       <Footer />
       {secondaryReady && (
         <>
-          <ChatWidget />
+          <ChatWidget blackFridayLive={blackFridayLive} />
           <ClientToast />
         </>
       )}
