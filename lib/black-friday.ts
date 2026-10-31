@@ -287,6 +287,25 @@ export function shouldShowBlackFriday(
   return (isBlackFridayWindow(now) || isDemoMode(env)) && deals.vehicles.length >= 1
 }
 
+const SHORT_MONTHS = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+] as const
+
+function dayAndMonth(iso: string): { day: number; month: string } {
+  const [, m, d] = iso.split('-')
+  return { day: Number(d), month: SHORT_MONTHS[Number(m) - 1] }
+}
+
+/** Window label for display, e.g. "9 – 30 Nov" (or "28 Oct – 3 Nov"). */
+export function formatWindowLabel(): string {
+  const start = dayAndMonth(BLACK_FRIDAY.startsOn)
+  const end = dayAndMonth(BLACK_FRIDAY.endsOn)
+  return start.month === end.month
+    ? `${start.day} – ${end.day} ${end.month}`
+    : `${start.day} ${start.month} – ${end.day} ${end.month}`
+}
+
 /**
  * Gate for the root layout's deals query: outside the window (and outside
  * preview demo mode) the layout must not touch any cache or the database.
