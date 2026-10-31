@@ -36,3 +36,9 @@ export function getCurrentPrice(
     campaign: null,
   }
 }
+
+/** Rounded whole-number percentage saved; 0 when there is no valid saving. */
+export function getSavingsPercent(price: number, specialPrice: number): number {
+  if (price <= 0 || specialPrice <= 0 || specialPrice >= price) return 0
+  return Math.round((1 - specialPrice / price) * 100)
+}
