@@ -32,6 +32,18 @@ describe('getCurrentPrice', () => {
     expect(info.isSpecial).toBe(false)
   })
 
+  it('a null special price is not special even inside the window', () => {
+    const info = getCurrentPrice(1000, null, FROM, TO, null, new Date('2026-11-10T08:00:00Z'))
+    expect(info.isSpecial).toBe(false)
+    expect(info.currentPrice).toBe(1000)
+  })
+
+  it('a zero special price is not special even inside the window', () => {
+    const info = getCurrentPrice(1000, 0, FROM, TO, null, new Date('2026-11-10T08:00:00Z'))
+    expect(info.isSpecial).toBe(false)
+    expect(info.currentPrice).toBe(1000)
+  })
+
   it('a price with missing dates is not special', () => {
     const info = getCurrentPrice(1000, 800, null, null, null, new Date('2026-11-10T08:00:00Z'))
     expect(info.isSpecial).toBe(false)

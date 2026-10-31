@@ -129,5 +129,46 @@ describe('SAST date-only handling', () => {
       expect(where.specialValidTo.gte).toEqual(new Date('2026-11-09T12:00:00Z'))
     }
     expect(spare.specialPrice).toEqual({ gt: 0 })
+    expect(vehicle.specialPrice).toEqual({ gt: 0 })
+    for (const where of [vehicle, spare]) {
+      expect(where.specialValidFrom.not).toBeNull()
+      expect(where.specialValidTo.not).toBeNull()
+    }
+  })
+
+  it('pre-filter bounds are a superset of isSpecialActive', () => {
+    const rows: Array<[string, string, string]> = [
+      // [from, to, now]
+      ['2026-11-09T00:00:00Z', '2026-11-30T00:00:00Z', '2026-11-08T21:59:59Z'],
+      ['2026-11-09T00:00:00Z', '2026-11-30T00:00:00Z', '2026-11-08T22:00:00Z'],
+      ['2026-11-09T00:00:00Z', '2026-11-30T00:00:00Z', '2026-11-30T21:59:59.999Z'],
+      ['2026-11-09T00:00:00Z', '2026-11-30T00:00:00Z', '2026-11-30T22:00:00Z'],
+      ['2026-11-09T00:00:00Z', '2026-11-30T00:00:00Z', '2026-11-15T12:00:00Z'],
+      ['2026-11-09T08:30:00Z', '2026-11-20T17:45:00Z', '2026-11-09T08:30:00Z'],
+      ['2026-11-09T08:30:00Z', '2026-11-20T17:45:00Z', '2026-11-20T17:45:00Z'],
+      ['2026-11-09T08:30:00Z', '2026-11-20T17:45:00Z', '2026-11-20T17:45:01Z'],
+    ]
+    let activeCount = 0
+    for (const [from, to, nowIso] of rows) {
+      const at = new Date(nowIso)
+      const active = isSpecialActive(
+        { specialPrice: 100, specialValidFrom: from, specialValidTo: to },
+        at,
+      )
+      if (!active) continue
+      activeCount++
+      for (const where of [
+        activeVehicleSpecialWhere(at),
+        activeSpareSpecialWhere(at),
+      ]) {
+        expect(new Date(from).getTime()).toBeLessThanOrEqual(
+          where.specialValidFrom.lte.getTime(),
+        )
+        expect(new Date(to).getTime()).toBeGreaterThanOrEqual(
+          where.specialValidTo.gte.getTime(),
+        )
+      }
+    }
+    expect(activeCount).toBeGreaterThanOrEqual(5)
   })
 })
