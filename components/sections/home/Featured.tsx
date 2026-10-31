@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 
-import { withDemoVehicleSpecials } from '@/lib/black-friday'
+import { isDemoMode, withDemoVehicleSpecials } from '@/lib/black-friday'
 import FeaturedMarquee from './FeaturedMarquee'
 
 type FeaturedTruck = {
@@ -13,6 +13,10 @@ type FeaturedTruck = {
   specialCampaign: string | null;
   thumbnail: { fileId?: string; url: string } | null;
 }
+
+// Demo mode depends only on the deployment's env, so it is fixed at module load;
+// it is part of the cache key so demo data never shares an entry with real data.
+const CACHE_MODE = isDemoMode() ? 'demo' : 'real'
 
 const getFeaturedTrucks = unstable_cache(
   async (): Promise<FeaturedTruck[]> => {
@@ -61,7 +65,7 @@ const getFeaturedTrucks = unstable_cache(
       }
     })
   },
-  ['featured-trucks'],
+  ['featured-trucks', CACHE_MODE],
   { revalidate: 86400, tags: ['inventory'] }
 )
 

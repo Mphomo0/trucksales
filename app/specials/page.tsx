@@ -133,6 +133,10 @@ function dedupeById<T extends { id: string }>(items: T[]): T[] {
   return items.filter((i) => (seen.has(i.id) ? false : (seen.add(i.id), true)))
 }
 
+// Demo mode depends only on the deployment's env, so it is fixed at module load;
+// it is part of the cache key so demo data never shares an entry with real data.
+const CACHE_MODE = isDemoMode() ? 'demo' : 'real'
+
 const getSpecialsData = unstable_cache(
   async () => {
     const now = new Date()
@@ -184,7 +188,7 @@ const getSpecialsData = unstable_cache(
       spares: spares.filter((s) => isSpecialActive(s, now)),
     }
   },
-  ['specials-page-data'],
+  ['specials-page-data', CACHE_MODE],
   { revalidate: SPECIALS_REVALIDATE_SECONDS, tags: ['inventory', 'spares'] },
 )
 
