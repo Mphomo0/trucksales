@@ -100,7 +100,27 @@ function demoPrice(id: string, base: number, step: number): number | null {
   return price
 }
 
-export function applyDemoVehicleSpecials<T extends DealVehicle>(items: T[]): T[] {
+const DAY_MS = 24 * 60 * 60 * 1000
+
+function utcMidnight(d: Date): number {
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())
+}
+
+/**
+ * Date-only (00:00:00.000Z) demo bounds that are live at `now`: from the day
+ * before, to the later of the real end date and the day after.
+ */
+function demoBounds(now: Date): { from: Date; to: Date } {
+  const from = new Date(utcMidnight(now) - DAY_MS)
+  const to = new Date(Math.max(WINDOW_TO.getTime(), utcMidnight(now) + DAY_MS))
+  return { from, to }
+}
+
+export function applyDemoVehicleSpecials<T extends DealVehicle>(
+  items: T[],
+  now: Date = new Date(),
+): T[] {
+  const { from, to } = demoBounds(now)
   return items.map((item) => {
     if (!isDemoDealId(item.id)) return item
     const specialPrice = demoPrice(item.id, item.vatPrice, 100)
@@ -108,14 +128,18 @@ export function applyDemoVehicleSpecials<T extends DealVehicle>(items: T[]): T[]
     return {
       ...item,
       specialPrice,
-      specialValidFrom: new Date(WINDOW_FROM),
-      specialValidTo: new Date(WINDOW_TO),
+      specialValidFrom: new Date(from),
+      specialValidTo: new Date(to),
       specialCampaign: BLACK_FRIDAY.campaign,
     }
   })
 }
 
-export function applyDemoSpareSpecials<T extends DealSpare>(items: T[]): T[] {
+export function applyDemoSpareSpecials<T extends DealSpare>(
+  items: T[],
+  now: Date = new Date(),
+): T[] {
+  const { from, to } = demoBounds(now)
   return items.map((item) => {
     if (!isDemoDealId(item.id)) return item
     const specialPrice = demoPrice(item.id, item.price, 10)
@@ -127,11 +151,48 @@ export function applyDemoSpareSpecials<T extends DealSpare>(items: T[]): T[] {
         item.noVatPrice != null
           ? Math.round(item.noVatPrice * (specialPrice / item.price))
           : null,
-      specialValidFrom: new Date(WINDOW_FROM),
-      specialValidTo: new Date(WINDOW_TO),
+      specialValidFrom: new Date(from),
+      specialValidTo: new Date(to),
       specialCampaign: BLACK_FRIDAY.campaign,
     }
   })
+}
+
+type RawDate = string | Date | null | undefined
+
+function toDate(v: RawDate): Date | null {
+  if (v == null) return null
+  return v instanceof Date ? v : new Date(v)
+}
+
+/**
+ * unstable_cache JSON-serialises its result, so Dates come back as ISO
+ * strings on a cache hit. Convert them back without mutating the input.
+ */
+export function reviveRows<
+  V extends { createdAt: unknown; specialValidFrom: unknown; specialValidTo: unknown },
+  S extends { createdAt: unknown; specialValidFrom: unknown; specialValidTo: unknown },
+>(rows: { vehicles: V[]; spares: S[] }): {
+  vehicles: (Omit<V, 'createdAt' | 'specialValidFrom' | 'specialValidTo'> & {
+    createdAt: Date
+    specialValidFrom: Date | null
+    specialValidTo: Date | null
+  })[]
+  spares: (Omit<S, 'createdAt' | 'specialValidFrom' | 'specialValidTo'> & {
+    createdAt: Date
+    specialValidFrom: Date | null
+    specialValidTo: Date | null
+  })[]
+} {
+  const fix = <T extends { createdAt: unknown; specialValidFrom: unknown; specialValidTo: unknown }>(
+    r: T,
+  ) => ({
+    ...r,
+    createdAt: toDate(r.createdAt as RawDate) as Date,
+    specialValidFrom: toDate(r.specialValidFrom as RawDate),
+    specialValidTo: toDate(r.specialValidTo as RawDate),
+  })
+  return { vehicles: rows.vehicles.map(fix), spares: rows.spares.map(fix) } as never
 }
 
 function saving(v: DealVehicle): number {

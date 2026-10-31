@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { isSpecialActive } from './specials'
 import {
   BLACK_FRIDAY,
   applyDemoSpareSpecials,
@@ -8,6 +9,7 @@ import {
   isDemoDealId,
   isDemoMode,
   pickFeatured,
+  reviveRows,
   shouldShowBlackFriday,
   type DealSpare,
   type DealVehicle,
@@ -151,6 +153,65 @@ describe('buildDeals', () => {
   })
 })
 
+const DEMO_NOW = new Date('2026-10-28T08:00:00Z')
+const LATE_NOW = new Date('2026-12-05T08:00:00Z')
+
+describe('demo deal dates', () => {
+  it('are live now and run to the window end when previewed early', () => {
+    const [id] = ids(1, 'early', true)
+    const [v] = applyDemoVehicleSpecials([vehicle({ id })], DEMO_NOW)
+    const [s] = applyDemoSpareSpecials([spare({ id })], DEMO_NOW)
+    for (const x of [v, s]) {
+      expect(isSpecialActive(x, DEMO_NOW)).toBe(true)
+      expect(x.specialValidFrom).toEqual(new Date('2026-10-27T00:00:00Z'))
+      expect(x.specialValidTo).toEqual(new Date('2026-11-30T00:00:00Z'))
+    }
+  })
+
+  it('are still live after the window and end tomorrow', () => {
+    const [id] = ids(1, 'late', true)
+    const [v] = applyDemoVehicleSpecials([vehicle({ id })], LATE_NOW)
+    const [s] = applyDemoSpareSpecials([spare({ id })], LATE_NOW)
+    for (const x of [v, s]) {
+      expect(isSpecialActive(x, LATE_NOW)).toBe(true)
+      expect(x.specialValidTo).toEqual(new Date('2026-12-06T00:00:00Z'))
+    }
+  })
+})
+
+describe('reviveRows', () => {
+  const iso = '2026-11-10T08:30:00.000Z'
+
+  it('turns ISO strings into Dates with the same instant, without mutating input', () => {
+    const rows = {
+      vehicles: [{ ...vehicle(), createdAt: iso, specialValidFrom: iso, specialValidTo: iso }],
+      spares: [{ ...spare(), createdAt: iso, specialValidFrom: iso, specialValidTo: iso }],
+    }
+    const snapshot = JSON.stringify(rows)
+    const out = reviveRows(rows)
+    expect(JSON.stringify(rows)).toBe(snapshot)
+    for (const x of [out.vehicles[0], out.spares[0]]) {
+      expect(x.createdAt).toBeInstanceOf(Date)
+      expect(x.createdAt.getTime()).toBe(new Date(iso).getTime())
+      expect(x.specialValidFrom?.getTime()).toBe(new Date(iso).getTime())
+      expect(x.specialValidTo?.getTime()).toBe(new Date(iso).getTime())
+    }
+  })
+
+  it('passes Dates through equal and keeps null as null', () => {
+    const d = new Date(iso)
+    const out = reviveRows({
+      vehicles: [vehicle({ createdAt: d, specialValidFrom: d, specialValidTo: null })],
+      spares: [spare({ createdAt: d, specialValidFrom: null, specialValidTo: d })],
+    })
+    expect(out.vehicles[0].createdAt).toEqual(d)
+    expect(out.vehicles[0].specialValidFrom).toEqual(d)
+    expect(out.vehicles[0].specialValidTo).toBeNull()
+    expect(out.spares[0].specialValidFrom).toBeNull()
+    expect(out.spares[0].specialValidTo).toEqual(d)
+  })
+})
+
 describe('applyDemoVehicleSpecials', () => {
   it('is deterministic and never mutates its input', () => {
     const demoIds = ids(3, 'dv', true)
@@ -158,8 +219,8 @@ describe('applyDemoVehicleSpecials', () => {
     const input = [...demoIds, ...plainIds].map((id) => vehicle({ id }))
     const snapshot = JSON.stringify(input)
 
-    const a = applyDemoVehicleSpecials(input)
-    const b = applyDemoVehicleSpecials(input)
+    const a = applyDemoVehicleSpecials(input, DEMO_NOW)
+    const b = applyDemoVehicleSpecials(input, DEMO_NOW)
     expect(JSON.stringify(input)).toBe(snapshot)
     expect(a).toEqual(b)
     expect(a).not.toBe(input)
@@ -167,7 +228,7 @@ describe('applyDemoVehicleSpecials', () => {
     for (const item of a) {
       if (isDemoDealId(item.id)) {
         expect(item.specialCampaign).toBe(BLACK_FRIDAY.campaign)
-        expect(item.specialValidFrom).toEqual(new Date('2026-11-09T00:00:00Z'))
+        expect(item.specialValidFrom).toEqual(new Date('2026-10-27T00:00:00Z'))
         expect(item.specialValidTo).toEqual(new Date('2026-11-30T00:00:00Z'))
         expect(item.specialPrice).not.toBeNull()
       } else {
@@ -207,7 +268,7 @@ describe('applyDemoSpareSpecials', () => {
     const demoIds = ids(20, 'ds', true)
     const input = [...demoIds, ...ids(2, 'ps', false)].map((id) => spare({ id, price: 10000, noVatPrice: 8696 }))
     const snapshot = JSON.stringify(input)
-    const out = applyDemoSpareSpecials(input)
+    const out = applyDemoSpareSpecials(input, DEMO_NOW)
     expect(JSON.stringify(input)).toBe(snapshot)
 
     for (const s of out) {
