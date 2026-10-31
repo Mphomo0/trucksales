@@ -13,6 +13,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ikCard } from '@/lib/imagekit'
 import BlackFridayTag from '@/components/shared/BlackFridayTag'
+import { useEffect, useState } from 'react'
+import {
+  filterSpecials,
+  getBodyTypes,
+  parseTypeParam,
+  type SpecialsFilter,
+} from '@/lib/specials-filter'
 
 interface Image {
   fileId: string
@@ -25,6 +32,7 @@ interface VehicleSpecial {
   make: string
   model: string
   year: number
+  bodyType?: string | null
   vatPrice: number
   pricenoVat?: number | null
   images: Image[] | any[]
@@ -57,9 +65,46 @@ interface SpareSpecial {
 interface Props {
   vehicles?: VehicleSpecial[]
   spares?: SpareSpecial[]
+  showTypeFilters?: boolean
 }
 
-export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
+function sameFilter(a: SpecialsFilter, b: SpecialsFilter) {
+  if (a.kind !== b.kind) return false
+  if (a.kind === 'bodyType' && b.kind === 'bodyType') {
+    return a.value.toLowerCase() === b.value.toLowerCase()
+  }
+  return true
+}
+
+export default function AllSpecials({
+  vehicles: allVehicles = [],
+  spares: allSpares = [],
+  showTypeFilters = false,
+}: Props) {
+  // Initial state is "all" on server and client; ?type is applied after mount
+  const [filter, setFilter] = useState<SpecialsFilter>({ kind: 'all' })
+
+  useEffect(() => {
+    if (!showTypeFilters) return
+    const type = new URLSearchParams(window.location.search).get('type')
+    setFilter(parseTypeParam(type))
+  }, [showTypeFilters])
+
+  const { vehicles, spares } = showTypeFilters
+    ? filterSpecials(allVehicles, allSpares, filter)
+    : { vehicles: allVehicles, spares: allSpares }
+  const bodyTypes = showTypeFilters ? getBodyTypes(allVehicles) : []
+
+  const chips: { label: string; value: SpecialsFilter }[] = [
+    { label: 'All deals', value: { kind: 'all' } },
+    { label: 'Trucks', value: { kind: 'trucks' } },
+    { label: 'Spares', value: { kind: 'spares' } },
+    ...bodyTypes.map((t) => ({
+      label: t.charAt(0).toUpperCase() + t.slice(1),
+      value: { kind: 'bodyType', value: t } as SpecialsFilter,
+    })),
+  ]
+
   const hasVehicles = vehicles.length > 0
   const hasSpares = spares.length > 0
 
@@ -74,6 +119,45 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
   }
 
   return (
+    <>
+      {showTypeFilters && (
+        <div
+          role="group"
+          aria-label="Filter deals"
+          className="mb-8 flex flex-wrap gap-2"
+        >
+          {chips.map((chip) => {
+            const active = sameFilter(filter, chip.value)
+            return (
+              <button
+                key={chip.label}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setFilter(chip.value)}
+                className={`rounded-full border px-4 py-2 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 ${
+                  active
+                    ? 'border-amber-500 bg-amber-500 text-gray-950'
+                    : 'border-gray-400 bg-white text-gray-800 hover:border-gray-900'
+                }`}
+              >
+                {chip.label}
+              </button>
+            )
+          })}
+        </div>
+      )}
+      {showTypeFilters && !hasVehicles && !hasSpares && (
+        <div className="rounded-lg bg-white py-12 text-center shadow-sm">
+          <p className="mb-4 text-lg text-gray-700">No deals match this filter.</p>
+          <button
+            type="button"
+            onClick={() => setFilter({ kind: 'all' })}
+            className="rounded-full border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-semibold text-gray-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+          >
+            Show all deals
+          </button>
+        </div>
+      )}
     <div className="space-y-16">
       {hasVehicles && (
         <section>
@@ -209,5 +293,6 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
         </section>
       )}
     </div>
+    </>
   )
 }

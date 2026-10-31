@@ -19,8 +19,10 @@ const AllSpecials = dynamicImport(
 )
 import JsonLd from '@/components/global/JsonLd'
 import { prisma } from '@/lib/prisma'
+import { getBlackFridayDeals } from '@/lib/black-friday-deals'
 import {
   isDemoMode,
+  shouldShowBlackFriday,
   withDemoSpareSpecials,
   withDemoVehicleSpecials,
 } from '@/lib/black-friday'
@@ -95,6 +97,7 @@ const vehicleSelect = {
   make: true,
   model: true,
   year: true,
+  bodyType: true,
   vatPrice: true,
   pricenoVat: true,
   images: true,
@@ -186,6 +189,9 @@ const getSpecialsData = unstable_cache(
 
 /* application/ld+json */ export default async function Specials() {
   const { vehicles, spares } = await getSpecialsData()
+  const deals = await getBlackFridayDeals()
+  const showBlackFriday = shouldShowBlackFriday(deals)
+  const dealCount = vehicles.length + spares.length
 
   const hasVehicles = vehicles.length > 0
   const hasSpares = spares.length > 0
@@ -232,6 +238,20 @@ const getSpecialsData = unstable_cache(
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={specialsFaqSchema} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {showBlackFriday ? (
+          <div className="mb-12 rounded-2xl bg-gradient-to-br from-[#0b0b0c] to-[#3b2506] px-6 py-12 text-center text-white sm:px-10">
+            <span className="inline-block rounded-full bg-amber-500 px-4 py-1 text-xs font-bold uppercase tracking-wider text-gray-950">
+              Black Friday · 9 – 30 Nov
+            </span>
+            <h2 className="mt-4 text-4xl font-extrabold sm:text-5xl">
+              Black Friday Truck Deals
+            </h2>
+            <p className="mt-3 text-lg text-gray-100">
+              {dealCount} {dealCount === 1 ? 'deal' : 'deals'}. Prices valid
+              until Monday 30 November.
+            </p>
+          </div>
+        ) : (
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Truck Specials &amp; Deals
@@ -243,6 +263,7 @@ const getSpecialsData = unstable_cache(
             available for a limited time.
           </p>
         </div>
+        )}
 
         {!hasAnySpecial ? (
           <div className="text-center py-12 bg-white rounded-lg shadow-sm">
@@ -254,7 +275,11 @@ const getSpecialsData = unstable_cache(
             </p>
           </div>
         ) : (
-          <AllSpecials vehicles={vehicles as any[]} spares={spares as any[]} />
+          <AllSpecials
+            vehicles={vehicles as any[]}
+            spares={spares as any[]}
+            showTypeFilters={showBlackFriday}
+          />
         )}
 
         {vehicles.length > 0 && (
