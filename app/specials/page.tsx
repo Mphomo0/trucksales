@@ -20,6 +20,11 @@ const AllSpecials = dynamicImport(
 import JsonLd from '@/components/global/JsonLd'
 import { prisma } from '@/lib/prisma'
 import {
+  isDemoMode,
+  withDemoSpareSpecials,
+  withDemoVehicleSpecials,
+} from '@/lib/black-friday'
+import {
   activeSpareSpecialWhere,
   activeVehicleSpecialWhere,
   isSpecialActive,
@@ -84,56 +89,88 @@ const specialsFaqs = [
   },
 ]
 
+const vehicleSelect = {
+  id: true,
+  name: true,
+  make: true,
+  model: true,
+  year: true,
+  vatPrice: true,
+  pricenoVat: true,
+  images: true,
+  description: true,
+  slug: true,
+  specialPrice: true,
+  specialValidFrom: true,
+  specialValidTo: true,
+} as const
+
+const spareSelect = {
+  id: true,
+  name: true,
+  make: true,
+  price: true,
+  noVatPrice: true,
+  images: true,
+  description: true,
+  slug: true,
+  category: true,
+  condition: true,
+  specialPrice: true,
+  specialPriceNoVat: true,
+  specialValidFrom: true,
+  specialValidTo: true,
+} as const
+
+function dedupeById<T extends { id: string }>(items: T[]): T[] {
+  const seen = new Set<string>()
+  return items.filter((i) => (seen.has(i.id) ? false : (seen.add(i.id), true)))
+}
+
 const getSpecialsData = unstable_cache(
   async () => {
     const now = new Date()
 
     // Run both queries in parallel — cuts DB round-trip time in half
-    const [vehicles, spares] = await Promise.all([
+    const [dbVehicles, dbSpares, demoVehicles, demoSpares] = await Promise.all([
       prisma.inventory.findMany({
         // Widened pre-filter; results are post-filtered with isSpecialActive below,
         // the same rule as /specials/[slug], so listed links never redirect back here
         where: activeVehicleSpecialWhere(now),
-        select: {
-          id: true,
-          name: true,
-          make: true,
-          model: true,
-          year: true,
-          vatPrice: true,
-          pricenoVat: true,
-          images: true,
-          description: true,
-          slug: true,
-          specialPrice: true,
-          specialValidFrom: true,
-          specialValidTo: true,
-        },
+        select: vehicleSelect,
         orderBy: { createdAt: 'desc' },
         take: 50,
       }),
       prisma.spares.findMany({
         where: activeSpareSpecialWhere(now),
-        select: {
-          id: true,
-          name: true,
-          make: true,
-          price: true,
-          noVatPrice: true,
-          images: true,
-          description: true,
-          slug: true,
-          category: true,
-          condition: true,
-          specialPrice: true,
-          specialPriceNoVat: true,
-          specialValidFrom: true,
-          specialValidTo: true,
-        },
+        select: spareSelect,
         orderBy: { createdAt: 'desc' },
         take: 50,
       }),
+      // Preview demo mode only: the real special filter would hide the pretend
+      // specials, so also fetch the latest items regardless of special price
+      isDemoMode()
+        ? prisma.inventory.findMany({
+            select: vehicleSelect,
+            orderBy: { createdAt: 'desc' },
+            take: 40,
+          })
+        : Promise.resolve([]),
+      isDemoMode()
+        ? prisma.spares.findMany({
+            select: spareSelect,
+            orderBy: { createdAt: 'desc' },
+            take: 20,
+          })
+        : Promise.resolve([]),
     ])
+
+    const vehicles = isDemoMode()
+      ? withDemoVehicleSpecials(dedupeById([...dbVehicles, ...demoVehicles]))
+      : dbVehicles
+    const spares = isDemoMode()
+      ? withDemoSpareSpecials(dedupeById([...dbSpares, ...demoSpares]))
+      : dbSpares
 
     // The where clauses are widened pre-filters; isSpecialActive is the rule
     return {

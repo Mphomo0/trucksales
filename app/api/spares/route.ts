@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import slugify from 'slugify'
+import { withDemoSpareSpecials } from '@/lib/black-friday'
 import { revalidatePath, revalidateTag } from 'next/cache' // 🔥 NATIVE REVALIDATION (Zero HTTP Overhead)
 
 export const runtime = 'nodejs'
@@ -207,7 +208,7 @@ export const GET = async (req: NextRequest) => {
     ])
 
     // Convert multi-image arrays to a unified single thumbnail string/object for card presentation
-    const optimizedSpares = spares.map((item) => {
+    const optimizedSpares = withDemoSpareSpecials(spares).map((item) => {
       const imgArray = Array.isArray(item.images) ? item.images : []
       return {
         ...item,

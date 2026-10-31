@@ -354,7 +354,7 @@ describe('withDemo wrappers', () => {
   })
 
   it('accepts narrower row shapes', () => {
-    const rows = [{ id: demoV.id, vatPrice: 500000 }]
+    const rows = [{ id: demoV.id, vatPrice: 500000, specialPrice: null as number | null }]
     const [out] = withDemoVehicleSpecials(rows, PREVIEW, DEMO_NOW)
     expect(out.specialPrice).toBeLessThan(500000)
   })
