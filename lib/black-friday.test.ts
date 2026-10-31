@@ -1,0 +1,261 @@
+import { describe, expect, it } from 'vitest'
+import {
+  BLACK_FRIDAY,
+  applyDemoSpareSpecials,
+  applyDemoVehicleSpecials,
+  buildDeals,
+  isBlackFridayWindow,
+  isDemoDealId,
+  isDemoMode,
+  pickFeatured,
+  shouldShowBlackFriday,
+  type DealSpare,
+  type DealVehicle,
+} from './black-friday'
+
+const IN_WINDOW = new Date('2026-11-15T10:00:00Z')
+
+function vehicle(over: Partial<DealVehicle> = {}): DealVehicle {
+  return {
+    id: 'v1',
+    name: 'Truck',
+    make: 'Isuzu',
+    model: 'FTR',
+    year: 2020,
+    vatPrice: 500000,
+    pricenoVat: 434783,
+    images: [],
+    slug: 'truck',
+    bodyType: null,
+    createdAt: new Date('2026-01-01T00:00:00Z'),
+    specialPrice: null,
+    specialValidFrom: null,
+    specialValidTo: null,
+    specialCampaign: null,
+    ...over,
+  }
+}
+
+function spare(over: Partial<DealSpare> = {}): DealSpare {
+  return {
+    id: 's1',
+    name: 'Part',
+    make: 'Isuzu',
+    category: 'Engine',
+    condition: 'Used',
+    price: 10000,
+    noVatPrice: 8696,
+    images: [],
+    slug: 'part',
+    createdAt: new Date('2026-01-01T00:00:00Z'),
+    specialPrice: null,
+    specialPriceNoVat: null,
+    specialValidFrom: null,
+    specialValidTo: null,
+    specialCampaign: null,
+    ...over,
+  }
+}
+
+const bfWindow = {
+  specialValidFrom: new Date('2026-11-09T00:00:00Z'),
+  specialValidTo: new Date('2026-11-30T00:00:00Z'),
+  specialCampaign: 'black-friday',
+}
+
+function ids(n: number, prefix: string, demo: boolean): string[] {
+  const out: string[] = []
+  for (let i = 0; out.length < n && i < 10000; i++) {
+    const id = `${prefix}-${i}`
+    if (isDemoDealId(id) === demo) out.push(id)
+  }
+  return out
+}
+
+describe('isBlackFridayWindow', () => {
+  it('window opens at 00:00 SAST on 9 Nov', () => {
+    expect(isBlackFridayWindow(new Date('2026-11-08T21:59:59Z'))).toBe(false)
+    expect(isBlackFridayWindow(new Date('2026-11-08T22:00:00Z'))).toBe(true)
+  })
+
+  it('window closes at 23:59:59 SAST on 30 Nov', () => {
+    expect(isBlackFridayWindow(new Date('2026-11-30T21:59:59Z'))).toBe(true)
+    expect(isBlackFridayWindow(new Date('2026-11-30T22:00:00Z'))).toBe(false)
+  })
+})
+
+describe('isDemoMode', () => {
+  it('demo mode needs preview and the flag', () => {
+    expect(isDemoMode({ VERCEL_ENV: 'preview', BLACK_FRIDAY_PREVIEW: '1' })).toBe(true)
+    expect(isDemoMode({ VERCEL_ENV: 'production', BLACK_FRIDAY_PREVIEW: '1' })).toBe(false)
+    expect(isDemoMode({ VERCEL_ENV: 'preview' })).toBe(false)
+  })
+})
+
+describe('pickFeatured', () => {
+  it('picks the largest rand saving', () => {
+    const small = vehicle({ id: 'a', vatPrice: 500000, specialPrice: 490000 })
+    const big = vehicle({ id: 'b', vatPrice: 300000, specialPrice: 250000 })
+    const mid = vehicle({ id: 'c', vatPrice: 400000, specialPrice: 380000 })
+    const r = pickFeatured([small, big, mid])
+    expect(r.featured?.id).toBe('b')
+    expect(r.more.map((v) => v.id)).toEqual(['c', 'a'])
+  })
+
+  it('breaks ties by newest', () => {
+    const older = vehicle({ id: 'old', specialPrice: 450000, createdAt: new Date('2026-01-01T00:00:00Z') })
+    const newer = vehicle({ id: 'new', specialPrice: 450000, createdAt: new Date('2026-06-01T00:00:00Z') })
+    expect(pickFeatured([older, newer]).featured?.id).toBe('new')
+  })
+
+  it('returns only three in more', () => {
+    const list = [1, 2, 3, 4, 5].map((n) =>
+      vehicle({ id: `v${n}`, specialPrice: 500000 - n * 1000 }),
+    )
+    const r = pickFeatured(list)
+    expect(r.featured?.id).toBe('v5')
+    expect(r.more).toHaveLength(3)
+  })
+
+  it('returns null featured and empty more for no deals', () => {
+    expect(pickFeatured([])).toEqual({ featured: null, more: [] })
+  })
+})
+
+describe('buildDeals', () => {
+  it('keeps only black-friday tagged, currently active specials', () => {
+    const good = vehicle({ id: 'good', specialPrice: 450000, ...bfWindow })
+    const normalSpecial = vehicle({ id: 'normal', specialPrice: 450000, ...bfWindow, specialCampaign: null })
+    const expired = vehicle({
+      id: 'expired',
+      specialPrice: 450000,
+      ...bfWindow,
+      specialValidTo: new Date('2026-11-10T00:00:00Z'),
+    })
+    const goodSpare = spare({ id: 'gs', specialPrice: 9000, ...bfWindow })
+    const otherSpare = spare({ id: 'os', specialPrice: 9000, ...bfWindow, specialCampaign: null })
+
+    const deals = buildDeals(
+      { vehicles: [good, normalSpecial, expired], spares: [goodSpare, otherSpare] },
+      { now: IN_WINDOW, demo: false },
+    )
+    expect(deals.vehicles.map((v) => v.id)).toEqual(['good'])
+    expect(deals.spares.map((s) => s.id)).toEqual(['gs'])
+    expect(deals.count).toBe(2)
+    expect(deals.featured?.id).toBe('good')
+    expect(deals.isDemo).toBe(false)
+  })
+
+  it('mirrors opts.demo in isDemo', () => {
+    expect(buildDeals({ vehicles: [], spares: [] }, { now: IN_WINDOW, demo: true }).isDemo).toBe(true)
+  })
+})
+
+describe('applyDemoVehicleSpecials', () => {
+  it('is deterministic and never mutates its input', () => {
+    const demoIds = ids(3, 'dv', true)
+    const plainIds = ids(2, 'pv', false)
+    const input = [...demoIds, ...plainIds].map((id) => vehicle({ id }))
+    const snapshot = JSON.stringify(input)
+
+    const a = applyDemoVehicleSpecials(input)
+    const b = applyDemoVehicleSpecials(input)
+    expect(JSON.stringify(input)).toBe(snapshot)
+    expect(a).toEqual(b)
+    expect(a).not.toBe(input)
+
+    for (const item of a) {
+      if (isDemoDealId(item.id)) {
+        expect(item.specialCampaign).toBe(BLACK_FRIDAY.campaign)
+        expect(item.specialValidFrom).toEqual(new Date('2026-11-09T00:00:00Z'))
+        expect(item.specialValidTo).toEqual(new Date('2026-11-30T00:00:00Z'))
+        expect(item.specialPrice).not.toBeNull()
+      } else {
+        expect(item.specialPrice).toBeNull()
+        expect(item.specialCampaign).toBeNull()
+      }
+    }
+  })
+
+  it('discounts are between 8% and 15%', () => {
+    const demoIds = ids(50, 'disc', true)
+    const out = applyDemoVehicleSpecials(demoIds.map((id) => vehicle({ id, vatPrice: 500000 })))
+    for (const v of out) {
+      const pct = (1 - (v.specialPrice as number) / 500000) * 100
+      expect(pct).toBeGreaterThanOrEqual(7.9)
+      expect(pct).toBeLessThanOrEqual(15.1)
+      expect((v.specialPrice as number) % 100).toBe(0)
+    }
+  })
+
+  it('keeps the special price strictly below a tiny base price and above zero', () => {
+    const [id] = ids(1, 'tiny', true)
+    const [out] = applyDemoVehicleSpecials([vehicle({ id, vatPrice: 120 })])
+    expect(out.specialPrice).toBeGreaterThan(0)
+    expect(out.specialPrice as number).toBeLessThan(120)
+  })
+
+  it('selects roughly one id in three', () => {
+    const hits = Array.from({ length: 900 }, (_, i) => isDemoDealId(`id-${i}`)).filter(Boolean).length
+    expect(hits).toBeGreaterThan(200)
+    expect(hits).toBeLessThan(400)
+  })
+})
+
+describe('applyDemoSpareSpecials', () => {
+  it('discounts spares to the nearest R10 and scales the ex-VAT price', () => {
+    const demoIds = ids(20, 'ds', true)
+    const input = [...demoIds, ...ids(2, 'ps', false)].map((id) => spare({ id, price: 10000, noVatPrice: 8696 }))
+    const snapshot = JSON.stringify(input)
+    const out = applyDemoSpareSpecials(input)
+    expect(JSON.stringify(input)).toBe(snapshot)
+
+    for (const s of out) {
+      if (isDemoDealId(s.id)) {
+        const sp = s.specialPrice as number
+        expect(sp).toBeLessThan(10000)
+        expect(sp).toBeGreaterThan(0)
+        expect(sp % 10).toBe(0)
+        expect(sp / 10000).toBeGreaterThanOrEqual(0.849)
+        expect(sp / 10000).toBeLessThanOrEqual(0.921)
+        expect(s.specialPriceNoVat).toBeCloseTo(8696 * (sp / 10000), 0)
+        expect(s.specialCampaign).toBe('black-friday')
+      } else {
+        expect(s.specialPrice).toBeNull()
+        expect(s.specialCampaign).toBeNull()
+      }
+    }
+  })
+
+  it('leaves specialPriceNoVat null when there is no ex-VAT price', () => {
+    const [id] = ids(1, 'nv', true)
+    const [out] = applyDemoSpareSpecials([spare({ id, noVatPrice: null })])
+    expect(out.specialPrice).not.toBeNull()
+    expect(out.specialPriceNoVat).toBeNull()
+  })
+})
+
+describe('shouldShowBlackFriday', () => {
+  const withDeal = buildDeals(
+    { vehicles: [vehicle({ id: 'x', specialPrice: 450000, ...bfWindow })], spares: [] },
+    { now: IN_WINDOW, demo: false },
+  )
+  const empty = buildDeals({ vehicles: [], spares: [] }, { now: IN_WINDOW, demo: false })
+  const preview = { VERCEL_ENV: 'preview', BLACK_FRIDAY_PREVIEW: '1' }
+
+  it('is false when the window is live but there are no vehicle deals', () => {
+    expect(shouldShowBlackFriday(empty, IN_WINDOW, {})).toBe(false)
+  })
+
+  it('is true inside the window with a vehicle deal', () => {
+    expect(shouldShowBlackFriday(withDeal, IN_WINDOW, {})).toBe(true)
+  })
+
+  it('is true in demo mode with a vehicle deal outside the window', () => {
+    expect(shouldShowBlackFriday(withDeal, new Date('2026-10-31T10:00:00Z'), preview)).toBe(true)
+  })
+
+  it('is false outside the window without demo', () => {
+    expect(shouldShowBlackFriday(withDeal, new Date('2026-10-31T10:00:00Z'), {})).toBe(false)
+  })
+})
