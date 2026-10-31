@@ -11,7 +11,7 @@ import DeferredGoogleAnalytics from '@/components/global/DeferredGoogleAnalytics
 import Script from 'next/script'
 import PreviewPill from '@/components/shared/PreviewPill'
 import { BlackFridayBarView } from '@/components/global/BlackFridayBar'
-import { getBlackFridayDeals } from '@/lib/black-friday-deals'
+import { getBlackFridayLayoutDeals } from '@/lib/black-friday-deals'
 import { shouldShowBlackFriday } from '@/lib/black-friday'
 
 const geistSans = Geist({
@@ -175,7 +175,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   // Never throws: a failing deals query yields empty deals (campaign hidden).
-  const deals = await getBlackFridayDeals()
+  const deals = await getBlackFridayLayoutDeals()
   const blackFridayLive = shouldShowBlackFriday(deals)
 
   return (
