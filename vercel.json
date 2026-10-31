@@ -44,5 +44,9 @@
       ]
     }
   ],
+  "crons": [
+    { "path": "/api/cron/black-friday", "schedule": "0 22 8 11 *" },
+    { "path": "/api/cron/black-friday", "schedule": "0 22 30 11 *" }
+  ],
   "framework": "nextjs"
 }
