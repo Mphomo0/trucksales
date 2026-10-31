@@ -116,7 +116,28 @@ function demoBounds(now: Date): { from: Date; to: Date } {
   return { from, to }
 }
 
-export function applyDemoVehicleSpecials<T extends DealVehicle>(
+/** Minimal shapes the demo functions need, so call sites with different selects fit. */
+export type DemoVehicleShape = {
+  id: string
+  vatPrice: number
+  specialPrice?: number | null
+  specialValidFrom?: Date | string | null
+  specialValidTo?: Date | string | null
+  specialCampaign?: string | null
+}
+
+export type DemoSpareShape = {
+  id: string
+  price: number
+  noVatPrice?: number | null
+  specialPrice?: number | null
+  specialPriceNoVat?: number | null
+  specialValidFrom?: Date | string | null
+  specialValidTo?: Date | string | null
+  specialCampaign?: string | null
+}
+
+export function applyDemoVehicleSpecials<T extends DemoVehicleShape>(
   items: T[],
   now: Date = new Date(),
 ): T[] {
@@ -135,7 +156,7 @@ export function applyDemoVehicleSpecials<T extends DealVehicle>(
   })
 }
 
-export function applyDemoSpareSpecials<T extends DealSpare>(
+export function applyDemoSpareSpecials<T extends DemoSpareShape>(
   items: T[],
   now: Date = new Date(),
 ): T[] {
@@ -156,6 +177,23 @@ export function applyDemoSpareSpecials<T extends DealSpare>(
       specialCampaign: BLACK_FRIDAY.campaign,
     }
   })
+}
+
+/** Returns `items` unchanged (same reference) unless demo mode is on. */
+export function withDemoVehicleSpecials<T extends DemoVehicleShape>(
+  items: T[],
+  env: Env = process.env,
+  now: Date = new Date(),
+): T[] {
+  return isDemoMode(env) ? applyDemoVehicleSpecials(items, now) : items
+}
+
+export function withDemoSpareSpecials<T extends DemoSpareShape>(
+  items: T[],
+  env: Env = process.env,
+  now: Date = new Date(),
+): T[] {
+  return isDemoMode(env) ? applyDemoSpareSpecials(items, now) : items
 }
 
 type RawDate = string | Date | null | undefined
