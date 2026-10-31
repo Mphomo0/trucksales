@@ -11,6 +11,8 @@ import {
   pickFeatured,
   reviveRows,
   shouldShowBlackFriday,
+  withDemoSpareSpecials,
+  withDemoVehicleSpecials,
   type DealSpare,
   type DealVehicle,
 } from './black-friday'
@@ -318,5 +320,42 @@ describe('shouldShowBlackFriday', () => {
 
   it('is false outside the window without demo', () => {
     expect(shouldShowBlackFriday(withDeal, new Date('2026-10-31T10:00:00Z'), {})).toBe(false)
+  })
+})
+
+describe('withDemo wrappers', () => {
+  const PREVIEW = { VERCEL_ENV: 'preview', BLACK_FRIDAY_PREVIEW: '1' }
+  const PROD = { VERCEL_ENV: 'production', BLACK_FRIDAY_PREVIEW: '1' }
+  const demoV = vehicle({ id: ids(1, 'wv', true)[0] })
+  const demoS = spare({ id: ids(1, 'ws', true)[0] })
+
+  it('returns the same reference when not in demo mode', () => {
+    const vs = [demoV]
+    const ss = [demoS]
+    expect(withDemoVehicleSpecials(vs, {}, DEMO_NOW)).toBe(vs)
+    expect(withDemoSpareSpecials(ss, {}, DEMO_NOW)).toBe(ss)
+    expect(withDemoVehicleSpecials(vs, { VERCEL_ENV: 'preview' }, DEMO_NOW)).toBe(vs)
+  })
+
+  it('is a no-op in production even with the flag set', () => {
+    const vs = [demoV]
+    const ss = [demoS]
+    expect(withDemoVehicleSpecials(vs, PROD, DEMO_NOW)).toBe(vs)
+    expect(withDemoSpareSpecials(ss, PROD, DEMO_NOW)).toBe(ss)
+  })
+
+  it('applies demo specials in preview with the flag', () => {
+    const [v] = withDemoVehicleSpecials([demoV], PREVIEW, DEMO_NOW)
+    const [s] = withDemoSpareSpecials([demoS], PREVIEW, DEMO_NOW)
+    expect(v.specialCampaign).toBe(BLACK_FRIDAY.campaign)
+    expect(v.specialPrice).not.toBeNull()
+    expect(s.specialCampaign).toBe(BLACK_FRIDAY.campaign)
+    expect(s.specialPrice).not.toBeNull()
+  })
+
+  it('accepts narrower row shapes', () => {
+    const rows = [{ id: demoV.id, vatPrice: 500000 }]
+    const [out] = withDemoVehicleSpecials(rows, PREVIEW, DEMO_NOW)
+    expect(out.specialPrice).toBeLessThan(500000)
   })
 })
