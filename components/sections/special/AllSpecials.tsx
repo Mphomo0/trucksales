@@ -134,10 +134,10 @@ export default function AllSpecials({
                 type="button"
                 aria-pressed={active}
                 onClick={() => setFilter(chip.value)}
-                className={`rounded-full border px-4 py-2 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 ${
+                className={`rounded-full border px-4 py-2 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 ${
                   active
                     ? 'border-amber-500 bg-amber-500 text-gray-950'
-                    : 'border-gray-400 bg-white text-gray-800 hover:border-gray-900'
+                    : 'border-gray-500 bg-white text-gray-800 hover:border-gray-900'
                 }`}
               >
                 {chip.label}
@@ -152,7 +152,7 @@ export default function AllSpecials({
           <button
             type="button"
             onClick={() => setFilter({ kind: 'all' })}
-            className="rounded-full border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-semibold text-gray-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
+            className="rounded-full border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-semibold text-gray-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2"
           >
             Show all deals
           </button>
