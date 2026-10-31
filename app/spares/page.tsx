@@ -20,6 +20,7 @@ import JsonLd from '@/components/global/JsonLd'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { unstable_cache } from 'next/cache'
+import { withDemoSpareSpecials } from '@/lib/black-friday'
 
 const getSparesStats = unstable_cache(
   async () => {
@@ -165,6 +166,7 @@ const getSparePageData = unstable_cache(
           specialPriceNoVat: true,
           specialValidFrom: true,
           specialValidTo: true,
+          specialCampaign: true,
         },
       }),
       prisma.spares.count(),
@@ -189,7 +191,8 @@ const getSparePageData = unstable_cache(
   const [{ spares, total, makesResult, categoriesResult }, allSpares] =
     await Promise.all([getSparePageData(), getAllSparesSlugs()])
 
-  const initialSpares = spares.map((item) => {
+  // Preview demo mode only (no-op otherwise); applied outside the cache so demo prices are never cached
+  const initialSpares = withDemoSpareSpecials(spares).map((item) => {
     const imgArray = Array.isArray(item.images) ? (item.images as any[]) : []
     return { ...item, thumbnail: imgArray[0] || null }
   })

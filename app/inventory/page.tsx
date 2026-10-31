@@ -13,6 +13,7 @@ import { prisma } from '@/lib/prisma'
 import { formatDisplayName } from '@/lib/text'
 import { buildVehicleItemList } from '@/lib/vehicle-list-schema'
 import { unstable_cache } from 'next/cache'
+import { withDemoVehicleSpecials } from '@/lib/black-friday'
 
 const AllVehiclesFilter = dynamic(
   () => import('@/components/sections/inventorySection/AllVehiclesFilter'),
@@ -137,6 +138,7 @@ const getInventoryPageData = unstable_cache(
           specialPrice: true,
           specialValidFrom: true,
           specialValidTo: true,
+          specialCampaign: true,
         },
       }),
       prisma.inventory.count(),
@@ -242,7 +244,7 @@ export default async function Inventory() {
       {/* useSearchParams in the filter needs a Suspense boundary on a static page */}
       <Suspense fallback={null}>
         <AllVehiclesFilter
-          initialVehicles={vehicles}
+          initialVehicles={withDemoVehicleSpecials(vehicles)}
           initialMeta={initialMeta}
           initialFilterOptions={initialFilterOptions}
         />
