@@ -12,6 +12,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import JsonLd from '@/components/global/JsonLd'
 import { formatDisplayName } from '@/lib/text'
+import { withDemoVehicleSpecials } from '@/lib/black-friday'
 import { isOffThemeVehicle } from '@/lib/off-theme'
 import RelatedGuides from '@/components/sections/shared/RelatedGuides'
 
@@ -136,6 +137,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!vehicle) {
     notFound()
   }
+
+  // Preview demo mode only: pretend special fields for the price display (no-op otherwise)
+  const [displayVehicle] = withDemoVehicleSpecials([vehicle])
 
   const images = Array.isArray(vehicle.images)
     ? (vehicle.images as { url: string }[]).map(img => img.url)
@@ -266,9 +270,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           videoLink: vehicle.videoLink,
           truckSize: vehicle.truckSize,
           bodyType: vehicle.bodyType,
-          specialPrice: vehicle.specialPrice,
-          specialValidFrom: vehicle.specialValidFrom,
-          specialValidTo: vehicle.specialValidTo,
+          specialPrice: displayVehicle.specialPrice,
+          specialValidFrom: displayVehicle.specialValidFrom,
+          specialValidTo: displayVehicle.specialValidTo,
         }}
       />
       <TonnageCrossLink truckSize={vehicle.truckSize} />

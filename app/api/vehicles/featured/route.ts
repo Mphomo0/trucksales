@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { withDemoVehicleSpecials } from '@/lib/black-friday'
 
 export const runtime = 'nodejs'
 export const revalidate = 3600
@@ -31,7 +32,7 @@ export async function GET() {
     })
 
     // 2. Data trimming: Map through records to strip out massive arrays
-    const optimizedVehicles = vehicles.map((vehicle) => {
+    const optimizedVehicles = withDemoVehicleSpecials(vehicles).map((vehicle) => {
       const imgArray = Array.isArray(vehicle.images) ? vehicle.images : []
 
       return {

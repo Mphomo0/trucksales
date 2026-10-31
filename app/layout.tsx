@@ -9,6 +9,7 @@ import ClientLayout from '@/components/global/ClientLayout'
 import { PostHogProvider } from './providers'
 import DeferredGoogleAnalytics from '@/components/global/DeferredGoogleAnalytics'
 import Script from 'next/script'
+import PreviewPill from '@/components/shared/PreviewPill'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -183,6 +184,7 @@ export default function RootLayout({
 
           <ClientLayout>{children}</ClientLayout>
         </PostHogProvider>
+        <PreviewPill />
       </body>
     </html>
   )

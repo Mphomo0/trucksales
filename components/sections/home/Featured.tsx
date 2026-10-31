@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 
+import { withDemoVehicleSpecials } from '@/lib/black-friday'
 import FeaturedMarquee from './FeaturedMarquee'
 
 type FeaturedTruck = {
@@ -36,7 +37,7 @@ const getFeaturedTrucks = unstable_cache(
       },
     })
 
-    return vehicles.map((v) => {
+    return withDemoVehicleSpecials(vehicles).map((v) => {
       const imgArray = Array.isArray(v.images) ? v.images : []
       return {
         id: v.id,
