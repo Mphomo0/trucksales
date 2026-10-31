@@ -12,6 +12,7 @@ import {
   pickFeatured,
   reviveRows,
   settleDeals,
+  shouldQueryLayoutDeals,
   shouldShowBlackFriday,
   withDemoSpareSpecials,
   withDemoVehicleSpecials,
@@ -395,5 +396,34 @@ describe('settleDeals', () => {
   it('works without an onError handler', async () => {
     const out = await settleDeals(() => Promise.reject(new Error('x')))
     expect(out.count).toBe(0)
+  })
+})
+
+describe('shouldQueryLayoutDeals', () => {
+  const preview = { VERCEL_ENV: 'preview', BLACK_FRIDAY_PREVIEW: '1' }
+  const production = { VERCEL_ENV: 'production', BLACK_FRIDAY_PREVIEW: '1' }
+
+  it('is false before the window opens', () => {
+    expect(shouldQueryLayoutDeals(new Date('2026-11-08T21:59:59.999Z'), {})).toBe(false)
+  })
+
+  it('is true at the first instant of the window', () => {
+    expect(shouldQueryLayoutDeals(new Date('2026-11-08T22:00:00Z'), {})).toBe(true)
+  })
+
+  it('is true at the last instant of the window', () => {
+    expect(shouldQueryLayoutDeals(new Date('2026-11-30T21:59:59.999Z'), {})).toBe(true)
+  })
+
+  it('is false once the window closes', () => {
+    expect(shouldQueryLayoutDeals(new Date('2026-11-30T22:00:00Z'), {})).toBe(false)
+  })
+
+  it('is true in preview demo mode outside the window', () => {
+    expect(shouldQueryLayoutDeals(new Date('2026-10-28T08:00:00Z'), preview)).toBe(true)
+  })
+
+  it('is false in production with the flag outside the window', () => {
+    expect(shouldQueryLayoutDeals(new Date('2026-10-28T08:00:00Z'), production)).toBe(false)
   })
 })

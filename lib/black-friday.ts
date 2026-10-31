@@ -287,6 +287,17 @@ export function shouldShowBlackFriday(
   return (isBlackFridayWindow(now) || isDemoMode(env)) && deals.vehicles.length >= 1
 }
 
+/**
+ * Gate for the root layout's deals query: outside the window (and outside
+ * preview demo mode) the layout must not touch any cache or the database.
+ */
+export function shouldQueryLayoutDeals(
+  now: Date = new Date(),
+  env: Env = process.env,
+): boolean {
+  return isBlackFridayWindow(now) || isDemoMode(env)
+}
+
 export function emptyDeals(isDemo = false): BlackFridayDeals {
   return { vehicles: [], spares: [], count: 0, featured: null, more: [], isDemo }
 }
