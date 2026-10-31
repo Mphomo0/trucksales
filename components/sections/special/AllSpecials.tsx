@@ -18,6 +18,7 @@ import {
   filterSpecials,
   getBodyTypes,
   parseTypeParam,
+  SPECIALS_TYPE_CHANGE_EVENT,
   type SpecialsFilter,
 } from '@/lib/specials-filter'
 
@@ -86,8 +87,18 @@ export default function AllSpecials({
 
   useEffect(() => {
     if (!showTypeFilters) return
-    const type = new URLSearchParams(window.location.search).get('type')
-    setFilter(parseTypeParam(type))
+    const sync = () => {
+      const type = new URLSearchParams(window.location.search).get('type')
+      setFilter(parseTypeParam(type))
+    }
+    sync()
+    // Back/forward and the chat quick links change ?type without a remount
+    window.addEventListener('popstate', sync)
+    window.addEventListener(SPECIALS_TYPE_CHANGE_EVENT, sync)
+    return () => {
+      window.removeEventListener('popstate', sync)
+      window.removeEventListener(SPECIALS_TYPE_CHANGE_EVENT, sync)
+    }
   }, [showTypeFilters])
 
   const { vehicles, spares } = showTypeFilters

@@ -17,6 +17,7 @@ import {
 
 import { getAttributionPayload } from '@/lib/attribution-client'
 import { trackLeadCreated } from '@/lib/analytics-events'
+import { SPECIALS_TYPE_CHANGE_EVENT } from '@/lib/specials-filter'
 import { BLACK_FRIDAY_CHAT_LINKS, getWelcomeMessage } from '@/lib/chat-greeting'
 
 interface ChatMessage {
@@ -337,7 +338,16 @@ export function ChatWidget({ blackFridayLive = false }: { blackFridayLive?: bool
                             key={link.href}
                             href={link.href}
                             prefetch={false}
-                            onClick={() => setIsOpen(false)}
+                            onClick={(event) => {
+                              // Already on /specials: next/link would only change
+                              // the URL, so update it and tell the filter directly
+                              if (window.location.pathname === '/specials') {
+                                event.preventDefault()
+                                window.history.pushState(null, '', link.href)
+                                window.dispatchEvent(new Event(SPECIALS_TYPE_CHANGE_EVENT))
+                              }
+                              setIsOpen(false)
+                            }}
                             className="rounded-full border border-amber-700 bg-white px-3 py-1 text-[13px] font-bold text-amber-700 hover:bg-amber-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950"
                           >
                             {link.label}

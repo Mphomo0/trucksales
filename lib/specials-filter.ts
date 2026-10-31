@@ -4,6 +4,9 @@ export type SpecialsFilter =
   | { kind: 'spares' }
   | { kind: 'bodyType'; value: string }
 
+/** Fired on window after the chat widget pushes a new ?type on /specials. */
+export const SPECIALS_TYPE_CHANGE_EVENT = 'specials:type-change'
+
 export function parseTypeParam(value: string | null | undefined): SpecialsFilter {
   if (value === 'trucks') return { kind: 'trucks' }
   if (value === 'spares') return { kind: 'spares' }
