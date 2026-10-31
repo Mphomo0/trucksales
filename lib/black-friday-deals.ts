@@ -6,6 +6,7 @@ import {
   buildDeals,
   isDemoMode,
   reviveRows,
+  settleDeals,
   type BlackFridayDeals,
   type DealSpare,
   type DealVehicle,
@@ -104,7 +105,7 @@ const getDemoRows = unstable_cache(
   CACHE_OPTS,
 )
 
-export async function getBlackFridayDeals(): Promise<BlackFridayDeals> {
+async function loadDeals(): Promise<BlackFridayDeals> {
   const demo = isDemoMode()
   const raw = await (demo ? getDemoRows() : getRealRows())
   const rows = reviveRows(raw)
@@ -116,4 +117,11 @@ export async function getBlackFridayDeals(): Promise<BlackFridayDeals> {
       }
     : rows
   return buildDeals(prepared, { now, demo })
+}
+
+/** Never throws: a failing query hides the campaign instead of crashing pages. */
+export function getBlackFridayDeals(): Promise<BlackFridayDeals> {
+  return settleDeals(loadDeals, (err) =>
+    console.error('[black-friday] deals query failed', err),
+  )
 }

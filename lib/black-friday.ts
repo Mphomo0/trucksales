@@ -286,3 +286,23 @@ export function shouldShowBlackFriday(
 ): boolean {
   return (isBlackFridayWindow(now) || isDemoMode(env)) && deals.vehicles.length >= 1
 }
+
+export function emptyDeals(isDemo = false): BlackFridayDeals {
+  return { vehicles: [], spares: [], count: 0, featured: null, more: [], isDemo }
+}
+
+/**
+ * Resolve the deals, or fall back to "no campaign" if loading fails (database
+ * error, missing column). A synchronous throw in `load` is caught too.
+ */
+export async function settleDeals(
+  load: () => Promise<BlackFridayDeals>,
+  onError?: (err: unknown) => void,
+): Promise<BlackFridayDeals> {
+  try {
+    return await load()
+  } catch (err) {
+    onError?.(err)
+    return emptyDeals()
+  }
+}
