@@ -6,6 +6,7 @@ import {
   applyDemoVehicleSpecials,
   buildDeals,
   emptyDeals,
+  formatWindowLabel,
   isBlackFridayWindow,
   isDemoDealId,
   isDemoMode,
@@ -323,6 +324,28 @@ describe('shouldShowBlackFriday', () => {
 
   it('is false outside the window without demo', () => {
     expect(shouldShowBlackFriday(withDeal, new Date('2026-10-31T10:00:00Z'), {})).toBe(false)
+  })
+
+  it('is false in the window when only spares are tagged', () => {
+    const now = new Date('2026-11-10T08:00:00Z')
+    const sparesOnly = buildDeals(
+      { vehicles: [], spares: [spare({ id: 'sp', specialPrice: 5000, ...bfWindow })] },
+      { now, demo: false },
+    )
+    expect(sparesOnly.spares.length).toBe(1)
+    expect(sparesOnly.vehicles).toEqual([])
+    expect(shouldShowBlackFriday(sparesOnly, now, {})).toBe(false)
+  })
+
+  it('is false in production even with the preview flag set, outside the window', () => {
+    const env = { VERCEL_ENV: 'production', BLACK_FRIDAY_PREVIEW: '1' }
+    expect(shouldShowBlackFriday(withDeal, new Date('2026-10-28T08:00:00Z'), env)).toBe(false)
+  })
+})
+
+describe('formatWindowLabel', () => {
+  it('formats the current campaign window', () => {
+    expect(formatWindowLabel()).toBe('9 – 30 Nov')
   })
 })
 

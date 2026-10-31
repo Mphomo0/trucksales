@@ -25,6 +25,7 @@ import {
   shouldShowBlackFriday,
   withDemoSpareSpecials,
   withDemoVehicleSpecials,
+  formatWindowLabel,
 } from '@/lib/black-friday'
 import {
   activeSpareSpecialWhere,
@@ -241,7 +242,7 @@ const getSpecialsData = unstable_cache(
         {showBlackFriday ? (
           <div className="mb-12 rounded-2xl bg-gradient-to-br from-[#0b0b0c] to-[#3b2506] px-6 py-12 text-center text-white sm:px-10">
             <span className="inline-block rounded-full bg-amber-500 px-4 py-1 text-xs font-bold uppercase tracking-wider text-gray-950">
-              Black Friday · 9 – 30 Nov
+              Black Friday · {formatWindowLabel()}
             </span>
             <h2 className="mt-4 text-4xl font-extrabold sm:text-5xl">
               Black Friday Truck Deals
