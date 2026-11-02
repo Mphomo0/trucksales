@@ -131,7 +131,7 @@ export default function BlackFridayHero({
                 variant="outline"
                 className="w-full border-white bg-transparent p-6 text-base text-white hover:bg-white hover:text-black sm:w-auto"
               >
-                <a href="tel:+27119026071">Call Alberton</a>
+                <a href="tel:+27119026071">Call Us Now</a>
               </Button>
             </div>
           </div>
