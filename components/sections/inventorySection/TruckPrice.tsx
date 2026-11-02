@@ -1,6 +1,6 @@
 'use client'
 
-import { getCurrentPrice } from '@/lib/pricing'
+import { getCurrentPrice, getSpecialExVatPrice } from '@/lib/pricing'
 import { formatNumber } from '@/lib/format'
 import BlackFridayTag from '@/components/shared/BlackFridayTag'
 
@@ -39,6 +39,9 @@ export default function TruckPrice({
     specialValidTo,
     specialCampaign ?? null
   )
+  const exVatPrice = priceInfo.isSpecial
+    ? getSpecialExVatPrice(vatPrice, pricenoVat, priceInfo.currentPrice)
+    : pricenoVat
   const validUntil = specialValidTo ? validUntilFormat.format(new Date(specialValidTo)) : null
 
   return (
@@ -67,7 +70,7 @@ export default function TruckPrice({
       ) : (
         <div className="text-3xl font-bold text-amber-600 mb-2">R{formatNumber(vatPrice)}</div>
       )}
-      <p className="text-gray-600">R{formatNumber(pricenoVat)} excl. VAT</p>
+      <p className="text-gray-600">R{formatNumber(exVatPrice)} excl. VAT</p>
     </div>
   )
 }

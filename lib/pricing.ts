@@ -42,3 +42,16 @@ export function getSavingsPercent(price: number, specialPrice: number): number {
   if (price <= 0 || specialPrice <= 0 || specialPrice >= price) return 0
   return Math.round((1 - specialPrice / price) * 100)
 }
+
+/**
+ * Excl-VAT equivalent of a special price, using the same VAT ratio as the
+ * normal price. Falls back to the normal excl-VAT price on invalid inputs.
+ */
+export function getSpecialExVatPrice(
+  vatPrice: number,
+  pricenoVat: number,
+  specialPrice: number,
+): number {
+  if (vatPrice <= 0 || specialPrice <= 0) return pricenoVat
+  return Math.round((pricenoVat * specialPrice) / vatPrice)
+}
