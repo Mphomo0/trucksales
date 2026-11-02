@@ -6,7 +6,7 @@ import { isSpecialActive, specialEndsAt, specialStartsAt } from '@/lib/specials'
  */
 export const BLACK_FRIDAY = {
   campaign: 'black-friday',
-  startsOn: '2026-11-09',
+  startsOn: '2026-11-01',
   endsOn: '2026-12-01',
 } as const
 
@@ -297,7 +297,7 @@ function dayAndMonth(iso: string): { day: number; month: string } {
   return { day: Number(d), month: SHORT_MONTHS[Number(m) - 1] }
 }
 
-/** Window label for display, e.g. "9 Nov – 1 Dec" (or "28 Oct – 3 Nov"). */
+/** Window label for display, e.g. "1 Nov – 1 Dec" (or "28 Oct – 3 Nov"). */
 export function formatWindowLabel(): string {
   const start = dayAndMonth(BLACK_FRIDAY.startsOn)
   const end = dayAndMonth(BLACK_FRIDAY.endsOn)

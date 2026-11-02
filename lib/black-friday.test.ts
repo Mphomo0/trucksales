@@ -84,9 +84,9 @@ function ids(n: number, prefix: string, demo: boolean): string[] {
 }
 
 describe('isBlackFridayWindow', () => {
-  it('window opens at 00:00 SAST on 9 Nov', () => {
-    expect(isBlackFridayWindow(new Date('2026-11-08T21:59:59Z'))).toBe(false)
-    expect(isBlackFridayWindow(new Date('2026-11-08T22:00:00Z'))).toBe(true)
+  it('window opens at 00:00 SAST on 1 Nov', () => {
+    expect(isBlackFridayWindow(new Date('2026-10-31T21:59:59Z'))).toBe(false)
+    expect(isBlackFridayWindow(new Date('2026-10-31T22:00:00Z'))).toBe(true)
   })
 
   it('window closes at 23:59:59 SAST on 1 Dec', () => {
@@ -348,7 +348,7 @@ describe('shouldShowBlackFriday', () => {
 
 describe('formatWindowLabel', () => {
   it('formats the current campaign window', () => {
-    expect(formatWindowLabel()).toBe('9 Nov – 1 Dec')
+    expect(formatWindowLabel()).toBe('1 Nov – 1 Dec')
   })
 })
 
@@ -444,11 +444,11 @@ describe('shouldQueryLayoutDeals', () => {
   const production = { VERCEL_ENV: 'production', BLACK_FRIDAY_PREVIEW: '1' }
 
   it('is false before the window opens', () => {
-    expect(shouldQueryLayoutDeals(new Date('2026-11-08T21:59:59.999Z'), {})).toBe(false)
+    expect(shouldQueryLayoutDeals(new Date('2026-10-31T21:59:59.999Z'), {})).toBe(false)
   })
 
   it('is true at the first instant of the window', () => {
-    expect(shouldQueryLayoutDeals(new Date('2026-11-08T22:00:00Z'), {})).toBe(true)
+    expect(shouldQueryLayoutDeals(new Date('2026-10-31T22:00:00Z'), {})).toBe(true)
   })
 
   it('is true at the last instant of the window', () => {
