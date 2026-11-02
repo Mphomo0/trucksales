@@ -7,7 +7,7 @@ export function BlackFridayBarView() {
   return (
     <div className="bg-black px-4 py-2 text-center text-[13px] leading-5 text-white sm:text-sm">
       <p className="mx-auto max-w-7xl">
-        <span className="font-bold tracking-widest text-amber-400">BLACK FRIDAY</span>
+        <span className="font-bold tracking-widest text-amber-400">BLACK NOVEMBER</span>
         <span aria-hidden="true"> · </span>
         <span>Prices valid until {formatEndLong()}</span>
         <span aria-hidden="true"> · </span>

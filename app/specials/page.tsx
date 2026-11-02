@@ -247,10 +247,10 @@ const getSpecialsData = unstable_cache(
         {showBlackFriday ? (
           <div className="mb-12 rounded-2xl bg-gradient-to-br from-[#0b0b0c] to-[#3b2506] px-6 py-12 text-center text-white sm:px-10">
             <span className="inline-block rounded-full bg-amber-500 px-4 py-1 text-xs font-bold uppercase tracking-wider text-gray-950">
-              Black Friday · {formatWindowLabel()}
+              Black November · {formatWindowLabel()}
             </span>
             <h2 className="mt-4 text-4xl font-extrabold sm:text-5xl">
-              Black Friday Truck Deals
+              Black November Truck Deals
             </h2>
             <p className="mt-3 text-lg text-gray-100">
               {dealCount} {dealCount === 1 ? 'deal' : 'deals'}. Prices valid

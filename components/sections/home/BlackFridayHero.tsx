@@ -45,13 +45,13 @@ export default function BlackFridayHero({
   const remaining = deals.count - 1 - deals.more.length
   const more = deals.more.slice(0, 3)
 
-  const whatsappText = `Hello, I'm interested in the Black Friday deal on the ${name}: ${SITE}/inventory/${featured.slug}`
+  const whatsappText = `Hello, I'm interested in the Black November deal on the ${name}: ${SITE}/inventory/${featured.slug}`
   const whatsappHref = `https://wa.me/27781277393?text=${encodeURIComponent(whatsappText)}`
 
   return (
     <section
       className="relative overflow-hidden bg-linear-to-br from-[#1c1007] to-[#3b1d08] text-white"
-      aria-label="Black Friday deals"
+      aria-label="Black November deals"
     >
       <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8 lg:pt-6">
         <h1 className="mb-4 text-lg font-bold leading-tight text-gray-200 sm:text-xl">
@@ -78,13 +78,13 @@ export default function BlackFridayHero({
               <NoImage className="h-full w-full" />
             )}
             <span className="absolute left-3 top-3 rounded-md bg-amber-500 px-2.5 py-1 text-xs font-extrabold tracking-wider text-gray-950">
-              BLACK FRIDAY
+              BLACK NOVEMBER
             </span>
           </Link>
 
           <div className="md:flex-1">
             <p className="inline-block rounded-full bg-amber-500 px-3 py-1 text-xs font-extrabold text-gray-950 sm:text-sm">
-              Black Friday · prices valid until {formatEndShort()}
+              Black November · prices valid until {formatEndShort()}
             </p>
             <h2 className="mt-3 text-2xl font-extrabold leading-tight sm:text-3xl">
               <Link

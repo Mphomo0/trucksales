@@ -299,7 +299,7 @@ type VehicleFormData = z.input<typeof vehicleSchema>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="normal">Normal special</SelectItem>
-                      <SelectItem value="black-friday">Black Friday</SelectItem>
+                      <SelectItem value="black-friday">Black November</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
