@@ -1,6 +1,6 @@
 import { revalidatePath, revalidateTag } from 'next/cache'
 
-// Called by Vercel Cron at the Black Friday window edges (00:00 SAST on 9 Nov
+// Called by Vercel Cron at the Black Friday window edges (00:00 SAST on 1 Nov
 // and 1 Dec) so cached pages and the deals query pick up the new state.
 export const dynamic = 'force-dynamic'
 
