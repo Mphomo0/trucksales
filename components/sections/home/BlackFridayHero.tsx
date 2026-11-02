@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { formatNumber } from '@/lib/format'
 import { ikCard, ikHero } from '@/lib/imagekit'
 import { formatDisplayName } from '@/lib/text'
+import { formatEndShort } from '@/lib/black-friday'
 import type { BlackFridayDeals, DealVehicle } from '@/lib/black-friday'
 
 const SITE = 'https://www.a-ztrucksales.com'
@@ -83,7 +84,7 @@ export default function BlackFridayHero({
 
           <div className="md:flex-1">
             <p className="inline-block rounded-full bg-amber-500 px-3 py-1 text-xs font-extrabold text-gray-950 sm:text-sm">
-              Black Friday · prices valid until Mon 30 Nov
+              Black Friday · prices valid until {formatEndShort()}
             </p>
             <h2 className="mt-3 text-2xl font-extrabold leading-tight sm:text-3xl">
               <Link

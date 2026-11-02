@@ -7,7 +7,7 @@ import { isSpecialActive, specialEndsAt, specialStartsAt } from '@/lib/specials'
 export const BLACK_FRIDAY = {
   campaign: 'black-friday',
   startsOn: '2026-11-09',
-  endsOn: '2026-11-30',
+  endsOn: '2026-12-01',
 } as const
 
 export type DealVehicle = {
@@ -297,13 +297,45 @@ function dayAndMonth(iso: string): { day: number; month: string } {
   return { day: Number(d), month: SHORT_MONTHS[Number(m) - 1] }
 }
 
-/** Window label for display, e.g. "9 – 30 Nov" (or "28 Oct – 3 Nov"). */
+/** Window label for display, e.g. "9 Nov – 1 Dec" (or "28 Oct – 3 Nov"). */
 export function formatWindowLabel(): string {
   const start = dayAndMonth(BLACK_FRIDAY.startsOn)
   const end = dayAndMonth(BLACK_FRIDAY.endsOn)
   return start.month === end.month
     ? `${start.day} – ${end.day} ${end.month}`
     : `${start.day} ${start.month} – ${end.day} ${end.month}`
+}
+
+const LONG_MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+] as const
+
+const WEEKDAYS = [
+  'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
+] as const
+
+function endParts() {
+  const d = new Date(`${BLACK_FRIDAY.endsOn}T00:00:00Z`)
+  return { weekday: WEEKDAYS[d.getUTCDay()], day: d.getUTCDate(), month: LONG_MONTHS[d.getUTCMonth()] }
+}
+
+/** Campaign end for display, e.g. "Tuesday 1 December". */
+export function formatEndLong(): string {
+  const { weekday, day, month } = endParts()
+  return `${weekday} ${day} ${month}`
+}
+
+/** Campaign end, short, e.g. "Tue 1 Dec". */
+export function formatEndShort(): string {
+  const { weekday, day, month } = endParts()
+  return `${weekday.slice(0, 3)} ${day} ${month.slice(0, 3)}`
+}
+
+/** Campaign end day and month, e.g. "1 December". */
+export function formatEndDayMonth(): string {
+  const { day, month } = endParts()
+  return `${day} ${month}`
 }
 
 /**

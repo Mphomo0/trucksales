@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { getBlackFridayDeals } from '@/lib/black-friday-deals'
-import { shouldShowBlackFriday } from '@/lib/black-friday'
+import { formatEndLong, shouldShowBlackFriday } from '@/lib/black-friday'
 
 /** Pure presentation: the slim announcement bar above the header. */
 export function BlackFridayBarView() {
@@ -9,7 +9,7 @@ export function BlackFridayBarView() {
       <p className="mx-auto max-w-7xl">
         <span className="font-bold tracking-widest text-amber-400">BLACK FRIDAY</span>
         <span aria-hidden="true"> · </span>
-        <span>Prices valid until Monday 30 November</span>
+        <span>Prices valid until {formatEndLong()}</span>
         <span aria-hidden="true"> · </span>
         <Link
           href="/specials"
