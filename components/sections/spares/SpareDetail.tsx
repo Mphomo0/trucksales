@@ -144,6 +144,13 @@ interface Props {
 
   const videoLinkUrl = getVideoLinkUrl(spare.videoLink)
 
+  const priceInfo = getCurrentPrice(
+    spare.price,
+    spare.specialPrice ?? null,
+    spare.specialValidFrom ?? null,
+    spare.specialValidTo ?? null,
+  )
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -388,12 +395,6 @@ interface Props {
               <CardHeader>
                 <div className="text-center">
                   {(() => {
-                    const priceInfo = getCurrentPrice(
-                      spare.price,
-                      spare.specialPrice ?? null,
-                      spare.specialValidFrom ?? null,
-                      spare.specialValidTo ?? null,
-                    )
                     const validUntil = spare.specialValidTo
                       ? new Date(spare.specialValidTo).toLocaleDateString(
                           'en-GB',
@@ -424,8 +425,9 @@ interface Props {
                     )
                   })()}
                   {(() => {
-                    const noVatPrice =
-                      spare.specialPriceNoVat ?? spare.noVatPrice
+                    const noVatPrice = priceInfo.isSpecial
+                      ? (spare.specialPriceNoVat ?? spare.noVatPrice)
+                      : spare.noVatPrice
                     if (!noVatPrice) return null
                     return (
                       <p className="text-gray-600">

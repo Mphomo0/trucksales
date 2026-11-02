@@ -2,7 +2,7 @@
 /* datePublished: 2026-04-27 */
 /* application/ld+json */
 
-export const revalidate = 86400
+export const revalidate = 3600
 
 import AboutSection from '@/components/sections/home/AboutSection'
 import BrandsSection from '@/components/sections/home/BrandsSection'

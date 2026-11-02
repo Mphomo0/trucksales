@@ -22,6 +22,7 @@ interface UpdateSparesBody {
   specialPriceNoVat?: number | null
   specialValidFrom?: string | null
   specialValidTo?: string | null
+  specialCampaign?: 'black-friday' | null
   deletedFileIds?: string[]
 }
 
@@ -49,8 +50,7 @@ export const GET = async (
       {
         status: 200,
         headers: {
-          'Cache-Control':
-            'public, s-maxage=3600, stale-while-revalidate=86400',
+          'Cache-Control': 'private, no-store',
           'Content-Type': 'application/json',
         },
       },
@@ -174,6 +174,7 @@ export async function PATCH(
         specialValidTo: body.specialValidTo
           ? new Date(body.specialValidTo)
           : null,
+        specialCampaign: body.specialCampaign ?? null,
       },
     })
 

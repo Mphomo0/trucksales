@@ -100,6 +100,7 @@ export const vehicleSchema = z.object({
   specialPrice: z.coerce.number<number>().optional(),
   specialValidFrom: z.string().optional(),
   specialValidTo: z.string().optional(),
+  specialCampaign: z.enum(['black-friday']).nullable().optional(),
 })
 
 export const tradeInFormSchema = z.object({
@@ -178,4 +179,5 @@ export const spareSchema = z.object({
   specialPriceNoVat: z.coerce.number<number>().optional(),
   specialValidFrom: z.string().optional(),
   specialValidTo: z.string().optional(),
+  specialCampaign: z.enum(['black-friday']).nullable().optional(),
 })

@@ -24,6 +24,7 @@ export async function GET() {
         specialPrice: true,
         specialValidFrom: true,
         specialValidTo: true,
+        specialCampaign: true,
         // We fetch images to extract a thumbnail, but we DROPPED description completely
         images: true,
       },
@@ -48,6 +49,7 @@ export async function GET() {
         specialPrice: vehicle.specialPrice,
         specialValidFrom: vehicle.specialValidFrom,
         specialValidTo: vehicle.specialValidTo,
+        specialCampaign: vehicle.specialCampaign,
         // Extract ONLY the first image object to act as a thumbnail card
         thumbnail: imgArray[0] || null,
       }

@@ -20,7 +20,9 @@ const AllSpecials = dynamicImport(
 import JsonLd from '@/components/global/JsonLd'
 import { prisma } from '@/lib/prisma'
 import {
+  activeSpareSpecialWhere,
   activeVehicleSpecialWhere,
+  isSpecialActive,
   SPECIALS_REVALIDATE_SECONDS,
 } from '@/lib/specials'
 import { unstable_cache } from 'next/cache'
@@ -89,7 +91,8 @@ const getSpecialsData = unstable_cache(
     // Run both queries in parallel — cuts DB round-trip time in half
     const [vehicles, spares] = await Promise.all([
       prisma.inventory.findMany({
-        // Same rule as /specials/[slug] so listed links never redirect back here
+        // Widened pre-filter; results are post-filtered with isSpecialActive below,
+        // the same rule as /specials/[slug], so listed links never redirect back here
         where: activeVehicleSpecialWhere(now),
         select: {
           id: true,
@@ -107,18 +110,10 @@ const getSpecialsData = unstable_cache(
           specialValidTo: true,
         },
         orderBy: { createdAt: 'desc' },
-        take: 20,
+        take: 50,
       }),
       prisma.spares.findMany({
-        where: {
-          specialPrice: { not: null },
-          AND: [
-            { specialPrice: { gt: 0 } },
-            {
-              OR: [{ specialValidTo: null }, { specialValidTo: { gte: now } }],
-            },
-          ],
-        },
+        where: activeSpareSpecialWhere(now),
         select: {
           id: true,
           name: true,
@@ -136,11 +131,15 @@ const getSpecialsData = unstable_cache(
           specialValidTo: true,
         },
         orderBy: { createdAt: 'desc' },
-        take: 20,
+        take: 50,
       }),
     ])
 
-    return { vehicles, spares }
+    // The where clauses are widened pre-filters; isSpecialActive is the rule
+    return {
+      vehicles: vehicles.filter((v) => isSpecialActive(v, now)),
+      spares: spares.filter((s) => isSpecialActive(s, now)),
+    }
   },
   ['specials-page-data'],
   { revalidate: SPECIALS_REVALIDATE_SECONDS, tags: ['inventory', 'spares'] },
