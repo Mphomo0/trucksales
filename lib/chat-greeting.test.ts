@@ -14,7 +14,7 @@ describe('getWelcomeMessage', () => {
     expect(getWelcomeMessage(true)).toEqual({
       role: 'assistant',
       message:
-        "Hi, I'm the A-Z Truck Sales assistant.\n\nBlack Friday deals are live until 30 November. What kind of truck are you looking for?",
+        "Hi, I'm the A-Z Truck Sales assistant.\n\nBlack Friday deals are live until 1 December. What kind of truck are you looking for?",
     })
   })
 

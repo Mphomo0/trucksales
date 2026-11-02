@@ -1,8 +1,9 @@
+import { formatEndDayMonth } from '@/lib/black-friday'
+
 const DEFAULT_WELCOME =
   "Hi, I'm the A-Z Truck Sales assistant.\n\nI can help you find available trucks, answer vehicle questions, and help you contact our sales team."
 
-const BLACK_FRIDAY_WELCOME =
-  "Hi, I'm the A-Z Truck Sales assistant.\n\nBlack Friday deals are live until 30 November. What kind of truck are you looking for?"
+const BLACK_FRIDAY_WELCOME = `Hi, I'm the A-Z Truck Sales assistant.\n\nBlack Friday deals are live until ${formatEndDayMonth()}. What kind of truck are you looking for?`
 
 /** The chat widget's opening assistant message. */
 export function getWelcomeMessage(blackFridayLive: boolean): {

@@ -26,6 +26,7 @@ import {
   withDemoSpareSpecials,
   withDemoVehicleSpecials,
   formatWindowLabel,
+  formatEndLong,
 } from '@/lib/black-friday'
 import {
   activeSpareSpecialWhere,
@@ -253,7 +254,7 @@ const getSpecialsData = unstable_cache(
             </h2>
             <p className="mt-3 text-lg text-gray-100">
               {dealCount} {dealCount === 1 ? 'deal' : 'deals'}. Prices valid
-              until Monday 30 November.
+              until {formatEndLong()}.
             </p>
           </div>
         ) : (

@@ -6,6 +6,9 @@ import {
   applyDemoVehicleSpecials,
   buildDeals,
   emptyDeals,
+  formatEndDayMonth,
+  formatEndLong,
+  formatEndShort,
   formatWindowLabel,
   isBlackFridayWindow,
   isDemoDealId,
@@ -86,9 +89,9 @@ describe('isBlackFridayWindow', () => {
     expect(isBlackFridayWindow(new Date('2026-11-08T22:00:00Z'))).toBe(true)
   })
 
-  it('window closes at 23:59:59 SAST on 30 Nov', () => {
-    expect(isBlackFridayWindow(new Date('2026-11-30T21:59:59Z'))).toBe(true)
-    expect(isBlackFridayWindow(new Date('2026-11-30T22:00:00Z'))).toBe(false)
+  it('window closes at 23:59:59 SAST on 1 Dec', () => {
+    expect(isBlackFridayWindow(new Date('2026-12-01T21:59:59Z'))).toBe(true)
+    expect(isBlackFridayWindow(new Date('2026-12-01T22:00:00Z'))).toBe(false)
   })
 })
 
@@ -170,7 +173,7 @@ describe('demo deal dates', () => {
     for (const x of [v, s]) {
       expect(isSpecialActive(x, DEMO_NOW)).toBe(true)
       expect(x.specialValidFrom).toEqual(new Date('2026-10-27T00:00:00Z'))
-      expect(x.specialValidTo).toEqual(new Date('2026-11-30T00:00:00Z'))
+      expect(x.specialValidTo).toEqual(new Date('2026-12-01T00:00:00Z'))
     }
   })
 
@@ -235,7 +238,7 @@ describe('applyDemoVehicleSpecials', () => {
       if (isDemoDealId(item.id)) {
         expect(item.specialCampaign).toBe(BLACK_FRIDAY.campaign)
         expect(item.specialValidFrom).toEqual(new Date('2026-10-27T00:00:00Z'))
-        expect(item.specialValidTo).toEqual(new Date('2026-11-30T00:00:00Z'))
+        expect(item.specialValidTo).toEqual(new Date('2026-12-01T00:00:00Z'))
         expect(item.specialPrice).not.toBeNull()
       } else {
         expect(item.specialPrice).toBeNull()
@@ -345,7 +348,21 @@ describe('shouldShowBlackFriday', () => {
 
 describe('formatWindowLabel', () => {
   it('formats the current campaign window', () => {
-    expect(formatWindowLabel()).toBe('9 – 30 Nov')
+    expect(formatWindowLabel()).toBe('9 Nov – 1 Dec')
+  })
+})
+
+describe('campaign end wording', () => {
+  it('formatEndLong', () => {
+    expect(formatEndLong()).toBe('Tuesday 1 December')
+  })
+
+  it('formatEndShort', () => {
+    expect(formatEndShort()).toBe('Tue 1 Dec')
+  })
+
+  it('formatEndDayMonth', () => {
+    expect(formatEndDayMonth()).toBe('1 December')
   })
 })
 
@@ -435,11 +452,11 @@ describe('shouldQueryLayoutDeals', () => {
   })
 
   it('is true at the last instant of the window', () => {
-    expect(shouldQueryLayoutDeals(new Date('2026-11-30T21:59:59.999Z'), {})).toBe(true)
+    expect(shouldQueryLayoutDeals(new Date('2026-12-01T21:59:59.999Z'), {})).toBe(true)
   })
 
   it('is false once the window closes', () => {
-    expect(shouldQueryLayoutDeals(new Date('2026-11-30T22:00:00Z'), {})).toBe(false)
+    expect(shouldQueryLayoutDeals(new Date('2026-12-01T22:00:00Z'), {})).toBe(false)
   })
 
   it('is true in preview demo mode outside the window', () => {
