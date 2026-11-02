@@ -18,7 +18,15 @@ const ClientToast = dynamic(() => import('@/components/global/ClientToast'), {
   ssr: false,
 })
 
-export default function ClientLayout({ children }: { children: React.ReactNode }) {
+type Props = {
+  children: React.ReactNode
+  /** Rendered above the Navbar (non-dashboard pages only). */
+  topBar?: React.ReactNode
+  /** Shows the Black Friday greeting in the chat widget. */
+  blackFridayLive?: boolean
+}
+
+export default function ClientLayout({ children, topBar, blackFridayLive }: Props) {
   const pathname = usePathname()
   const isDashboard = pathname?.startsWith('/dashboard')
   const [secondaryReady, setSecondaryReady] = useState(false)
@@ -37,12 +45,13 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       >
         Skip to main content
       </a>
+      {topBar}
       <Navbar />
       <main id="main-content">{children}</main>
       <Footer />
       {secondaryReady && (
         <>
-          <ChatWidget />
+          <ChatWidget blackFridayLive={blackFridayLive} />
           <ClientToast />
         </>
       )}

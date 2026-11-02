@@ -3,6 +3,7 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import slugify from 'slugify'
+import { withDemoVehicleSpecials } from '@/lib/black-friday'
 
 export const runtime = 'nodejs'
 
@@ -253,7 +254,7 @@ export const GET = async (req: NextRequest) => {
 
     return NextResponse.json(
       {
-        vehicles,
+        vehicles: withDemoVehicleSpecials(vehicles),
         meta: {
           total,
           page,

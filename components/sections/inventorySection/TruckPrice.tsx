@@ -1,7 +1,8 @@
 'use client'
 
-import { getCurrentPrice } from '@/lib/pricing'
+import { getCurrentPrice, getSpecialExVatPrice } from '@/lib/pricing'
 import { formatNumber } from '@/lib/format'
+import BlackFridayTag from '@/components/shared/BlackFridayTag'
 
 interface TruckPriceProps {
   vatPrice: number
@@ -9,6 +10,7 @@ interface TruckPriceProps {
   specialPrice: number | null
   specialValidFrom: Date | string | null
   specialValidTo: Date | string | null
+  specialCampaign?: string | null
 }
 
 const validUntilFormat = new Intl.DateTimeFormat('en-ZA', {
@@ -28,20 +30,39 @@ export default function TruckPrice({
   specialPrice,
   specialValidFrom,
   specialValidTo,
+  specialCampaign,
 }: TruckPriceProps) {
-  const priceInfo = getCurrentPrice(vatPrice, specialPrice, specialValidFrom, specialValidTo)
+  const priceInfo = getCurrentPrice(
+    vatPrice,
+    specialPrice,
+    specialValidFrom,
+    specialValidTo,
+    specialCampaign ?? null
+  )
+  const exVatPrice = priceInfo.isSpecial
+    ? getSpecialExVatPrice(vatPrice, pricenoVat, priceInfo.currentPrice)
+    : pricenoVat
   const validUntil = specialValidTo ? validUntilFormat.format(new Date(specialValidTo)) : null
 
   return (
     <div className="text-center tabular-nums">
       {priceInfo.isSpecial ? (
         <div className="flex flex-col">
+          {priceInfo.campaign === 'black-friday' && (
+            <BlackFridayTag className="self-center mb-2" />
+          )}
           <span className="text-xl font-bold text-red-500 line-through">
             R{formatNumber(vatPrice)}
           </span>
           <span className="text-3xl font-bold text-amber-600">
             R{formatNumber(priceInfo.currentPrice)}
           </span>
+          {priceInfo.campaign === 'black-friday' &&
+            priceInfo.originalPrice > priceInfo.currentPrice && (
+              <span className="text-sm font-bold text-red-600">
+                Save R{formatNumber(priceInfo.originalPrice - priceInfo.currentPrice)}
+              </span>
+            )}
           {validUntil && (
             <span className="text-sm text-gray-500">Valid until {validUntil}</span>
           )}
@@ -49,7 +70,7 @@ export default function TruckPrice({
       ) : (
         <div className="text-3xl font-bold text-amber-600 mb-2">R{formatNumber(vatPrice)}</div>
       )}
-      <p className="text-gray-600">R{formatNumber(pricenoVat)} excl. VAT</p>
+      <p className="text-gray-600">R{formatNumber(exVatPrice)} excl. VAT</p>
     </div>
   )
 }

@@ -9,6 +9,10 @@ import ClientLayout from '@/components/global/ClientLayout'
 import { PostHogProvider } from './providers'
 import DeferredGoogleAnalytics from '@/components/global/DeferredGoogleAnalytics'
 import Script from 'next/script'
+import PreviewPill from '@/components/shared/PreviewPill'
+import { BlackFridayBarView } from '@/components/global/BlackFridayBar'
+import { getBlackFridayLayoutDeals } from '@/lib/black-friday-deals'
+import { shouldShowBlackFriday } from '@/lib/black-friday'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -165,11 +169,15 @@ const websiteSchema = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // Never throws: a failing deals query yields empty deals (campaign hidden).
+  const deals = await getBlackFridayLayoutDeals()
+  const blackFridayLive = shouldShowBlackFriday(deals)
+
   return (
     <html lang="en-ZA">
       <body
@@ -181,8 +189,14 @@ export default function RootLayout({
           <JsonLd data={localBusinessSchema} />
           <JsonLd data={websiteSchema} />
 
-          <ClientLayout>{children}</ClientLayout>
+          <ClientLayout
+            topBar={blackFridayLive ? <BlackFridayBarView /> : null}
+            blackFridayLive={blackFridayLive}
+          >
+            {children}
+          </ClientLayout>
         </PostHogProvider>
+        <PreviewPill />
       </body>
     </html>
   )

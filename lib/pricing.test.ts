@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getCurrentPrice } from './pricing'
+import { getCurrentPrice, getSavingsPercent, getSpecialExVatPrice } from './pricing'
 import { isSpecialActive } from './specials'
 
 const FROM = '2026-11-09'
@@ -79,5 +79,35 @@ describe('getCurrentPrice', () => {
         ),
       )
     }
+  })
+})
+
+describe('getSavingsPercent', () => {
+  it('rounds the percentage saved', () => {
+    expect(getSavingsPercent(1000, 850)).toBe(15)
+    expect(getSavingsPercent(2400, 2040)).toBe(15)
+  })
+
+  it('is 0 when there is no saving or inputs are invalid', () => {
+    expect(getSavingsPercent(1000, 1000)).toBe(0)
+    expect(getSavingsPercent(1000, 1200)).toBe(0)
+    expect(getSavingsPercent(0, 50)).toBe(0)
+    expect(getSavingsPercent(1000, 0)).toBe(0)
+  })
+})
+
+describe('getSpecialExVatPrice', () => {
+  it('applies the normal VAT ratio to the special price', () => {
+    expect(getSpecialExVatPrice(201250, 175000, 172500)).toBe(150000)
+    expect(getSpecialExVatPrice(1150, 1000, 920)).toBe(800)
+  })
+
+  it('rounds to a whole number', () => {
+    expect(getSpecialExVatPrice(1150, 1000, 921)).toBe(801)
+  })
+
+  it('falls back to the normal ex-VAT price on invalid inputs', () => {
+    expect(getSpecialExVatPrice(1150, 1000, 0)).toBe(1000)
+    expect(getSpecialExVatPrice(0, 1000, 500)).toBe(1000)
   })
 })

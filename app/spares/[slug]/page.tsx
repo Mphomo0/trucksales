@@ -9,6 +9,7 @@ import { cache } from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import JsonLd from '@/components/global/JsonLd'
+import { withDemoSpareSpecials } from '@/lib/black-friday'
 import { buildSpareDescription, buildSpareTitle, formatMake, formatSpareName } from '@/lib/spares'
 
 export const dynamic = 'force-static'
@@ -130,7 +131,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return (
     <div>
       <JsonLd data={productSchema} />
-      <SpareDetail spare={spare} related={relatedSpares} />
+      <SpareDetail spare={withDemoSpareSpecials([spare])[0]} related={relatedSpares} />
     </div>
   )
 }

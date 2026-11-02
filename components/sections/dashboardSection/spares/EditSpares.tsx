@@ -320,7 +320,7 @@ type PreviewFile = {
               className="w-full p-2 border rounded"
             >
               <option value="">Normal special</option>
-              <option value="black-friday">Black Friday</option>
+              <option value="black-friday">Black November</option>
             </select>
           </div>
 

@@ -18,6 +18,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Pagination } from '@/components/global/Pagination'
 import { getCurrentPrice } from '@/lib/pricing'
+import BlackFridayTag from '@/components/shared/BlackFridayTag'
 import { ikCard } from '@/lib/imagekit'
 import { formatNumber } from '@/lib/format'
 import { cn } from '@/lib/utils'
@@ -50,6 +51,7 @@ interface Truck {
   specialPrice: number | null
   specialValidFrom: Date | string | null
   specialValidTo: Date | string | null
+  specialCampaign?: string | null
 }
 
 interface FilterOptions extends InventoryFilterOptions {
@@ -85,7 +87,8 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
     truck.vatPrice,
     truck.specialPrice ?? null,
     truck.specialValidFrom ?? null,
-    truck.specialValidTo ?? null
+    truck.specialValidTo ?? null,
+    truck.specialCampaign ?? null
   )
   const validUntil = truck.specialValidTo
     ? new Intl.DateTimeFormat('en-ZA', {
@@ -107,9 +110,12 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
           className="w-full h-48 object-cover"
           priority={priority}
         />
-        {priceInfo.isSpecial && (
-          <Badge className="absolute top-2 left-2 bg-red-600">SPECIAL</Badge>
-        )}
+        {priceInfo.isSpecial &&
+          (priceInfo.campaign === 'black-friday' ? (
+            <BlackFridayTag className="absolute top-2 left-2" />
+          ) : (
+            <Badge className="absolute top-2 left-2 bg-red-600">SPECIAL</Badge>
+          ))}
         <Badge className="absolute top-2 right-2 bg-amber-600">
           {truck.condition}
         </Badge>
@@ -131,6 +137,12 @@ const TruckCard = memo(function TruckCard({ truck, priority }: TruckCardProps) {
                     incl. VAT
                   </span>
                 </span>
+                {priceInfo.campaign === 'black-friday' &&
+                  priceInfo.originalPrice > priceInfo.currentPrice && (
+                    <span className="text-xs font-bold text-red-600">
+                      Save R{formatNumber(priceInfo.originalPrice - priceInfo.currentPrice)}
+                    </span>
+                  )}
                 {validUntil && (
                   <span className="text-xs text-green-600 font-medium">
                     Valid until {validUntil}

@@ -6,11 +6,21 @@
 
 import { Badge } from '@/components/ui/badge'
 import { formatNumber } from '@/lib/format'
+import { getSavingsPercent } from '@/lib/pricing'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ikCard } from '@/lib/imagekit'
+import BlackFridayTag from '@/components/shared/BlackFridayTag'
+import { useEffect, useState } from 'react'
+import {
+  filterSpecials,
+  getBodyTypes,
+  parseTypeParam,
+  SPECIALS_TYPE_CHANGE_EVENT,
+  type SpecialsFilter,
+} from '@/lib/specials-filter'
 
 interface Image {
   fileId: string
@@ -23,6 +33,7 @@ interface VehicleSpecial {
   make: string
   model: string
   year: number
+  bodyType?: string | null
   vatPrice: number
   pricenoVat?: number | null
   images: Image[] | any[]
@@ -31,6 +42,7 @@ interface VehicleSpecial {
   specialPrice: number
   specialValidFrom?: Date | string | null
   specialValidTo?: Date | string | null
+  specialCampaign?: string | null
 }
 
 interface SpareSpecial {
@@ -48,14 +60,62 @@ interface SpareSpecial {
   specialPriceNoVat?: number | null
   specialValidFrom?: Date | string | null
   specialValidTo?: Date | string | null
+  specialCampaign?: string | null
 }
 
 interface Props {
   vehicles?: VehicleSpecial[]
   spares?: SpareSpecial[]
+  showTypeFilters?: boolean
 }
 
-export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
+function sameFilter(a: SpecialsFilter, b: SpecialsFilter) {
+  if (a.kind !== b.kind) return false
+  if (a.kind === 'bodyType' && b.kind === 'bodyType') {
+    return a.value.toLowerCase() === b.value.toLowerCase()
+  }
+  return true
+}
+
+export default function AllSpecials({
+  vehicles: allVehicles = [],
+  spares: allSpares = [],
+  showTypeFilters = false,
+}: Props) {
+  // Initial state is "all" on server and client; ?type is applied after mount
+  const [filter, setFilter] = useState<SpecialsFilter>({ kind: 'all' })
+
+  useEffect(() => {
+    if (!showTypeFilters) return
+    const sync = () => {
+      const type = new URLSearchParams(window.location.search).get('type')
+      setFilter(parseTypeParam(type))
+    }
+    sync()
+    // Back/forward and the chat quick links change ?type without a remount
+    window.addEventListener('popstate', sync)
+    window.addEventListener(SPECIALS_TYPE_CHANGE_EVENT, sync)
+    return () => {
+      window.removeEventListener('popstate', sync)
+      window.removeEventListener(SPECIALS_TYPE_CHANGE_EVENT, sync)
+    }
+  }, [showTypeFilters])
+
+  const { vehicles, spares } = showTypeFilters
+    ? filterSpecials(allVehicles, allSpares, filter)
+    : { vehicles: allVehicles, spares: allSpares }
+  const bodyTypes = showTypeFilters ? getBodyTypes(allVehicles) : []
+
+  const chips: { label: string; value: SpecialsFilter }[] = [
+    { label: 'All deals', value: { kind: 'all' } },
+    { label: 'Trucks', value: { kind: 'trucks' } },
+    { label: 'Spares', value: { kind: 'spares' } },
+    ...bodyTypes.map((t) => ({
+      label: t.charAt(0).toUpperCase() + t.slice(1),
+      value: { kind: 'bodyType', value: t } as SpecialsFilter,
+    })),
+  ]
+
   const hasVehicles = vehicles.length > 0
   const hasSpares = spares.length > 0
 
@@ -70,6 +130,45 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
   }
 
   return (
+    <>
+      {showTypeFilters && (
+        <div
+          role="group"
+          aria-label="Filter deals"
+          className="mb-8 flex flex-wrap gap-2"
+        >
+          {chips.map((chip) => {
+            const active = sameFilter(filter, chip.value)
+            return (
+              <button
+                key={chip.label}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setFilter(chip.value)}
+                className={`rounded-full border px-4 py-2 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 ${
+                  active
+                    ? 'border-amber-500 bg-amber-500 text-gray-950'
+                    : 'border-gray-500 bg-white text-gray-800 hover:border-gray-900'
+                }`}
+              >
+                {chip.label}
+              </button>
+            )
+          })}
+        </div>
+      )}
+      {showTypeFilters && !hasVehicles && !hasSpares && (
+        <div className="rounded-lg bg-white py-12 text-center shadow-sm">
+          <p className="mb-4 text-lg text-gray-700">No deals match this filter.</p>
+          <button
+            type="button"
+            onClick={() => setFilter({ kind: 'all' })}
+            className="rounded-full border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-semibold text-gray-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2"
+          >
+            Show all deals
+          </button>
+        </div>
+      )}
     <div className="space-y-16">
       {hasVehicles && (
         <section>
@@ -85,9 +184,13 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                       height={300}
                       className="w-full h-48 object-cover"
                     />
-                    <Badge className="absolute top-2 right-2 bg-red-600">
-                      SPECIAL
-                    </Badge>
+                    {vehicle.specialCampaign === 'black-friday' ? (
+                      <BlackFridayTag className="absolute top-2 right-2" />
+                    ) : (
+                      <Badge className="absolute top-2 right-2 bg-red-600">
+                        SPECIAL
+                      </Badge>
+                    )}
                   </div>
                   <CardContent className="p-6">
                     <h4 className="text-xl font-bold mb-2">
@@ -108,6 +211,12 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                           </p>
                         </div>
                       </div>
+                      {vehicle.specialCampaign === 'black-friday' &&
+                        vehicle.vatPrice > vehicle.specialPrice && (
+                          <p className="mt-1 text-sm font-bold text-red-600">
+                            Save R{formatNumber(vehicle.vatPrice - vehicle.specialPrice)}
+                          </p>
+                        )}
                     </div>
                     {vehicle.specialValidTo && (
                       <div className="text-sm text-gray-600">
@@ -139,9 +248,13 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                       height={300}
                       className="w-full h-48 object-cover"
                     />
-                    <Badge className="absolute top-2 right-2 bg-red-600">
-                      SPECIAL
-                    </Badge>
+                    {spare.specialCampaign === 'black-friday' ? (
+                      <BlackFridayTag className="absolute top-2 right-2" />
+                    ) : (
+                      <Badge className="absolute top-2 right-2 bg-red-600">
+                        SPECIAL
+                      </Badge>
+                    )}
                     <Badge className="absolute top-2 left-2 bg-blue-600 capitalize">
                       {spare.condition.toLowerCase()}
                     </Badge>
@@ -168,6 +281,12 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
                           </p>
                         </div>
                       </div>
+                      {spare.specialCampaign === 'black-friday' &&
+                        getSavingsPercent(spare.price, spare.specialPrice) > 0 && (
+                          <p className="mt-1 text-sm font-bold text-red-600">
+                            Save {getSavingsPercent(spare.price, spare.specialPrice)}%
+                          </p>
+                        )}
                     </div>
                     {spare.specialValidTo && (
                       <div className="text-sm text-gray-600">
@@ -185,5 +304,6 @@ export default function AllSpecials({ vehicles = [], spares = [] }: Props) {
         </section>
       )}
     </div>
+    </>
   )
 }

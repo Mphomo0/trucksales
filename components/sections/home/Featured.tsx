@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 
+import { isDemoMode, withDemoVehicleSpecials } from '@/lib/black-friday'
 import FeaturedMarquee from './FeaturedMarquee'
 
 type FeaturedTruck = {
@@ -9,8 +10,13 @@ type FeaturedTruck = {
   vatPrice: number; mileage: number | null; fuelType: string | null;
   condition: string; transmission: string | null; slug: string;
   specialPrice: number | null; specialValidFrom: string | null; specialValidTo: string | null;
+  specialCampaign: string | null;
   thumbnail: { fileId?: string; url: string } | null;
 }
+
+// Demo mode depends only on the deployment's env, so it is fixed at module load;
+// it is part of the cache key so demo data never shares an entry with real data.
+const CACHE_MODE = isDemoMode() ? 'demo' : 'real'
 
 const getFeaturedTrucks = unstable_cache(
   async (): Promise<FeaturedTruck[]> => {
@@ -32,11 +38,12 @@ const getFeaturedTrucks = unstable_cache(
         specialPrice: true,
         specialValidFrom: true,
         specialValidTo: true,
+        specialCampaign: true,
         images: true,
       },
     })
 
-    return vehicles.map((v) => {
+    return withDemoVehicleSpecials(vehicles).map((v) => {
       const imgArray = Array.isArray(v.images) ? v.images : []
       return {
         id: v.id,
@@ -53,11 +60,12 @@ const getFeaturedTrucks = unstable_cache(
         specialPrice: v.specialPrice,
         specialValidFrom: v.specialValidFrom instanceof Date ? v.specialValidFrom.toISOString() : v.specialValidFrom ?? null,
         specialValidTo: v.specialValidTo instanceof Date ? v.specialValidTo.toISOString() : v.specialValidTo ?? null,
+        specialCampaign: v.specialCampaign ?? null,
         thumbnail: (imgArray[0] as { fileId?: string; url: string } | undefined) ?? null,
       }
     })
   },
-  ['featured-trucks'],
+  ['featured-trucks', CACHE_MODE],
   { revalidate: 86400, tags: ['inventory'] }
 )
 

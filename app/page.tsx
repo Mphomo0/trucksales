@@ -10,7 +10,10 @@ import CTA from '@/components/sections/home/CTA'
 import FAQSection from '@/components/sections/home/FAQSection'
 import Featured from '@/components/sections/home/Featured'
 import Features from '@/components/sections/home/Features'
+import BlackFridayHero from '@/components/sections/home/BlackFridayHero'
 import Hero from '@/components/sections/home/Hero'
+import { getBlackFridayDeals } from '@/lib/black-friday-deals'
+import { shouldShowBlackFriday } from '@/lib/black-friday'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -51,10 +54,16 @@ export const metadata: Metadata = {
 // The business (#org) is defined in app/layout.tsx and each branch (#branch) on its
 // /locations page, so the homepage no longer repeats them with different data.
 
-export default function Home() {
+export default async function Home() {
+  const deals = await getBlackFridayDeals()
+
   return (
     <>
-      <Hero />
+      {shouldShowBlackFriday(deals) ? (
+        <BlackFridayHero deals={deals} />
+      ) : (
+        <Hero />
+      )}
       <Features />
       <Featured />
       <div className="cv-auto">

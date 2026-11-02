@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import {
   MessageCircle,
   X,
@@ -16,6 +17,8 @@ import {
 
 import { getAttributionPayload } from '@/lib/attribution-client'
 import { trackLeadCreated } from '@/lib/analytics-events'
+import { SPECIALS_TYPE_CHANGE_EVENT } from '@/lib/specials-filter'
+import { BLACK_FRIDAY_CHAT_LINKS, getWelcomeMessage } from '@/lib/chat-greeting'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -23,15 +26,9 @@ interface ChatMessage {
   createdAt?: string
 }
 
-const WELCOME_MESSAGE: ChatMessage = {
-  role: 'assistant',
-  message:
-    "Hi, I'm the A-Z Truck Sales assistant.\n\nI can help you find available trucks, answer vehicle questions, and help you contact our sales team.",
-}
-
-export function ChatWidget() {
+export function ChatWidget({ blackFridayLive = false }: { blackFridayLive?: boolean }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<ChatMessage[]>([WELCOME_MESSAGE])
+  const [messages, setMessages] = useState<ChatMessage[]>([getWelcomeMessage(blackFridayLive)])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [sessionId, setSessionId] = useState<string | null>(null)
@@ -334,6 +331,30 @@ export function ChatWidget() {
                         {line}
                       </p>
                     ))}
+                    {blackFridayLive && i === 0 && msg.role === 'assistant' && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {BLACK_FRIDAY_CHAT_LINKS.map((link) => (
+                          <Link
+                            key={link.href}
+                            href={link.href}
+                            prefetch={false}
+                            onClick={(event) => {
+                              // Already on /specials: next/link would only change
+                              // the URL, so update it and tell the filter directly
+                              if (window.location.pathname === '/specials') {
+                                event.preventDefault()
+                                window.history.pushState(null, '', link.href)
+                                window.dispatchEvent(new Event(SPECIALS_TYPE_CHANGE_EVENT))
+                              }
+                              setIsOpen(false)
+                            }}
+                            className="rounded-full border border-amber-700 bg-white px-3 py-1 text-[13px] font-bold text-amber-700 hover:bg-amber-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950"
+                          >
+                            {link.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
