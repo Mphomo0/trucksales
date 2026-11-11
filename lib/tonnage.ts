@@ -42,10 +42,10 @@ export const TONNAGE_BUCKETS: TonnageBucket[] = [
     slug: '3-to-5-ton',
     dbValue: '3 to 5 ton',
     label: '3 to 5 Ton',
-    h1: '3 to 5 Ton Trucks for Sale in Gauteng',
-    metaTitle: '3 to 5 Ton Trucks for Sale',
+    h1: '5 Ton Trucks for Sale in Gauteng (3 to 5 Ton)',
+    metaTitle: '5 Ton Trucks for Sale',
     intro:
-      'The 3 to 5 ton class is one of the most popular sizes for South African small and medium businesses — big enough for real payloads, small enough to drive on a Code C1 licence (GVM up to 16,000 kg).',
+      'Looking for a 5 ton truck for sale? The 3 to 5 ton class is one of the most popular sizes for South African small and medium businesses — big enough for real payloads, small enough to drive on a Code C1 licence (GVM up to 16,000 kg).',
     useCases:
       'furniture removals, parcel and courier delivery, retail distribution and light construction supply',
     faqs: [
@@ -126,13 +126,18 @@ export const TONNAGE_BUCKETS: TonnageBucket[] = [
     slug: '10-to-18-ton',
     dbValue: '10 to 18 ton',
     label: '10 to 18 Ton',
-    h1: '10 to 18 Ton Trucks for Sale in Gauteng',
-    metaTitle: '10 to 18 Ton Trucks for Sale',
+    h1: '14 Ton Trucks for Sale in Gauteng (10 to 18 Ton)',
+    metaTitle: '14 Ton Trucks for Sale',
     intro:
-      'The 10 to 18 ton class covers medium-to-heavy rigid trucks used for long-haul distribution, construction supply and heavier route work across South Africa.',
+      'Looking for a 14 ton truck for sale? The 10 to 18 ton class, including 10, 14, 16 and 18 ton trucks, covers medium-to-heavy rigid trucks used for long-haul distribution, construction supply and heavier route work across South Africa.',
     useCases:
       'long-haul distribution, construction and building supply, bulk freight and heavier route work',
     faqs: [
+      {
+        question: 'Do you have 14 ton trucks for sale?',
+        answer:
+          'Yes, 14 ton trucks are part of our 10 to 18 ton range. Stock changes often, so check the trucks listed on this page or contact us to confirm which 14 ton trucks are available now.',
+      },
       {
         question: 'What licence do I need for a 10 ton or 16 ton truck?',
         answer:
