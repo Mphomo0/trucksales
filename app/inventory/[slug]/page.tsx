@@ -2,6 +2,7 @@ import React from 'react'
 import { formatNumber } from '@/lib/format'
 import TruckDetail from '@/components/sections/inventorySection/TruckDetail'
 import QualityAssurance from '@/components/sections/inventorySection/QualityAssurance'
+import { listingPriceSelect } from '@/components/shared/ListingPrice'
 import RelatedVehicles from '@/components/sections/inventorySection/RelatedVehicles'
 import TonnageCrossLink from '@/components/sections/inventorySection/TonnageCrossLink'
 import BrandCrossLink from '@/components/sections/inventorySection/BrandCrossLink'
@@ -214,7 +215,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const relatedVehicles = await prisma.inventory.findMany({
     where: { make: vehicle.make, slug: { not: vehicle.slug } },
-    select: { slug: true, year: true, make: true, model: true, bodyType: true, vatPrice: true, images: true },
+    select: { slug: true, year: true, make: true, model: true, bodyType: true, ...listingPriceSelect, images: true },
     orderBy: { createdAt: 'desc' },
     take: 4,
   })

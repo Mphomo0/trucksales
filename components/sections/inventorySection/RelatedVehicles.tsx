@@ -1,14 +1,14 @@
 import { formatDisplayName } from '@/lib/text'
 import Link from 'next/link'
 import Image from 'next/image'
+import ListingPrice, { type ListingPriceFields } from '@/components/shared/ListingPrice'
 
-interface RelatedVehicle {
+interface RelatedVehicle extends ListingPriceFields {
   slug: string
   year: number
   make: string
   model: string
   bodyType: string | null
-  vatPrice: number
   images: { url: string }[]
 }
 
@@ -50,11 +50,7 @@ export default function RelatedVehicles({ vehicles, make }: Props) {
                 </div>
                 <div className="p-3">
                   <p className="text-sm font-semibold text-gray-800 line-clamp-2">{title}</p>
-                  {v.vatPrice > 0 && (
-                    <p className="text-sm text-amber-600 font-medium mt-1">
-                      R {v.vatPrice.toLocaleString('en-ZA')} incl. VAT
-                    </p>
-                  )}
+                  <ListingPrice truck={v} compact className="mt-1 text-sm font-medium" />
                 </div>
               </Link>
             )

@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/prisma'
+import ListingPrice, { listingPriceSelect } from '@/components/shared/ListingPrice'
 import RelatedGuides from '@/components/sections/shared/RelatedGuides'
 import { formatDisplayName } from '@/lib/text'
 import { BRAND_ROUTES } from '@/lib/brands'
@@ -71,7 +72,7 @@ const getBrandVehicles = unstable_cache(
         name: true,
         model: true,
         year: true,
-        vatPrice: true,
+        ...listingPriceSelect,
         mileage: true,
         fuelType: true,
         transmission: true,
@@ -276,16 +277,7 @@ export default async function BrandPage({ params }: Props) {
                     <h3 className="font-semibold text-gray-900">
                       {truck.name}
                     </h3>
-                    <p className="text-amber-600 font-bold text-lg">
-                      {truck.vatPrice
-                        ? `R${formatNumber(truck.vatPrice)}`
-                        : 'Call for price'}
-                      {truck.vatPrice ? (
-                        <span className="ml-1 text-xs font-normal text-gray-500">
-                          incl. VAT
-                        </span>
-                      ) : null}
-                    </p>
+                    <ListingPrice truck={truck} className="text-lg" />
                     <div className="flex gap-2 mt-2 text-sm text-gray-500">
                       <span>{formatNumber(truck.mileage) ?? '-'} km</span>
                       <span>|</span>
