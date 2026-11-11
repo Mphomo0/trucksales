@@ -93,10 +93,10 @@ export const TONNAGE_BUCKETS: TonnageBucket[] = [
     slug: '8-to-9-ton',
     dbValue: '8 to 9 ton',
     label: '8 to 9 Ton',
-    h1: '8 to 9 Ton Trucks for Sale in Gauteng',
-    metaTitle: '8 to 9 Ton Trucks for Sale',
+    h1: '8 Ton Trucks for Sale in Gauteng (8 to 9 Ton)',
+    metaTitle: '8 Ton Trucks for Sale',
     intro:
-      'The 8 to 9 ton class is a workhorse size for South African fleets, offering solid payload capacity for bulk delivery, refrigerated transport and regular route work.',
+      'Looking for an 8 ton truck for sale? The 8 to 9 ton class is a workhorse size for South African fleets, offering solid payload capacity for bulk delivery, refrigerated transport and regular route work.',
     useCases:
       'bulk and wholesale delivery, refrigerated transport, route work and fleet distribution',
     faqs: [
