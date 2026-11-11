@@ -9,6 +9,7 @@ Brands commonly in stock include Isuzu, UD Trucks, Hino, Fuso, Nissan, Toyota, F
 - [Home](https://www.a-ztrucksales.com/): Used trucks for sale in Gauteng
 - [Inventory](https://www.a-ztrucksales.com/inventory): Used trucks in stock, filterable by make, body type and price
 - [Trucks by Tonnage](https://www.a-ztrucksales.com/tonnage): Browse stock by payload class, from 1 to 2.5 ton up to 18 to 35 ton
+- [Trucks by Body Type](https://www.a-ztrucksales.com/body-types): Browse stock by body: refrigerated, dropside, curtain side and volume (box) body
 - [Brands](https://www.a-ztrucksales.com/brands): Isuzu, Hino, Fuso, UD Trucks, MAN, Mercedes-Benz, Toyota, Tata and Hyundai model ranges
 - [About](https://www.a-ztrucksales.com/about): Company history, branches and specialities
 - [Specials](https://www.a-ztrucksales.com/specials): Current discounted trucks and spares with validity dates

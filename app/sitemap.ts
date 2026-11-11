@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { CONTENT_DATES } from '@/lib/content-dates'
 import { BRAND_ROUTES } from '@/lib/brands'
 import { TONNAGE_BUCKETS, getTonnageBucketBySize } from '@/lib/tonnage'
+import { BODY_TYPE_PAGES } from '@/lib/body-types'
 import { isOffThemeVehicle } from '@/lib/off-theme'
 
 export const revalidate = 86400
@@ -82,6 +83,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: `${baseUrl}/tonnage/${b.slug}`,
         lastModified: tonnageUpdated(b.slug) ?? inventoryUpdated,
       })),
+      { url: `${baseUrl}/body-types`, lastModified: inventoryUpdated },
+      ...BODY_TYPE_PAGES.map((b) => ({
+        url: `${baseUrl}/body-types/${b.slug}`,
+        lastModified: inventoryUpdated,
+      })),
     ]
 
     return [
@@ -110,6 +116,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...BRAND_ROUTES.map((b) => `/brands/${b.slug}`),
       '/tonnage',
       ...TONNAGE_BUCKETS.map((b) => `/tonnage/${b.slug}`),
+      '/body-types',
+      ...BODY_TYPE_PAGES.map((b) => `/body-types/${b.slug}`),
     ]
     return [
       ...staticRoutes.map((route) => ({ url: `${baseUrl}${route}` })),

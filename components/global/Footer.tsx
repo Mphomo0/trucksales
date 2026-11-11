@@ -79,6 +79,11 @@ import Link from 'next/link'
               </Link>
             </li>
             <li>
+              <Link prefetch={false} href="/body-types" className="hover:underline">
+                Trucks by Body Type
+              </Link>
+            </li>
+            <li>
               <Link prefetch={false} href="/guides" className="hover:underline">
                 Guides
               </Link>
