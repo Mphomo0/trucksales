@@ -4,6 +4,7 @@ import TruckDetail from '@/components/sections/inventorySection/TruckDetail'
 import QualityAssurance from '@/components/sections/inventorySection/QualityAssurance'
 import { listingPriceSelect } from '@/components/shared/ListingPrice'
 import RelatedVehicles from '@/components/sections/inventorySection/RelatedVehicles'
+import BodyTypeCrossLink from '@/components/sections/inventorySection/BodyTypeCrossLink'
 import TonnageCrossLink from '@/components/sections/inventorySection/TonnageCrossLink'
 import BrandCrossLink from '@/components/sections/inventorySection/BrandCrossLink'
 
@@ -278,6 +279,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         }}
       />
       <TonnageCrossLink truckSize={vehicle.truckSize} />
+      <BodyTypeCrossLink bodyType={vehicle.bodyType} />
       <BrandCrossLink make={vehicle.make} />
       <RelatedVehicles
         vehicles={relatedVehicles.map(v => ({ ...v, images: (v.images as { url: string }[]) }))}

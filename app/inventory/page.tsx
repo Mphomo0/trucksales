@@ -308,6 +308,12 @@ export default async function Inventory() {
                 Looking for a specific payload? Browse trucks by tonnage →
               </Link>
               <Link
+                href="/body-types"
+                className="text-blue-700 hover:text-blue-800 font-medium"
+              >
+                Need a particular body? Browse trucks by body type →
+              </Link>
+              <Link
                 href="/specials"
                 className="text-blue-700 hover:text-blue-800 font-medium"
               >
